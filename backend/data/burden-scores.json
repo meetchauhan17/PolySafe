@@ -1,0 +1,41 @@
+{
+  "_comment": "Anticholinergic Cognitive Burden (ACB) scale — scores 0-3. drugName must be lowercase for lookup. Sources: ACB Scale (Boustani et al.), FORTA list, NHS medicines guide.",
+  "_scoring": {
+    "0": "No clinically relevant anticholinergic or sedative burden",
+    "1": "Mild burden — possible anticholinergic or sedative activity",
+    "2": "Moderate burden — definite anticholinergic or sedative activity",
+    "3": "Severe burden — strongly anticholinergic/sedative, high risk in elderly and polypharmacy"
+  },
+  "drugs": [
+    { "drugName": "diphenhydramine",  "score": 3, "category": "Antihistamine / Sleep aid",  "notes": "Strong anticholinergic; Benadryl, ZzzQuil" },
+    { "drugName": "chlorpheniramine", "score": 3, "category": "Antihistamine",               "notes": "First-gen H1 blocker; strong CNS penetration" },
+    { "drugName": "hydroxyzine",      "score": 3, "category": "Antihistamine / Anxiolytic",  "notes": "Atarax; used for anxiety and pruritus" },
+    { "drugName": "promethazine",     "score": 3, "category": "Antihistamine / Antiemetic",  "notes": "Phenergan; strong anticholinergic + sedation" },
+    { "drugName": "doxylamine",       "score": 3, "category": "Antihistamine / Sleep aid",   "notes": "Unisom; heavily sedating" },
+    { "drugName": "cyclobenzaprine",  "score": 3, "category": "Muscle relaxant",             "notes": "Flexeril; structurally similar to TCAs" },
+    { "drugName": "oxybutynin",       "score": 3, "category": "Bladder / Urinary",           "notes": "Ditropan; top ACB offender, high CNS penetration" },
+    { "drugName": "tolterodine",      "score": 2, "category": "Bladder / Urinary",           "notes": "Detrol; anticholinergic but lower CNS penetration" },
+    { "drugName": "solifenacin",      "score": 2, "category": "Bladder / Urinary",           "notes": "VESIcare; overactive bladder" },
+    { "drugName": "amitriptyline",    "score": 3, "category": "Antidepressant (TCA)",        "notes": "Elavil; very strong anticholinergic TCA" },
+    { "drugName": "imipramine",       "score": 3, "category": "Antidepressant (TCA)",        "notes": "Tofranil; strong anticholinergic TCA" },
+    { "drugName": "doxepin",          "score": 3, "category": "Antidepressant (TCA)",        "notes": "Sinequan; high ACB score, avoid in elderly" },
+    { "drugName": "paroxetine",       "score": 2, "category": "Antidepressant (SSRI)",       "notes": "Paxil; most anticholinergic SSRI" },
+    { "drugName": "olanzapine",       "score": 2, "category": "Antipsychotic",               "notes": "Zyprexa; moderate anticholinergic load" },
+    { "drugName": "quetiapine",       "score": 2, "category": "Antipsychotic",               "notes": "Seroquel; sedation + moderate ACB" },
+    { "drugName": "clozapine",        "score": 3, "category": "Antipsychotic",               "notes": "Clozaril; highest ACB among antipsychotics" },
+    { "drugName": "diazepam",         "score": 1, "category": "Benzodiazepine",              "notes": "Valium; sedation burden, not classically anticholinergic" },
+    { "drugName": "lorazepam",        "score": 1, "category": "Benzodiazepine",              "notes": "Ativan; sedative burden included in cumulative scoring" },
+    { "drugName": "alprazolam",       "score": 1, "category": "Benzodiazepine",              "notes": "Xanax; sedation contributes to fall/cognitive risk" },
+    { "drugName": "zolpidem",         "score": 1, "category": "Sleep aid (Z-drug)",          "notes": "Ambien; cognitive/sedation burden, controversial but included" },
+    { "drugName": "meclizine",        "score": 2, "category": "Antivertigo / Antiemetic",    "notes": "Antivert; anticholinergic vestibular agent" },
+    { "drugName": "scopolamine",      "score": 3, "category": "Anticholinergic / Antiemetic","notes": "Transderm-Scop; pure anticholinergic" },
+    { "drugName": "baclofen",         "score": 1, "category": "Muscle relaxant",             "notes": "Lioresal; CNS depressant burden" },
+    { "drugName": "carbamazepine",    "score": 1, "category": "Anticonvulsant / Mood",       "notes": "Tegretol; mild anticholinergic activity" },
+    { "drugName": "metformin",        "score": 0, "category": "Antidiabetic",                "notes": "Glucophage; no anticholinergic burden" },
+    { "drugName": "warfarin",         "score": 0, "category": "Anticoagulant",               "notes": "Coumadin; no anticholinergic burden" },
+    { "drugName": "atorvastatin",     "score": 0, "category": "Statin",                     "notes": "Lipitor; no ACB burden" },
+    { "drugName": "lisinopril",       "score": 0, "category": "ACE Inhibitor",               "notes": "Prinivil/Zestril; no ACB burden" },
+    { "drugName": "amlodipine",       "score": 0, "category": "Calcium channel blocker",     "notes": "Norvasc; no ACB burden" },
+    { "drugName": "ashwagandha",      "score": 0, "category": "Herbal / Adaptogen",          "notes": "Withania somnifera; no documented ACB burden" }
+  ]
+}

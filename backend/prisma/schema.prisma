@@ -1,0 +1,209 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Enums ────────────────────────────────────────────────────────────────────
+
+enum Role {
+  PATIENT
+  CAREGIVER
+  DOCTOR
+  PHARMACIST
+}
+
+enum MedicineType {
+  PRESCRIPTION
+  OTC
+  HERBAL
+}
+
+enum ConnectionRole {
+  CAREGIVER
+  DOCTOR
+}
+
+enum ConnectionStatus {
+  PENDING
+  APPROVED
+  REVOKED
+}
+
+// ─── Models ───────────────────────────────────────────────────────────────────
+
+model User {
+  id           String   @id @default(uuid())
+  phone        String?  @unique
+  email        String?  @unique
+  passwordHash String?  // Only for DOCTOR / PHARMACIST roles
+  role         Role     @default(PATIENT)
+  createdAt    DateTime @default(now())
+
+  // Relations
+  patient      Patient?
+  medicinesAdded Medicine[]      @relation("AddedByUser")
+  connections  Connection[]      @relation("ConnectedUser")
+}
+
+model Patient {
+  id         String   @id @default(uuid())
+  userId     String   @unique
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  age        Int
+  conditions String[] // e.g. ["diabetes", "kidney", "liver"]
+  allergies  String[] // e.g. ["penicillin", "aspirin"]
+
+  // Relations
+  medicines        Medicine[]
+  symptoms         Symptom[]
+  connections      Connection[]
+  interactionFlags InteractionFlag[]
+}
+
+model Medicine {
+  id               String       @id @default(uuid())
+  patientId        String
+  patient          Patient      @relation(fields: [patientId], references: [id], onDelete: Cascade)
+
+  name             String
+  standardizedCode String?      // RxNorm CUI code
+  type             MedicineType @default(PRESCRIPTION)
+  addedBy          String       // userId of who added this medicine
+  addedByUser      User         @relation("AddedByUser", fields: [addedBy], references: [id])
+  dateAdded        DateTime     @default(now())
+  dosage           String?
+
+  // Relations
+  symptoms              Symptom[]         @relation("PossibleCauseMedicine")
+  interactionFlagsAsA   InteractionFlag[] @relation("MedicineA")
+  interactionFlagsAsB   InteractionFlag[] @relation("MedicineB")
+}
+
+model Symptom {
+  id                    String    @id @default(uuid())
+  patientId             String
+  patient               Patient   @relation(fields: [patientId], references: [id], onDelete: Cascade)
+
+  description           String
+  dateLogged            DateTime  @default(now())
+
+  possibleCauseMedicineId String?
+  possibleCauseMedicine   Medicine? @relation("PossibleCauseMedicine", fields: [possibleCauseMedicineId], references: [id], onDelete: SetNull)
+}
+
+model Connection {
+  id              String           @id @default(uuid())
+  patientId       String
+  patient         Patient          @relation(fields: [patientId], references: [id], onDelete: Cascade)
+
+  // Null until a doctor claims the code via POST /connection/claim-code
+  connectedUserId String?
+  connectedUser   User?            @relation("ConnectedUser", fields: [connectedUserId], references: [id], onDelete: SetNull)
+
+  role            ConnectionRole   @default(DOCTOR)
+  status          ConnectionStatus @default(PENDING)
+  shareCode       String?          @unique  // 6-digit invite code — unique, used once
+  expiresAt       DateTime?                 // 24 hours from generation
+  createdAt       DateTime         @default(now())
+
+  @@index([shareCode])
+}
+
+model InteractionFlag {
+  id                  String   @id @default(uuid())
+  patientId           String
+  patient             Patient  @relation(fields: [patientId], references: [id], onDelete: Cascade)
+
+  medicineAId         String
+  medicineA           Medicine @relation("MedicineA", fields: [medicineAId], references: [id], onDelete: Cascade)
+
+  medicineBId         String
+  medicineB           Medicine @relation("MedicineB", fields: [medicineBId], references: [id], onDelete: Cascade)
+
+  severity            String   // e.g. "Major", "Moderate", "Minor", "Contraindicated"
+  clinicalExplanation String   // Full pharmacological explanation for doctors
+  plainExplanation    String   // Plain-language explanation for patients
+
+  // Tracks the source that generated the explanation text.
+  // 'groq'       = live Groq LLM response
+  // 'fallback'   = no API key or JSON parse error
+  // 'timeout'    = Groq did not respond within 8s — raw severity shown immediately in UI
+  // 'demo-mock'  = DEMO_MODE=true — pre-written fixture, Groq not called
+  generatedBy         String?  @default("fallback")
+
+  dateFlagged         DateTime @default(now())
+}
+
+// ─── DDInter Reference Dataset ────────────────────────────────────────────────
+// Populated by prisma/seed.js from backend/data/ddinter.csv.
+// Used only for lookup (read-only at runtime) — never updated by user actions.
+model DrugInteractionReference {
+  id         Int    @id @default(autoincrement())
+  drugAName  String
+  drugBName  String
+  severity   String // DDInter levels: "Minor" | "Moderate" | "Major" | "Contraindicated"
+  ddinterId  String? // original DDInter row identifier, if present
+
+  // Composite index for fast A-B and B-A bidirectional lookup
+  @@index([drugAName, drugBName])
+  @@index([drugBName, drugAName])
+  @@map("drug_interaction_reference")
+}
+
+// ─── Anticholinergic / Sedative Burden Index ──────────────────────────────────
+// Populated by prisma/seed-burden.js from backend/data/burden-scores.json.
+// Scores use the Anticholinergic Cognitive Burden (ACB) scale convention:
+//   0 = no clinically relevant burden
+//   1 = mild anticholinergic / sedative effect
+//   2 = moderate burden
+//   3 = severe burden — significant risk in elderly and polypharmacy patients
+// Read-only at runtime — seeded once, queried by burdenIndex service.
+model BurdenScore {
+  id       Int    @id @default(autoincrement())
+  drugName String @unique // normalized lowercase for case-insensitive lookup
+  score    Int    // 0 | 1 | 2 | 3
+
+  @@index([drugName])
+  @@map("burden_score")
+}
+
+// ─── Prescribing Cascade Reference ────────────────────────────────────────────
+// A prescribing cascade is when a drug's side effect is treated as a new
+// disease, leading to a second (unnecessary) prescription.
+// This table stores documented cascade pairs for symptom keyword matching.
+// Populated by prisma/seed-cascade.js from backend/data/cascade-references.json.
+model CascadeReference {
+  id                 Int    @id @default(autoincrement())
+  symptomKeyword     String // e.g. "leg swelling", "confusion", "constipation"
+  causingDrugCategory String // e.g. "calcium channel blocker", "opioid"
+  description        String // plain-language explanation of the known cascade
+
+  @@index([symptomKeyword])
+  @@map("cascade_reference")
+}
+
+// ─── Herb-Drug Interaction Reference ──────────────────────────────────────────
+// Documented herb-drug interactions from clinical pharmacology literature.
+// Sources: Natural Medicines Comprehensive Database, WHO Herbal Safety monographs,
+// Stargrove et al. "Herb, Nutrient, and Drug Interactions" (2008),
+// Memorial Sloan Kettering About Herbs database, Cochrane reviews.
+// Read-only at runtime — seeded by prisma/seed-herb-drug.js.
+model HerbDrugReference {
+  id          Int    @id @default(autoincrement())
+  herbName    String // lowercase normalized herb name (e.g. "turmeric", "st. john's wort")
+  drugName    String // lowercase normalized drug name or class the herb interacts with
+  severity    String // "Major" | "Moderate" | "Minor"
+  description String // plain-language description of the interaction mechanism
+
+  @@index([herbName])
+  @@index([drugName])
+  @@map("herb_drug_reference")
+}

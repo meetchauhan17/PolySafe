@@ -1,0 +1,106 @@
+{
+  "_source": "Documented prescribing cascade pairs from peer-reviewed pharmacology literature. Sources: Rochon & Gurwitz (1997, 2017), Kalisch et al. (2011), Ontario Drug Policy Research Network, Canadian Deprescribing Network.",
+  "_note": "symptomKeyword is a lowercase searchable fragment — multiple aliases per cascade pair are listed as separate entries to maximise keyword matching coverage.",
+  "cascades": [
+    {
+      "symptomKeyword": "leg swelling",
+      "causingDrugCategory": "calcium channel blocker",
+      "description": "Calcium channel blockers (e.g., amlodipine, nifedipine, felodipine) cause peripheral oedema / ankle/leg swelling as a direct vasodilatory side effect. This is commonly mistaken for new-onset heart failure or venous insufficiency, triggering unnecessary diuretic prescriptions — a classic prescribing cascade."
+    },
+    {
+      "symptomKeyword": "ankle swelling",
+      "causingDrugCategory": "calcium channel blocker",
+      "description": "Ankle oedema caused by dihydropyridine calcium channel blockers (amlodipine, nifedipine) is a direct drug side effect, not a sign of cardiac decompensation. Initiating a loop diuretic to treat it constitutes a well-documented prescribing cascade."
+    },
+    {
+      "symptomKeyword": "ankle swelling",
+      "causingDrugCategory": "NSAID",
+      "description": "NSAIDs (ibuprofen, naproxen, diclofenac) can cause sodium and water retention, leading to ankle and leg oedema. This is often misidentified as heart failure, leading to inappropriate diuretic initiation."
+    },
+    {
+      "symptomKeyword": "confusion",
+      "causingDrugCategory": "sedative",
+      "description": "Benzodiazepines, Z-drugs (zolpidem), and sedating antihistamines (diphenhydramine) frequently cause acute or subacute cognitive impairment in older adults. This is often misinterpreted as new-onset dementia or delirium requiring antipsychotic treatment — a dangerous prescribing cascade."
+    },
+    {
+      "symptomKeyword": "confusion",
+      "causingDrugCategory": "anticholinergic",
+      "description": "Drugs with high anticholinergic burden (oxybutynin, amitriptyline, promethazine) impair central acetylcholine signalling, causing memory problems, disorientation, and confusion. This is a leading contributor to avoidable dementia misdiagnosis in older patients."
+    },
+    {
+      "symptomKeyword": "memory problems",
+      "causingDrugCategory": "anticholinergic",
+      "description": "High anticholinergic load from medications like bladder agents (oxybutynin) and sedating antidepressants (amitriptyline) is associated with reversible cognitive decline and short-term memory impairment. A cascade occurs when cognitive symptoms are treated with cholinesterase inhibitors rather than deprescribing the offending agent."
+    },
+    {
+      "symptomKeyword": "memory problems",
+      "causingDrugCategory": "sedative",
+      "description": "Benzodiazepines and related sedatives are associated with anterograde amnesia and daytime cognitive impairment, which may be confused with early dementia and trigger inappropriate dementia workup or drug initiation."
+    },
+    {
+      "symptomKeyword": "constipation",
+      "causingDrugCategory": "opioid",
+      "description": "Opioid-induced constipation (OIC) is universal with opioid analgesia (codeine, tramadol, morphine, oxycodone) and is caused by mu-opioid receptor activation in the gut wall. Treating OIC with laxatives rather than opioid dose reduction represents a recognised prescribing cascade."
+    },
+    {
+      "symptomKeyword": "constipation",
+      "causingDrugCategory": "calcium channel blocker",
+      "description": "Calcium channel blockers (particularly verapamil and diltiazem) reduce intestinal smooth muscle contractility, causing constipation. This is frequently misattributed to diet or ageing rather than the medication."
+    },
+    {
+      "symptomKeyword": "dry mouth",
+      "causingDrugCategory": "anticholinergic",
+      "description": "Anticholinergic drugs (bladder agents, tricyclic antidepressants, antihistamines) reduce salivary gland secretion, causing xerostomia (dry mouth). Dry mouth is often treated with artificial saliva products or mouth rinses rather than deprescribing the offending agent."
+    },
+    {
+      "symptomKeyword": "dry mouth",
+      "causingDrugCategory": "antidepressant",
+      "description": "Tricyclic antidepressants (amitriptyline, imipramine) and some SSRIs cause dry mouth as a direct anticholinergic side effect. This is commonly unrecognised as drug-induced and leads to unnecessary dental or salivary gland evaluation."
+    },
+    {
+      "symptomKeyword": "urinary retention",
+      "causingDrugCategory": "anticholinergic",
+      "description": "Anticholinergic medications (oxybutynin, tolterodine, diphenhydramine) can paradoxically worsen urinary outflow obstruction in patients with benign prostatic hyperplasia (BPH) or pelvic floor dysfunction, often leading to addition of alpha-blockers as a cascade."
+    },
+    {
+      "symptomKeyword": "frequent urination",
+      "causingDrugCategory": "ACE inhibitor",
+      "description": "ACE inhibitors and diuretics (thiazides, furosemide) used for hypertension or heart failure can increase urinary frequency. This symptom is often misattributed to overactive bladder, triggering anticholinergic bladder agents — a well-documented cascade with cumulative side effect burden."
+    },
+    {
+      "symptomKeyword": "frequent urination",
+      "causingDrugCategory": "diuretic",
+      "description": "Loop and thiazide diuretics (furosemide, hydrochlorothiazide) cause increased urinary frequency as their primary mechanism of action. This is sometimes misinterpreted as overactive bladder and treated with anticholinergic agents, adding unnecessary drug burden."
+    },
+    {
+      "symptomKeyword": "dizziness",
+      "causingDrugCategory": "antihypertensive",
+      "description": "Antihypertensive drugs (beta-blockers, ACE inhibitors, calcium channel blockers) can cause orthostatic hypotension and dizziness, particularly in older adults. This is frequently misdiagnosed as vestibular disease or labyrinthitis, triggering prescriptions for antivert medications (meclizine) — a known prescribing cascade."
+    },
+    {
+      "symptomKeyword": "dizziness",
+      "causingDrugCategory": "sedative",
+      "description": "Sedatives and anxiolytics (benzodiazepines, Z-drugs) cause dose-dependent dizziness and gait instability. This is often misattributed to inner ear problems rather than the medication, leading to inappropriate antivertigo drug prescriptions."
+    },
+    {
+      "symptomKeyword": "falls",
+      "causingDrugCategory": "sedative",
+      "description": "Benzodiazepines and sedating antihistamines significantly increase fall risk in older adults through sedation, muscle relaxation, and impaired proprioception. Falls may trigger pain prescriptions (NSAIDs, opioids) as a cascade without addressing the root sedative cause."
+    },
+    {
+      "symptomKeyword": "nausea",
+      "causingDrugCategory": "opioid",
+      "description": "Opioid analgesics (codeine, tramadol, morphine) stimulate the chemoreceptor trigger zone, causing nausea and vomiting in 25-40% of patients. This is a direct drug side effect that is commonly treated with antiemetic prescriptions (metoclopramide, ondansetron) — a prescribing cascade."
+    },
+    {
+      "symptomKeyword": "heartburn",
+      "causingDrugCategory": "NSAID",
+      "description": "NSAIDs (ibuprofen, naproxen, diclofenac, aspirin) damage the gastric mucosa and reduce prostaglandin-mediated mucosal protection, causing heartburn, dyspepsia, and peptic ulceration. PPI (omeprazole, pantoprazole) prescriptions triggered by NSAID-induced heartburn represent one of the most common prescribing cascades globally."
+    },
+    {
+      "symptomKeyword": "stomach pain",
+      "causingDrugCategory": "NSAID",
+      "description": "NSAID-related gastrointestinal symptoms (stomach pain, dyspepsia, reflux) are among the most common drug adverse effects. Prescribing a PPI or H2 blocker to manage NSAID-induced GI symptoms is the most frequently cited prescribing cascade pair in the literature."
+    }
+  ]
+}

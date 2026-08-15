@@ -1,0 +1,39 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Environment variables
+.env
+.env.local
+.env.production
+.env.development
+
+# Build outputs
+dist/
+build/
+out/
+.next/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+logs/
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Database & Uploads
+prisma/*.db
+prisma/*.db-journal
+backend/prisma/*.db
+backend/prisma/*.db-journal
+*.db
+*.db-journal
+uploads/
+
+# Multer temp OCR upload dir — files deleted after processing but keep dir
+backend/tmp/

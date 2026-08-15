@@ -1,0 +1,285 @@
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
+import {
+  ArrowLeft,
+  Pill,
+  Leaf,
+  ShoppingBag,
+  Stethoscope,
+  AlertTriangle,
+  AlertOctagon,
+  ShieldCheck,
+  CalendarDays,
+  Plus,
+  Info,
+  AlertCircle,
+  Loader2,
+  ChevronRight,
+} from 'lucide-react';
+import Card from '../components/Card';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
+import { EmptyTimelineIllustration } from '../components/EmptyIllustrations';
+import { TimelineSkeleton } from '../components/Skeletons';
+
+// ─── API ──────────────────────────────────────────────────────────────────────
+function getToken() {
+  return localStorage.getItem('polysafe_token');
+}
+
+async function fetchTimeline() {
+  const { data } = await axios.get('/patient/timeline', {
+    headers: { Authorization: `Bearer ${getToken()}` },
+  });
+  return data;
+}
+
+// ─── Date helpers ─────────────────────────────────────────────────────────────
+function formatDate(dateStr) {
+  if (!dateStr) return '—';
+  return new Date(dateStr).toLocaleDateString('en-IN', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  });
+}
+
+// ─── Main page ────────────────────────────────────────────────────────────────
+export default function TimelinePage() {
+  const navigate = useNavigate();
+  const shouldReduceMotion = useReducedMotion();
+
+  const { data, isLoading, isError, error } = useQuery({
+    queryKey: ['patient-timeline'],
+    queryFn: fetchTimeline,
+    retry: 1,
+  });
+
+  if (isLoading) {
+    return (
+      <div className="min-h-[88vh] bg-[#FBF8F2] pb-16">
+        <TimelineSkeleton />
+      </div>
+    );
+  }
+
+  const medicines = data?.medicines ?? [];
+  const flaggedCount = medicines.filter((m) => m.flagged).length;
+  const herbalCount = medicines.filter((m) => m.type === 'HERBAL').length;
+
+  return (
+    <div className="min-h-[88vh] bg-[#FBF8F2] pb-16">
+      <div className="max-w-2xl mx-auto px-4 py-8 space-y-6">
+
+        {/* ── Header ───────────────────────────────────────────────────────── */}
+        <div className="flex items-center space-x-3">
+          <button
+            onClick={() => navigate('/home')}
+            className="p-2.5 rounded-xl border-2 border-[#E7E1D3] bg-white text-[#6B726C] hover:text-[#2B6E5E] hover:border-[#2B6E5E] transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4" />
+          </button>
+          <div className="flex-1">
+            <h1 className="text-2xl font-bold text-[#232724]" style={{ fontFamily: "'Fraunces', serif" }}>
+              Medication Timeline
+            </h1>
+            <p className="text-xs text-[#6B726C]">
+              Complete chronological prescription and supplement history
+            </p>
+          </div>
+          <Link
+            to="/add-medicine"
+            className="btn-primary flex items-center gap-1.5 text-xs font-bold px-3.5 py-2.5"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Add Medicine</span>
+          </Link>
+        </div>
+
+        {/* ── Stats Summary Bar ──────────────────────────────────────────────── */}
+        {!isLoading && !isError && medicines.length > 0 && (
+          <div className="grid grid-cols-3 gap-3">
+            {[
+              { label: 'Total Tracked', value: medicines.length, color: '#2B6E5E' },
+              { label: 'Risk Flags', value: flaggedCount, color: flaggedCount > 0 ? '#B23D25' : '#2B6E5E' },
+              { label: 'Herbals & OTC', value: herbalCount, color: '#2B6E5E' },
+            ].map((s) => (
+              <Card key={s.label} className="p-3.5 text-center space-y-0.5">
+                <p
+                  className="text-2xl font-black"
+                  style={{ color: s.color, fontFamily: "'Fraunces', serif" }}
+                >
+                  {s.value}
+                </p>
+                <p className="text-[11px] text-[#6B726C] font-semibold">{s.label}</p>
+              </Card>
+            ))}
+          </div>
+        )}
+
+        {/* ── Legend ───────────────────────────────────────────────────────── */}
+        {!isLoading && medicines.length > 0 && (
+          <div className="flex items-center gap-6 px-1">
+            <span className="flex items-center gap-2 text-xs text-[#6B726C] font-semibold">
+              <span className="w-3.5 h-3.5 rounded-full bg-white border-[3px] border-[#2B6E5E]" />
+              Safe / Normal Entry
+            </span>
+            <span className="flex items-center gap-2 text-xs text-[#6B726C] font-semibold">
+              <span className="w-3.5 h-3.5 rounded-full bg-white border-[3px] border-[#B23D25]" />
+              Interaction Flagged
+            </span>
+          </div>
+        )}
+
+        {/* ── Error State ───────────────────────────────────────────────────── */}
+        {isError && (
+          <Card variant="danger" className="flex-row items-start space-x-3 bg-rose-50 text-rose-700">
+            <AlertCircle className="w-5 h-5 text-rose-500 flex-shrink-0 mt-0.5" />
+            <div>
+              <p className="text-sm font-bold text-rose-700">Could not load timeline</p>
+              <p className="text-xs text-rose-600 mt-0.5">
+                {error?.response?.data?.error || error?.message || 'Failed to fetch timeline records.'}
+              </p>
+            </div>
+          </Card>
+        )}
+
+        {/* ── Empty State ───────────────────────────────────────────────────── */}
+        {!isLoading && !isError && medicines.length === 0 && (
+          <Card className="p-10 flex flex-col items-center text-center space-y-4">
+            <EmptyTimelineIllustration className="w-36 h-36 mx-auto mb-1" />
+            <div>
+              <h3 className="text-lg font-bold text-[#232724]" style={{ fontFamily: "'Fraunces', serif" }}>
+                No medicines logged yet
+              </h3>
+              <p className="text-sm text-[#6B726C] mt-1 max-w-sm">
+                Add your prescriptions, over-the-counter medicines, and herbal supplements to start generating your safety timeline.
+              </p>
+            </div>
+            <Link to="/add-medicine" className="btn-primary px-6 py-3 inline-flex items-center gap-2">
+              <Plus className="w-4 h-4" />
+              <span>Add Your First Medicine</span>
+            </Link>
+          </Card>
+        )}
+
+        {/* ── Timeline Display with Vertical #E0824B Line ───────────────────── */}
+        {!isLoading && !isError && medicines.length > 0 && (
+          <div className="relative pl-2 py-2">
+            {/* Continuous Vertical Line: 3px wide, animated draw-down */}
+            <motion.div
+              className="absolute left-[19px] top-4 bottom-6 w-[3px] z-0 rounded-full origin-top"
+              style={{ backgroundColor: '#E0824B' }}
+              initial={shouldReduceMotion ? { scaleY: 1 } : { scaleY: 0 }}
+              animate={{ scaleY: 1 }}
+              transition={{ duration: shouldReduceMotion ? 0 : 0.45, ease: 'easeOut' }}
+            />
+
+            <div className="space-y-6">
+              <AnimatePresence initial={false}>
+                {medicines.map((med, index) => {
+                  const isFlagged = med.flagged && med.flags?.length > 0;
+
+                  return (
+                    <motion.div
+                      key={med.id}
+                      layout={!shouldReduceMotion}
+                      initial={shouldReduceMotion ? false : { opacity: 0, y: 14 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={shouldReduceMotion ? undefined : { opacity: 0, scale: 0.95 }}
+                      transition={{
+                        duration: shouldReduceMotion ? 0 : 0.28,
+                        delay: shouldReduceMotion ? 0 : index * 0.065,
+                        ease: [0.25, 1, 0.5, 1],
+                      }}
+                      className="relative z-10 flex items-start gap-4"
+                    >
+                      {/* Circular Dot Marker: white fill, colored border (teal #2B6E5E for normal, red #B23D25 for flagged) */}
+                      <div
+                        className="w-[18px] h-[18px] rounded-full bg-white flex-shrink-0 mt-4 shadow-sm"
+                        style={{
+                          border: `3.5px solid ${isFlagged ? '#B23D25' : '#2B6E5E'}`,
+                        }}
+                      />
+
+                      {/* Content Card */}
+                      <Card
+                        variant={isFlagged ? 'danger' : 'default'}
+                        className="flex-1 space-y-2.5 transition-shadow hover:shadow-md"
+                      >
+                        {/* Source Label (uppercase, small, teal) */}
+                        <div className="flex items-center justify-between gap-2">
+                          <span className="text-[11px] font-extrabold uppercase tracking-wider text-[#2B6E5E]">
+                            {med.sourceLabel || 'Self-logged'}
+                          </span>
+                          
+                          {/* Date Added */}
+                          <span className="flex items-center gap-1 text-xs text-[#6B726C]">
+                            <CalendarDays className="w-3.5 h-3.5 text-[#9CA3AF]" />
+                            {formatDate(med.dateAdded)}
+                          </span>
+                        </div>
+
+                        {/* Medicine Name (bold) */}
+                        <div className="flex items-baseline gap-2 flex-wrap">
+                          <h3 className="text-base sm:text-lg font-bold text-[#232724]">
+                            {med.name}
+                          </h3>
+                          {med.dosage && (
+                            <span className="text-xs text-[#6B726C] font-medium">
+                              ({med.dosage})
+                            </span>
+                          )}
+                          <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-[#F5F0E8] border border-[#E7E1D3] text-[#6B726C]">
+                            {med.type}
+                          </span>
+                        </div>
+
+                        {/* Flagged Red Pill Notes */}
+                        {isFlagged && (
+                          <div className="flex flex-wrap gap-2 pt-1">
+                            {med.flags.map((f) => (
+                              <Link
+                                key={f.flagId}
+                                to={`/risk/${f.flagId}`}
+                                className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1 rounded-full bg-[#FBE4DE] text-[#B23D25] border border-[#B23D25]/30 hover:bg-[#f7d4cb] transition-colors"
+                              >
+                                <AlertOctagon className="w-3.5 h-3.5 text-[#B23D25]" />
+                                <span>Flagged with {f.counterpartName}</span>
+                                <ChevronRight className="w-3.5 h-3.5 opacity-60" />
+                              </Link>
+                            ))}
+                          </div>
+                        )}
+
+                        {/* Standardized code badge if present */}
+                        {med.standardizedCode && (
+                          <div className="pt-1 flex items-center gap-1.5 text-[11px] text-[#6B726C]">
+                            <ShieldCheck className="w-3.5 h-3.5 text-[#2B6E5E]" />
+                            <span>RxNorm CUI: <span className="font-mono font-bold text-[#232724]">{med.standardizedCode}</span></span>
+                          </div>
+                        )}
+                      </Card>
+                    </motion.div>
+                  );
+                })}
+              </AnimatePresence>
+            </div>
+          </div>
+        )}
+
+        {/* ── Footer Information ────────────────────────────────────────────── */}
+        {!isLoading && medicines.length > 0 && (
+          <div className="flex items-start space-x-3 p-4 border-2 border-[#E7E1D3] bg-[#FDFBF7] rounded-2xl">
+            <Info className="w-4 h-4 text-[#2B6E5E] flex-shrink-0 mt-0.5" />
+            <p className="text-xs text-[#6B726C] leading-relaxed">
+              <strong>Prescription timeline protection:</strong> Prescribing cascades often develop silently over months as new drugs are introduced to treat side effects of previous drugs. This timeline tracks every addition in sequence to assist clinical de-prescribing reviews.
+            </p>
+          </div>
+        )}
+
+      </div>
+    </div>
+  );
+}

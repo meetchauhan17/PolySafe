@@ -1,0 +1,83 @@
+/**
+ * PolySafe Centralized Design Tokens
+ * frontend/src/styles/tokens.css
+ *
+ * Single source of truth for colors, typography, spacing, border radii, and shadows.
+ * Avoids one-off hex values and generic SaaS defaults.
+ */
+
+:root {
+  /* ── Core Brand Palette ────────────────────────────────────────────── */
+  --brand-primary: #2B6E5E;              /* Deep Teal */
+  --brand-primary-hover: #22574A;
+  --brand-primary-active: #1B453A;
+  --brand-primary-light: #E4F2E9;        /* Light Teal Tint (10%) */
+  --brand-primary-muted: rgba(43, 110, 94, 0.08);
+
+  --brand-paper: #FBF8F2;                /* Warm Parchment App Background */
+  --brand-card: #FFFFFF;                 /* Pure Card White */
+  --brand-surface-subtle: #F5F0E8;       /* Warm Secondary Surface */
+  --brand-border: #E7E1D3;               /* Warm Border */
+  --brand-border-dark: #D3CABA;          /* Darker Warm Border */
+
+  --brand-text: #232724;                 /* Charcoal Text */
+  --brand-muted: #6B726C;                /* Muted Text */
+  --brand-subtle: #9CA3AF;               /* Very Subtle Text / Icons */
+
+  /* ── Clinical Safety Statuses ──────────────────────────────────────── */
+  /* Safe / All Clear */
+  --status-safe: #2F8558;
+  --status-safe-bg: #E4F2E9;
+  --status-safe-border: #2F8558;
+  --status-safe-text: #1A5C3A;
+
+  /* Caution / Moderate */
+  --status-caution: #B5791A;
+  --status-caution-bg: #FBEED9;
+  --status-caution-border: #B5791A;
+  --status-caution-text: #7A4A0A;
+
+  /* Danger / Critical / Major / Contraindicated */
+  --status-danger: #B23D25;
+  --status-danger-bg: #FBE4DE;
+  --status-danger-border: #B23D25;
+  --status-danger-text: #7A1A0A;
+
+  /* Timeline & Accent */
+  --status-accent: #E0824B;              /* Timeline Orange Line */
+  --status-accent-light: #FDF3EB;
+
+  /* ── Role Identity Accents ─────────────────────────────────────────── */
+  /* Patient: Deep Teal (#2B6E5E) */
+  --role-patient: #2B6E5E;
+  --role-patient-bg: #E4F2E9;
+
+  /* Doctor: Clinical Navy (#1B4B66) */
+  --role-doctor: #1B4B66;
+  --role-doctor-bg: #E9F1F5;
+  --role-doctor-border: rgba(27, 75, 102, 0.25);
+
+  /* Caregiver: Warm Earth Brown (#8A6D3B) */
+  --role-caregiver: #8A6D3B;
+  --role-caregiver-bg: #F7F3EB;
+  --role-caregiver-border: rgba(138, 109, 59, 0.25);
+
+  /* ── Typography Tokens ─────────────────────────────────────────────── */
+  --font-heading: 'Fraunces', Georgia, serif;
+  --font-body: 'Source Sans 3', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  /* ── Border Radii ──────────────────────────────────────────────────── */
+  --radius-card: 16px;                   /* Standard PolySafe Card */
+  --radius-interactive: 18px;            /* Interactive Hero Card */
+  --radius-button: 14px;                 /* Buttons */
+  --radius-input: 14px;                  /* Text inputs */
+  --radius-chip: 10px;                   /* Tags / Chips */
+  --radius-pill: 9999px;                 /* Badges / Dots */
+
+  /* ── Shadows ───────────────────────────────────────────────────────── */
+  --shadow-card: 0 6px 16px rgba(28, 43, 39, 0.10);
+  --shadow-card-hover: 0 10px 24px rgba(43, 110, 94, 0.14);
+  --shadow-button: 0 4px 12px rgba(43, 110, 94, 0.22);
+  --shadow-dropdown: 0 12px 32px rgba(28, 43, 39, 0.12);
+}

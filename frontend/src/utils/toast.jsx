@@ -1,0 +1,109 @@
+import React from 'react';
+import { toast } from 'sonner';
+import { CheckCircle2, AlertCircle, AlertTriangle, Info, X } from 'lucide-react';
+
+/**
+ * PolySafe Branded Toast Notifications.
+ * Formatted with brand token styling:
+ *   - Success: Safe Green (#2F8558 / #E4F2E9)
+ *   - Error: Danger Red (#B23D25 / #FBE4DE)
+ *   - Warning: Caution Amber (#B5791A / #FBEED9)
+ *   - Info: Clinical Navy (#1B4B66 / #E6EFF5)
+ */
+export const notify = {
+  success: (title, description) => {
+    return toast.custom((t) => (
+      <div className="w-full max-w-sm bg-white border-2 border-[#2F8558]/40 rounded-2xl p-4 shadow-xl flex items-start gap-3 relative text-left font-sans">
+        <div className="p-2 bg-[#E4F2E9] text-[#2F8558] rounded-xl flex-shrink-0 mt-0.5">
+          <CheckCircle2 className="w-5 h-5" />
+        </div>
+        <div className="flex-1 pr-6 space-y-0.5">
+          <h4 className="text-sm font-bold text-[#232724]">{title}</h4>
+          {description && (
+            <p className="text-xs text-[#6B726C] leading-relaxed">{description}</p>
+          )}
+        </div>
+        <button
+          type="button"
+          onClick={() => toast.dismiss(t)}
+          className="absolute top-3 right-3 text-[#9CA3AF] hover:text-[#232724] transition-colors p-1 rounded-lg hover:bg-[#F5F0E8]"
+          aria-label="Dismiss notification"
+        >
+          <X className="w-3.5 h-3.5" />
+        </button>
+      </div>
+    ), { duration: 4000 });
+  },
+
+  error: (title, description) => {
+    return toast.custom((t) => (
+      <div className="w-full max-w-sm bg-white border-2 border-[#B23D25]/40 rounded-2xl p-4 shadow-xl flex items-start gap-3 relative text-left font-sans">
+        <div className="p-2 bg-[#FBE4DE] text-[#B23D25] rounded-xl flex-shrink-0 mt-0.5">
+          <AlertCircle className="w-5 h-5" />
+        </div>
+        <div className="flex-1 pr-6 space-y-0.5">
+          <h4 className="text-sm font-bold text-[#B23D25]">{title}</h4>
+          {description && (
+            <p className="text-xs text-[#6B726C] leading-relaxed">{description}</p>
+          )}
+        </div>
+        <button
+          type="button"
+          onClick={() => toast.dismiss(t)}
+          className="absolute top-3 right-3 text-[#9CA3AF] hover:text-[#232724] transition-colors p-1 rounded-lg hover:bg-[#F5F0E8]"
+          aria-label="Dismiss notification"
+        >
+          <X className="w-3.5 h-3.5" />
+        </button>
+      </div>
+    ), { duration: 4500 });
+  },
+
+  warning: (title, description) => {
+    return toast.custom((t) => (
+      <div className="w-full max-w-sm bg-white border-2 border-[#B5791A]/40 rounded-2xl p-4 shadow-xl flex items-start gap-3 relative text-left font-sans">
+        <div className="p-2 bg-[#FBEED9] text-[#B5791A] rounded-xl flex-shrink-0 mt-0.5">
+          <AlertTriangle className="w-5 h-5" />
+        </div>
+        <div className="flex-1 pr-6 space-y-0.5">
+          <h4 className="text-sm font-bold text-[#7A4A0A]">{title}</h4>
+          {description && (
+            <p className="text-xs text-[#6B726C] leading-relaxed">{description}</p>
+          )}
+        </div>
+        <button
+          type="button"
+          onClick={() => toast.dismiss(t)}
+          className="absolute top-3 right-3 text-[#9CA3AF] hover:text-[#232724] transition-colors p-1 rounded-lg hover:bg-[#F5F0E8]"
+          aria-label="Dismiss notification"
+        >
+          <X className="w-3.5 h-3.5" />
+        </button>
+      </div>
+    ), { duration: 4000 });
+  },
+
+  info: (title, description) => {
+    return toast.custom((t) => (
+      <div className="w-full max-w-sm bg-white border-2 border-[#1B4B66]/40 rounded-2xl p-4 shadow-xl flex items-start gap-3 relative text-left font-sans">
+        <div className="p-2 bg-[#E6EFF5] text-[#1B4B66] rounded-xl flex-shrink-0 mt-0.5">
+          <Info className="w-5 h-5" />
+        </div>
+        <div className="flex-1 pr-6 space-y-0.5">
+          <h4 className="text-sm font-bold text-[#1B4B66]">{title}</h4>
+          {description && (
+            <p className="text-xs text-[#6B726C] leading-relaxed">{description}</p>
+          )}
+        </div>
+        <button
+          type="button"
+          onClick={() => toast.dismiss(t)}
+          className="absolute top-3 right-3 text-[#9CA3AF] hover:text-[#232724] transition-colors p-1 rounded-lg hover:bg-[#F5F0E8]"
+          aria-label="Dismiss notification"
+        >
+          <X className="w-3.5 h-3.5" />
+        </button>
+      </div>
+    ), { duration: 4000 });
+  },
+};

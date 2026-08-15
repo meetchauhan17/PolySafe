@@ -1,0 +1,150 @@
+{
+  "_source": "Documented herb-drug interaction pairs from: Natural Medicines Comprehensive Database, WHO Herbal Safety Monographs, Stargrove et al. 'Herb, Nutrient, and Drug Interactions' (2008), Memorial Sloan Kettering About Herbs database, and Cochrane systematic reviews.",
+  "_note": "herbName and drugName are lowercase normalized. drugName may refer to a specific drug or a class. Multiple entries per herb cover different drug classes.",
+  "interactions": [
+    {
+      "herbName": "turmeric",
+      "drugName": "warfarin",
+      "severity": "Moderate",
+      "description": "Curcumin (the active compound in turmeric) inhibits platelet aggregation and has mild anticoagulant activity. Combined use with warfarin may potentiate anticoagulation, increasing bleeding risk. INR monitoring is advised if concurrent use cannot be avoided. Sources: Natural Medicines Database, multiple case reports."
+    },
+    {
+      "herbName": "turmeric",
+      "drugName": "aspirin",
+      "severity": "Moderate",
+      "description": "Turmeric/curcumin inhibits thromboxane synthesis and platelet aggregation through similar but additive pathways to aspirin. Combined use can increase bleeding risk, particularly in patients with gastrointestinal vulnerabilities or on dual antiplatelet therapy."
+    },
+    {
+      "herbName": "turmeric",
+      "drugName": "clopidogrel",
+      "severity": "Moderate",
+      "description": "Curcumin has demonstrated antiplatelet activity via inhibition of arachidonic acid metabolism. Concurrent use with clopidogrel may additively inhibit platelet function, raising the risk of bruising, prolonged bleeding, or haemorrhage."
+    },
+    {
+      "herbName": "turmeric",
+      "drugName": "antihypertensive",
+      "severity": "Minor",
+      "description": "Turmeric has demonstrated modest blood pressure-lowering effects in clinical studies. Combined use with antihypertensive drugs (ACE inhibitors, calcium channel blockers, ARBs) may produce additive hypotension, particularly in higher-dose supplementation."
+    },
+    {
+      "herbName": "curcumin",
+      "drugName": "warfarin",
+      "severity": "Moderate",
+      "description": "Curcumin is the bioactive constituent of turmeric. It inhibits platelet aggregation and coagulation cascade enzymes. Combined use with warfarin is associated with raised INR and increased bleeding risk in published case reports."
+    },
+    {
+      "herbName": "ginger",
+      "drugName": "warfarin",
+      "severity": "Moderate",
+      "description": "Ginger (Zingiber officinale) contains gingerols and shogaols that inhibit thromboxane synthetase and platelet aggregation. Combined use with warfarin has been associated with raised INR and spontaneous bruising in case reports. Monitor INR closely."
+    },
+    {
+      "herbName": "ginger",
+      "drugName": "aspirin",
+      "severity": "Minor",
+      "description": "Ginger has antiplatelet properties that may be additive with aspirin's COX-1 inhibition. Combined use at high ginger supplement doses may mildly increase bleeding time. Most relevant in post-operative patients or those with gastric mucosal fragility."
+    },
+    {
+      "herbName": "ginger",
+      "drugName": "antidiabetic",
+      "severity": "Minor",
+      "description": "Clinical studies have shown ginger can modestly reduce fasting blood glucose. Combined use with antidiabetic drugs (metformin, sulfonylureas, insulin) may have additive hypoglycaemic effects, increasing the risk of low blood sugar."
+    },
+    {
+      "herbName": "ashwagandha",
+      "drugName": "sedative",
+      "severity": "Moderate",
+      "description": "Ashwagandha (Withania somnifera) has documented anxiolytic and mild CNS depressant properties (GABA-A receptor modulation). Combined use with benzodiazepines, Z-drugs, or sedating antihistamines may produce additive central nervous system depression, drowsiness, and psychomotor impairment."
+    },
+    {
+      "herbName": "ashwagandha",
+      "drugName": "thyroid hormone",
+      "severity": "Moderate",
+      "description": "Ashwagandha has been shown in clinical trials to stimulate thyroid hormone synthesis (T3/T4 elevation). Combined use with levothyroxine or thyroid replacement therapy may produce thyrotoxic effects (palpitations, anxiety, weight loss). Thyroid function should be monitored."
+    },
+    {
+      "herbName": "ashwagandha",
+      "drugName": "immunosuppressant",
+      "severity": "Moderate",
+      "description": "Ashwagandha has demonstrated immunostimulatory activity (NK cell activation, macrophage stimulation). This may antagonize the therapeutic effect of immunosuppressive drugs used post-transplant or in autoimmune conditions (tacrolimus, cyclosporine, corticosteroids)."
+    },
+    {
+      "herbName": "garlic",
+      "drugName": "warfarin",
+      "severity": "Moderate",
+      "description": "Garlic supplements contain allicin which inhibits platelet aggregation and fibrinolysis. Multiple case reports and pharmacological studies document warfarin potentiation with garlic supplementation, resulting in elevated INR and bleeding episodes. Documented in Natural Medicines Database."
+    },
+    {
+      "herbName": "garlic",
+      "drugName": "antiretroviral",
+      "severity": "Major",
+      "description": "High-dose garlic supplements significantly induce CYP3A4 and P-glycoprotein, leading to markedly reduced plasma concentrations of HIV antiretroviral drugs (saquinavir reduced by ~50% in pharmacokinetic studies). This may lead to therapeutic failure and viral resistance."
+    },
+    {
+      "herbName": "ginkgo biloba",
+      "drugName": "warfarin",
+      "severity": "Major",
+      "description": "Ginkgo biloba inhibits platelet-activating factor (PAF) and has direct antiplatelet activity. Combined with warfarin, it can significantly increase bleeding risk. Multiple case reports of spontaneous intracerebral haemorrhage in patients on concurrent warfarin and ginkgo. High-severity interaction."
+    },
+    {
+      "herbName": "ginkgo biloba",
+      "drugName": "aspirin",
+      "severity": "Moderate",
+      "description": "Ginkgo biloba's PAF-inhibiting antiplatelet effects combined with aspirin's COX-1 inhibition produce additive antiplatelet activity. This combination has been associated with spontaneous haemorrhage in published case reports."
+    },
+    {
+      "herbName": "ginkgo biloba",
+      "drugName": "antiepileptic",
+      "severity": "Moderate",
+      "description": "Ginkgo biloba may lower seizure threshold and reduce the efficacy of antiepileptic drugs (phenytoin, valproate, carbamazepine), possibly through induction of drug-metabolising enzymes. Case reports of seizure recurrence in controlled epilepsy exist."
+    },
+    {
+      "herbName": "valerian",
+      "drugName": "sedative",
+      "severity": "Moderate",
+      "description": "Valerian root (Valeriana officinalis) exerts GABAergic CNS depressant effects. Combined use with benzodiazepines, barbiturates, Z-drugs, or opioids may produce additive sedation, respiratory depression, and cognitive impairment — particularly dangerous in older adults."
+    },
+    {
+      "herbName": "valerian",
+      "drugName": "alprazolam",
+      "severity": "Moderate",
+      "description": "Valerian may have pharmacodynamic synergy with alprazolam (Xanax) and other benzodiazepines via GABA-A receptor modulation. This may potentiate sedation, memory impairment, and psychomotor depression. Avoid concurrent use without clinical supervision."
+    },
+    {
+      "herbName": "echinacea",
+      "drugName": "immunosuppressant",
+      "severity": "Moderate",
+      "description": "Echinacea is an immunostimulant and may counteract the therapeutic intent of immunosuppressive drugs (cyclosporine, tacrolimus, azathioprine) used in transplant patients or autoimmune disease. Risk of graft rejection or disease flare with concurrent use."
+    },
+    {
+      "herbName": "echinacea",
+      "drugName": "hepatotoxic",
+      "severity": "Minor",
+      "description": "Echinacea preparations have been rarely associated with hepatotoxicity. Combined use with other hepatotoxic drugs (statins, isoniazid, methotrexate) may increase liver enzyme elevation risk. Liver function monitoring is recommended in long-term use."
+    },
+    {
+      "herbName": "ginseng",
+      "drugName": "warfarin",
+      "severity": "Moderate",
+      "description": "Panax ginseng has both procoagulant and antiplatelet properties depending on the preparation and dose. American ginseng has been shown in controlled studies to reduce warfarin's anticoagulant effect (lower INR), potentially leading to therapeutic failure."
+    },
+    {
+      "herbName": "ginseng",
+      "drugName": "antidiabetic",
+      "severity": "Minor",
+      "description": "Ginseng has documented hypoglycaemic activity. Combined use with antidiabetic agents (metformin, insulin, sulfonylureas) may enhance glucose-lowering effects, increasing hypoglycaemia risk. Blood glucose monitoring is advisable."
+    },
+    {
+      "herbName": "licorice root",
+      "drugName": "antihypertensive",
+      "severity": "Major",
+      "description": "Glycyrrhizic acid in licorice root inhibits 11β-hydroxysteroid dehydrogenase, causing mineralocorticoid excess (pseudohyperaldosteronism) with sodium retention, hypokalaemia, and hypertension. This directly antagonises antihypertensive drugs and may cause drug-resistant hypertension."
+    },
+    {
+      "herbName": "licorice root",
+      "drugName": "digoxin",
+      "severity": "Major",
+      "description": "Licorice root-induced hypokalaemia increases myocardial sensitivity to digoxin toxicity (arrhythmias, nausea, visual disturbances). This is a clinically important pharmacodynamic interaction, particularly in patients with cardiac conditions."
+    }
+  ]
+}
