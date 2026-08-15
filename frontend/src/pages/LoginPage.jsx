@@ -28,7 +28,21 @@ import { useAuth } from '../context/AuthContext';
 
 export default function LoginPage() {
   const navigate = useNavigate();
-  const { login, enterGuestMode } = useAuth();
+  const { user, token, isAuthenticated, login, enterGuestMode } = useAuth();
+
+  // ─── On Mount: Redirect already authenticated sessions (replace: true) ─────
+  useEffect(() => {
+    if (user && !user.isGuest && token) {
+      const userRole = (user.role || 'PATIENT').toUpperCase();
+      if (userRole === 'DOCTOR') {
+        navigate('/doctor-dashboard', { replace: true });
+      } else if (userRole === 'CAREGIVER') {
+        navigate('/caregiver-view', { replace: true });
+      } else {
+        navigate('/home', { replace: true });
+      }
+    }
+  }, [user, token, navigate]);
 
   // Selected Role: null (role select screen) | 'PATIENT' | 'CAREGIVER' | 'DOCTOR'
   const [selectedRole, setSelectedRole] = useState(null);
@@ -87,13 +101,13 @@ export default function LoginPage() {
 
       notify.success('Authentication Verified', 'Welcome to PolySafe Patient Portal.');
 
-      // Navigate according to user role and onboarding status
+      // Navigate with replace: true so Login page does not sit in browser history
       if (selectedRole === 'CAREGIVER') {
-        navigate('/caregiver-view');
+        navigate('/caregiver-view', { replace: true });
       } else if (data.isNewUser || data.message?.toLowerCase().includes('created') || !data.user?.patient) {
-        navigate('/onboarding');
+        navigate('/onboarding', { replace: true });
       } else {
-        navigate('/home');
+        navigate('/home', { replace: true });
       }
     },
     onError: (err) => {
@@ -112,7 +126,7 @@ export default function LoginPage() {
         login(data.token, 'DOCTOR', data.user);
       }
       notify.success('Doctor Login Successful', 'Welcome to your Clinical Workstation.');
-      navigate('/doctor-dashboard');
+      navigate('/doctor-dashboard', { replace: true });
     },
     onError: (err) => {
       const msg = err.response?.data?.error || err.message || 'Invalid email or password.';
@@ -130,7 +144,7 @@ export default function LoginPage() {
         login(data.token, 'DOCTOR', data.user);
       }
       notify.success('Practice Account Created', 'Welcome to PolySafe Clinical Portal.');
-      navigate('/doctor-dashboard');
+      navigate('/doctor-dashboard', { replace: true });
     },
     onError: (err) => {
       const msg = err.response?.data?.error || err.message || 'Signup failed. Please verify credentials.';
@@ -360,7 +374,7 @@ export default function LoginPage() {
                   onClick={() => {
                     enterGuestMode();
                     notify.info('Demo Mode Active', 'Exploring PolySafe with sample mock records.');
-                    navigate('/home');
+                    navigate('/home', { replace: true });
                   }}
                   className="inline-flex items-center gap-2 text-xs font-bold text-[#2B6E5E] hover:text-[#1f5246] py-2 px-4 rounded-xl hover:bg-[#E4F2E9] transition-all"
                 >

@@ -51,8 +51,8 @@ export function AuthProvider({ children }) {
   const [token, setToken] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // ─── Initialize Auth on Mount ──────────────────────────────────────────────
-  useEffect(() => {
+  // ─── Session Validator ──────────────────────────────────────────────────────
+  const validateSession = useCallback(() => {
     try {
       const storedToken = localStorage.getItem(TOKEN_KEY);
       const storedRole = localStorage.getItem(ROLE_KEY);
@@ -80,6 +80,7 @@ export function AuthProvider({ children }) {
           setToken(storedToken);
           setUser(restoredUser);
           setAxiosAuthHeader(storedToken);
+          return restoredUser;
         } else {
           // Token expired or malformed — clear storage
           localStorage.removeItem(TOKEN_KEY);
@@ -88,20 +89,40 @@ export function AuthProvider({ children }) {
           setAxiosAuthHeader(null);
           setToken(null);
           setUser(null);
+          return null;
         }
       } else {
         setAxiosAuthHeader(null);
         setToken(null);
-        setUser(null);
+        setUser((prev) => (prev?.isGuest ? prev : null));
+        return null;
       }
     } catch (err) {
-      console.error('[AuthContext] Initialization error:', err);
+      console.error('[AuthContext] Session validation error:', err);
       setUser(null);
       setToken(null);
+      return null;
     } finally {
       setIsLoading(false);
     }
   }, []);
+
+  // ─── Initialize Auth on Mount & Handle BFCache (pageshow) ─────────────────
+  useEffect(() => {
+    validateSession();
+
+    const handlePageShow = (event) => {
+      // event.persisted is true when restored from back-forward cache (bfcache)
+      if (event.persisted) {
+        validateSession();
+      }
+    };
+
+    window.addEventListener('pageshow', handlePageShow);
+    return () => {
+      window.removeEventListener('pageshow', handlePageShow);
+    };
+  }, [validateSession]);
 
   // ─── Login Action ───────────────────────────────────────────────────────────
   const login = useCallback((newToken, roleOverride, userData = {}) => {
@@ -162,6 +183,7 @@ export function AuthProvider({ children }) {
     login,
     logout,
     enterGuestMode,
+    checkSession: validateSession,
   };
 
   return (
