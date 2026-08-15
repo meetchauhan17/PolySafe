@@ -56,65 +56,65 @@ function RootRedirect() {
 export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <Toaster
-          position="top-right"
-          expand={false}
-          duration={4000}
-        offset="20px"
-        toastOptions={{
-          style: {
-            background: 'transparent',
-            boxShadow: 'none',
-            border: 'none',
-            padding: 0,
-          },
-        }}
-      />
       <Router>
-        <Suspense fallback={<RouteLoadingFallback />}>
-          <Routes>
-            {/* ── Public Auth Routes ── */}
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/onboarding" element={<OnboardingPage />} />
+        <AuthProvider>
+          <Toaster
+            position="top-right"
+            expand={false}
+            duration={4000}
+            offset="20px"
+            toastOptions={{
+              style: {
+                background: 'transparent',
+                boxShadow: 'none',
+                border: 'none',
+                padding: 0,
+              },
+            }}
+          />
+          <Suspense fallback={<RouteLoadingFallback />}>
+            <Routes>
+              {/* ── Public Auth Routes ── */}
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/onboarding" element={<OnboardingPage />} />
 
-            {/* ── 1. PATIENT LAYOUT & PROTECTED ROUTES ── */}
-            <Route element={<ProtectedRoute allowedRoles={['PATIENT']} />}>
-              <Route element={<PatientLayout />}>
-                <Route path="/home" element={<HomePage />} />
-                <Route path="/add-medicine" element={<AddMedicinePage />} />
-                <Route path="/risk/:id" element={<RiskAnalysisPage />} />
-                <Route path="/log-symptom" element={<LogSymptomPage />} />
-                <Route path="/symptom-result" element={<SymptomResultPage />} />
-                <Route path="/timeline" element={<TimelinePage />} />
-                <Route path="/insights" element={<InsightsPage />} />
-                <Route path="/trends" element={<InsightsPage />} />
-                <Route path="/connected-people" element={<ConnectedPeoplePage />} />
-                <Route path="/share-with-doctor" element={<DoctorSharePage />} />
+              {/* ── 1. PATIENT LAYOUT & PROTECTED ROUTES ── */}
+              <Route element={<ProtectedRoute allowedRoles={['PATIENT']} />}>
+                <Route element={<PatientLayout />}>
+                  <Route path="/home" element={<HomePage />} />
+                  <Route path="/add-medicine" element={<AddMedicinePage />} />
+                  <Route path="/risk/:id" element={<RiskAnalysisPage />} />
+                  <Route path="/log-symptom" element={<LogSymptomPage />} />
+                  <Route path="/symptom-result" element={<SymptomResultPage />} />
+                  <Route path="/timeline" element={<TimelinePage />} />
+                  <Route path="/insights" element={<InsightsPage />} />
+                  <Route path="/trends" element={<InsightsPage />} />
+                  <Route path="/connected-people" element={<ConnectedPeoplePage />} />
+                  <Route path="/share-with-doctor" element={<DoctorSharePage />} />
+                </Route>
               </Route>
-            </Route>
 
-            {/* ── 2. DOCTOR LAYOUT & PROTECTED ROUTES ── */}
-            <Route element={<ProtectedRoute allowedRoles={['DOCTOR']} />}>
-              <Route element={<DoctorLayout />}>
-                <Route path="/doctor-dashboard" element={<DoctorDashboardPage />} />
+              {/* ── 2. DOCTOR LAYOUT & PROTECTED ROUTES ── */}
+              <Route element={<ProtectedRoute allowedRoles={['DOCTOR']} />}>
+                <Route element={<DoctorLayout />}>
+                  <Route path="/doctor-dashboard" element={<DoctorDashboardPage />} />
+                </Route>
               </Route>
-            </Route>
 
-            {/* ── 3. CAREGIVER LAYOUT & PROTECTED ROUTES ── */}
-            <Route element={<ProtectedRoute allowedRoles={['CAREGIVER']} />}>
-              <Route element={<CaregiverLayout />}>
-                <Route path="/caregiver-view" element={<CaregiverViewPage />} />
+              {/* ── 3. CAREGIVER LAYOUT & PROTECTED ROUTES ── */}
+              <Route element={<ProtectedRoute allowedRoles={['CAREGIVER']} />}>
+                <Route element={<CaregiverLayout />}>
+                  <Route path="/caregiver-view" element={<CaregiverViewPage />} />
+                </Route>
               </Route>
-            </Route>
 
-            {/* ── Default & Fallback Redirects ── */}
-            <Route path="/" element={<RootRedirect />} />
-            <Route path="*" element={<RootRedirect />} />
-          </Routes>
-        </Suspense>
+              {/* ── Default & Fallback Redirects ── */}
+              <Route path="/" element={<RootRedirect />} />
+              <Route path="*" element={<RootRedirect />} />
+            </Routes>
+          </Suspense>
+        </AuthProvider>
       </Router>
-      </AuthProvider>
     </QueryClientProvider>
   );
 }
