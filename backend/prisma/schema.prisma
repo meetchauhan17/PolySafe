@@ -40,8 +40,9 @@ enum ConnectionStatus {
 
 model User {
   id           String   @id @default(uuid())
+  name         String   @default("PolySafe User")
   phone        String?  @unique
-  email        String?  @unique
+  email        String   @unique
   passwordHash String?  // Only for DOCTOR / PHARMACIST roles
   role         Role     @default(PATIENT)
   createdAt    DateTime @default(now())
@@ -50,6 +51,19 @@ model User {
   patient      Patient?
   medicinesAdded Medicine[]      @relation("AddedByUser")
   connections  Connection[]      @relation("ConnectedUser")
+}
+
+model OtpCode {
+  id        String   @id @default(uuid())
+  email     String
+  code      String
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([email])
+  @@index([email, code])
+  @@map("otp_code")
 }
 
 model Patient {

@@ -60,9 +60,8 @@ io.on('connection', (socket) => {
   });
 });
 
-// ─── Start ────────────────────────────────────────────────────────────────────
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
   console.log(`PolySafe Backend → http://localhost:${PORT}`);
-  console.log(`OTP mode: ${process.env.USE_FIREBASE_OTP === 'true' ? 'Firebase' : 'Stub (console log)'}`);
+  console.log(`Email OTP: ${process.env.RESEND_API_KEY ? 'Resend Live' : 'Console Stub'}`);
 });

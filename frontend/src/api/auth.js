@@ -17,14 +17,15 @@ api.interceptors.request.use((config) => {
 });
 
 export const authApi = {
-  // Patient / Caregiver OTP
-  sendPatientOtp: async (phone) => {
-    const response = await api.post('/auth/patient/send-otp', { phone });
+  // Patient / Caregiver Email OTP
+  sendPatientOtp: async ({ name, email }) => {
+    const payload = typeof email === 'string' ? { name, email } : (typeof name === 'string' && !email ? { email: name } : { name, email });
+    const response = await api.post('/auth/patient/send-otp', payload);
     return response.data;
   },
 
-  verifyPatientOtp: async ({ phone, code }) => {
-    const response = await api.post('/auth/patient/verify-otp', { phone, code });
+  verifyPatientOtp: async ({ email, code, role, name }) => {
+    const response = await api.post('/auth/patient/verify-otp', { email, code, role, name });
     return response.data;
   },
 

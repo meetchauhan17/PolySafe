@@ -7,7 +7,6 @@ import {
   Stethoscope, 
   ArrowRight, 
   ArrowLeft, 
-  Phone, 
   Mail, 
   Lock, 
   FileText, 
@@ -27,16 +26,6 @@ import Card from '../components/Card';
 import PageTransition from '../components/PageTransition';
 import { notify } from '../utils/toast';
 import { useAuth } from '../context/AuthContext';
-
-// Country codes for phone prefix
-const COUNTRY_CODES = [
-  { code: '+91', country: 'IN', label: 'India (+91)' },
-  { code: '+1', country: 'US', label: 'United States (+1)' },
-  { code: '+44', country: 'GB', label: 'United Kingdom (+44)' },
-  { code: '+61', country: 'AU', label: 'Australia (+61)' },
-  { code: '+65', country: 'SG', label: 'Singapore (+65)' },
-  { code: '+971', country: 'AE', label: 'UAE (+971)' },
-];
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -59,10 +48,13 @@ export default function LoginPage() {
   // Selected Role: null (role select screen) | 'PATIENT' | 'CAREGIVER' | 'DOCTOR'
   const [selectedRole, setSelectedRole] = useState(null);
 
-  // Patient / Caregiver phone & OTP state
-  const [countryCode, setCountryCode] = useState('+91');
-  const [nationalPhone, setNationalPhone] = useState('9876543210');
-  const [phoneTouched, setPhoneTouched] = useState(false);
+  // Patient / Caregiver Email & OTP state
+  const [patientName, setPatientName] = useState('Priya Sharma');
+  const [patientEmail, setPatientEmail] = useState('priya.sharma@example.com');
+  const [patientTouched, setPatientTouched] = useState({
+    name: false,
+    email: false,
+  });
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [otpSent, setOtpSent] = useState(false);
   const [devOtpHint, setDevOtpHint] = useState(null);
@@ -87,12 +79,6 @@ export default function LoginPage() {
 
   // Error & Status Messages
   const [errorMsg, setErrorMsg] = useState(null);
-
-  // Full composite phone number
-  const fullPhone = useMemo(() => {
-    const cleanNational = nationalPhone.replace(/\D/g, '');
-    return `${countryCode}${cleanNational}`;
-  }, [countryCode, nationalPhone]);
 
   // ─── Countdown Timer for OTP Resend ─────────────────────────────────────────
   useEffect(() => {
@@ -137,15 +123,29 @@ export default function LoginPage() {
     return { score, label, color, hasLen, hasNum, hasSpecial };
   }, [doctorForm.password]);
 
-  // ─── Inline Validation Checks ───────────────────────────────────────────────
-  const phoneError = useMemo(() => {
-    if (!phoneTouched) return null;
-    const digits = nationalPhone.replace(/\D/g, '');
-    if (!digits) return 'Mobile number is required.';
-    if (digits.length < 7 || digits.length > 15) return 'Please enter a valid mobile phone number.';
-    return null;
-  }, [nationalPhone, phoneTouched]);
+  // ─── Patient / Caregiver Inline Validation Checks ───────────────────────────
+  const patientErrors = useMemo(() => {
+    const errors = {};
+    if (patientTouched.name) {
+      if (!patientName.trim()) {
+        errors.name = 'Full name is required.';
+      } else if (patientName.trim().length < 2) {
+        errors.name = 'Please enter your full name (at least 2 characters).';
+      }
+    }
 
+    if (patientTouched.email) {
+      if (!patientEmail.trim()) {
+        errors.email = 'Email address is required.';
+      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(patientEmail.trim())) {
+        errors.email = 'Please enter a valid email address.';
+      }
+    }
+
+    return errors;
+  }, [patientName, patientEmail, patientTouched]);
+
+  // ─── Doctor Inline Validation Checks ─────────────────────────────────────────
   const doctorErrors = useMemo(() => {
     const errors = {};
     if (doctorTouched.email) {
@@ -178,14 +178,14 @@ export default function LoginPage() {
 
   // ─── TanStack Query Mutations ──────────────────────────────────────────────
 
-  // 1. Send OTP Mutation
+  // 1. Send Email OTP Mutation
   const sendOtpMutation = useMutation({
-    mutationFn: (phoneNumber) => authApi.sendPatientOtp(phoneNumber),
+    mutationFn: ({ name, email }) => authApi.sendPatientOtp({ name, email }),
     onSuccess: (data) => {
       setErrorMsg(null);
       setOtpSent(true);
       startCountdown();
-      notify.success('Security Code Sent', `A 6-digit OTP has been sent to ${fullPhone}.`);
+      notify.success('Verification Code Sent', `A 6-digit code has been sent to ${patientEmail.trim()}.`);
       if (data._devOtp) {
         setDevOtpHint(data._devOtp);
       }
@@ -195,15 +195,15 @@ export default function LoginPage() {
       }, 100);
     },
     onError: (err) => {
-      const msg = err.response?.data?.error || err.message || 'Failed to send OTP. Please check the phone number.';
+      const msg = err.response?.data?.error || err.message || 'Failed to send verification code. Please check your email.';
       setErrorMsg(msg);
-      notify.error('OTP Dispatch Failed', msg);
+      notify.error('Email Dispatch Failed', msg);
     },
   });
 
-  // 2. Verify OTP Mutation
+  // 2. Verify Email OTP Mutation
   const verifyOtpMutation = useMutation({
-    mutationFn: ({ phone, code }) => authApi.verifyPatientOtp({ phone, code }),
+    mutationFn: ({ email, code, role, name }) => authApi.verifyPatientOtp({ email, code, role, name }),
     onSuccess: (data) => {
       setErrorMsg(null);
       if (data.token) {
@@ -222,7 +222,7 @@ export default function LoginPage() {
       }
     },
     onError: (err) => {
-      const msg = err.response?.data?.error || err.message || 'Invalid or expired OTP. Please try again.';
+      const msg = err.response?.data?.error || err.message || 'Invalid or expired verification code. Please try again.';
       setErrorMsg(msg);
       notify.error('Verification Failed', msg);
     },
@@ -268,16 +268,25 @@ export default function LoginPage() {
 
   const handleSendOtp = (e) => {
     e?.preventDefault();
-    setPhoneTouched(true);
+    setPatientTouched({ name: true, email: true });
     setErrorMsg(null);
 
-    const digits = nationalPhone.replace(/\D/g, '');
-    if (!digits || digits.length < 7) {
-      setErrorMsg('Please enter a valid mobile phone number.');
-      notify.warning('Invalid Phone Number', 'Please enter a valid mobile number.');
+    const cleanName = patientName.trim();
+    const cleanEmail = patientEmail.trim();
+
+    if (!cleanName) {
+      setErrorMsg('Please enter your full name.');
+      notify.warning('Name Required', 'Please enter your full name.');
       return;
     }
-    sendOtpMutation.mutate(fullPhone);
+
+    if (!cleanEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail)) {
+      setErrorMsg('Please enter a valid email address.');
+      notify.warning('Invalid Email', 'Please enter a valid email address.');
+      return;
+    }
+
+    sendOtpMutation.mutate({ name: cleanName, email: cleanEmail });
   };
 
   const handleOtpChange = (index, value) => {
@@ -317,11 +326,16 @@ export default function LoginPage() {
     setErrorMsg(null);
     const code = otp.join('');
     if (code.length !== 6) {
-      setErrorMsg('Please enter all 6 digits of the OTP code.');
+      setErrorMsg('Please enter all 6 digits of the verification code.');
       notify.warning('Code Incomplete', 'Please enter all 6 digits.');
       return;
     }
-    verifyOtpMutation.mutate({ phone: fullPhone, code });
+    verifyOtpMutation.mutate({
+      email: patientEmail.trim(),
+      code,
+      role: selectedRole || 'PATIENT',
+      name: patientName.trim(),
+    });
   };
 
   const handleFillDevOtp = () => {
@@ -424,6 +438,7 @@ export default function LoginPage() {
                   setSelectedRole('PATIENT');
                   setErrorMsg(null);
                   setOtpSent(false);
+                  setPatientTouched({ name: false, email: false });
                 }}
                 className="polysafe-card-interactive p-5 flex items-start space-x-4 group cursor-pointer border-2 border-[#E7E1D3] hover:border-[#2B6E5E] bg-white transition-all duration-180"
               >
@@ -436,7 +451,7 @@ export default function LoginPage() {
                       Patient
                     </h3>
                     <span className="text-[11px] font-bold bg-[#E4F2E9] text-[#2B6E5E] px-2.5 py-0.5 rounded-full border border-[#2B6E5E]/20">
-                      Phone + OTP
+                      Email + OTP
                     </span>
                   </div>
                   <p className="text-xs text-[#6B726C] mt-1 leading-relaxed">
@@ -452,6 +467,7 @@ export default function LoginPage() {
                   setSelectedRole('CAREGIVER');
                   setErrorMsg(null);
                   setOtpSent(false);
+                  setPatientTouched({ name: false, email: false });
                 }}
                 className="polysafe-card-interactive p-5 flex items-start space-x-4 group cursor-pointer border-2 border-[#E7E1D3] hover:border-[#8A6D3B] bg-white transition-all duration-180"
               >
@@ -464,7 +480,7 @@ export default function LoginPage() {
                       Family / Caregiver
                     </h3>
                     <span className="text-[11px] font-bold bg-[#FBEED9] text-[#8A6D3B] px-2.5 py-0.5 rounded-full border border-[#8A6D3B]/20">
-                      Phone + OTP
+                      Email + OTP
                     </span>
                   </div>
                   <p className="text-xs text-[#6B726C] mt-1 leading-relaxed">
@@ -479,6 +495,7 @@ export default function LoginPage() {
                 onClick={() => {
                   setSelectedRole('DOCTOR');
                   setErrorMsg(null);
+                  setDoctorTouched({ email: false, password: false, name: false, registrationNumber: false });
                 }}
                 className="polysafe-card-interactive p-5 flex items-start space-x-4 group cursor-pointer border-2 border-[#E7E1D3] hover:border-[#1B4B66] bg-white transition-all duration-180"
               >
@@ -541,7 +558,7 @@ export default function LoginPage() {
         )}
 
         {/* ══════════════════════════════════════════════════════════════════
-            STEP 2: PATIENT / CAREGIVER PHONE + OTP FLOW
+            STEP 2: PATIENT / CAREGIVER EMAIL + OTP FLOW
            ══════════════════════════════════════════════════════════════════ */}
         {(selectedRole === 'PATIENT' || selectedRole === 'CAREGIVER') && (
           <Card className="p-6 md:p-8 space-y-6">
@@ -552,7 +569,7 @@ export default function LoginPage() {
                   setSelectedRole(null);
                   setOtpSent(false);
                   setErrorMsg(null);
-                  setPhoneTouched(false);
+                  setPatientTouched({ name: false, email: false });
                 }}
                 className="text-xs font-bold text-[#6B726C] hover:text-[#2B6E5E] flex items-center space-x-1 transition-colors cursor-pointer"
               >
@@ -561,68 +578,74 @@ export default function LoginPage() {
               </button>
 
               <span className="text-xs font-semibold px-2.5 py-1 bg-[#E4F2E9] text-[#2B6E5E] rounded-lg border border-[#2B6E5E]/20">
-                Secure Mobile Sign-In
+                Secure Email Sign-In
               </span>
             </div>
 
             {!otpSent ? (
-              // Step 2A: Phone Number Form
-              <form onSubmit={handleSendOtp} className="space-y-5">
+              // Step 2A: Full Name & Email Form
+              <form onSubmit={handleSendOtp} className="space-y-4">
                 <div className="space-y-1">
                   <h2 className="text-2xl text-[#232724] font-bold" style={{ fontFamily: "'Fraunces', serif" }}>
-                    Enter Your Mobile Number
+                    Create Your Account
                   </h2>
                   <p className="text-xs text-[#6B726C]">
-                    We will send a 6-digit one-time password (OTP) via SMS to verify your identity.
+                    We will send a 6-digit verification code to your email.
                   </p>
                 </div>
 
-                <div className="space-y-1.5">
+                {/* Full Name */}
+                <div className="space-y-1">
                   <label className="block text-xs font-bold text-[#232724] uppercase tracking-wider">
-                    Mobile Number
+                    Full Name
                   </label>
-                  <div className="flex gap-2">
-                    {/* Country Code Selector */}
-                    <div className="relative w-28 sm:w-32 flex-shrink-0">
-                      <select
-                        value={countryCode}
-                        onChange={(e) => setCountryCode(e.target.value)}
-                        className="input-field py-3 text-sm font-semibold bg-white cursor-pointer"
-                      >
-                        {COUNTRY_CODES.map((c) => (
-                          <option key={c.code} value={c.code}>
-                            {c.country} ({c.code})
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-
-                    {/* National Phone Input */}
-                    <div className="relative flex-1">
-                      <Phone className="w-4 h-4 text-[#6B726C] absolute left-3.5 top-3.5" />
-                      <input
-                        type="tel"
-                        required
-                        value={nationalPhone}
-                        onBlur={() => setPhoneTouched(true)}
-                        onChange={(e) => {
-                          setNationalPhone(e.target.value);
-                          if (errorMsg) setErrorMsg(null);
-                        }}
-                        placeholder="98765 43210"
-                        className={`input-field pl-10 text-base ${phoneError || errorMsg ? 'input-error' : ''}`}
-                      />
-                    </div>
+                  <div className="relative">
+                    <User className="w-4 h-4 text-[#6B726C] absolute left-3.5 top-3.5" />
+                    <input
+                      type="text"
+                      required
+                      value={patientName}
+                      onBlur={() => setPatientTouched((t) => ({ ...t, name: true }))}
+                      onChange={(e) => {
+                        setPatientName(e.target.value);
+                        if (errorMsg) setErrorMsg(null);
+                      }}
+                      placeholder="e.g. Priya Sharma"
+                      className={`input-field pl-10 text-base ${patientErrors.name ? 'input-error' : ''}`}
+                    />
                   </div>
-
-                  {phoneError ? (
+                  {patientErrors.name && (
                     <p className="text-xs text-rose-600 mt-1 flex items-center gap-1 font-medium">
                       <AlertCircle className="w-3.5 h-3.5" />
-                      {phoneError}
+                      {patientErrors.name}
                     </p>
-                  ) : (
-                    <p className="text-[11px] text-[#6B726C]">
-                      Full international format: <span className="font-semibold text-[#2B6E5E]">{fullPhone}</span>
+                  )}
+                </div>
+
+                {/* Email Address */}
+                <div className="space-y-1">
+                  <label className="block text-xs font-bold text-[#232724] uppercase tracking-wider">
+                    Email Address
+                  </label>
+                  <div className="relative">
+                    <Mail className="w-4 h-4 text-[#6B726C] absolute left-3.5 top-3.5" />
+                    <input
+                      type="email"
+                      required
+                      value={patientEmail}
+                      onBlur={() => setPatientTouched((t) => ({ ...t, email: true }))}
+                      onChange={(e) => {
+                        setPatientEmail(e.target.value);
+                        if (errorMsg) setErrorMsg(null);
+                      }}
+                      placeholder="priya@example.com"
+                      className={`input-field pl-10 text-base ${patientErrors.email ? 'input-error' : ''}`}
+                    />
+                  </div>
+                  {patientErrors.email && (
+                    <p className="text-xs text-rose-600 mt-1 flex items-center gap-1 font-medium">
+                      <AlertCircle className="w-3.5 h-3.5" />
+                      {patientErrors.email}
                     </p>
                   )}
                 </div>
@@ -630,12 +653,12 @@ export default function LoginPage() {
                 <button
                   type="submit"
                   disabled={sendOtpMutation.isPending}
-                  className="btn-primary w-full text-base py-3.5"
+                  className="btn-primary w-full text-base py-3.5 mt-2"
                 >
                   {sendOtpMutation.isPending ? (
                     <>
                       <Loader2 className="w-5 h-5 animate-spin" />
-                      <span>Sending OTP...</span>
+                      <span>Sending Verification Code...</span>
                     </>
                   ) : (
                     <>
@@ -653,7 +676,7 @@ export default function LoginPage() {
                     Enter 6-Digit Code
                   </h2>
                   <p className="text-xs text-[#6B726C]">
-                    Code sent to <span className="font-bold text-[#232724]">{fullPhone}</span>
+                    Code sent to your email: <span className="font-bold text-[#232724]">{patientEmail}</span>
                   </p>
                 </div>
 
@@ -724,7 +747,7 @@ export default function LoginPage() {
                       }}
                       className="font-bold text-[#6B726C] hover:text-[#2B6E5E] cursor-pointer"
                     >
-                      Change Phone Number
+                      Change Email Address
                     </button>
 
                     {countdown > 0 ? (
