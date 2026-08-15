@@ -15,6 +15,7 @@ import {
 import { AnimatePresence } from 'framer-motion';
 import PageTransition from '../components/PageTransition';
 import { useAuth } from '../context/AuthContext';
+import SignOutConfirmButton from '../components/SignOutConfirmButton';
 
 /**
  * PatientLayout.jsx — Mobile-first shell for Patient users
@@ -140,14 +141,7 @@ export default function PatientLayout() {
               <span>Insights</span>
             </Link>
 
-            <button
-              onClick={handleSignOut}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-[#6B726C] hover:text-[#B23D25] hover:bg-[#FBE4DE]/50 rounded-xl border border-[#E7E1D3] transition-colors"
-              title={isGuest ? 'Exit Guest Mode' : 'Sign Out of PolySafe'}
-            >
-              <LogOut className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">{isGuest ? 'Exit Demo' : 'Sign Out'}</span>
-            </button>
+            <SignOutConfirmButton />
           </div>
         </div>
       </header>

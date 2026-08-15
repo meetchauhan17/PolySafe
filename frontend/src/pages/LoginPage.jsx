@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 import { 
@@ -19,6 +19,8 @@ import {
   RefreshCw,
   KeyRound,
   Compass,
+  Check,
+  X,
 } from 'lucide-react';
 import { authApi } from '../api/auth';
 import Card from '../components/Card';
@@ -26,9 +28,19 @@ import PageTransition from '../components/PageTransition';
 import { notify } from '../utils/toast';
 import { useAuth } from '../context/AuthContext';
 
+// Country codes for phone prefix
+const COUNTRY_CODES = [
+  { code: '+91', country: 'IN', label: 'India (+91)' },
+  { code: '+1', country: 'US', label: 'United States (+1)' },
+  { code: '+44', country: 'GB', label: 'United Kingdom (+44)' },
+  { code: '+61', country: 'AU', label: 'Australia (+61)' },
+  { code: '+65', country: 'SG', label: 'Singapore (+65)' },
+  { code: '+971', country: 'AE', label: 'UAE (+971)' },
+];
+
 export default function LoginPage() {
   const navigate = useNavigate();
-  const { user, token, isAuthenticated, login, enterGuestMode } = useAuth();
+  const { user, token, login, enterGuestMode } = useAuth();
 
   // ─── On Mount: Redirect already authenticated sessions (replace: true) ─────
   useEffect(() => {
@@ -48,10 +60,14 @@ export default function LoginPage() {
   const [selectedRole, setSelectedRole] = useState(null);
 
   // Patient / Caregiver phone & OTP state
-  const [phone, setPhone] = useState('+919876543210');
+  const [countryCode, setCountryCode] = useState('+91');
+  const [nationalPhone, setNationalPhone] = useState('9876543210');
+  const [phoneTouched, setPhoneTouched] = useState(false);
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [otpSent, setOtpSent] = useState(false);
   const [devOtpHint, setDevOtpHint] = useState(null);
+  const [countdown, setCountdown] = useState(30);
+  const countdownTimerRef = useRef(null);
   const otpInputRefs = useRef([]);
 
   // Doctor Auth state
@@ -62,9 +78,103 @@ export default function LoginPage() {
     name: '',
     registrationNumber: '',
   });
+  const [doctorTouched, setDoctorTouched] = useState({
+    email: false,
+    password: false,
+    name: false,
+    registrationNumber: false,
+  });
 
   // Error & Status Messages
   const [errorMsg, setErrorMsg] = useState(null);
+
+  // Full composite phone number
+  const fullPhone = useMemo(() => {
+    const cleanNational = nationalPhone.replace(/\D/g, '');
+    return `${countryCode}${cleanNational}`;
+  }, [countryCode, nationalPhone]);
+
+  // ─── Countdown Timer for OTP Resend ─────────────────────────────────────────
+  useEffect(() => {
+    if (otpSent && countdown > 0) {
+      countdownTimerRef.current = setTimeout(() => {
+        setCountdown((prev) => prev - 1);
+      }, 1000);
+    } else {
+      clearTimeout(countdownTimerRef.current);
+    }
+    return () => clearTimeout(countdownTimerRef.current);
+  }, [otpSent, countdown]);
+
+  const startCountdown = () => {
+    setCountdown(30);
+  };
+
+  // ─── Password Strength Calculations (For Doctor Signup) ─────────────────────
+  const passwordStrength = useMemo(() => {
+    const pwd = doctorForm.password;
+    if (!pwd) return { score: 0, label: 'Empty', color: '#6B726C', hasLen: false, hasNum: false, hasSpecial: false };
+
+    const hasLen = pwd.length >= 8;
+    const hasNum = /\d/.test(pwd);
+    const hasSpecial = /[^A-Za-z0-9]/.test(pwd) || /[A-Z]/.test(pwd);
+
+    let score = 0;
+    if (hasLen) score++;
+    if (hasNum) score++;
+    if (hasSpecial) score++;
+
+    let label = 'Weak';
+    let color = '#B23D25'; // danger red
+    if (score === 2) {
+      label = 'Moderate';
+      color = '#B5791A'; // amber
+    } else if (score === 3) {
+      label = 'Strong';
+      color = '#2B6E5E'; // safe deep teal
+    }
+
+    return { score, label, color, hasLen, hasNum, hasSpecial };
+  }, [doctorForm.password]);
+
+  // ─── Inline Validation Checks ───────────────────────────────────────────────
+  const phoneError = useMemo(() => {
+    if (!phoneTouched) return null;
+    const digits = nationalPhone.replace(/\D/g, '');
+    if (!digits) return 'Mobile number is required.';
+    if (digits.length < 7 || digits.length > 15) return 'Please enter a valid mobile phone number.';
+    return null;
+  }, [nationalPhone, phoneTouched]);
+
+  const doctorErrors = useMemo(() => {
+    const errors = {};
+    if (doctorTouched.email) {
+      if (!doctorForm.email.trim()) {
+        errors.email = 'Email address is required.';
+      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(doctorForm.email.trim())) {
+        errors.email = 'Please enter a valid email address.';
+      }
+    }
+
+    if (doctorTouched.password) {
+      if (!doctorForm.password) {
+        errors.password = 'Password is required.';
+      } else if (doctorMode === 'signup' && doctorForm.password.length < 8) {
+        errors.password = 'Password must be at least 8 characters.';
+      }
+    }
+
+    if (doctorMode === 'signup') {
+      if (doctorTouched.name && !doctorForm.name.trim()) {
+        errors.name = 'Doctor / Physician name is required.';
+      }
+      if (doctorTouched.registrationNumber && !doctorForm.registrationNumber.trim()) {
+        errors.registrationNumber = 'Medical registration or license number is required.';
+      }
+    }
+
+    return errors;
+  }, [doctorForm, doctorTouched, doctorMode]);
 
   // ─── TanStack Query Mutations ──────────────────────────────────────────────
 
@@ -74,7 +184,8 @@ export default function LoginPage() {
     onSuccess: (data) => {
       setErrorMsg(null);
       setOtpSent(true);
-      notify.success('Security Code Sent', `A 6-digit OTP has been sent to ${phone}.`);
+      startCountdown();
+      notify.success('Security Code Sent', `A 6-digit OTP has been sent to ${fullPhone}.`);
       if (data._devOtp) {
         setDevOtpHint(data._devOtp);
       }
@@ -99,7 +210,7 @@ export default function LoginPage() {
         login(data.token, selectedRole || 'PATIENT', data.user);
       }
 
-      notify.success('Authentication Verified', 'Welcome to PolySafe Patient Portal.');
+      notify.success('Authentication Verified', 'Welcome to PolySafe.');
 
       // Navigate with replace: true so Login page does not sit in browser history
       if (selectedRole === 'CAREGIVER') {
@@ -156,13 +267,17 @@ export default function LoginPage() {
   // ─── Handlers ─────────────────────────────────────────────────────────────
 
   const handleSendOtp = (e) => {
-    e.preventDefault();
+    e?.preventDefault();
+    setPhoneTouched(true);
     setErrorMsg(null);
-    if (!phone || phone.length < 10) {
-      setErrorMsg('Please enter a valid phone number (e.g. +919876543210).');
+
+    const digits = nationalPhone.replace(/\D/g, '');
+    if (!digits || digits.length < 7) {
+      setErrorMsg('Please enter a valid mobile phone number.');
+      notify.warning('Invalid Phone Number', 'Please enter a valid mobile number.');
       return;
     }
-    sendOtpMutation.mutate(phone);
+    sendOtpMutation.mutate(fullPhone);
   };
 
   const handleOtpChange = (index, value) => {
@@ -203,9 +318,10 @@ export default function LoginPage() {
     const code = otp.join('');
     if (code.length !== 6) {
       setErrorMsg('Please enter all 6 digits of the OTP code.');
+      notify.warning('Code Incomplete', 'Please enter all 6 digits.');
       return;
     }
-    verifyOtpMutation.mutate({ phone, code });
+    verifyOtpMutation.mutate({ phone: fullPhone, code });
   };
 
   const handleFillDevOtp = () => {
@@ -213,6 +329,7 @@ export default function LoginPage() {
       const digits = devOtpHint.split('');
       setOtp(digits);
       otpInputRefs.current[5]?.focus();
+      notify.info('Dev Code Applied', `Filled ${devOtpHint}`);
     }
   };
 
@@ -220,23 +337,39 @@ export default function LoginPage() {
     e.preventDefault();
     setErrorMsg(null);
 
+    // Touch all relevant fields
+    setDoctorTouched({
+      email: true,
+      password: true,
+      name: true,
+      registrationNumber: true,
+    });
+
     if (doctorMode === 'signup') {
-      if (!doctorForm.name || !doctorForm.registrationNumber || !doctorForm.email || !doctorForm.password) {
+      if (!doctorForm.name.trim() || !doctorForm.registrationNumber.trim() || !doctorForm.email.trim() || !doctorForm.password) {
         setErrorMsg('Please fill in all required doctor registration fields.');
+        notify.warning('Missing Fields', 'Please fill in all required fields.');
         return;
       }
       if (doctorForm.password.length < 8) {
         setErrorMsg('Password must be at least 8 characters long.');
+        notify.warning('Password Too Short', 'Password must be at least 8 characters long.');
         return;
       }
-      doctorSignupMutation.mutate(doctorForm);
+      doctorSignupMutation.mutate({
+        ...doctorForm,
+        email: doctorForm.email.trim(),
+        name: doctorForm.name.trim(),
+        registrationNumber: doctorForm.registrationNumber.trim(),
+      });
     } else {
-      if (!doctorForm.email || !doctorForm.password) {
+      if (!doctorForm.email.trim() || !doctorForm.password) {
         setErrorMsg('Please provide both email and password.');
+        notify.warning('Credentials Required', 'Please enter your professional email and password.');
         return;
       }
       doctorLoginMutation.mutate({
-        email: doctorForm.email,
+        email: doctorForm.email.trim(),
         password: doctorForm.password,
       });
     }
@@ -248,10 +381,10 @@ export default function LoginPage() {
 
         {/* Brand Header */}
         <div className="text-center space-y-2">
-          <div className="inline-flex items-center justify-center p-3 bg-[#2B6E5E]/10 rounded-2xl border-2 border-[#2B6E5E]/20 text-[#2B6E5E] mb-1">
+          <div className="inline-flex items-center justify-center p-3.5 bg-[#E4F2E9] rounded-2xl border-2 border-[#2B6E5E]/20 text-[#2B6E5E] mb-1 shadow-sm">
             <ShieldCheck className="w-8 h-8" />
           </div>
-          <h1 className="text-3xl md:text-4xl text-[#232724] font-bold tracking-tight">
+          <h1 className="text-3xl md:text-4xl text-[#232724] font-bold tracking-tight" style={{ fontFamily: "'Fraunces', serif" }}>
             PolySafe
           </h1>
           <p className="text-sm text-[#6B726C] max-w-sm mx-auto">
@@ -261,8 +394,8 @@ export default function LoginPage() {
 
         {/* Global Error Alert */}
         {errorMsg && (
-          <div className="p-4 bg-rose-50 border-2 border-rose-200 rounded-2xl flex items-start space-x-3 text-rose-800 text-sm animate-fadeIn">
-            <AlertCircle className="w-5 h-5 text-rose-600 flex-shrink-0 mt-0.5" />
+          <div className="p-4 bg-[#FBE4DE] border-2 border-[#B23D25]/30 rounded-2xl flex items-start space-x-3 text-[#B23D25] text-sm animate-fadeIn shadow-xs">
+            <AlertCircle className="w-5 h-5 text-[#B23D25] flex-shrink-0 mt-0.5" />
             <div className="flex-1">
               <p className="font-semibold">{errorMsg}</p>
             </div>
@@ -283,7 +416,8 @@ export default function LoginPage() {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 gap-4">
+            {/* Three primary tappable role cards */}
+            <div className="grid grid-cols-1 gap-3.5">
               {/* Card 1: Patient */}
               <div
                 onClick={() => {
@@ -291,17 +425,17 @@ export default function LoginPage() {
                   setErrorMsg(null);
                   setOtpSent(false);
                 }}
-                className="polysafe-card-interactive p-5 flex items-start space-x-4 group cursor-pointer"
+                className="polysafe-card-interactive p-5 flex items-start space-x-4 group cursor-pointer border-2 border-[#E7E1D3] hover:border-[#2B6E5E] bg-white transition-all duration-180"
               >
-                <div className="p-3.5 bg-[#2B6E5E]/10 text-[#2B6E5E] rounded-2xl group-hover:bg-[#2B6E5E] group-hover:text-white transition-colors">
+                <div className="p-3.5 bg-[#E4F2E9] text-[#2B6E5E] rounded-2xl group-hover:bg-[#2B6E5E] group-hover:text-white transition-colors">
                   <User className="w-6 h-6" />
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-lg font-bold text-[#232724] group-hover:text-[#2B6E5E] transition-colors">
+                    <h3 className="text-lg font-bold text-[#232724] group-hover:text-[#2B6E5E] transition-colors" style={{ fontFamily: "'Fraunces', serif" }}>
                       Patient
                     </h3>
-                    <span className="text-[11px] font-bold bg-[#E7E1D3] text-[#2B6E5E] px-2.5 py-0.5 rounded-full">
+                    <span className="text-[11px] font-bold bg-[#E4F2E9] text-[#2B6E5E] px-2.5 py-0.5 rounded-full border border-[#2B6E5E]/20">
                       Phone + OTP
                     </span>
                   </div>
@@ -319,17 +453,17 @@ export default function LoginPage() {
                   setErrorMsg(null);
                   setOtpSent(false);
                 }}
-                className="polysafe-card-interactive p-5 flex items-start space-x-4 group cursor-pointer"
+                className="polysafe-card-interactive p-5 flex items-start space-x-4 group cursor-pointer border-2 border-[#E7E1D3] hover:border-[#8A6D3B] bg-white transition-all duration-180"
               >
-                <div className="p-3.5 bg-[#8A6D3B]/10 text-[#8A6D3B] rounded-2xl group-hover:bg-[#8A6D3B] group-hover:text-white transition-colors">
+                <div className="p-3.5 bg-[#FBF8F2] border border-[#8A6D3B]/20 text-[#8A6D3B] rounded-2xl group-hover:bg-[#8A6D3B] group-hover:text-white transition-colors">
                   <HeartHandshake className="w-6 h-6" />
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-lg font-bold text-[#232724] group-hover:text-[#8A6D3B] transition-colors">
+                    <h3 className="text-lg font-bold text-[#232724] group-hover:text-[#8A6D3B] transition-colors" style={{ fontFamily: "'Fraunces', serif" }}>
                       Family / Caregiver
                     </h3>
-                    <span className="text-[11px] font-bold bg-[#E7E1D3] text-[#8A6D3B] px-2.5 py-0.5 rounded-full">
+                    <span className="text-[11px] font-bold bg-[#FBEED9] text-[#8A6D3B] px-2.5 py-0.5 rounded-full border border-[#8A6D3B]/20">
                       Phone + OTP
                     </span>
                   </div>
@@ -346,17 +480,17 @@ export default function LoginPage() {
                   setSelectedRole('DOCTOR');
                   setErrorMsg(null);
                 }}
-                className="polysafe-card-interactive p-5 flex items-start space-x-4 group cursor-pointer"
+                className="polysafe-card-interactive p-5 flex items-start space-x-4 group cursor-pointer border-2 border-[#E7E1D3] hover:border-[#1B4B66] bg-white transition-all duration-180"
               >
                 <div className="p-3.5 bg-[#1B4B66]/10 text-[#1B4B66] rounded-2xl group-hover:bg-[#1B4B66] group-hover:text-white transition-colors">
                   <Stethoscope className="w-6 h-6" />
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-lg font-bold text-[#232724] group-hover:text-[#1B4B66] transition-colors">
+                    <h3 className="text-lg font-bold text-[#232724] group-hover:text-[#1B4B66] transition-colors" style={{ fontFamily: "'Fraunces', serif" }}>
                       Doctor / Clinician
                     </h3>
-                    <span className="text-[11px] font-bold bg-[#E7E1D3] text-[#1B4B66] px-2.5 py-0.5 rounded-full">
+                    <span className="text-[11px] font-bold bg-[#1B4B66]/10 text-[#1B4B66] px-2.5 py-0.5 rounded-full border border-[#1B4B66]/20">
                       Email + Password
                     </span>
                   </div>
@@ -366,34 +500,42 @@ export default function LoginPage() {
                 </div>
                 <ArrowRight className="w-5 h-5 text-[#6B726C] group-hover:text-[#1B4B66] group-hover:translate-x-1 transition-all self-center" />
               </div>
+            </div>
 
-              {/* Card 4: Continue as Guest */}
-              <div
-                onClick={() => {
-                  enterGuestMode();
-                  notify.info('Demo Mode Active', 'Exploring PolySafe with realistic sample data.');
-                  navigate('/home', { replace: true });
-                }}
-                className="polysafe-card-interactive p-5 flex items-start space-x-4 group cursor-pointer border-dashed border-2 border-[#2B6E5E]/40 hover:border-[#2B6E5E] bg-[#E4F2E9]/20"
-              >
-                <div className="p-3.5 bg-[#2B6E5E]/15 text-[#2B6E5E] rounded-2xl group-hover:bg-[#2B6E5E] group-hover:text-white transition-colors">
-                  <Compass className="w-6 h-6" />
-                </div>
-                <div className="flex-1">
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-lg font-bold text-[#232724] group-hover:text-[#2B6E5E] transition-colors">
-                      Continue as Guest
-                    </h3>
-                    <span className="text-[11px] font-bold bg-[#2B6E5E] text-white px-2.5 py-0.5 rounded-full shadow-sm">
-                      Instant Demo
-                    </span>
-                  </div>
-                  <p className="text-xs text-[#6B726C] mt-1 leading-relaxed">
-                    Preview PolySafe with realistic sample medications, risk graphs, and timeline cascades without logging in.
-                  </p>
-                </div>
-                <ArrowRight className="w-5 h-5 text-[#6B726C] group-hover:text-[#2B6E5E] group-hover:translate-x-1 transition-all self-center" />
+            {/* Divider */}
+            <div className="relative flex items-center justify-center my-4">
+              <div className="border-t border-[#E7E1D3] w-full" />
+              <span className="bg-white px-3 text-[11px] font-semibold text-[#9CA3AF] uppercase tracking-wider absolute">
+                or explore without an account
+              </span>
+            </div>
+
+            {/* Card 4: Continue as Guest (Outlined style, visually lighter) */}
+            <div
+              onClick={() => {
+                enterGuestMode();
+                notify.info('Demo Mode Active', 'Exploring PolySafe with realistic sample data.');
+                navigate('/home', { replace: true });
+              }}
+              className="p-4 rounded-2xl border-2 border-[#E7E1D3] hover:border-[#2B6E5E] bg-[#FAF8F5] hover:bg-[#E4F2E9]/20 flex items-center space-x-3.5 group cursor-pointer transition-all duration-180"
+            >
+              <div className="p-2.5 bg-white border border-[#E7E1D3] text-[#2B6E5E] rounded-xl group-hover:bg-[#2B6E5E] group-hover:text-white transition-colors">
+                <Compass className="w-5 h-5" />
               </div>
+              <div className="flex-1">
+                <div className="flex items-center justify-between">
+                  <h4 className="text-sm font-bold text-[#232724] group-hover:text-[#2B6E5E] transition-colors">
+                    Continue as Guest
+                  </h4>
+                  <span className="text-[10px] font-bold text-[#2B6E5E] bg-white px-2 py-0.5 rounded-full border border-[#2B6E5E]/20">
+                    Instant Demo
+                  </span>
+                </div>
+                <p className="text-xs text-[#6B726C] mt-0.5">
+                  Browse sample medications, risk graphs, and timeline cascades.
+                </p>
+              </div>
+              <ArrowRight className="w-4 h-4 text-[#9CA3AF] group-hover:text-[#2B6E5E] group-hover:translate-x-1 transition-all" />
             </div>
           </Card>
         )}
@@ -410,14 +552,15 @@ export default function LoginPage() {
                   setSelectedRole(null);
                   setOtpSent(false);
                   setErrorMsg(null);
+                  setPhoneTouched(false);
                 }}
-                className="text-xs font-bold text-[#6B726C] hover:text-[#2B6E5E] flex items-center space-x-1 transition-colors"
+                className="text-xs font-bold text-[#6B726C] hover:text-[#2B6E5E] flex items-center space-x-1 transition-colors cursor-pointer"
               >
                 <ArrowLeft className="w-4 h-4" />
                 <span>Change Role ({selectedRole === 'PATIENT' ? 'Patient' : 'Caregiver'})</span>
               </button>
 
-              <span className="text-xs font-semibold px-2.5 py-1 bg-[#2B6E5E]/10 text-[#2B6E5E] rounded-lg">
+              <span className="text-xs font-semibold px-2.5 py-1 bg-[#E4F2E9] text-[#2B6E5E] rounded-lg border border-[#2B6E5E]/20">
                 Secure Mobile Sign-In
               </span>
             </div>
@@ -436,25 +579,52 @@ export default function LoginPage() {
 
                 <div className="space-y-1.5">
                   <label className="block text-xs font-bold text-[#232724] uppercase tracking-wider">
-                    Phone Number (E.164 with Country Code)
+                    Mobile Number
                   </label>
-                  <div className="relative">
-                    <Phone className="w-4 h-4 text-[#6B726C] absolute left-3.5 top-3.5" />
-                    <input
-                      type="tel"
-                      required
-                      value={phone}
-                      onChange={(e) => {
-                        setPhone(e.target.value);
-                        if (errorMsg) setErrorMsg(null);
-                      }}
-                      placeholder="+919876543210"
-                      className={`input-field pl-10 text-base ${errorMsg ? 'input-error' : ''}`}
-                    />
+                  <div className="flex gap-2">
+                    {/* Country Code Selector */}
+                    <div className="relative w-28 sm:w-32 flex-shrink-0">
+                      <select
+                        value={countryCode}
+                        onChange={(e) => setCountryCode(e.target.value)}
+                        className="input-field py-3 text-sm font-semibold bg-white cursor-pointer"
+                      >
+                        {COUNTRY_CODES.map((c) => (
+                          <option key={c.code} value={c.code}>
+                            {c.country} ({c.code})
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    {/* National Phone Input */}
+                    <div className="relative flex-1">
+                      <Phone className="w-4 h-4 text-[#6B726C] absolute left-3.5 top-3.5" />
+                      <input
+                        type="tel"
+                        required
+                        value={nationalPhone}
+                        onBlur={() => setPhoneTouched(true)}
+                        onChange={(e) => {
+                          setNationalPhone(e.target.value);
+                          if (errorMsg) setErrorMsg(null);
+                        }}
+                        placeholder="98765 43210"
+                        className={`input-field pl-10 text-base ${phoneError || errorMsg ? 'input-error' : ''}`}
+                      />
+                    </div>
                   </div>
-                  <p className="text-[11px] text-[#6B726C]">
-                    Example: <span className="font-semibold text-[#2B6E5E]">+919876543210</span> or <span className="font-semibold text-[#2B6E5E]">+14155552671</span>
-                  </p>
+
+                  {phoneError ? (
+                    <p className="text-xs text-rose-600 mt-1 flex items-center gap-1 font-medium">
+                      <AlertCircle className="w-3.5 h-3.5" />
+                      {phoneError}
+                    </p>
+                  ) : (
+                    <p className="text-[11px] text-[#6B726C]">
+                      Full international format: <span className="font-semibold text-[#2B6E5E]">{fullPhone}</span>
+                    </p>
+                  )}
                 </div>
 
                 <button
@@ -483,13 +653,13 @@ export default function LoginPage() {
                     Enter 6-Digit Code
                   </h2>
                   <p className="text-xs text-[#6B726C]">
-                    Code sent to <span className="font-bold text-[#232724]">{phone}</span>
+                    Code sent to <span className="font-bold text-[#232724]">{fullPhone}</span>
                   </p>
                 </div>
 
                 {/* Dev Mode OTP auto-hint banner */}
                 {devOtpHint && (
-                  <div className="p-3 bg-[#2B6E5E]/10 border border-[#2B6E5E]/30 rounded-xl flex items-center justify-between text-xs text-[#2B6E5E]">
+                  <div className="p-3 bg-[#E4F2E9] border border-[#2B6E5E]/30 rounded-xl flex items-center justify-between text-xs text-[#2B6E5E]">
                     <div className="flex items-center space-x-2">
                       <Sparkles className="w-4 h-4 text-[#2B6E5E]" />
                       <span><strong>Demo Mode OTP:</strong> {devOtpHint}</span>
@@ -518,7 +688,7 @@ export default function LoginPage() {
                         handleOtpChange(index, e.target.value);
                         if (errorMsg) setErrorMsg(null);
                       }}
-                      onKeyDown={(e) => handleOtpKeyDown(index, e.target)}
+                      onKeyDown={(e) => handleOtpKeyDown(index, e)}
                       className={`otp-box ${errorMsg ? 'input-error' : ''}`}
                       autoFocus={index === 0}
                     />
@@ -552,20 +722,26 @@ export default function LoginPage() {
                         setOtp(['', '', '', '', '', '']);
                         setErrorMsg(null);
                       }}
-                      className="font-bold text-[#6B726C] hover:text-[#2B6E5E]"
+                      className="font-bold text-[#6B726C] hover:text-[#2B6E5E] cursor-pointer"
                     >
                       Change Phone Number
                     </button>
 
-                    <button
-                      type="button"
-                      onClick={handleSendOtp}
-                      disabled={sendOtpMutation.isPending}
-                      className="font-bold text-[#2B6E5E] hover:underline flex items-center space-x-1"
-                    >
-                      <RefreshCw className="w-3.5 h-3.5" />
-                      <span>Resend Code</span>
-                    </button>
+                    {countdown > 0 ? (
+                      <span className="text-[#6B726C] font-medium">
+                        Resend code in <strong className="text-[#232724]">0:{countdown < 10 ? `0${countdown}` : countdown}</strong>
+                      </span>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={handleSendOtp}
+                        disabled={sendOtpMutation.isPending}
+                        className="font-bold text-[#2B6E5E] hover:underline flex items-center space-x-1 cursor-pointer"
+                      >
+                        <RefreshCw className="w-3.5 h-3.5" />
+                        <span>Resend Code</span>
+                      </button>
+                    )}
                   </div>
                 </div>
               </form>
@@ -585,13 +761,13 @@ export default function LoginPage() {
                   setSelectedRole(null);
                   setErrorMsg(null);
                 }}
-                className="text-xs font-bold text-[#6B726C] hover:text-[#2B6E5E] flex items-center space-x-1 transition-colors"
+                className="text-xs font-bold text-[#6B726C] hover:text-[#1B4B66] flex items-center space-x-1 transition-colors cursor-pointer"
               >
                 <ArrowLeft className="w-4 h-4" />
                 <span>Change Role</span>
               </button>
 
-              <span className="text-xs font-semibold px-2.5 py-1 bg-[#1B4B66]/10 text-[#1B4B66] rounded-lg">
+              <span className="text-xs font-semibold px-2.5 py-1 bg-[#1B4B66]/10 text-[#1B4B66] rounded-lg border border-[#1B4B66]/20">
                 Physician Credentials
               </span>
             </div>
@@ -620,13 +796,14 @@ export default function LoginPage() {
                   doctorMode === 'signup' ? 'active' : ''
                 }`}
               >
-                Register New Practice
+                Create Account
               </button>
             </div>
 
             <form onSubmit={handleDoctorSubmit} className="space-y-4">
               {doctorMode === 'signup' && (
                 <>
+                  {/* Name field */}
                   <div className="space-y-1">
                     <label className="block text-xs font-bold text-[#232724] uppercase tracking-wider">
                       Physician Full Name
@@ -637,16 +814,24 @@ export default function LoginPage() {
                         type="text"
                         required
                         value={doctorForm.name}
+                        onBlur={() => setDoctorTouched((t) => ({ ...t, name: true }))}
                         onChange={(e) => {
                           setDoctorForm({ ...doctorForm, name: e.target.value });
                           if (errorMsg) setErrorMsg(null);
                         }}
-                        placeholder="Dr. Robert Chen, MD"
-                        className={`input-field pl-10 ${errorMsg ? 'input-error' : ''}`}
+                        placeholder="Dr. Priya Sharma, MD"
+                        className={`input-field pl-10 ${doctorErrors.name ? 'input-error' : ''}`}
                       />
                     </div>
+                    {doctorErrors.name && (
+                      <p className="text-xs text-rose-600 mt-1 flex items-center gap-1 font-medium">
+                        <AlertCircle className="w-3.5 h-3.5" />
+                        {doctorErrors.name}
+                      </p>
+                    )}
                   </div>
 
+                  {/* Medical Registration Number */}
                   <div className="space-y-1">
                     <label className="block text-xs font-bold text-[#232724] uppercase tracking-wider">
                       Medical Registration / License No.
@@ -657,18 +842,26 @@ export default function LoginPage() {
                         type="text"
                         required
                         value={doctorForm.registrationNumber}
+                        onBlur={() => setDoctorTouched((t) => ({ ...t, registrationNumber: true }))}
                         onChange={(e) => {
                           setDoctorForm({ ...doctorForm, registrationNumber: e.target.value });
                           if (errorMsg) setErrorMsg(null);
                         }}
                         placeholder="MCI-2024-88492"
-                        className={`input-field pl-10 ${errorMsg ? 'input-error' : ''}`}
+                        className={`input-field pl-10 ${doctorErrors.registrationNumber ? 'input-error' : ''}`}
                       />
                     </div>
+                    {doctorErrors.registrationNumber && (
+                      <p className="text-xs text-rose-600 mt-1 flex items-center gap-1 font-medium">
+                        <AlertCircle className="w-3.5 h-3.5" />
+                        {doctorErrors.registrationNumber}
+                      </p>
+                    )}
                   </div>
                 </>
               )}
 
+              {/* Email Address */}
               <div className="space-y-1">
                 <label className="block text-xs font-bold text-[#232724] uppercase tracking-wider">
                   Professional Email Address
@@ -679,16 +872,24 @@ export default function LoginPage() {
                     type="email"
                     required
                     value={doctorForm.email}
+                    onBlur={() => setDoctorTouched((t) => ({ ...t, email: true }))}
                     onChange={(e) => {
                       setDoctorForm({ ...doctorForm, email: e.target.value });
                       if (errorMsg) setErrorMsg(null);
                     }}
-                    placeholder="dr.chen@hospital.org"
-                    className={`input-field pl-10 ${errorMsg ? 'input-error' : ''}`}
+                    placeholder="dr.sharma@hospital.org"
+                    className={`input-field pl-10 ${doctorErrors.email ? 'input-error' : ''}`}
                   />
                 </div>
+                {doctorErrors.email && (
+                  <p className="text-xs text-rose-600 mt-1 flex items-center gap-1 font-medium">
+                    <AlertCircle className="w-3.5 h-3.5" />
+                    {doctorErrors.email}
+                  </p>
+                )}
               </div>
 
+              {/* Password */}
               <div className="space-y-1">
                 <label className="block text-xs font-bold text-[#232724] uppercase tracking-wider">
                   Password {doctorMode === 'signup' && '(min. 8 characters)'}
@@ -699,14 +900,64 @@ export default function LoginPage() {
                     type="password"
                     required
                     value={doctorForm.password}
+                    onBlur={() => setDoctorTouched((t) => ({ ...t, password: true }))}
                     onChange={(e) => {
                       setDoctorForm({ ...doctorForm, password: e.target.value });
                       if (errorMsg) setErrorMsg(null);
                     }}
                     placeholder="••••••••••••"
-                    className={`input-field pl-10 ${errorMsg ? 'input-error' : ''}`}
+                    className={`input-field pl-10 ${doctorErrors.password ? 'input-error' : ''}`}
                   />
                 </div>
+                {doctorErrors.password && (
+                  <p className="text-xs text-rose-600 mt-1 flex items-center gap-1 font-medium">
+                    <AlertCircle className="w-3.5 h-3.5" />
+                    {doctorErrors.password}
+                  </p>
+                )}
+
+                {/* Password strength meter — Visible during signup only */}
+                {doctorMode === 'signup' && doctorForm.password && (
+                  <div className="mt-2 space-y-1.5 p-2.5 bg-[#FAF8F5] border border-[#E7E1D3] rounded-xl text-xs">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[#6B726C]">Password Strength:</span>
+                      <span className="font-bold" style={{ color: passwordStrength.color }}>
+                        {passwordStrength.label}
+                      </span>
+                    </div>
+
+                    {/* Progress Bar */}
+                    <div className="h-1.5 w-full bg-[#E7E1D3] rounded-full overflow-hidden flex gap-1">
+                      <div
+                        className="h-full rounded-full transition-all duration-300"
+                        style={{
+                          width: `${(passwordStrength.score / 3) * 100}%`,
+                          backgroundColor: passwordStrength.color,
+                        }}
+                      />
+                    </div>
+
+                    {/* Hints checklist */}
+                    <div className="grid grid-cols-2 gap-1 pt-1 text-[11px] text-[#6B726C]">
+                      <div className="flex items-center gap-1">
+                        {passwordStrength.hasLen ? (
+                          <Check className="w-3 h-3 text-[#2B6E5E]" />
+                        ) : (
+                          <X className="w-3 h-3 text-[#9CA3AF]" />
+                        )}
+                        <span className={passwordStrength.hasLen ? 'text-[#232724] font-medium' : ''}>8+ characters</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        {passwordStrength.hasNum ? (
+                          <Check className="w-3 h-3 text-[#2B6E5E]" />
+                        ) : (
+                          <X className="w-3 h-3 text-[#9CA3AF]" />
+                        )}
+                        <span className={passwordStrength.hasNum ? 'text-[#232724] font-medium' : ''}>Contains number</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
 
               <button

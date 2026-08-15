@@ -10,6 +10,7 @@ import {
   Lock,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import SignOutConfirmButton from '../components/SignOutConfirmButton';
 
 /**
  * DoctorLayout.jsx — Desktop-oriented clinical shell for Physicians & Doctors
@@ -102,14 +103,7 @@ export default function DoctorLayout() {
             </div>
 
             {/* Sign Out */}
-            <button
-              onClick={handleSignOut}
-              className="btn-secondary py-2 px-3.5 text-xs text-[#6B726C] hover:text-[#B23D25] hover:border-rose-300"
-              title="Sign Out of Doctor Portal"
-            >
-              <LogOut className="w-3.5 h-3.5" />
-              <span>Sign Out</span>
-            </button>
+            <SignOutConfirmButton buttonText="Sign Out" />
           </div>
         </div>
       </header>

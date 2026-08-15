@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import PageTransition from '../components/PageTransition';
 import { useAuth } from '../context/AuthContext';
+import SignOutConfirmButton from '../components/SignOutConfirmButton';
 
 /**
  * CaregiverLayout.jsx — Simple, focused shell for Family Members & Caregivers
@@ -22,11 +23,6 @@ export default function CaregiverLayout() {
   const navigate = useNavigate();
   const location = useLocation();
   const { logout } = useAuth();
-
-  const handleSignOut = () => {
-    logout();
-    navigate('/login', { replace: true });
-  };
 
   return (
     <div className="min-h-screen bg-[#FBF8F2] text-[#232724] flex flex-col font-sans selection:bg-[#8A6D3B] selection:text-white">
@@ -55,14 +51,7 @@ export default function CaregiverLayout() {
             </div>
           </Link>
 
-          <button
-            onClick={handleSignOut}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-[#6B726C] hover:text-[#B23D25] hover:bg-[#FBE4DE]/50 rounded-xl border border-[#E7E1D3] transition-colors"
-            title="Sign Out of Caregiver Portal"
-          >
-            <LogOut className="w-3.5 h-3.5" />
-            <span>Sign Out</span>
-          </button>
+          <SignOutConfirmButton buttonText="Sign Out" />
         </div>
       </header>
 
