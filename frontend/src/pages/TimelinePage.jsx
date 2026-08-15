@@ -24,14 +24,8 @@ import { EmptyTimelineIllustration } from '../components/EmptyIllustrations';
 import { TimelineSkeleton } from '../components/Skeletons';
 
 // ─── API ──────────────────────────────────────────────────────────────────────
-function getToken() {
-  return localStorage.getItem('polysafe_token');
-}
-
 async function fetchTimeline() {
-  const { data } = await axios.get('/patient/timeline', {
-    headers: { Authorization: `Bearer ${getToken()}` },
-  });
+  const { data } = await axios.get('/patient/timeline');
   return data;
 }
 

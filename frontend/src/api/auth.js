@@ -7,6 +7,15 @@ const api = axios.create({
   },
 });
 
+// Inherit global axios Authorization header if set
+api.interceptors.request.use((config) => {
+  const globalAuth = axios.defaults.headers.common['Authorization'];
+  if (globalAuth && !config.headers.Authorization) {
+    config.headers.Authorization = globalAuth;
+  }
+  return config;
+});
+
 export const authApi = {
   // Patient / Caregiver OTP
   sendPatientOtp: async (phone) => {
@@ -41,22 +50,24 @@ export const patientApi = {
     const response = await api.post(
       '/patient/profile',
       { age, conditions, allergies },
-      { headers: { Authorization: `Bearer ${token}` } }
+      token ? { headers: { Authorization: `Bearer ${token}` } } : undefined
     );
     return response.data;
   },
 
   getProfile: async (token) => {
-    const response = await api.get('/patient/profile', {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    const response = await api.get(
+      '/patient/profile',
+      token ? { headers: { Authorization: `Bearer ${token}` } } : undefined
+    );
     return response.data;
   },
 
   getHomeSummary: async (token) => {
-    const response = await api.get('/patient/home-summary', {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    const response = await api.get(
+      '/patient/home-summary',
+      token ? { headers: { Authorization: `Bearer ${token}` } } : undefined
+    );
     return response.data;
   },
 };

@@ -17,15 +17,18 @@ import {
   ShieldCheck, 
   Sparkles,
   RefreshCw,
-  KeyRound
+  KeyRound,
+  Compass,
 } from 'lucide-react';
 import { authApi } from '../api/auth';
 import Card from '../components/Card';
 import PageTransition from '../components/PageTransition';
 import { notify } from '../utils/toast';
+import { useAuth } from '../context/AuthContext';
 
 export default function LoginPage() {
   const navigate = useNavigate();
+  const { login, enterGuestMode } = useAuth();
 
   // Selected Role: null (role select screen) | 'PATIENT' | 'CAREGIVER' | 'DOCTOR'
   const [selectedRole, setSelectedRole] = useState(null);
@@ -79,9 +82,7 @@ export default function LoginPage() {
     onSuccess: (data) => {
       setErrorMsg(null);
       if (data.token) {
-        localStorage.setItem('polysafe_token', data.token);
-        localStorage.setItem('polysafe_user', JSON.stringify(data.user));
-        localStorage.setItem('polysafe_role', selectedRole || 'PATIENT');
+        login(data.token, selectedRole || 'PATIENT', data.user);
       }
 
       notify.success('Authentication Verified', 'Welcome to PolySafe Patient Portal.');
@@ -108,9 +109,7 @@ export default function LoginPage() {
     onSuccess: (data) => {
       setErrorMsg(null);
       if (data.token) {
-        localStorage.setItem('polysafe_token', data.token);
-        localStorage.setItem('polysafe_user', JSON.stringify(data.user));
-        localStorage.setItem('polysafe_role', 'DOCTOR');
+        login(data.token, 'DOCTOR', data.user);
       }
       notify.success('Doctor Login Successful', 'Welcome to your Clinical Workstation.');
       navigate('/doctor-dashboard');
@@ -128,9 +127,7 @@ export default function LoginPage() {
     onSuccess: (data) => {
       setErrorMsg(null);
       if (data.token) {
-        localStorage.setItem('polysafe_token', data.token);
-        localStorage.setItem('polysafe_user', JSON.stringify(data.user));
-        localStorage.setItem('polysafe_role', 'DOCTOR');
+        login(data.token, 'DOCTOR', data.user);
       }
       notify.success('Practice Account Created', 'Welcome to PolySafe Clinical Portal.');
       navigate('/doctor-dashboard');
@@ -354,6 +351,22 @@ export default function LoginPage() {
                   </p>
                 </div>
                 <ArrowRight className="w-5 h-5 text-[#6B726C] group-hover:text-[#1B4B66] group-hover:translate-x-1 transition-all self-center" />
+              </div>
+
+              {/* Guest / Demo Mode */}
+              <div className="pt-2 border-t border-[#E7E1D3] flex flex-col items-center">
+                <button
+                  type="button"
+                  onClick={() => {
+                    enterGuestMode();
+                    notify.info('Demo Mode Active', 'Exploring PolySafe with sample mock records.');
+                    navigate('/home');
+                  }}
+                  className="inline-flex items-center gap-2 text-xs font-bold text-[#2B6E5E] hover:text-[#1f5246] py-2 px-4 rounded-xl hover:bg-[#E4F2E9] transition-all"
+                >
+                  <Compass className="w-4 h-4 text-[#2B6E5E]" />
+                  <span>Explore Demo Patient (Guest Mode — No Login Required)</span>
+                </button>
               </div>
             </div>
           </Card>

@@ -28,22 +28,19 @@ import {
 } from '../components/Skeletons';
 import { notify } from '../utils/toast';
 
-function getToken() { return localStorage.getItem('polysafe_token'); }
-const headers = () => ({ Authorization: `Bearer ${getToken()}` });
-
 // ─── API helpers ──────────────────────────────────────────────────────────────
 async function claimCode(code) {
-  const { data } = await axios.post('/connection/claim-code', { code }, { headers: headers() });
+  const { data } = await axios.post('/connection/claim-code', { code });
   return data;
 }
 
 async function fetchMyConnections() {
-  const { data } = await axios.get('/connection/mine', { headers: headers() });
+  const { data } = await axios.get('/connection/mine');
   return data;
 }
 
 async function fetchPatientTimeline(patientId) {
-  const { data } = await axios.get(`/connection/doctor-patient/${patientId}/timeline`, { headers: headers() });
+  const { data } = await axios.get(`/connection/doctor-patient/${patientId}/timeline`);
   return data;
 }
 

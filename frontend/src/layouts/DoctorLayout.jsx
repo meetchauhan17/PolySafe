@@ -1,6 +1,7 @@
 import React from 'react';
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
+import PageTransition from '../components/PageTransition';
 import {
   Stethoscope,
   Shield,
@@ -8,7 +9,7 @@ import {
   Building2,
   Lock,
 } from 'lucide-react';
-import PageTransition from '../components/PageTransition';
+import { useAuth } from '../context/AuthContext';
 
 /**
  * DoctorLayout.jsx — Desktop-oriented clinical shell for Physicians & Doctors
@@ -21,22 +22,13 @@ import PageTransition from '../components/PageTransition';
 export default function DoctorLayout() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { user, logout } = useAuth();
 
-  // Retrieve physician profile if saved in localStorage
-  let user = null;
-  try {
-    user = JSON.parse(localStorage.getItem('polysafe_user') || '{}');
-  } catch {
-    user = {};
-  }
-
-  const doctorName = user?.doctor?.name || user?.name || 'Dr. Physician, MD';
+  const doctorName = user?.doctor?.name || user?.name || (user?.email ? `Dr. ${user.email.split('@')[0]}` : 'Dr. Physician, MD');
   const regNumber  = user?.doctor?.registrationNumber || user?.registrationNumber;
 
   const handleSignOut = () => {
-    localStorage.removeItem('polysafe_token');
-    localStorage.removeItem('polysafe_user');
-    localStorage.removeItem('polysafe_role');
+    logout();
     navigate('/login', { replace: true });
   };
 

@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { AnimatePresence } from 'framer-motion';
 import PageTransition from '../components/PageTransition';
+import { useAuth } from '../context/AuthContext';
 
 /**
  * PatientLayout.jsx — Mobile-first shell for Patient users
@@ -25,11 +26,10 @@ import PageTransition from '../components/PageTransition';
 export default function PatientLayout() {
   const location = useLocation();
   const navigate = useNavigate();
+  const { logout } = useAuth();
 
   const handleSignOut = () => {
-    localStorage.removeItem('polysafe_token');
-    localStorage.removeItem('polysafe_user');
-    localStorage.removeItem('polysafe_role');
+    logout();
     navigate('/login', { replace: true });
   };
 

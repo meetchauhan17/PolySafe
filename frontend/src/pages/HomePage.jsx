@@ -26,6 +26,7 @@ import Card from '../components/Card';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { EmptyMedicinesIllustration } from '../components/EmptyIllustrations';
 import { HomeSkeleton } from '../components/Skeletons';
+import { useAuth } from '../context/AuthContext';
 
 // ─── Severity colour map ─────────────────────────────────────────────────────
 const SEVERITY_STYLES = {
@@ -116,7 +117,7 @@ const DEMO_DATA = {
 export default function HomePage() {
   const navigate = useNavigate();
   const shouldReduceMotion = useReducedMotion();
-  const token = localStorage.getItem('polysafe_token');
+  const { token, user } = useAuth();
 
   const {
     data: summary,
@@ -127,13 +128,13 @@ export default function HomePage() {
   } = useQuery({
     queryKey: ['home-summary', token],
     queryFn: () => patientApi.getHomeSummary(token),
-    enabled: !!token,
+    enabled: !!token && !user?.isGuest,
     staleTime: 30_000,
   });
 
   // Use real data when authenticated, demo data otherwise
-  const data = token ? summary : DEMO_DATA;
-  const isDemo = !token;
+  const isDemo = !token || user?.isGuest;
+  const data = isDemo ? DEMO_DATA : (summary || DEMO_DATA);
 
   if (isLoading) {
     return <HomeSkeleton />;

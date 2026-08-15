@@ -1,27 +1,42 @@
 import React from 'react';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
-import { decodeJwtPayload } from '../lib/jwt';
+import { useAuth } from '../context/AuthContext';
+import { HomeSkeleton } from './Skeletons';
 
 /**
  * ProtectedRoute.jsx
  *
  * Ensures the user is authenticated and possesses the required role to access the route.
- * Redirects to /login if unauthenticated, or to the user's role-appropriate home if unauthorized.
+ * Reads solely from centralized useAuth() context.
  *
  * @param {Array<string>} [allowedRoles] - ['PATIENT', 'DOCTOR', 'CAREGIVER']
  */
 export default function ProtectedRoute({ allowedRoles }) {
   const location = useLocation();
-  const token = localStorage.getItem('polysafe_token');
-  const storedRole = localStorage.getItem('polysafe_role');
+  const { user, isLoading } = useAuth();
 
-  if (!token) {
+  if (isLoading) {
+    return (
+      <div className="min-h-[85vh] bg-[#FBF8F2] flex items-center justify-center">
+        <HomeSkeleton />
+      </div>
+    );
+  }
+
+  // Not authenticated attempting protected route
+  if (!user) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  // Verify decoded payload role or fallback to stored role
-  const payload = decodeJwtPayload(token);
-  const userRole = (payload?.role || storedRole || 'PATIENT').toUpperCase();
+  // Guest users are allowed to explore patient routes in demo/preview mode
+  if (user.isGuest) {
+    if (allowedRoles && allowedRoles.includes('PATIENT')) {
+      return <Outlet />;
+    }
+    return <Navigate to="/login" replace />;
+  }
+
+  const userRole = (user.role || 'PATIENT').toUpperCase();
 
   // If role-restricted and current user role is not permitted
   if (allowedRoles && allowedRoles.length > 0 && !allowedRoles.includes(userRole)) {

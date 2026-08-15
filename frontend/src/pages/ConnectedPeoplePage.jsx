@@ -24,16 +24,13 @@ import { EmptyDoctorsIllustration, EmptyCaregiversIllustration } from '../compon
 import { Skeleton } from '../components/Skeletons';
 import { notify } from '../utils/toast';
 
-function getToken() { return localStorage.getItem('polysafe_token'); }
-const headers = () => ({ Authorization: `Bearer ${getToken()}` });
-
 // ─── API helpers ──────────────────────────────────────────────────────────────
 const fetchConnections = () =>
-  axios.get('/connection/my-connections', { headers: headers() }).then((r) => r.data);
+  axios.get('/connection/my-connections').then((r) => r.data);
 const revokeConnection = (id) =>
-  axios.post(`/connection/${id}/revoke`, {}, { headers: headers() }).then((r) => r.data);
+  axios.post(`/connection/${id}/revoke`).then((r) => r.data);
 const addCaregiver = (phone) =>
-  axios.post('/connection/add-caregiver', { phone }, { headers: headers() }).then((r) => r.data);
+  axios.post('/connection/add-caregiver', { phone }).then((r) => r.data);
 
 // ─── Status badge config ──────────────────────────────────────────────────────
 const STATUS_CFG = {

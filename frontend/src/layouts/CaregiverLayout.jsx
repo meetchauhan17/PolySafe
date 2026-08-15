@@ -8,6 +8,7 @@ import {
   UserCheck,
 } from 'lucide-react';
 import PageTransition from '../components/PageTransition';
+import { useAuth } from '../context/AuthContext';
 
 /**
  * CaregiverLayout.jsx — Simple, focused shell for Family Members & Caregivers
@@ -20,11 +21,10 @@ import PageTransition from '../components/PageTransition';
 export default function CaregiverLayout() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { logout } = useAuth();
 
   const handleSignOut = () => {
-    localStorage.removeItem('polysafe_token');
-    localStorage.removeItem('polysafe_user');
-    localStorage.removeItem('polysafe_role');
+    logout();
     navigate('/login', { replace: true });
   };
 

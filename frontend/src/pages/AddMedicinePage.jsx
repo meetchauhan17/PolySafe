@@ -9,9 +9,9 @@ import {
   FileImage, TriangleAlert, Edit3, ShieldCheck, Zap, ExternalLink,
   Activity, AlertOctagon,
 } from 'lucide-react';
-import { getUserIdFromToken } from '../lib/jwt';
 import Card from '../components/Card';
 import { notify } from '../utils/toast';
+import { useAuth } from '../context/AuthContext';
 
 // ─── Medicine type options ────────────────────────────────────────────────────
 const MEDICINE_TYPES = [
@@ -60,27 +60,18 @@ const SEVERITY_COLOR = {
 };
 
 // ─── API helpers ──────────────────────────────────────────────────────────────
-function getToken() { return localStorage.getItem('polysafe_token'); }
-
 async function scanPrescription(imageFile) {
   const form = new FormData();
   form.append('image', imageFile);
   const resp = await axios.post('/medicine/scan', form, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-      Authorization: `Bearer ${getToken()}`,
-    },
+    headers: { 'Content-Type': 'multipart/form-data' },
     timeout: 20_000,
   });
   return resp.data;
 }
 
 async function addMedicine({ name, type, dosage }) {
-  const resp = await axios.post(
-    '/medicine',
-    { name, type, dosage },
-    { headers: { Authorization: `Bearer ${getToken()}` } }
-  );
+  const resp = await axios.post('/medicine', { name, type, dosage });
   return resp.data;
 }
 
@@ -235,57 +226,48 @@ function InteractionResult({ result, medicineName }) {
 // ─── Main Component ───────────────────────────────────────────────────────────
 export default function AddMedicinePage() {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const fileInputRef = useRef(null);
-  const socketRef = useRef(null);
 
-  // Form state
+  // Form inputs
   const [name, setName] = useState('');
   const [type, setType] = useState('PRESCRIPTION');
   const [dosage, setDosage] = useState('');
 
-  // OCR / scan state
-  const [scanState, setScanState] = useState('idle'); // 'idle'|'scanning'|'confirm'|'error'
+  // Scan state: 'idle' | 'scanning' | 'confirm' | 'error'
+  const [scanState, setScanState] = useState('idle');
+  const [scanResult, setScanResult] = useState(null); // { candidate, rawText, confidence }
   const [scanError, setScanError] = useState(null);
-  const [scanResult, setScanResult] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
 
-  // Interaction check state
-  const [checkState, setCheckState] = useState('idle'); // 'idle'|'checking'|'done'
+  // Live interaction check state
+  const [checkState, setCheckState] = useState('idle'); // 'idle' | 'checking' | 'done'
   const [checkResult, setCheckResult] = useState(null);
-  const [savedMedicineName, setSavedMedicineName] = useState('');
-
-  // Submit error
   const [submitError, setSubmitError] = useState(null);
   const [submitSuccess, setSubmitSuccess] = useState(null);
+  const [savedMedicineName, setSavedMedicineName] = useState('');
 
-  // ─── Socket.io setup ────────────────────────────────────────────────────────
-  const setupSocket = useCallback((userId) => {
-    // Don't create duplicate connections
-    if (socketRef.current?.connected) return;
+  const socketRef = useRef(null);
 
-    const socketUrl = import.meta.env.VITE_API_URL || (
-      window.location.origin.includes(':3000') || window.location.origin.includes(':5173')
-        ? 'http://localhost:5000'
-        : window.location.origin
-    );
+  // ─── Setup Socket.IO listener ───────────────────────────────────────────────
+  const setupSocket = useCallback((currentUserId) => {
+    if (socketRef.current) socketRef.current.disconnect();
 
+    const socketUrl = import.meta.env.VITE_API_URL || window.location.origin;
     const socket = socketIO(socketUrl, {
       transports: ['websocket', 'polling'],
       autoConnect: true,
     });
 
     socket.on('connect', () => {
-      console.log('[socket] connected:', socket.id);
-      socket.emit('join-patient-room', userId);
+      socket.emit('join-patient-room', { userId: currentUserId });
     });
 
-    socket.on('interaction-checked', (data) => {
-      console.log('[socket] interaction-checked:', data);
-      setCheckState('done');
+    socket.on('interaction-check-result', (data) => {
       setCheckResult(data);
+      setCheckState('done');
     });
 
-    socket.on('disconnect', () => console.log('[socket] disconnected'));
     socket.on('connect_error', (err) => {
       console.warn('[socket] connect_error:', err.message);
       // Graceful degradation — don't block the user

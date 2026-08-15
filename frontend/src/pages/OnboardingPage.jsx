@@ -18,6 +18,7 @@ import { patientApi } from '../api/auth';
 import Card from '../components/Card';
 import PageTransition from '../components/PageTransition';
 import { notify } from '../utils/toast';
+import { useAuth } from '../context/AuthContext';
 
 // ─── Condition chip options (from master spec) ───────────────────────────────
 const CONDITION_OPTIONS = [
@@ -79,6 +80,7 @@ const CHIP_STYLES = {
 
 export default function OnboardingPage() {
   const navigate = useNavigate();
+  const { token } = useAuth();
 
   const [age, setAge] = useState('');
   const [conditions, setConditions] = useState([]); // array of condition ids
@@ -88,7 +90,6 @@ export default function OnboardingPage() {
   // ─── Mutation ───────────────────────────────────────────────────────────────
   const saveProfileMutation = useMutation({
     mutationFn: ({ age, conditions, allergies }) => {
-      const token = localStorage.getItem('polysafe_token');
       return patientApi.saveProfile({ age, conditions, allergies }, token);
     },
     onSuccess: () => {

@@ -35,14 +35,8 @@ import { motion, useReducedMotion } from 'framer-motion';
 import { EmptyTrendsIllustration } from '../components/EmptyIllustrations';
 import { InsightsSkeleton } from '../components/Skeletons';
 
-function getToken() {
-  return localStorage.getItem('polysafe_token');
-}
-
 async function fetchInsights() {
-  const { data } = await axios.get('/patient/insights', {
-    headers: { Authorization: `Bearer ${getToken()}` },
-  });
+  const { data } = await axios.get('/patient/insights');
   return data;
 }
 

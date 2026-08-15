@@ -23,15 +23,12 @@ import { EmptyCaregiversIllustration, EmptyScheduleIllustration } from '../compo
 import { Skeleton } from '../components/Skeletons';
 import { notify } from '../utils/toast';
 
-function getToken() { return localStorage.getItem('polysafe_token'); }
-const headers = () => ({ Authorization: `Bearer ${getToken()}` });
-
 // ─── API helpers ──────────────────────────────────────────────────────────────
-const fetchInvites      = () => axios.get('/connection/caregiver-invites', { headers: headers() }).then(r => r.data);
-const fetchMyPatients   = () => axios.get('/caregiver/my-patients', { headers: headers() }).then(r => r.data);
-const fetchSummary      = (pid) => axios.get(`/caregiver/patient-summary/${pid}`, { headers: headers() }).then(r => r.data);
-const acceptInvite      = (id) => axios.post(`/connection/${id}/accept`, {}, { headers: headers() }).then(r => r.data);
-const revokeInvite      = (id) => axios.post(`/connection/${id}/revoke`, {}, { headers: headers() }).then(r => r.data);
+const fetchInvites      = () => axios.get('/connection/caregiver-invites').then(r => r.data);
+const fetchMyPatients   = () => axios.get('/caregiver/my-patients').then(r => r.data);
+const fetchSummary      = (pid) => axios.get(`/caregiver/patient-summary/${pid}`).then(r => r.data);
+const acceptInvite      = (id) => axios.post(`/connection/${id}/accept`).then(r => r.data);
+const revokeInvite      = (id) => axios.post(`/connection/${id}/revoke`).then(r => r.data);
 
 // ─── Status config ────────────────────────────────────────────────────────────
 const STATUS_CFG = {

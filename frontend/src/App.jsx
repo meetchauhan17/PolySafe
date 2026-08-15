@@ -2,6 +2,7 @@ import React, { Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'sonner';
+import { AuthProvider, useAuth } from './context/AuthContext';
 
 // Layouts (loaded eagerly for shell stability)
 import PatientLayout from './layouts/PatientLayout';
@@ -43,9 +44,10 @@ function RouteLoadingFallback() {
 }
 
 function RootRedirect() {
-  const token = localStorage.getItem('polysafe_token');
-  const role = (localStorage.getItem('polysafe_role') || '').toUpperCase();
-  if (!token) return <Navigate to="/login" replace />;
+  const { user, isLoading } = useAuth();
+  if (isLoading) return <RouteLoadingFallback />;
+  if (!user || user.isGuest) return <Navigate to="/login" replace />;
+  const role = (user.role || '').toUpperCase();
   if (role === 'DOCTOR') return <Navigate to="/doctor-dashboard" replace />;
   if (role === 'CAREGIVER') return <Navigate to="/caregiver-view" replace />;
   return <Navigate to="/home" replace />;
@@ -54,10 +56,11 @@ function RootRedirect() {
 export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <Toaster
-        position="top-right"
-        expand={false}
-        duration={4000}
+      <AuthProvider>
+        <Toaster
+          position="top-right"
+          expand={false}
+          duration={4000}
         offset="20px"
         toastOptions={{
           style: {
@@ -111,6 +114,7 @@ export default function App() {
           </Routes>
         </Suspense>
       </Router>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }

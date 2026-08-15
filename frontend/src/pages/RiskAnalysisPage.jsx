@@ -22,12 +22,8 @@ import { motion, useReducedMotion } from 'framer-motion';
 import { RiskAnalysisSkeleton } from '../components/Skeletons';
 
 // ─── API ──────────────────────────────────────────────────────────────────────
-function getToken() { return localStorage.getItem('polysafe_token'); }
-
 async function fetchFlag(flagId) {
-  const { data } = await axios.get(`/interaction-flag/${flagId}`, {
-    headers: { Authorization: `Bearer ${getToken()}` },
-  });
+  const { data } = await axios.get(`/interaction-flag/${flagId}`);
   return data;
 }
 

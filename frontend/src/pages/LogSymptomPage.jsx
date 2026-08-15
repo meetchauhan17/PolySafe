@@ -15,9 +15,6 @@ import {
 import Card from '../components/Card';
 import { notify } from '../utils/toast';
 
-// ─── API ──────────────────────────────────────────────────────────────────────
-function getToken() { return localStorage.getItem('polysafe_token'); }
-
 // ─── Quick-select symptom suggestions ────────────────────────────────────────
 const QUICK_SYMPTOMS = [
   'Leg swelling',
@@ -69,8 +66,7 @@ export default function LogSymptomPage() {
     try {
       const { data } = await axios.post(
         '/symptom',
-        { description: description.trim(), dateLogged: new Date(dateLogged).toISOString() },
-        { headers: { Authorization: `Bearer ${getToken()}` } }
+        { description: description.trim(), dateLogged: new Date(dateLogged).toISOString() }
       );
 
       notify.success('Symptom Logged Successfully', 'Cross-referencing against your medication timeline...');

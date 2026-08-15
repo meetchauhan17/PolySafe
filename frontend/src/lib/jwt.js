@@ -15,8 +15,7 @@ export function decodeJwtPayload(token) {
   }
 }
 
-export function getUserIdFromToken() {
-  const token = localStorage.getItem('polysafe_token');
+export function getUserIdFromToken(token) {
   if (!token) return null;
   const payload = decodeJwtPayload(token);
   return payload?.userId ?? null;

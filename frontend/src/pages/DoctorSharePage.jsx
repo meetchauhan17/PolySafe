@@ -18,24 +18,21 @@ import Card from '../components/Card';
 import { Skeleton } from '../components/Skeletons';
 import { notify } from '../utils/toast';
 
-function getToken() { return localStorage.getItem('polysafe_token'); }
-const headers = () => ({ Authorization: `Bearer ${getToken()}` });
-
 // ─── API helpers ──────────────────────────────────────────────────────────────
 async function generateCode() {
-  const { data } = await axios.post('/connection/generate-code', {}, { headers: headers() });
+  const { data } = await axios.post('/connection/generate-code');
   return data;
 }
 async function fetchPending() {
-  const { data } = await axios.get('/connection/pending', { headers: headers() });
+  const { data } = await axios.get('/connection/pending');
   return data;
 }
 async function approveConnection(id) {
-  const { data } = await axios.post(`/connection/${id}/approve`, {}, { headers: headers() });
+  const { data } = await axios.post(`/connection/${id}/approve`);
   return data;
 }
 async function revokeConnection(id) {
-  const { data } = await axios.post(`/connection/${id}/revoke`, {}, { headers: headers() });
+  const { data } = await axios.post(`/connection/${id}/revoke`);
   return data;
 }
 
