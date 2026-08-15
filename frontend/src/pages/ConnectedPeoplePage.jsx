@@ -23,6 +23,27 @@ import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { EmptyDoctorsIllustration, EmptyCaregiversIllustration } from '../components/EmptyIllustrations';
 import { Skeleton } from '../components/Skeletons';
 import { notify } from '../utils/toast';
+import { useAuth } from '../context/AuthContext';
+import { Lock } from 'lucide-react';
+
+const DEMO_CONNECTIONS = [
+  {
+    connectionId: 'demo-conn-1',
+    role: 'DOCTOR',
+    status: 'APPROVED',
+    name: 'Dr. Priya Sharma, MD',
+    registrationNumber: 'MCI-84920',
+    createdAt: new Date(Date.now() - 30 * 86400000).toISOString(),
+  },
+  {
+    connectionId: 'demo-conn-2',
+    role: 'CAREGIVER',
+    status: 'APPROVED',
+    name: 'Rajesh Kumar (Son)',
+    phone: '+91 98765 43210',
+    createdAt: new Date(Date.now() - 20 * 86400000).toISOString(),
+  },
+];
 
 // ─── API helpers ──────────────────────────────────────────────────────────────
 const fetchConnections = () =>
@@ -89,6 +110,7 @@ function ConnectionRow({ conn, onRevoke, revoking }) {
 
 // ─── Add Caregiver Panel ──────────────────────────────────────────────────────
 function AddCaregiverPanel({ onSuccess }) {
+  const { isGuest, requireAuth } = useAuth();
   const [phone, setPhone]   = useState('');
   const [error, setError]   = useState('');
   const [success, setSuccess] = useState('');
@@ -110,6 +132,10 @@ function AddCaregiverPanel({ onSuccess }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (isGuest) {
+      requireAuth('invite family caregivers');
+      return;
+    }
     setError('');
     setSuccess('');
     const trimmed = phone.trim();
@@ -153,12 +179,12 @@ function AddCaregiverPanel({ onSuccess }) {
         </div>
         <button
           type="submit"
-          disabled={!phone.trim() || mutation.isPending}
-          className="btn-primary w-full py-3"
+          disabled={(!phone.trim() && !isGuest) || mutation.isPending}
+          className="btn-primary w-full py-3 relative"
         >
           {mutation.isPending
             ? <><Loader2 className="w-4 h-4 animate-spin" /> Sending…</>
-            : <><Plus className="w-4 h-4" /> Send Caregiver Invite</>}
+            : <><Plus className="w-4 h-4" /> Send Caregiver Invite {isGuest && <Lock className="w-3.5 h-3.5 text-[#E7E1D3] ml-1" />}</>}
         </button>
       </form>
     </Card>
@@ -170,13 +196,15 @@ export default function ConnectedPeoplePage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const shouldReduceMotion = useReducedMotion();
+  const { isGuest, token, requireAuth } = useAuth();
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ['my-connections'],
     queryFn:  fetchConnections,
+    enabled:  !!token && !isGuest,
   });
 
-  const connections = data?.connections ?? [];
+  const connections = isGuest ? DEMO_CONNECTIONS : (data?.connections ?? (token ? [] : DEMO_CONNECTIONS));
 
   // Group by role
   const doctors    = connections.filter((c) => c.role === 'DOCTOR');
@@ -194,6 +222,10 @@ export default function ConnectedPeoplePage() {
   });
 
   const handleRevoke = (id) => {
+    if (isGuest) {
+      requireAuth('manage and revoke connection permissions');
+      return;
+    }
     if (window.confirm('Revoke access for this connection? They will no longer be able to view your records.')) {
       revokeMut.mutate(id);
     }

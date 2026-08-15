@@ -20,6 +20,7 @@ import {
   Users,
   QrCode,
   TrendingUp,
+  Lock,
 } from 'lucide-react';
 import { patientApi } from '../api/auth';
 import Card from '../components/Card';
@@ -117,7 +118,7 @@ const DEMO_DATA = {
 export default function HomePage() {
   const navigate = useNavigate();
   const shouldReduceMotion = useReducedMotion();
-  const { token, user } = useAuth();
+  const { token, user, isGuest, openGuestLockModal } = useAuth();
 
   const {
     data: summary,
@@ -452,10 +453,17 @@ export default function HomePage() {
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-2">
               <Link
                 to="/log-symptom"
-                className="btn-secondary py-3 text-xs sm:text-sm justify-center"
+                onClick={(e) => {
+                  if (isGuest) {
+                    e.preventDefault();
+                    openGuestLockModal('log symptoms');
+                  }
+                }}
+                className="btn-secondary py-3 text-xs sm:text-sm justify-center relative"
               >
                 <Activity className="w-4 h-4 text-orange-500" />
                 <span>Log Symptom</span>
+                {isGuest && <Lock className="w-3 h-3 text-[#8A6D3B] ml-1" />}
               </Link>
               <Link
                 to="/timeline"
@@ -480,10 +488,17 @@ export default function HomePage() {
               </Link>
               <Link
                 to="/share-with-doctor"
-                className="btn-secondary py-3 text-xs sm:text-sm justify-center sm:col-span-2"
+                onClick={(e) => {
+                  if (isGuest) {
+                    e.preventDefault();
+                    openGuestLockModal('generate clinical share codes');
+                  }
+                }}
+                className="btn-secondary py-3 text-xs sm:text-sm justify-center sm:col-span-2 relative"
               >
                 <QrCode className="w-4 h-4 text-[#1B4B66]" />
                 <span>Doctor QR Share</span>
+                {isGuest && <Lock className="w-3 h-3 text-[#8A6D3B] ml-1" />}
               </Link>
             </div>
           </>

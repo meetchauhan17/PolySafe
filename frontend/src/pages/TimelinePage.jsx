@@ -22,6 +22,78 @@ import Card from '../components/Card';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { EmptyTimelineIllustration } from '../components/EmptyIllustrations';
 import { TimelineSkeleton } from '../components/Skeletons';
+import { useAuth } from '../context/AuthContext';
+import { Lock } from 'lucide-react';
+
+const DEMO_TIMELINE_MEDICINES = [
+  {
+    id: 'demo-med-1',
+    name: 'Amitriptyline',
+    type: 'PRESCRIPTION',
+    dosage: '25mg at bedtime',
+    dateAdded: new Date(Date.now() - 90 * 86400000).toISOString(),
+    status: 'ACTIVE',
+    prescribedBy: 'Dr. Priya Sharma, MD',
+    flagged: true,
+    flagSeverity: 'Major',
+    flagMessage: 'Anticholinergic burden + QT prolongation risk when combined with Escitalopram',
+    flagId: 'demo-flag-1',
+    prescribingCascade: null,
+  },
+  {
+    id: 'demo-med-2',
+    name: 'Escitalopram',
+    type: 'PRESCRIPTION',
+    dosage: '10mg once daily',
+    dateAdded: new Date(Date.now() - 60 * 86400000).toISOString(),
+    status: 'ACTIVE',
+    prescribedBy: 'Dr. Priya Sharma, MD',
+    flagged: true,
+    flagSeverity: 'Major',
+    flagId: 'demo-flag-1',
+    prescribingCascade: null,
+  },
+  {
+    id: 'demo-med-3',
+    name: 'Amlodipine',
+    type: 'PRESCRIPTION',
+    dosage: '5mg in morning',
+    dateAdded: new Date(Date.now() - 45 * 86400000).toISOString(),
+    status: 'ACTIVE',
+    prescribedBy: 'Dr. Ramesh Patel, MD',
+    flagged: false,
+    prescribingCascade: null,
+  },
+  {
+    id: 'demo-med-4',
+    name: 'Furosemide',
+    type: 'PRESCRIPTION',
+    dosage: '20mg once daily',
+    dateAdded: new Date(Date.now() - 20 * 86400000).toISOString(),
+    status: 'ACTIVE',
+    prescribedBy: 'Dr. Ramesh Patel, MD',
+    flagged: false,
+    prescribingCascade: {
+      originalDrug: 'Amlodipine',
+      symptom: 'Leg swelling (Peripheral Edema)',
+      message: 'Prescribed to treat peripheral edema caused by Amlodipine calcium-channel blockade.',
+    },
+  },
+  {
+    id: 'demo-med-5',
+    name: 'Ashwagandha Extract',
+    type: 'HERBAL',
+    dosage: '500mg daily',
+    dateAdded: new Date(Date.now() - 10 * 86400000).toISOString(),
+    status: 'ACTIVE',
+    prescribedBy: null,
+    flagged: true,
+    flagSeverity: 'Moderate',
+    flagMessage: 'Synergistic central nervous system sedation when taken with Amitriptyline',
+    flagId: 'demo-flag-2',
+    prescribingCascade: null,
+  },
+];
 
 // ─── API ──────────────────────────────────────────────────────────────────────
 async function fetchTimeline() {
@@ -43,10 +115,12 @@ function formatDate(dateStr) {
 export default function TimelinePage() {
   const navigate = useNavigate();
   const shouldReduceMotion = useReducedMotion();
+  const { isGuest, token, openGuestLockModal } = useAuth();
 
-  const { data, isLoading, isError, error } = useQuery({
+  const { data, isLoading, isError } = useQuery({
     queryKey: ['patient-timeline'],
     queryFn: fetchTimeline,
+    enabled: !!token && !isGuest,
     retry: 1,
   });
 
@@ -58,7 +132,7 @@ export default function TimelinePage() {
     );
   }
 
-  const medicines = data?.medicines ?? [];
+  const medicines = isGuest ? DEMO_TIMELINE_MEDICINES : (data?.medicines ?? (token ? [] : DEMO_TIMELINE_MEDICINES));
   const flaggedCount = medicines.filter((m) => m.flagged).length;
   const herbalCount = medicines.filter((m) => m.type === 'HERBAL').length;
 
@@ -79,15 +153,22 @@ export default function TimelinePage() {
               Medication Timeline
             </h1>
             <p className="text-xs text-[#6B726C]">
-              Complete chronological prescription and supplement history
+              {isGuest ? 'Sample interactive prescription and cascade timeline' : 'Complete chronological prescription and supplement history'}
             </p>
           </div>
           <Link
             to="/add-medicine"
-            className="btn-primary flex items-center gap-1.5 text-xs font-bold px-3.5 py-2.5"
+            onClick={(e) => {
+              if (isGuest) {
+                e.preventDefault();
+                openGuestLockModal('add medications');
+              }
+            }}
+            className="btn-primary flex items-center gap-1.5 text-xs font-bold px-3.5 py-2.5 relative"
           >
             <Plus className="w-4 h-4" />
             <span>Add Medicine</span>
+            {isGuest && <Lock className="w-3 h-3 text-[#E7E1D3] ml-0.5" />}
           </Link>
         </div>
 

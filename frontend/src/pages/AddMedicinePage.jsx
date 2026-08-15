@@ -226,7 +226,7 @@ function InteractionResult({ result, medicineName }) {
 // ─── Main Component ───────────────────────────────────────────────────────────
 export default function AddMedicinePage() {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, isGuest, requireAuth } = useAuth();
   const fileInputRef = useRef(null);
 
   // Form inputs
@@ -354,6 +354,11 @@ export default function AddMedicinePage() {
   const handleFileSelect = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    if (isGuest) {
+      requireAuth('scan and extract prescription labels');
+      e.target.value = '';
+      return;
+    }
     if (previewUrl) URL.revokeObjectURL(previewUrl);
     setPreviewUrl(URL.createObjectURL(file));
     setScanState('idle'); setScanError(null);
@@ -368,6 +373,10 @@ export default function AddMedicinePage() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (isGuest) {
+      requireAuth('add medications to your profile');
+      return;
+    }
     setSubmitError(null);
     if (!name.trim()) { setSubmitError('Please enter or confirm the medicine name.'); return; }
     addMutation.mutate({ name: name.trim(), type, dosage: dosage.trim() || undefined });

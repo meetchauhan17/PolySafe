@@ -367,20 +367,32 @@ export default function LoginPage() {
                 <ArrowRight className="w-5 h-5 text-[#6B726C] group-hover:text-[#1B4B66] group-hover:translate-x-1 transition-all self-center" />
               </div>
 
-              {/* Guest / Demo Mode */}
-              <div className="pt-2 border-t border-[#E7E1D3] flex flex-col items-center">
-                <button
-                  type="button"
-                  onClick={() => {
-                    enterGuestMode();
-                    notify.info('Demo Mode Active', 'Exploring PolySafe with sample mock records.');
-                    navigate('/home', { replace: true });
-                  }}
-                  className="inline-flex items-center gap-2 text-xs font-bold text-[#2B6E5E] hover:text-[#1f5246] py-2 px-4 rounded-xl hover:bg-[#E4F2E9] transition-all"
-                >
-                  <Compass className="w-4 h-4 text-[#2B6E5E]" />
-                  <span>Explore Demo Patient (Guest Mode — No Login Required)</span>
-                </button>
+              {/* Card 4: Continue as Guest */}
+              <div
+                onClick={() => {
+                  enterGuestMode();
+                  notify.info('Demo Mode Active', 'Exploring PolySafe with realistic sample data.');
+                  navigate('/home', { replace: true });
+                }}
+                className="polysafe-card-interactive p-5 flex items-start space-x-4 group cursor-pointer border-dashed border-2 border-[#2B6E5E]/40 hover:border-[#2B6E5E] bg-[#E4F2E9]/20"
+              >
+                <div className="p-3.5 bg-[#2B6E5E]/15 text-[#2B6E5E] rounded-2xl group-hover:bg-[#2B6E5E] group-hover:text-white transition-colors">
+                  <Compass className="w-6 h-6" />
+                </div>
+                <div className="flex-1">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-lg font-bold text-[#232724] group-hover:text-[#2B6E5E] transition-colors">
+                      Continue as Guest
+                    </h3>
+                    <span className="text-[11px] font-bold bg-[#2B6E5E] text-white px-2.5 py-0.5 rounded-full shadow-sm">
+                      Instant Demo
+                    </span>
+                  </div>
+                  <p className="text-xs text-[#6B726C] mt-1 leading-relaxed">
+                    Preview PolySafe with realistic sample medications, risk graphs, and timeline cascades without logging in.
+                  </p>
+                </div>
+                <ArrowRight className="w-5 h-5 text-[#6B726C] group-hover:text-[#2B6E5E] group-hover:translate-x-1 transition-all self-center" />
               </div>
             </div>
           </Card>

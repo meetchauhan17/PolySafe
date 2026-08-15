@@ -12,11 +12,12 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import {
   ArrowLeft, QrCode, Copy, RefreshCw, Clock, CheckCircle2, XCircle,
-  Stethoscope, ShieldCheck, AlertCircle, Loader2, Info, ChevronRight, Users,
+  Stethoscope, ShieldCheck, AlertCircle, Loader2, Info, ChevronRight, Users, Lock,
 } from 'lucide-react';
 import Card from '../components/Card';
 import { Skeleton } from '../components/Skeletons';
 import { notify } from '../utils/toast';
+import { useAuth } from '../context/AuthContext';
 
 // ─── API helpers ──────────────────────────────────────────────────────────────
 async function generateCode() {
@@ -41,11 +42,11 @@ function ExpiryCountdown({ expiresAt }) {
   const [label, setLabel] = useState('');
   useEffect(() => {
     const update = () => {
-      const ms = new Date(expiresAt) - Date.now();
+      const ms = new Date(expiresAt).getTime() - Date.now();
       if (ms <= 0) { setLabel('Expired'); return; }
-      const h = Math.floor(ms / 3600000);
-      const m = Math.floor((ms % 3600000) / 60000);
-      setLabel(h > 0 ? `${h}h ${m}m remaining` : `${m}m remaining`);
+      const m = Math.floor(ms / 60000);
+      const s = Math.floor((ms % 60000) / 1000);
+      setLabel(`Expires in ${m}m ${s < 10 ? '0' : ''}${s}s`);
     };
     update();
     const t = setInterval(update, 30000);
@@ -64,13 +65,22 @@ function ExpiryCountdown({ expiresAt }) {
 export default function DoctorSharePage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const [codeData, setCodeData] = useState(null);  // { shareCode, qrCode, expiresAt, connectionId }
+  const { isGuest, requireAuth } = useAuth();
+  const [codeData, setCodeData] = useState(
+    isGuest
+      ? { shareCode: '849-210', expiresAt: new Date(Date.now() + 15 * 60000).toISOString() }
+      : null
+  );
   const [copied, setCopied]     = useState(false);
   const [generating, setGenerating] = useState(false);
   const [genError, setGenError]     = useState('');
 
   // ── Generate code ──────────────────────────────────────────────────────────
   const handleGenerate = useCallback(async () => {
+    if (isGuest) {
+      requireAuth('generate new clinical share codes');
+      return;
+    }
     setGenerating(true);
     setGenError('');
     try {
@@ -85,10 +95,14 @@ export default function DoctorSharePage() {
     } finally {
       setGenerating(false);
     }
-  }, [queryClient]);
+  }, [isGuest, requireAuth, queryClient]);
 
-  // Auto-generate on mount
-  useEffect(() => { handleGenerate(); }, []);
+  // Auto-generate on mount if not guest
+  useEffect(() => {
+    if (!isGuest) {
+      handleGenerate();
+    }
+  }, [isGuest, handleGenerate]);
 
   // ── Copy to clipboard ──────────────────────────────────────────────────────
   const handleCopy = () => {
@@ -231,10 +245,11 @@ export default function DoctorSharePage() {
             <button
               onClick={handleGenerate}
               disabled={generating}
-              className="btn-secondary w-full py-3 text-sm"
+              className="btn-secondary w-full py-3 text-sm relative"
             >
               <RefreshCw className="w-4 h-4" />
-              Generate New Code
+              <span>Generate New Code</span>
+              {isGuest && <Lock className="w-3.5 h-3.5 text-[#8A6D3B] ml-1" />}
             </button>
           </Card>
         ) : null}

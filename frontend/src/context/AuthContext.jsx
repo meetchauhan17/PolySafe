@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
+import GuestLockModal from '../components/GuestLockModal';
 
 const TOKEN_KEY = 'polysafe_token';
 const USER_KEY = 'polysafe_user';
@@ -50,6 +51,23 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [guestLockState, setGuestLockState] = useState({ isOpen: false, featureName: 'this feature' });
+
+  const openGuestLockModal = useCallback((featureName = 'this feature') => {
+    setGuestLockState({ isOpen: true, featureName });
+  }, []);
+
+  const closeGuestLockModal = useCallback(() => {
+    setGuestLockState((prev) => ({ ...prev, isOpen: false }));
+  }, []);
+
+  const requireAuth = useCallback((featureName = 'this feature') => {
+    if (!user || user.isGuest || !token) {
+      openGuestLockModal(featureName);
+      return true; // blocked by auth check
+    }
+    return false; // allowed
+  }, [user, token, openGuestLockModal]);
 
   // ─── Session Validator ──────────────────────────────────────────────────────
   const validateSession = useCallback(() => {
@@ -175,20 +193,31 @@ export function AuthProvider({ children }) {
     });
   }, []);
 
+  const isGuest = Boolean(user?.isGuest);
+
   const value = {
     user,
     token,
     isLoading,
+    isGuest,
     isAuthenticated: !!user && !user.isGuest && !!token,
     login,
     logout,
     enterGuestMode,
+    openGuestLockModal,
+    closeGuestLockModal,
+    requireAuth,
     checkSession: validateSession,
   };
 
   return (
     <AuthContext.Provider value={value}>
       {children}
+      <GuestLockModal
+        isOpen={guestLockState.isOpen}
+        onClose={closeGuestLockModal}
+        featureName={guestLockState.featureName}
+      />
     </AuthContext.Provider>
   );
 }

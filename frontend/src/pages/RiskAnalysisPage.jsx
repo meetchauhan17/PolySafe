@@ -20,9 +20,88 @@ import {
 import Card from '../components/Card';
 import { motion, useReducedMotion } from 'framer-motion';
 import { RiskAnalysisSkeleton } from '../components/Skeletons';
+import { useAuth } from '../context/AuthContext';
+
+const DEMO_FLAG_DETAILS = {
+  'demo-flag-1': {
+    flag: {
+      id: 'demo-flag-1',
+      severity: 'Major',
+      plainExplanation: 'Taking Amitriptyline with Escitalopram significantly increases your risk of irregular heart rhythms (QT prolongation) and extreme drowsiness or confusion.',
+      clinicalExplanation: 'Pharmacodynamic synergism: concurrent use of tricyclic antidepressant (Amitriptyline) and selective serotonin reuptake inhibitor (Escitalopram) prolongs the QTc interval and elevates serotonin syndrome and anticholinergic burden risks.',
+      actionPlan: 'Contact your prescribing physician to review concurrent antidepressant therapy and consider alternative non-anticholinergic options or baseline ECG monitoring.',
+      doctorQuestions: [
+        'Could we replace Amitriptyline with a lower-anticholinergic alternative for sleep/pain?',
+        'Should we perform a baseline ECG to verify QT interval safety?',
+        'What early symptoms of serotonin or anticholinergic excess should my caregiver monitor?',
+      ],
+      medicineA: {
+        id: 'demo-med-1',
+        name: 'Amitriptyline',
+        type: 'PRESCRIPTION',
+        dosage: '25mg at bedtime',
+        prescribedBy: 'Dr. Priya Sharma, MD',
+        dateAdded: new Date(Date.now() - 90 * 86400000).toISOString(),
+      },
+      medicineB: {
+        id: 'demo-med-2',
+        name: 'Escitalopram',
+        type: 'PRESCRIPTION',
+        dosage: '10mg once daily',
+        prescribedBy: 'Dr. Priya Sharma, MD',
+        dateAdded: new Date(Date.now() - 60 * 86400000).toISOString(),
+      },
+    },
+    cumulativeBurden: {
+      totalScore: 4,
+      level: 'Critical',
+      description: 'Severe cumulative anticholinergic burden from multiple active agents.',
+    },
+    acbScores: [
+      { medicineId: 'demo-med-1', name: 'Amitriptyline', score: 3 },
+      { medicineId: 'demo-med-2', name: 'Escitalopram', score: 0 },
+      { medicineId: 'demo-med-3', name: 'Amlodipine', score: 0 },
+      { medicineId: 'demo-med-5', name: 'Ashwagandha Extract', score: 1 },
+    ],
+  },
+  'demo-flag-2': {
+    flag: {
+      id: 'demo-flag-2',
+      severity: 'Moderate',
+      plainExplanation: 'Combining Ashwagandha herbal supplement with prescription Amitriptyline causes additive central nervous system sedation, dizziness, and fall risk.',
+      clinicalExplanation: 'GABA-mimetic and sedative herbal synergy with tricyclic antidepressant potentiates psychomotor impairment and orthostatic hypotension.',
+      actionPlan: 'Discuss all herbal supplements with your physician or pharmacist before combining with central nervous system active medications.',
+      doctorQuestions: [
+        'Is it safe to continue Ashwagandha alongside my current prescriptions?',
+        'Does this combination increase my nighttime fall risk?',
+      ],
+      medicineA: {
+        id: 'demo-med-1',
+        name: 'Amitriptyline',
+        type: 'PRESCRIPTION',
+        dosage: '25mg at bedtime',
+      },
+      medicineB: {
+        id: 'demo-med-5',
+        name: 'Ashwagandha Extract',
+        type: 'HERBAL',
+        dosage: '500mg daily',
+      },
+    },
+    cumulativeBurden: {
+      totalScore: 4,
+      level: 'Critical',
+      description: 'Severe cumulative sedation and anticholinergic load.',
+    },
+    acbScores: [
+      { medicineId: 'demo-med-1', name: 'Amitriptyline', score: 3 },
+      { medicineId: 'demo-med-5', name: 'Ashwagandha Extract', score: 1 },
+    ],
+  },
+};
 
 // ─── API ──────────────────────────────────────────────────────────────────────
-async function fetchFlag(flagId) {
+async function fetchFlagDetail(flagId) {
   const { data } = await axios.get(`/interaction-flag/${flagId}`);
   return data;
 }
@@ -139,16 +218,22 @@ export default function RiskAnalysisPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const shouldReduceMotion = useReducedMotion();
+  const { isGuest, token } = useAuth();
+
+  const isDemoFlag = isGuest || id?.startsWith('demo-');
+  const demoFallback = DEMO_FLAG_DETAILS[id] || DEMO_FLAG_DETAILS['demo-flag-1'];
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ['flag-detail', id],
     queryFn:  () => fetchFlagDetail(id),
+    enabled:  !!token && !isDemoFlag,
     staleTime: 60_000,
   });
 
-  const flag             = data?.flag;
-  const cumulativeBurden = data?.cumulativeBurden;
-  const acbScores        = data?.acbScores ?? [];
+  const activeData = isDemoFlag ? demoFallback : (data || demoFallback);
+  const flag             = activeData?.flag;
+  const cumulativeBurden = activeData?.cumulativeBurden;
+  const acbScores        = activeData?.acbScores ?? [];
 
   const scoreFor = (medId) => acbScores.find((s) => s.medicineId === medId)?.score ?? null;
 

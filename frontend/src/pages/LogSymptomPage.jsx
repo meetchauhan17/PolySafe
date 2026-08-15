@@ -14,6 +14,8 @@ import {
 } from 'lucide-react';
 import Card from '../components/Card';
 import { notify } from '../utils/toast';
+import { useAuth } from '../context/AuthContext';
+import { Lock } from 'lucide-react';
 
 // ─── Quick-select symptom suggestions ────────────────────────────────────────
 const QUICK_SYMPTOMS = [
@@ -37,6 +39,7 @@ function todayISO() {
 
 export default function LogSymptomPage() {
   const navigate  = useNavigate();
+  const { isGuest, requireAuth } = useAuth();
   const textareaRef = useRef(null);
 
   const [description, setDescription] = useState('');
@@ -54,6 +57,10 @@ export default function LogSymptomPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (isGuest) {
+      requireAuth('log symptoms and cross-reference cascades');
+      return;
+    }
     setError(null);
 
     if (!description.trim() || description.trim().length < 3) {
@@ -197,8 +204,8 @@ export default function LogSymptomPage() {
             <button
               type="submit"
               id="log-symptom-submit"
-              disabled={isSubmitting || !description.trim()}
-              className="btn-primary w-full py-3.5 flex items-center justify-center gap-2"
+              disabled={isSubmitting || (!description.trim() && !isGuest)}
+              className="btn-primary w-full py-3.5 flex items-center justify-center gap-2 relative"
             >
               {isSubmitting ? (
                 <>
@@ -209,6 +216,7 @@ export default function LogSymptomPage() {
                 <>
                   <span>Check for Prescribing Cascades</span>
                   <ArrowRight className="w-4 h-4" />
+                  {isGuest && <Lock className="w-4 h-4 text-[#E7E1D3] ml-1" />}
                 </>
               )}
             </button>

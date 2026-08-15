@@ -34,6 +34,7 @@ import Card from '../components/Card';
 import { motion, useReducedMotion } from 'framer-motion';
 import { EmptyTrendsIllustration } from '../components/EmptyIllustrations';
 import { InsightsSkeleton } from '../components/Skeletons';
+import { useAuth } from '../context/AuthContext';
 
 async function fetchInsights() {
   const { data } = await axios.get('/patient/insights');
@@ -133,11 +134,13 @@ const SAMPLE_BURDEN_DATA = [
 export default function InsightsPage() {
   const navigate = useNavigate();
   const shouldReduceMotion = useReducedMotion();
+  const { isGuest, token } = useAuth();
   const [chartMode, setChartMode] = useState('area'); // 'area' | 'bar'
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ['patient-insights'],
     queryFn: fetchInsights,
+    enabled: !!token && !isGuest,
   });
 
   if (isLoading) {
