@@ -17,26 +17,33 @@ api.interceptors.request.use((config) => {
 });
 
 export const authApi = {
-  // Patient / Caregiver Email OTP
-  sendPatientOtp: async ({ name, email }) => {
-    const payload = typeof email === 'string' ? { name, email } : (typeof name === 'string' && !email ? { email: name } : { name, email });
-    const response = await api.post('/auth/patient/send-otp', payload);
-    return response.data;
+  // ── Step 1: Check if an email already has an account (branches signup vs login) ──
+  checkEmail: async ({ email, role }) => {
+    const response = await api.post('/auth/check-email', { email, role });
+    return response.data; // { exists: boolean }
   },
 
-  verifyPatientOtp: async ({ email, code, role, name }) => {
-    const response = await api.post('/auth/patient/verify-otp', { email, code, role, name });
-    return response.data;
+  // ── New-user flow: hash password server-side, store pending row, send OTP ────
+  signupSendOtp: async ({ name, email, password, role }) => {
+    const response = await api.post('/auth/patient/signup-send-otp', { name, email, password, role });
+    return response.data; // { message, email, _devOtp? }
   },
 
-  // Doctor Auth
+  // ── New-user flow: verify OTP, promote PendingSignup → real User ─────────────
+  verifySignupOtp: async ({ email, code }) => {
+    const response = await api.post('/auth/patient/verify-signup-otp', { email, code });
+    return response.data; // { token, user, isNewUser }
+  },
+
+  // ── Returning-user flow: email + password only, no OTP ───────────────────────
+  patientLogin: async ({ email, password, role }) => {
+    const response = await api.post('/auth/patient/login', { email, password, role });
+    return response.data; // { token, user }
+  },
+
+  // ── Doctor Auth (unchanged) ───────────────────────────────────────────────────
   doctorSignup: async ({ email, password, name, registrationNumber }) => {
-    const response = await api.post('/auth/doctor/signup', {
-      email,
-      password,
-      name,
-      registrationNumber,
-    });
+    const response = await api.post('/auth/doctor/signup', { email, password, name, registrationNumber });
     return response.data;
   },
 

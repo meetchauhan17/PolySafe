@@ -1,83 +1,90 @@
 /**
- * PolySafe Centralized Design Tokens
+ * PolySafe Centralized Design Tokens — Neumorphic (Soft UI) Edition
  * frontend/src/styles/tokens.css
  *
- * Single source of truth for colors, typography, spacing, border radii, and shadows.
- * Avoids one-off hex values and generic SaaS defaults.
+ * Warm Clay Neumorphism:
+ * - Base Surface: #EDE8DC (warm clay material)
+ * - Foreground: #1C2B27 (PolySafe ink, WCAG AAA compliant 11.99:1)
+ * - Muted Text: #5C6B64 (WCAG AA compliant 4.65:1)
+ * - Accent: #2B6E5E (Trust Teal) | Hover: #3D8A76
+ * - Shadows: Calculated for #EDE8DC warm base (highlight rgba(255,255,255,0.65), shadow rgba(191,180,155,0.55))
+ * - Typography: Fraunces (Headings) + Source Sans 3 (Body) + IBM Plex Mono (Dosage/Codes)
+ * - Radius: 32px (Containers), 16px (Buttons), 12px (Inner tiles), 9999px (Icon Wells)
  */
 
 :root {
-  /* ── Core Brand Palette ────────────────────────────────────────────── */
-  --brand-primary: #2B6E5E;              /* Deep Teal */
-  --brand-primary-hover: #22574A;
-  --brand-primary-active: #1B453A;
-  --brand-primary-light: #E4F2E9;        /* Light Teal Tint (10%) */
-  --brand-primary-muted: rgba(43, 110, 94, 0.08);
+  /* ── Core Brand Neumorphic Palette ─────────────────────────────────── */
+  --brand-paper: #EDE8DC;                /* Warm Clay App Base */
+  --brand-card: #EDE8DC;                 /* Neumorphic Molded Surface */
+  --brand-surface-subtle: #E6E0D3;       /* Sub-surface / Inset Well */
+  --brand-border: transparent;           /* Transparent by default in Neumorphic Soft UI */
+  --brand-border-visible: #DCD5C6;       /* Subtle edge accent when needed */
 
-  --brand-paper: #FBF8F2;                /* Warm Parchment App Background */
-  --brand-card: #FFFFFF;                 /* Pure Card White */
-  --brand-surface-subtle: #F5F0E8;       /* Warm Secondary Surface */
-  --brand-border: #E7E1D3;               /* Warm Border */
-  --brand-border-dark: #D3CABA;          /* Darker Warm Border */
+  --brand-text: #1C2B27;                 /* Ink (11.99:1 contrast ratio against #EDE8DC) */
+  --brand-muted: #5C6B64;                /* Muted text (4.65:1 contrast ratio against #EDE8DC) */
+  --brand-subtle: #85948C;               /* Subtle text / secondary captions */
 
-  --brand-text: #232724;                 /* Charcoal Text */
-  --brand-muted: #6B726C;                /* Muted Text */
-  --brand-subtle: #9CA3AF;               /* Very Subtle Text / Icons */
+  --brand-primary: #2B6E5E;              /* Trust Teal Accent */
+  --brand-primary-hover: #3D8A76;        /* Light Teal Accent */
+  --brand-primary-active: #22574A;
+  --brand-primary-light: #E4F2E9;
+  --brand-primary-muted: rgba(43, 110, 94, 0.12);
 
-  /* ── Clinical Safety Statuses ──────────────────────────────────────── */
-  /* Safe / All Clear */
+  /* ── Neumorphic Shadow System ──────────────────────────────────────── */
+  --neu-shadow-light: rgba(255, 255, 255, 0.65);
+  --neu-shadow-dark: rgba(191, 180, 155, 0.55);
+
+  --neu-extruded: 9px 9px 16px rgba(191, 180, 155, 0.55), -9px -9px 16px rgba(255, 255, 255, 0.65);
+  --neu-extruded-hover: 12px 12px 20px rgba(191, 180, 155, 0.65), -12px -12px 20px rgba(255, 255, 255, 0.75);
+  --neu-extruded-sm: 4px 4px 8px rgba(191, 180, 155, 0.50), -4px -4px 8px rgba(255, 255, 255, 0.65);
+  --neu-inset: inset 6px 6px 10px rgba(191, 180, 155, 0.55), inset -6px -6px 10px rgba(255, 255, 255, 0.65);
+  --neu-inset-deep: inset 10px 10px 20px rgba(191, 180, 155, 0.65), inset -10px -10px 20px rgba(255, 255, 255, 0.75);
+  --neu-inset-sm: inset 3px 3px 6px rgba(191, 180, 155, 0.50), inset -3px -3px 6px rgba(255, 255, 255, 0.60);
+
+  /* ── Clinical Safety Statuses (SAFETY CARVE-OUT) ────────────────────── */
+  /* Must NOT blend into clay background; keep real visible high-contrast backgrounds & 2px borders */
   --status-safe: #2F8558;
   --status-safe-bg: #E4F2E9;
   --status-safe-border: #2F8558;
   --status-safe-text: #1A5C3A;
 
-  /* Caution / Moderate */
   --status-caution: #B5791A;
   --status-caution-bg: #FBEED9;
   --status-caution-border: #B5791A;
   --status-caution-text: #7A4A0A;
 
-  /* Danger / Critical / Major / Contraindicated */
   --status-danger: #B23D25;
   --status-danger-bg: #FBE4DE;
   --status-danger-border: #B23D25;
   --status-danger-text: #7A1A0A;
 
-  /* Timeline & Accent */
-  --status-accent: #E0824B;              /* Timeline Orange Line */
+  --status-accent: #E0824B;              /* Timeline Orange Thread */
   --status-accent-light: #FDF3EB;
 
   /* ── Role Identity Accents ─────────────────────────────────────────── */
-  /* Patient: Deep Teal (#2B6E5E) */
   --role-patient: #2B6E5E;
   --role-patient-bg: #E4F2E9;
 
-  /* Doctor: Clinical Navy (#1B4B66) */
   --role-doctor: #1B4B66;
   --role-doctor-bg: #E9F1F5;
-  --role-doctor-border: rgba(27, 75, 102, 0.25);
+  --role-doctor-border: rgba(27, 75, 102, 0.35);
 
-  /* Caregiver: Warm Earth Brown (#8A6D3B) */
   --role-caregiver: #8A6D3B;
   --role-caregiver-bg: #F7F3EB;
-  --role-caregiver-border: rgba(138, 109, 59, 0.25);
+  --role-caregiver-border: rgba(138, 109, 59, 0.35);
 
   /* ── Typography Tokens ─────────────────────────────────────────────── */
   --font-heading: 'Fraunces', Georgia, serif;
   --font-body: 'Source Sans 3', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
-  /* ── Border Radii ──────────────────────────────────────────────────── */
-  --radius-card: 16px;                   /* Standard PolySafe Card */
-  --radius-interactive: 18px;            /* Interactive Hero Card */
-  --radius-button: 14px;                 /* Buttons */
-  --radius-input: 14px;                  /* Text inputs */
-  --radius-chip: 10px;                   /* Tags / Chips */
-  --radius-pill: 9999px;                 /* Badges / Dots */
-
-  /* ── Shadows ───────────────────────────────────────────────────────── */
-  --shadow-card: 0 6px 16px rgba(28, 43, 39, 0.10);
-  --shadow-card-hover: 0 10px 24px rgba(43, 110, 94, 0.14);
-  --shadow-button: 0 4px 12px rgba(43, 110, 94, 0.22);
-  --shadow-dropdown: 0 12px 32px rgba(28, 43, 39, 0.12);
+  /* ── Border Radii (Neumorphic Spec) ────────────────────────────────── */
+  --radius-card: 32px;                   /* 32px for containers / cards */
+  --radius-interactive: 32px;
+  --radius-button: 16px;                 /* 16px for buttons */
+  --radius-input: 16px;                  /* 16px for inputs */
+  --radius-inner: 12px;                  /* 12px for inner elements / tiles */
+  --radius-chip: 12px;
+  --radius-well: 9999px;                 /* Circular icon wells */
+  --radius-pill: 9999px;
 }

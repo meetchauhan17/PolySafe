@@ -140,9 +140,14 @@ router.get('/home-summary', auth, async (req, res) => {
       where: { userId },
       include: {
         medicines: {
+          where: { removedAt: null },
           orderBy: { dateAdded: 'asc' },
         },
         interactionFlags: {
+          where: {
+            medicineA: { removedAt: null },
+            medicineB: { removedAt: null },
+          },
           include: {
             medicineA: { select: { id: true, name: true, type: true, dosage: true } },
             medicineB: { select: { id: true, name: true, type: true, dosage: true } },
@@ -166,7 +171,7 @@ router.get('/home-summary', auth, async (req, res) => {
 
     const { medicines, interactionFlags } = patient;
 
-    // 2. Derive "today's schedule" from the medicine list
+    // 2. Derive "today's schedule" from the active medicine list
     //    Rule: cycle through TIME_SLOTS using the medicine's index in the list.
     const today = new Date().toLocaleDateString('en-IN', {
       weekday: 'long',
@@ -219,9 +224,11 @@ router.get('/home-summary', auth, async (req, res) => {
 // GET /patient/timeline
 // Returns all medicines for the authenticated patient in descending date order,
 // each enriched with:
-//   - source:    human-readable label (e.g. "Self-logged · Herbal" or "Connected Doctor")
-//   - sourceRole: "self" | "doctor" | "caregiver" | "pharmacist"
-//   - flags:     any InteractionFlags involving this medicine (id, severity, counterpartName)
+//   - source:        human-readable label (e.g. "Self-logged · Herbal" or "Connected Doctor")
+//   - sourceRole:    "self" | "doctor" | "caregiver" | "pharmacist"
+//   - discontinued:  boolean (true if soft-deleted)
+//   - removedAt:     ISO timestamp if discontinued
+//   - flags:         any InteractionFlags involving this medicine (id, severity, counterpartName)
 // ═════════════════════════════════════════════════════════════════════════════
 router.get('/timeline', auth, async (req, res) => {
   const { userId } = req.user;
@@ -234,7 +241,7 @@ router.get('/timeline', auth, async (req, res) => {
       return res.status(200).json({ medicines: [], total: 0 });
     }
 
-    // Fetch all medicines with addedByUser and both sets of interaction flags
+    // Fetch all medicines (including discontinued for historical tracking) with addedByUser
     const medicines = await prisma.medicine.findMany({
       where:   { patientId: patient.id },
       orderBy: { dateAdded: 'desc' },
@@ -279,7 +286,6 @@ router.get('/timeline', auth, async (req, res) => {
         const role = adder.role;
         if (role === 'DOCTOR') {
           sourceRole  = 'doctor';
-          // Show an anonymised identifier — e-mail prefix or phone last-4
           const identifier = adder.email
             ? `Dr. ${adder.email.split('@')[0]}`
             : adder.phone
@@ -328,9 +334,11 @@ router.get('/timeline', auth, async (req, res) => {
         dosage:           med.dosage,
         standardizedCode: med.standardizedCode,
         dateAdded:        med.dateAdded,
+        removedAt:        med.removedAt,
+        discontinued:     !!med.removedAt,
         sourceLabel,
         sourceRole,
-        flagged:          allFlags.length > 0,
+        flagged:          !med.removedAt && allFlags.length > 0,
         flags:            allFlags,
       };
     });

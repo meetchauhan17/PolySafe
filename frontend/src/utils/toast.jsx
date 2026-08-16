@@ -107,3 +107,11 @@ export const notify = {
     ), { duration: 4000 });
   },
 };
+
+// Named helper exports per Prompt 3 spec: showSuccess(msg), showError(msg), showInfo(msg)
+export const showSuccess = (title, description) => notify.success(title, description);
+export const showError   = (title, description) => notify.error(title, description);
+export const showInfo    = (title, description) => notify.info(title, description);
+export const showWarning = (title, description) => notify.warning(title, description);
+
+export default notify;

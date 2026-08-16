@@ -9,22 +9,46 @@ import PatientLayout from './layouts/PatientLayout';
 import DoctorLayout from './layouts/DoctorLayout';
 import CaregiverLayout from './layouts/CaregiverLayout';
 import ProtectedRoute from './components/ProtectedRoute';
+import ErrorBoundary from './components/ErrorBoundary';
 import { HomeSkeleton } from './components/Skeletons';
 
-// Route-based Code Splitting with React.lazy
-const LoginPage            = lazy(() => import('./pages/LoginPage'));
-const OnboardingPage       = lazy(() => import('./pages/OnboardingPage'));
-const HomePage             = lazy(() => import('./pages/HomePage'));
-const AddMedicinePage      = lazy(() => import('./pages/AddMedicinePage'));
-const RiskAnalysisPage     = lazy(() => import('./pages/RiskAnalysisPage'));
-const LogSymptomPage       = lazy(() => import('./pages/LogSymptomPage'));
-const SymptomResultPage    = lazy(() => import('./pages/SymptomResultPage'));
-const TimelinePage         = lazy(() => import('./pages/TimelinePage'));
-const InsightsPage         = lazy(() => import('./pages/InsightsPage'));
-const DoctorDashboardPage  = lazy(() => import('./pages/DoctorDashboardPage'));
-const DoctorSharePage      = lazy(() => import('./pages/DoctorSharePage'));
-const CaregiverViewPage    = lazy(() => import('./pages/CaregiverViewPage'));
-const ConnectedPeoplePage  = lazy(() => import('./pages/ConnectedPeoplePage'));
+// Auto-recovering lazy import helper to prevent blank screens on chunk mismatch
+function lazyWithRetry(componentImport) {
+  return lazy(() =>
+    componentImport()
+      .then((module) => {
+        window.sessionStorage.removeItem('chunk_retry_reloaded');
+        return module;
+      })
+      .catch((error) => {
+        console.warn('[App] Dynamic chunk load failed, auto-reloading page for fresh assets:', error);
+        const hasReloaded = window.sessionStorage.getItem('chunk_retry_reloaded') === 'true';
+        if (!hasReloaded) {
+          window.sessionStorage.setItem('chunk_retry_reloaded', 'true');
+          window.location.reload();
+          return new Promise(() => {}); // prevent throwing while reload is executing
+        }
+        window.sessionStorage.removeItem('chunk_retry_reloaded');
+        throw error;
+      })
+  );
+}
+
+// Route-based Code Splitting with Auto-Recovering Lazy Loading
+const LoginPage            = lazyWithRetry(() => import('./pages/LoginPage'));
+const OnboardingPage       = lazyWithRetry(() => import('./pages/OnboardingPage'));
+const HomePage             = lazyWithRetry(() => import('./pages/HomePage'));
+const AddMedicinePage      = lazyWithRetry(() => import('./pages/AddMedicinePage'));
+const RiskAnalysisPage     = lazyWithRetry(() => import('./pages/RiskAnalysisPage'));
+const LogSymptomPage       = lazyWithRetry(() => import('./pages/LogSymptomPage'));
+const SymptomResultPage    = lazyWithRetry(() => import('./pages/SymptomResultPage'));
+const TimelinePage         = lazyWithRetry(() => import('./pages/TimelinePage'));
+const InsightsPage         = lazyWithRetry(() => import('./pages/InsightsPage'));
+const DoctorDashboardPage  = lazyWithRetry(() => import('./pages/DoctorDashboardPage'));
+const DoctorSharePage      = lazyWithRetry(() => import('./pages/DoctorSharePage'));
+const CaregiverViewPage    = lazyWithRetry(() => import('./pages/CaregiverViewPage'));
+const ConnectedPeoplePage  = lazyWithRetry(() => import('./pages/ConnectedPeoplePage'));
+const ProfilePage          = lazyWithRetry(() => import('./pages/ProfilePage'));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -37,7 +61,7 @@ const queryClient = new QueryClient({
 
 function RouteLoadingFallback() {
   return (
-    <div className="min-h-[85vh] bg-[#FBF8F2]">
+    <div className="min-h-screen bg-[#EDE8DC] flex items-center justify-center">
       <HomeSkeleton />
     </div>
   );
@@ -72,47 +96,50 @@ export default function App() {
               },
             }}
           />
-          <Suspense fallback={<RouteLoadingFallback />}>
-            <Routes>
-              {/* ── Public Auth Routes ── */}
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/onboarding" element={<OnboardingPage />} />
+          <ErrorBoundary>
+            <Suspense fallback={<RouteLoadingFallback />}>
+              <Routes>
+                {/* ── Public Auth Routes ── */}
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/onboarding" element={<OnboardingPage />} />
 
-              {/* ── 1. PATIENT LAYOUT & PROTECTED ROUTES ── */}
-              <Route element={<ProtectedRoute allowedRoles={['PATIENT']} />}>
-                <Route element={<PatientLayout />}>
-                  <Route path="/home" element={<HomePage />} />
-                  <Route path="/add-medicine" element={<AddMedicinePage />} />
-                  <Route path="/risk/:id" element={<RiskAnalysisPage />} />
-                  <Route path="/log-symptom" element={<LogSymptomPage />} />
-                  <Route path="/symptom-result" element={<SymptomResultPage />} />
-                  <Route path="/timeline" element={<TimelinePage />} />
-                  <Route path="/insights" element={<InsightsPage />} />
-                  <Route path="/trends" element={<InsightsPage />} />
-                  <Route path="/connected-people" element={<ConnectedPeoplePage />} />
-                  <Route path="/share-with-doctor" element={<DoctorSharePage />} />
+                {/* ── 1. PATIENT LAYOUT & PROTECTED ROUTES ── */}
+                <Route element={<ProtectedRoute allowedRoles={['PATIENT']} />}>
+                  <Route element={<PatientLayout />}>
+                    <Route path="/home" element={<HomePage />} />
+                    <Route path="/add-medicine" element={<AddMedicinePage />} />
+                    <Route path="/risk/:id" element={<RiskAnalysisPage />} />
+                    <Route path="/log-symptom" element={<LogSymptomPage />} />
+                    <Route path="/symptom-result" element={<SymptomResultPage />} />
+                    <Route path="/timeline" element={<TimelinePage />} />
+                    <Route path="/insights" element={<InsightsPage />} />
+                    <Route path="/trends" element={<InsightsPage />} />
+                    <Route path="/connected-people" element={<ConnectedPeoplePage />} />
+                    <Route path="/share-with-doctor" element={<DoctorSharePage />} />
+                    <Route path="/profile" element={<ProfilePage />} />
+                  </Route>
                 </Route>
-              </Route>
 
-              {/* ── 2. DOCTOR LAYOUT & PROTECTED ROUTES ── */}
-              <Route element={<ProtectedRoute allowedRoles={['DOCTOR']} />}>
-                <Route element={<DoctorLayout />}>
-                  <Route path="/doctor-dashboard" element={<DoctorDashboardPage />} />
+                {/* ── 2. DOCTOR LAYOUT & PROTECTED ROUTES ── */}
+                <Route element={<ProtectedRoute allowedRoles={['DOCTOR']} />}>
+                  <Route element={<DoctorLayout />}>
+                    <Route path="/doctor-dashboard" element={<DoctorDashboardPage />} />
+                  </Route>
                 </Route>
-              </Route>
 
-              {/* ── 3. CAREGIVER LAYOUT & PROTECTED ROUTES ── */}
-              <Route element={<ProtectedRoute allowedRoles={['CAREGIVER']} />}>
-                <Route element={<CaregiverLayout />}>
-                  <Route path="/caregiver-view" element={<CaregiverViewPage />} />
+                {/* ── 3. CAREGIVER LAYOUT & PROTECTED ROUTES ── */}
+                <Route element={<ProtectedRoute allowedRoles={['CAREGIVER']} />}>
+                  <Route element={<CaregiverLayout />}>
+                    <Route path="/caregiver-view" element={<CaregiverViewPage />} />
+                  </Route>
                 </Route>
-              </Route>
 
-              {/* ── Default & Fallback Redirects ── */}
-              <Route path="/" element={<RootRedirect />} />
-              <Route path="*" element={<RootRedirect />} />
-            </Routes>
-          </Suspense>
+                {/* ── Default & Fallback Redirects ── */}
+                <Route path="/" element={<RootRedirect />} />
+                <Route path="*" element={<RootRedirect />} />
+              </Routes>
+            </Suspense>
+          </ErrorBoundary>
         </AuthProvider>
       </Router>
     </QueryClientProvider>

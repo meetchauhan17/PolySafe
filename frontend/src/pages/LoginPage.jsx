@@ -45,22 +45,64 @@ export default function LoginPage() {
     }
   }, [user, token, navigate]);
 
-  // Selected Role: null (role select screen) | 'PATIENT' | 'CAREGIVER' | 'DOCTOR'
+  // Selected Role: null | 'PATIENT' | 'CAREGIVER' | 'DOCTOR'
   const [selectedRole, setSelectedRole] = useState(null);
 
-  // Patient / Caregiver Email & OTP state
-  const [patientName, setPatientName] = useState('Priya Sharma');
-  const [patientEmail, setPatientEmail] = useState('priya.sharma@example.com');
-  const [patientTouched, setPatientTouched] = useState({
-    name: false,
-    email: false,
-  });
+  // Global error message displayed in the error banner
+  const [errorMsg, setErrorMsg] = useState(null);
+
+  // ── Patient/Caregiver 3-step flow state ─────────────────────────────────────
+  // Step 0: role select  →  Step 1: email entry  →  Step 2a: signup form
+  //   OR  →  Step 2b: login form  →  Step 3: OTP verification (new users only)
+  const [pcStep, setPcStep] = useState('email'); // 'email' | 'signup' | 'login' | 'otp'
+
+  const [patientEmail, setPatientEmail] = useState('');
+  const [patientEmailTouched, setPatientEmailTouched] = useState(false);
+
+  // Signup-specific fields
+  const [signupName, setSignupName] = useState('');
+  const [signupPassword, setSignupPassword] = useState('');
+  const [signupTouched, setSignupTouched] = useState({ name: false, password: false });
+
+  // Login-specific fields
+  const [loginPassword, setLoginPassword] = useState('');
+  const [loginTouched, setLoginTouched] = useState({ password: false });
+  const [lockoutUntil, setLockoutUntil] = useState(null); // ISO string or null
+  const [lockoutSecsLeft, setLockoutSecsLeft] = useState(0);
+
+  // ─── Real-time 1-Second Countdown for Lockout ──────────────────────────────
+  useEffect(() => {
+    if (!lockoutUntil) {
+      setLockoutSecsLeft(0);
+      return;
+    }
+
+    const calcSecs = () => {
+      const ms = new Date(lockoutUntil).getTime() - Date.now();
+      const secs = ms > 0 ? Math.ceil(ms / 1000) : 0;
+      setLockoutSecsLeft(secs);
+      if (secs <= 0) {
+        setLockoutUntil(null);
+        setErrorMsg(null);
+      }
+    };
+
+    calcSecs();
+    const interval = setInterval(calcSecs, 1000);
+    return () => clearInterval(interval);
+  }, [lockoutUntil]);
+
+  // OTP state (shared, only used in 'otp' step)
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
-  const [otpSent, setOtpSent] = useState(false);
   const [devOtpHint, setDevOtpHint] = useState(null);
   const [countdown, setCountdown] = useState(30);
   const countdownTimerRef = useRef(null);
   const otpInputRefs = useRef([]);
+
+  // Remind Me state
+  const [remindMe, setRemindMe] = useState(() => {
+    return localStorage.getItem('polysafe_remind_me') !== 'false';
+  });
 
   // Doctor Auth state
   const [doctorMode, setDoctorMode] = useState('login'); // 'login' | 'signup'
@@ -77,26 +119,15 @@ export default function LoginPage() {
     registrationNumber: false,
   });
 
-  // Remind Me state
-  const [remindMe, setRemindMe] = useState(() => {
-    return localStorage.getItem('polysafe_remind_me') !== 'false';
-  });
-
-  // Load remembered credentials on mount
+  // Load remembered email on mount
   useEffect(() => {
     const savedEmail = localStorage.getItem('polysafe_saved_email');
-    const savedName = localStorage.getItem('polysafe_saved_name');
-    if (savedEmail && !patientEmail) {
-      setPatientEmail(savedEmail);
-    }
-    if (savedName && !patientName) {
-      setPatientName(savedName);
-    }
+    if (savedEmail) setPatientEmail(savedEmail);
   }, []);
 
   // ─── Countdown Timer for OTP Resend ─────────────────────────────────────────
   useEffect(() => {
-    if (otpSent && countdown > 0) {
+    if (pcStep === 'otp' && countdown > 0) {
       countdownTimerRef.current = setTimeout(() => {
         setCountdown((prev) => prev - 1);
       }, 1000);
@@ -104,11 +135,25 @@ export default function LoginPage() {
       clearTimeout(countdownTimerRef.current);
     }
     return () => clearTimeout(countdownTimerRef.current);
-  }, [otpSent, countdown]);
+  }, [pcStep, countdown]);
 
-  const startCountdown = () => {
-    setCountdown(30);
+  // ─── Signup password strength (shared helper) ────────────────────────────────
+  const calcStrength = (pwd) => {
+    if (!pwd) return { score: 0, label: 'Empty', color: '#6B726C', hasLen: false, hasNum: false, hasSpecial: false };
+    const hasLen = pwd.length >= 8;
+    const hasNum = /\d/.test(pwd);
+    const hasSpecial = /[^A-Za-z0-9]/.test(pwd) || /[A-Z]/.test(pwd);
+    let score = 0;
+    if (hasLen) score++;
+    if (hasNum) score++;
+    if (hasSpecial) score++;
+    let label = 'Weak', color = '#B23D25';
+    if (score === 2) { label = 'Moderate'; color = '#B5791A'; }
+    else if (score === 3) { label = 'Strong'; color = '#2B6E5E'; }
+    return { score, label, color, hasLen, hasNum, hasSpecial };
   };
+
+  const signupPasswordStrength = useMemo(() => calcStrength(signupPassword), [signupPassword]);
 
   // ─── Password Strength Calculations (For Doctor Signup) ─────────────────────
   const passwordStrength = useMemo(() => {
@@ -137,27 +182,39 @@ export default function LoginPage() {
     return { score, label, color, hasLen, hasNum, hasSpecial };
   }, [doctorForm.password]);
 
-  // ─── Patient / Caregiver Inline Validation Checks ───────────────────────────
-  const patientErrors = useMemo(() => {
+  // ─── Patient / Caregiver Inline Validation ───────────────────────────────────
+  const emailError = useMemo(() => {
+    if (!patientEmailTouched) return null;
+    if (!patientEmail.trim()) return 'Email address is required.';
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(patientEmail.trim())) return 'Please enter a valid email address.';
+    return null;
+  }, [patientEmail, patientEmailTouched]);
+
+  const signupErrors = useMemo(() => {
     const errors = {};
-    if (patientTouched.name) {
-      if (!patientName.trim()) {
-        errors.name = 'Full name is required.';
-      } else if (patientName.trim().length < 2) {
-        errors.name = 'Please enter your full name (at least 2 characters).';
-      }
+    if (signupTouched.name) {
+      if (!signupName.trim()) errors.name = 'Full name is required.';
+      else if (signupName.trim().length < 2) errors.name = 'Please enter your full name (at least 2 characters).';
     }
-
-    if (patientTouched.email) {
-      if (!patientEmail.trim()) {
-        errors.email = 'Email address is required.';
-      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(patientEmail.trim())) {
-        errors.email = 'Please enter a valid email address.';
-      }
+    if (signupTouched.password) {
+      if (!signupPassword) errors.password = 'Password is required.';
+      else if (signupPassword.length < 8) errors.password = 'Password must be at least 8 characters.';
     }
-
     return errors;
-  }, [patientName, patientEmail, patientTouched]);
+  }, [signupName, signupPassword, signupTouched]);
+
+  const loginPasswordError = useMemo(() => {
+    if (!loginTouched.password) return null;
+    if (!loginPassword) return 'Password is required.';
+    return null;
+  }, [loginPassword, loginTouched]);
+
+  // Remaining lockout time helper
+  const lockoutMinsLeft = useMemo(() => {
+    if (!lockoutUntil) return 0;
+    const ms = new Date(lockoutUntil).getTime() - Date.now();
+    return ms > 0 ? Math.ceil(ms / 60000) : 0;
+  }, [lockoutUntil]);
 
   // ─── Doctor Inline Validation Checks ─────────────────────────────────────────
   const doctorErrors = useMemo(() => {
@@ -192,61 +249,91 @@ export default function LoginPage() {
 
   // ─── TanStack Query Mutations ──────────────────────────────────────────────
 
-  // 1. Send Email OTP Mutation
-  const sendOtpMutation = useMutation({
-    mutationFn: ({ name, email }) => authApi.sendPatientOtp({ name, email }),
-    onSuccess: (data) => {
+  // ── Helper: navigate after successful patient/caregiver auth ─────────────────
+  const handlePatientAuthSuccess = (data, isNewUser = false) => {
+    setErrorMsg(null);
+    if (remindMe) {
+      localStorage.setItem('polysafe_saved_email', patientEmail.trim());
+    } else {
+      localStorage.removeItem('polysafe_saved_email');
+    }
+    if (data.token) {
+      login(data.token, selectedRole || 'PATIENT', data.user);
+    }
+    notify.success('Welcome to PolySafe', isNewUser ? 'Your account has been created.' : 'Signed in successfully.');
+    if (selectedRole === 'CAREGIVER') {
+      navigate('/caregiver-view', { replace: true });
+    } else if (isNewUser || !data.user?.patient) {
+      navigate('/onboarding', { replace: true });
+    } else {
+      navigate('/home', { replace: true });
+    }
+  };
+
+  // 1. Check Email Mutation
+  // Also handles "smooth redirect": if the user somehow reached signup but the
+  // email already exists (or vice versa), we silently move them to the right step.
+  const checkEmailMutation = useMutation({
+    mutationFn: ({ email, role }) => authApi.checkEmail({ email, role }),
+    onSuccess: (data, variables) => {
       setErrorMsg(null);
-      setOtpSent(true);
-      startCountdown();
-      notify.success('Verification Code Sent', `A 6-digit code has been sent to ${patientEmail.trim()}.`);
-      if (data._devOtp) {
-        setDevOtpHint(data._devOtp);
+      const targetStep = data.exists ? 'login' : 'signup';
+      // Smooth redirect: if we're already on a step and get a contradictory result,
+      // silently move to the correct step and show a brief contextual notice.
+      if (pcStep === 'signup' && data.exists) {
+        notify.info('Account Found', 'This email already has an account. Sign in instead.');
+      } else if (pcStep === 'login' && !data.exists) {
+        notify.info('New Email', 'No account found. Create one below.');
       }
-      // Focus first OTP box
-      setTimeout(() => {
-        otpInputRefs.current[0]?.focus();
-      }, 100);
+      setPcStep(targetStep);
     },
     onError: (err) => {
-      const msg = err.response?.data?.error || err.message || 'Failed to send verification code. Please check your email.';
+      const msg = err.response?.data?.error || 'Could not check email. Please try again.';
       setErrorMsg(msg);
-      notify.error('Email Dispatch Failed', msg);
+      notify.error('Error', msg);
     },
   });
 
-  // 2. Verify Email OTP Mutation
-  const verifyOtpMutation = useMutation({
-    mutationFn: ({ email, code, role, name }) => authApi.verifyPatientOtp({ email, code, role, name }),
+  // 2. Signup: Send OTP Mutation
+  const signupSendOtpMutation = useMutation({
+    mutationFn: ({ name, email, password, role }) => authApi.signupSendOtp({ name, email, password, role }),
     onSuccess: (data) => {
       setErrorMsg(null);
-      if (remindMe) {
-        localStorage.setItem('polysafe_saved_email', patientEmail.trim());
-        localStorage.setItem('polysafe_saved_name', patientName.trim());
-      } else {
-        localStorage.removeItem('polysafe_saved_email');
-        localStorage.removeItem('polysafe_saved_name');
-      }
-
-      if (data.token) {
-        login(data.token, selectedRole || 'PATIENT', data.user);
-      }
-
-      notify.success('Authentication Verified', 'Welcome to PolySafe.');
-
-      // Navigate with replace: true so Login page does not sit in browser history
-      if (selectedRole === 'CAREGIVER') {
-        navigate('/caregiver-view', { replace: true });
-      } else if (data.isNewUser || data.message?.toLowerCase().includes('created') || !data.user?.patient) {
-        navigate('/onboarding', { replace: true });
-      } else {
-        navigate('/home', { replace: true });
-      }
+      setOtp(['', '', '', '', '', '']);
+      setCountdown(30);
+      setPcStep('otp');
+      notify.success('Code Sent', `A 6-digit code was sent to ${patientEmail.trim()}.`);
+      if (data._devOtp) setDevOtpHint(data._devOtp);
+      setTimeout(() => otpInputRefs.current[0]?.focus(), 100);
     },
     onError: (err) => {
-      const msg = err.response?.data?.error || err.message || 'Invalid or expired verification code. Please try again.';
+      const msg = err.response?.data?.error || 'Failed to send verification code.';
+      setErrorMsg(msg);
+      notify.error('Send Failed', msg);
+    },
+  });
+
+  // 3. Signup: Verify OTP Mutation
+  const verifySignupOtpMutation = useMutation({
+    mutationFn: ({ email, code }) => authApi.verifySignupOtp({ email, code }),
+    onSuccess: (data) => handlePatientAuthSuccess(data, true),
+    onError: (err) => {
+      const msg = err.response?.data?.error || 'Invalid or expired code. Please try again.';
       setErrorMsg(msg);
       notify.error('Verification Failed', msg);
+    },
+  });
+
+  // 4. Login Mutation (returning users — email + password, no OTP)
+  const patientLoginMutation = useMutation({
+    mutationFn: ({ email, password, role }) => authApi.patientLogin({ email, password, role }),
+    onSuccess: (data) => handlePatientAuthSuccess(data, false),
+    onError: (err) => {
+      const errData = err.response?.data;
+      const msg = errData?.error || 'Invalid email or password.';
+      if (errData?.lockedUntil) setLockoutUntil(errData.lockedUntil);
+      setErrorMsg(msg);
+      notify.error('Sign In Failed', msg);
     },
   });
 
@@ -268,7 +355,9 @@ export default function LoginPage() {
       navigate('/doctor-dashboard', { replace: true });
     },
     onError: (err) => {
-      const msg = err.response?.data?.error || err.message || 'Invalid email or password.';
+      const errData = err.response?.data;
+      const msg = errData?.error || err.message || 'Invalid email or password.';
+      if (errData?.lockedUntil) setLockoutUntil(errData.lockedUntil);
       setErrorMsg(msg);
       notify.error('Login Failed', msg);
     },
@@ -294,27 +383,63 @@ export default function LoginPage() {
 
   // ─── Handlers ─────────────────────────────────────────────────────────────
 
-  const handleSendOtp = (e) => {
-    e?.preventDefault();
-    setPatientTouched({ name: true, email: true });
+  const resetPcFlow = () => {
+    setPcStep('email');
+    setPatientEmail('');
+    setPatientEmailTouched(false);
+    setSignupName('');
+    setSignupPassword('');
+    setSignupTouched({ name: false, password: false });
+    setLoginPassword('');
+    setLoginTouched({ password: false });
+    setLockoutUntil(null);
+    setOtp(['', '', '', '', '', '']);
+    setDevOtpHint(null);
     setErrorMsg(null);
+  };
 
-    const cleanName = patientName.trim();
+  const handleEmailContinue = (e) => {
+    e?.preventDefault();
+    setPatientEmailTouched(true);
+    setErrorMsg(null);
     const cleanEmail = patientEmail.trim();
-
-    if (!cleanName) {
-      setErrorMsg('Please enter your full name.');
-      notify.warning('Name Required', 'Please enter your full name.');
-      return;
-    }
-
     if (!cleanEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail)) {
       setErrorMsg('Please enter a valid email address.');
-      notify.warning('Invalid Email', 'Please enter a valid email address.');
       return;
     }
+    checkEmailMutation.mutate({ email: cleanEmail, role: selectedRole || 'PATIENT' });
+  };
 
-    sendOtpMutation.mutate({ name: cleanName, email: cleanEmail });
+  const handleSignupSubmit = (e) => {
+    e?.preventDefault();
+    setSignupTouched({ name: true, password: true });
+    setErrorMsg(null);
+    const cleanName = signupName.trim();
+    const cleanEmail = patientEmail.trim();
+    if (!cleanName || cleanName.length < 2) { setErrorMsg('Please enter your full name.'); return; }
+    if (!signupPassword || signupPassword.length < 8) { setErrorMsg('Password must be at least 8 characters.'); return; }
+    signupSendOtpMutation.mutate({ name: cleanName, email: cleanEmail, password: signupPassword, role: selectedRole || 'PATIENT' });
+  };
+
+  const handleLoginSubmit = (e) => {
+    e?.preventDefault();
+    setLoginTouched({ password: true });
+    setErrorMsg(null);
+    if (!loginPassword) { setErrorMsg('Please enter your password.'); return; }
+    patientLoginMutation.mutate({ email: patientEmail.trim(), password: loginPassword, role: selectedRole || 'PATIENT' });
+  };
+
+  // Resend OTP (calls signup-send-otp again with same data stored in state)
+  const handleResendOtp = () => {
+    setErrorMsg(null);
+    setOtp(['', '', '', '', '', '']);
+    setCountdown(30);
+    signupSendOtpMutation.mutate({
+      name: signupName.trim(),
+      email: patientEmail.trim(),
+      password: signupPassword,
+      role: selectedRole || 'PATIENT',
+    });
   };
 
   const handleOtpChange = (index, value) => {
@@ -358,11 +483,9 @@ export default function LoginPage() {
       notify.warning('Code Incomplete', 'Please enter all 6 digits.');
       return;
     }
-    verifyOtpMutation.mutate({
+    verifySignupOtpMutation.mutate({
       email: patientEmail.trim(),
       code,
-      role: selectedRole || 'PATIENT',
-      name: patientName.trim(),
     });
   };
 
@@ -418,18 +541,18 @@ export default function LoginPage() {
   };
 
   return (
-    <PageTransition className="min-h-[88vh] bg-[#FBF8F2] flex items-center justify-center px-4 py-12">
+    <PageTransition className="min-h-[88vh] bg-[#EDE8DC] flex items-center justify-center px-4 py-12">
       <div className="max-w-xl w-full space-y-6">
 
         {/* Brand Header */}
         <div className="text-center space-y-2">
-          <div className="inline-flex items-center justify-center p-3.5 bg-[#E4F2E9] rounded-2xl border-2 border-[#2B6E5E]/20 text-[#2B6E5E] mb-1 shadow-sm">
-            <ShieldCheck className="w-8 h-8" />
+          <div className="icon-well w-16 h-16 mx-auto mb-2">
+            <ShieldCheck className="w-8 h-8 text-[#2B6E5E]" />
           </div>
-          <h1 className="text-3xl md:text-4xl text-[#232724] font-bold tracking-tight" style={{ fontFamily: "'Fraunces', serif" }}>
+          <h1 className="text-3xl md:text-4xl text-[#1C2B27] font-bold tracking-tight" style={{ fontFamily: "'Fraunces', serif" }}>
             PolySafe
           </h1>
-          <p className="text-sm text-[#6B726C] max-w-sm mx-auto">
+          <p className="text-sm text-[#5C6B64] max-w-sm mx-auto">
             AI Polypharmacy Interaction & Cumulative Burden Protection System
           </p>
         </div>
@@ -450,72 +573,68 @@ export default function LoginPage() {
         {!selectedRole && (
           <Card className="p-6 md:p-8 space-y-6">
             <div className="text-center space-y-1">
-              <h2 className="text-2xl text-[#232724] font-bold" style={{ fontFamily: "'Fraunces', serif" }}>
+              <h2 className="text-2xl text-[#1C2B27] font-bold" style={{ fontFamily: "'Fraunces', serif" }}>
                 I am a...
               </h2>
-              <p className="text-xs text-[#6B726C]">
+              <p className="text-xs text-[#5C6B64]">
                 Select your account type to access the appropriate clinical or personal dashboard
               </p>
             </div>
 
             {/* Three primary tappable role cards */}
-            <div className="grid grid-cols-1 gap-3.5">
+            <div className="grid grid-cols-1 gap-4">
               {/* Card 1: Patient */}
               <div
                 onClick={() => {
                   setSelectedRole('PATIENT');
-                  setErrorMsg(null);
-                  setOtpSent(false);
-                  setPatientTouched({ name: false, email: false });
+                  resetPcFlow();
                 }}
-                className="polysafe-card-interactive p-5 flex items-start space-x-4 group cursor-pointer border-2 border-[#E7E1D3] hover:border-[#2B6E5E] bg-white transition-all duration-180"
+                className="p-5 flex items-start space-x-4 group cursor-pointer bg-[#EDE8DC] shadow-[6px_6px_14px_rgba(191,180,155,0.55),-6px_-6px_14px_rgba(255,255,255,0.65)] hover:shadow-[10px_10px_20px_rgba(191,180,155,0.65),-10px_-10px_20px_rgba(255,255,255,0.75)] active:shadow-[inset_4px_4px_8px_rgba(191,180,155,0.55)] rounded-2xl transition-all duration-180"
               >
-                <div className="p-3.5 bg-[#E4F2E9] text-[#2B6E5E] rounded-2xl group-hover:bg-[#2B6E5E] group-hover:text-white transition-colors">
-                  <User className="w-6 h-6" />
+                <div className="icon-well w-12 h-12 flex-shrink-0 group-hover:scale-105 transition-transform">
+                  <User className="w-6 h-6 text-[#2B6E5E]" />
                 </div>
-                <div className="flex-1">
+                <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-lg font-bold text-[#232724] group-hover:text-[#2B6E5E] transition-colors" style={{ fontFamily: "'Fraunces', serif" }}>
+                    <h3 className="text-lg font-bold text-[#1C2B27] group-hover:text-[#2B6E5E] transition-colors" style={{ fontFamily: "'Fraunces', serif" }}>
                       Patient
                     </h3>
-                    <span className="text-[11px] font-bold bg-[#E4F2E9] text-[#2B6E5E] px-2.5 py-0.5 rounded-full border border-[#2B6E5E]/20">
-                      Email + OTP
+                    <span className="text-[11px] font-bold bg-[#EDE8DC] shadow-[inset_2px_2px_4px_rgba(191,180,155,0.45),inset_-2px_-2px_4px_rgba(255,255,255,0.6)] text-[#2B6E5E] px-2.5 py-0.5 rounded-xl">
+                      Email + Password
                     </span>
                   </div>
-                  <p className="text-xs text-[#6B726C] mt-1 leading-relaxed">
+                  <p className="text-xs text-[#5C6B64] mt-1 leading-relaxed">
                     I manage my own medications, log daily symptoms, and monitor drug interaction alerts.
                   </p>
                 </div>
-                <ArrowRight className="w-5 h-5 text-[#6B726C] group-hover:text-[#2B6E5E] group-hover:translate-x-1 transition-all self-center" />
+                <ArrowRight className="w-5 h-5 text-[#5C6B64] group-hover:text-[#2B6E5E] group-hover:translate-x-1 transition-all self-center flex-shrink-0" />
               </div>
 
               {/* Card 2: Caregiver */}
               <div
                 onClick={() => {
                   setSelectedRole('CAREGIVER');
-                  setErrorMsg(null);
-                  setOtpSent(false);
-                  setPatientTouched({ name: false, email: false });
+                  resetPcFlow();
                 }}
-                className="polysafe-card-interactive p-5 flex items-start space-x-4 group cursor-pointer border-2 border-[#E7E1D3] hover:border-[#8A6D3B] bg-white transition-all duration-180"
+                className="p-5 flex items-start space-x-4 group cursor-pointer bg-[#EDE8DC] shadow-[6px_6px_14px_rgba(191,180,155,0.55),-6px_-6px_14px_rgba(255,255,255,0.65)] hover:shadow-[10px_10px_20px_rgba(191,180,155,0.65),-10px_-10px_20px_rgba(255,255,255,0.75)] active:shadow-[inset_4px_4px_8px_rgba(191,180,155,0.55)] rounded-2xl transition-all duration-180"
               >
-                <div className="p-3.5 bg-[#FBF8F2] border border-[#8A6D3B]/20 text-[#8A6D3B] rounded-2xl group-hover:bg-[#8A6D3B] group-hover:text-white transition-colors">
-                  <HeartHandshake className="w-6 h-6" />
+                <div className="icon-well w-12 h-12 flex-shrink-0 group-hover:scale-105 transition-transform">
+                  <HeartHandshake className="w-6 h-6 text-[#8A6D3B]" />
                 </div>
-                <div className="flex-1">
+                <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-lg font-bold text-[#232724] group-hover:text-[#8A6D3B] transition-colors" style={{ fontFamily: "'Fraunces', serif" }}>
+                    <h3 className="text-lg font-bold text-[#1C2B27] group-hover:text-[#8A6D3B] transition-colors" style={{ fontFamily: "'Fraunces', serif" }}>
                       Family / Caregiver
                     </h3>
-                    <span className="text-[11px] font-bold bg-[#FBEED9] text-[#8A6D3B] px-2.5 py-0.5 rounded-full border border-[#8A6D3B]/20">
-                      Email + OTP
+                    <span className="text-[11px] font-bold bg-[#EDE8DC] shadow-[inset_2px_2px_4px_rgba(191,180,155,0.45),inset_-2px_-2px_4px_rgba(255,255,255,0.6)] text-[#8A6D3B] px-2.5 py-0.5 rounded-xl">
+                      Email + Password
                     </span>
                   </div>
-                  <p className="text-xs text-[#6B726C] mt-1 leading-relaxed">
+                  <p className="text-xs text-[#5C6B64] mt-1 leading-relaxed">
                     I help an elderly family member manage prescriptions, verify sedative risks, and receive reminders.
                   </p>
                 </div>
-                <ArrowRight className="w-5 h-5 text-[#6B726C] group-hover:text-[#8A6D3B] group-hover:translate-x-1 transition-all self-center" />
+                <ArrowRight className="w-5 h-5 text-[#5C6B64] group-hover:text-[#8A6D3B] group-hover:translate-x-1 transition-all self-center flex-shrink-0" />
               </div>
 
               {/* Card 3: Doctor */}
@@ -525,32 +644,32 @@ export default function LoginPage() {
                   setErrorMsg(null);
                   setDoctorTouched({ email: false, password: false, name: false, registrationNumber: false });
                 }}
-                className="polysafe-card-interactive p-5 flex items-start space-x-4 group cursor-pointer border-2 border-[#E7E1D3] hover:border-[#1B4B66] bg-white transition-all duration-180"
+                className="p-5 flex items-start space-x-4 group cursor-pointer bg-[#EDE8DC] shadow-[6px_6px_14px_rgba(191,180,155,0.55),-6px_-6px_14px_rgba(255,255,255,0.65)] hover:shadow-[10px_10px_20px_rgba(191,180,155,0.65),-10px_-10px_20px_rgba(255,255,255,0.75)] active:shadow-[inset_4px_4px_8px_rgba(191,180,155,0.55)] rounded-2xl transition-all duration-180"
               >
-                <div className="p-3.5 bg-[#1B4B66]/10 text-[#1B4B66] rounded-2xl group-hover:bg-[#1B4B66] group-hover:text-white transition-colors">
-                  <Stethoscope className="w-6 h-6" />
+                <div className="icon-well w-12 h-12 flex-shrink-0 group-hover:scale-105 transition-transform">
+                  <Stethoscope className="w-6 h-6 text-[#1B4B66]" />
                 </div>
-                <div className="flex-1">
+                <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-lg font-bold text-[#232724] group-hover:text-[#1B4B66] transition-colors" style={{ fontFamily: "'Fraunces', serif" }}>
+                    <h3 className="text-lg font-bold text-[#1C2B27] group-hover:text-[#1B4B66] transition-colors" style={{ fontFamily: "'Fraunces', serif" }}>
                       Doctor / Clinician
                     </h3>
-                    <span className="text-[11px] font-bold bg-[#1B4B66]/10 text-[#1B4B66] px-2.5 py-0.5 rounded-full border border-[#1B4B66]/20">
+                    <span className="text-[11px] font-bold bg-[#EDE8DC] shadow-[inset_2px_2px_4px_rgba(191,180,155,0.45),inset_-2px_-2px_4px_rgba(255,255,255,0.6)] text-[#1B4B66] px-2.5 py-0.5 rounded-xl">
                       Email + Password
                     </span>
                   </div>
-                  <p className="text-xs text-[#6B726C] mt-1 leading-relaxed">
+                  <p className="text-xs text-[#5C6B64] mt-1 leading-relaxed">
                     I am a prescribing physician reviewing patient timelines, DDInter pharmacology, and prescribing cascades.
                   </p>
                 </div>
-                <ArrowRight className="w-5 h-5 text-[#6B726C] group-hover:text-[#1B4B66] group-hover:translate-x-1 transition-all self-center" />
+                <ArrowRight className="w-5 h-5 text-[#5C6B64] group-hover:text-[#1B4B66] group-hover:translate-x-1 transition-all self-center flex-shrink-0" />
               </div>
             </div>
 
             {/* Divider */}
             <div className="relative flex items-center justify-center my-4">
-              <div className="border-t border-[#E7E1D3] w-full" />
-              <span className="bg-white px-3 text-[11px] font-semibold text-[#9CA3AF] uppercase tracking-wider absolute">
+              <div className="border-t border-[rgba(191,180,155,0.4)] w-full" />
+              <span className="bg-[#EDE8DC] px-3 text-[11px] font-semibold text-[#5C6B64] uppercase tracking-wider absolute">
                 or explore without an account
               </span>
             </div>
@@ -586,71 +705,62 @@ export default function LoginPage() {
         )}
 
         {/* ══════════════════════════════════════════════════════════════════
-            STEP 2: PATIENT / CAREGIVER EMAIL + OTP FLOW
+            PATIENT / CAREGIVER 3-STEP AUTH FLOW
            ══════════════════════════════════════════════════════════════════ */}
         {(selectedRole === 'PATIENT' || selectedRole === 'CAREGIVER') && (
           <Card className="p-6 md:p-8 space-y-6">
+            {/* Card header: back button + role badge */}
             <div className="flex items-center justify-between pb-4 border-b border-[#E7E1D3]">
               <button
                 type="button"
                 onClick={() => {
-                  setSelectedRole(null);
-                  setOtpSent(false);
-                  setErrorMsg(null);
-                  setPatientTouched({ name: false, email: false });
+                  if (pcStep === 'email') {
+                    setSelectedRole(null);
+                    resetPcFlow();
+                  } else if (pcStep === 'signup' || pcStep === 'login') {
+                    setPcStep('email');
+                    setErrorMsg(null);
+                  } else if (pcStep === 'otp') {
+                    setPcStep('signup');
+                    setErrorMsg(null);
+                  }
                 }}
                 className="text-xs font-bold text-[#6B726C] hover:text-[#2B6E5E] flex items-center space-x-1 transition-colors cursor-pointer"
               >
                 <ArrowLeft className="w-4 h-4" />
-                <span>Change Role ({selectedRole === 'PATIENT' ? 'Patient' : 'Caregiver'})</span>
+                <span>
+                  {pcStep === 'email'
+                    ? `Change Role (${selectedRole === 'PATIENT' ? 'Patient' : 'Caregiver'})`
+                    : 'Back'}
+                </span>
               </button>
-
               <span className="text-xs font-semibold px-2.5 py-1 bg-[#E4F2E9] text-[#2B6E5E] rounded-lg border border-[#2B6E5E]/20">
-                Secure Email Sign-In
+                {pcStep === 'email' && 'Step 1 of 3'}
+                {pcStep === 'signup' && 'Step 2 of 3 — New Account'}
+                {pcStep === 'login' && 'Sign In'}
+                {pcStep === 'otp' && 'Step 3 of 3 — Verify'}
               </span>
             </div>
 
-            {!otpSent ? (
-              // Step 2A: Full Name & Email Form
-              <form onSubmit={handleSendOtp} className="space-y-4">
-                <div className="space-y-1">
+            {/* ── Step 1: Email entry ── */}
+            {pcStep === 'email' && (
+              <form onSubmit={handleEmailContinue} className="space-y-5">
+                <div className="space-y-2">
                   <h2 className="text-2xl text-[#232724] font-bold" style={{ fontFamily: "'Fraunces', serif" }}>
-                    Create Your Account
+                    Enter Your Email
                   </h2>
                   <p className="text-xs text-[#6B726C]">
-                    We will send a 6-digit verification code to your email.
+                    We'll check if you have an account and show the right next step.
                   </p>
-                </div>
-
-                {/* Full Name */}
-                <div className="space-y-1">
-                  <label className="block text-xs font-bold text-[#232724] uppercase tracking-wider">
-                    Full Name
-                  </label>
-                  <div className="relative flex items-center">
-                    <User className="w-4 h-4 text-[#6B726C] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none z-10" />
-                    <input
-                      type="text"
-                      required
-                      value={patientName}
-                      onBlur={() => setPatientTouched((t) => ({ ...t, name: true }))}
-                      onChange={(e) => {
-                        setPatientName(e.target.value);
-                        if (errorMsg) setErrorMsg(null);
-                      }}
-                      placeholder="e.g. Priya Sharma"
-                      className={`input-field has-icon-left pl-11 text-base ${patientErrors.name ? 'input-error' : ''}`}
-                    />
-                  </div>
-                  {patientErrors.name && (
-                    <p className="text-xs text-rose-600 mt-1 flex items-center gap-1 font-medium">
-                      <AlertCircle className="w-3.5 h-3.5" />
-                      {patientErrors.name}
+                  {/* OTP explainer — sets expectation before the user commits */}
+                  <div className="flex items-start gap-2 mt-1 p-2.5 bg-[#E4F2E9]/60 border border-[#2B6E5E]/15 rounded-xl">
+                    <ShieldCheck className="w-3.5 h-3.5 text-[#2B6E5E] flex-shrink-0 mt-0.5" />
+                    <p className="text-[11px] text-[#2B6E5E] leading-relaxed">
+                      We'll verify your email once when you sign up — after that, just use your password.
                     </p>
-                  )}
+                  </div>
                 </div>
 
-                {/* Email Address */}
                 <div className="space-y-1">
                   <label className="block text-xs font-bold text-[#232724] uppercase tracking-wider">
                     Email Address
@@ -660,86 +770,292 @@ export default function LoginPage() {
                     <input
                       type="email"
                       required
+                      autoFocus
                       value={patientEmail}
-                      onBlur={() => setPatientTouched((t) => ({ ...t, email: true }))}
-                      onChange={(e) => {
-                        setPatientEmail(e.target.value);
-                        if (errorMsg) setErrorMsg(null);
-                      }}
+                      onBlur={() => setPatientEmailTouched(true)}
+                      onChange={(e) => { setPatientEmail(e.target.value); if (errorMsg) setErrorMsg(null); }}
                       placeholder="priya@example.com"
-                      className={`input-field has-icon-left pl-11 text-base ${patientErrors.email ? 'input-error' : ''}`}
+                      className={`input-field has-icon-left pl-11 text-base ${emailError ? 'input-error' : ''}`}
                     />
                   </div>
-                  {patientErrors.email && (
+                  {emailError && (
                     <p className="text-xs text-rose-600 mt-1 flex items-center gap-1 font-medium">
-                      <AlertCircle className="w-3.5 h-3.5" />
-                      {patientErrors.email}
+                      <AlertCircle className="w-3.5 h-3.5" />{emailError}
                     </p>
                   )}
                 </div>
 
-                {/* Remind Me / Keep me signed in */}
-                <div className="flex items-center justify-between pt-1">
-                  <label className="flex items-center space-x-2 text-xs text-[#232724] cursor-pointer select-none">
+                <button
+                  type="submit"
+                  disabled={checkEmailMutation.isPending}
+                  className="btn-primary w-full text-base py-3.5 mt-1"
+                >
+                  {checkEmailMutation.isPending ? (
+                    <><Loader2 className="w-5 h-5 animate-spin" /><span>Checking...</span></>
+                  ) : (
+                    <><span>Continue</span><ArrowRight className="w-5 h-5" /></>
+                  )}
+                </button>
+              </form>
+            )}
+
+            {/* ── Step 2a: Signup form (new user) ── */}
+            {pcStep === 'signup' && (
+              <form onSubmit={handleSignupSubmit} className="space-y-4">
+                <div className="space-y-2">
+                  <h2 className="text-2xl text-[#232724] font-bold" style={{ fontFamily: "'Fraunces', serif" }}>
+                    Create Your Account
+                  </h2>
+                  {/* Read-only email pill with edit link */}
+                  <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1.5 px-3 py-1.5 bg-[#F3F0EA] border border-[#E7E1D3] rounded-xl text-xs text-[#232724] font-medium min-w-0">
+                      <Mail className="w-3.5 h-3.5 text-[#6B726C] flex-shrink-0" />
+                      <span className="truncate">{patientEmail}</span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => { setPcStep('email'); setErrorMsg(null); }}
+                      className="text-xs font-bold text-[#2B6E5E] hover:underline whitespace-nowrap cursor-pointer flex-shrink-0"
+                    >
+                      Change
+                    </button>
+                  </div>
+                  <p className="text-xs text-[#6B726C]">
+                    A 6-digit verification code will be emailed to you after you set a password — this only happens once.
+                  </p>
+                </div>
+
+                {/* Full Name */}
+                <div className="space-y-1">
+                  <label className="block text-xs font-bold text-[#232724] uppercase tracking-wider">Full Name</label>
+                  <div className="relative flex items-center">
+                    <User className="w-4 h-4 text-[#6B726C] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none z-10" />
+                    <input
+                      type="text"
+                      required
+                      autoFocus
+                      value={signupName}
+                      onBlur={() => setSignupTouched((t) => ({ ...t, name: true }))}
+                      onChange={(e) => { setSignupName(e.target.value); if (errorMsg) setErrorMsg(null); }}
+                      placeholder="e.g. Priya Sharma"
+                      className={`input-field has-icon-left pl-11 text-base ${signupErrors.name ? 'input-error' : ''}`}
+                    />
+                  </div>
+                  {signupErrors.name && (
+                    <p className="text-xs text-rose-600 mt-1 flex items-center gap-1 font-medium">
+                      <AlertCircle className="w-3.5 h-3.5" />{signupErrors.name}
+                    </p>
+                  )}
+                </div>
+
+                {/* Password */}
+                <div className="space-y-1">
+                  <label className="block text-xs font-bold text-[#232724] uppercase tracking-wider">Password (min. 8 characters)</label>
+                  <div className="relative flex items-center">
+                    <Lock className="w-4 h-4 text-[#6B726C] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none z-10" />
+                    <input
+                      type="password"
+                      required
+                      value={signupPassword}
+                      onBlur={() => setSignupTouched((t) => ({ ...t, password: true }))}
+                      onChange={(e) => { setSignupPassword(e.target.value); if (errorMsg) setErrorMsg(null); }}
+                      placeholder="••••••••••••"
+                      className={`input-field has-icon-left pl-11 text-base ${signupErrors.password ? 'input-error' : ''}`}
+                    />
+                  </div>
+                  {signupErrors.password && (
+                    <p className="text-xs text-rose-600 mt-1 flex items-center gap-1 font-medium">
+                      <AlertCircle className="w-3.5 h-3.5" />{signupErrors.password}
+                    </p>
+                  )}
+                  {/* Password strength meter */}
+                  {signupPassword && (
+                    <div className="mt-2 space-y-1.5 p-2.5 bg-[#FAF8F5] border border-[#E7E1D3] rounded-xl text-xs">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[#6B726C]">Password Strength:</span>
+                        <span className="font-bold" style={{ color: signupPasswordStrength.color }}>{signupPasswordStrength.label}</span>
+                      </div>
+                      <div className="h-1.5 w-full bg-[#E7E1D3] rounded-full overflow-hidden">
+                        <div
+                          className="h-full rounded-full transition-all duration-300"
+                          style={{ width: `${(signupPasswordStrength.score / 3) * 100}%`, backgroundColor: signupPasswordStrength.color }}
+                        />
+                      </div>
+                      <div className="grid grid-cols-2 gap-1 pt-1 text-[11px] text-[#6B726C]">
+                        <div className="flex items-center gap-1">
+                          {signupPasswordStrength.hasLen ? <Check className="w-3 h-3 text-[#2B6E5E]" /> : <X className="w-3 h-3 text-[#9CA3AF]" />}
+                          <span className={signupPasswordStrength.hasLen ? 'text-[#232724] font-medium' : ''}>8+ characters</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          {signupPasswordStrength.hasNum ? <Check className="w-3 h-3 text-[#2B6E5E]" /> : <X className="w-3 h-3 text-[#9CA3AF]" />}
+                          <span className={signupPasswordStrength.hasNum ? 'text-[#232724] font-medium' : ''}>Contains number</span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Remind Me */}
+                <div className="flex items-center pt-1">
+                  <label className="flex items-center space-x-2 text-xs cursor-pointer select-none">
                     <input
                       type="checkbox"
                       checked={remindMe}
-                      onChange={(e) => {
-                        setRemindMe(e.target.checked);
-                        localStorage.setItem('polysafe_remind_me', String(e.target.checked));
-                      }}
+                      onChange={(e) => { setRemindMe(e.target.checked); localStorage.setItem('polysafe_remind_me', String(e.target.checked)); }}
                       className="w-4 h-4 rounded text-[#2B6E5E] focus:ring-[#2B6E5E] border-[#E7E1D3] cursor-pointer"
                     />
-                    <span className="font-medium text-[#6B726C] hover:text-[#232724] transition-colors">
-                      Remind me on this device (Save login)
-                    </span>
+                    <span className="font-medium text-[#6B726C] hover:text-[#232724] transition-colors">Remind me on this device</span>
                   </label>
                 </div>
 
                 <button
                   type="submit"
-                  disabled={sendOtpMutation.isPending}
-                  className="btn-primary w-full text-base py-3.5 mt-2"
+                  disabled={signupSendOtpMutation.isPending}
+                  className="btn-primary w-full text-base py-3.5 mt-1"
                 >
-                  {sendOtpMutation.isPending ? (
-                    <>
-                      <Loader2 className="w-5 h-5 animate-spin" />
-                      <span>Sending Verification Code...</span>
-                    </>
+                  {signupSendOtpMutation.isPending ? (
+                    <><Loader2 className="w-5 h-5 animate-spin" /><span>Sending Code...</span></>
                   ) : (
-                    <>
-                      <span>Send Verification Code</span>
-                      <ArrowRight className="w-5 h-5" />
-                    </>
+                    <><span>Create Account & Send Code</span><ArrowRight className="w-5 h-5" /></>
                   )}
                 </button>
-              </form>
-            ) : (
-              // Step 2B: 6-Digit OTP Form
-              <form onSubmit={handleVerifyOtp} className="space-y-6">
-                <div className="space-y-1 text-center">
-                  <h2 className="text-2xl text-[#232724] font-bold" style={{ fontFamily: "'Fraunces', serif" }}>
-                    Enter 6-Digit Code
-                  </h2>
-                  <p className="text-xs text-[#6B726C]">
-                    Code sent to your email: <span className="font-bold text-[#232724]">{patientEmail}</span>
-                  </p>
-                </div>
 
-                {/* Dev Mode OTP auto-hint banner */}
-                {devOtpHint && (
-                  <div className="p-3 bg-[#E4F2E9] border border-[#2B6E5E]/30 rounded-xl flex items-center justify-between text-xs text-[#2B6E5E]">
-                    <div className="flex items-center space-x-2">
-                      <Sparkles className="w-4 h-4 text-[#2B6E5E]" />
-                      <span><strong>Demo Mode OTP:</strong> {devOtpHint}</span>
+                {/* Already have an account? Smooth redirect */}
+                <p className="text-center text-xs text-[#6B726C]">
+                  Already have an account?{' '}
+                  <button
+                    type="button"
+                    onClick={() => checkEmailMutation.mutate({ email: patientEmail.trim(), role: selectedRole || 'PATIENT' })}
+                    className="font-bold text-[#2B6E5E] hover:underline cursor-pointer"
+                  >
+                    Sign in instead
+                  </button>
+                </p>
+              </form>
+            )}
+
+            {/* ── Step 2b: Login form (returning user) ── */}
+            {pcStep === 'login' && (
+              <form onSubmit={handleLoginSubmit} className="space-y-4">
+                <div className="space-y-2">
+                  <h2 className="text-2xl text-[#232724] font-bold" style={{ fontFamily: "'Fraunces', serif" }}>
+                    Welcome Back
+                  </h2>
+                  {/* Read-only email pill with "Change" link */}
+                  <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1.5 px-3 py-1.5 bg-[#F3F0EA] border border-[#E7E1D3] rounded-xl text-xs text-[#232724] font-medium min-w-0">
+                      <Mail className="w-3.5 h-3.5 text-[#6B726C] flex-shrink-0" />
+                      <span className="truncate">{patientEmail}</span>
                     </div>
                     <button
                       type="button"
-                      onClick={handleFillDevOtp}
-                      className="font-bold underline hover:text-[#1B453A] cursor-pointer"
+                      onClick={() => { setPcStep('email'); setLoginPassword(''); setLoginTouched({ password: false }); setErrorMsg(null); }}
+                      className="text-xs font-bold text-[#2B6E5E] hover:underline whitespace-nowrap cursor-pointer flex-shrink-0"
                     >
-                      Autofill Code
+                      Change
                     </button>
+                  </div>
+                </div>
+
+                {/* Lockout banner — prominent live seconds countdown, auto-reenables */}
+                {lockoutSecsLeft > 0 && (
+                  <div className="p-4 bg-[#FBEED9] border-2 border-[#B5791A] rounded-2xl text-sm text-[#7A4A0A] space-y-1 shadow-sm">
+                    <div className="flex items-center gap-2 font-bold text-[#7A4A0A]">
+                      <AlertCircle className="w-4 h-4 text-[#B5791A] flex-shrink-0" />
+                      Account temporarily locked
+                    </div>
+                    <p className="text-xs text-[#7A4A0A] pl-6">
+                      Too many failed attempts. Try again in{' '}
+                      <strong className="font-bold font-mono text-[#1C2B27]">
+                        {lockoutSecsLeft} second{lockoutSecsLeft !== 1 ? 's' : ''}
+                      </strong>.
+                    </p>
+                  </div>
+                )}
+
+                {/* Password */}
+                <div className="space-y-1">
+                  <label className="block text-xs font-bold text-[#232724] uppercase tracking-wider">Password</label>
+                  <div className="relative flex items-center">
+                    <Lock className="w-4 h-4 text-[#6B726C] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none z-10" />
+                    <input
+                      type="password"
+                      required
+                      autoFocus
+                      value={loginPassword}
+                      onBlur={() => setLoginTouched({ password: true })}
+                      onChange={(e) => { setLoginPassword(e.target.value); if (errorMsg) setErrorMsg(null); }}
+                      placeholder="••••••••••••"
+                      disabled={lockoutSecsLeft > 0}
+                      className={`input-field has-icon-left pl-11 text-base ${loginPasswordError ? 'input-error' : ''}`}
+                    />
+                  </div>
+                  {loginPasswordError && (
+                    <p className="text-xs text-rose-600 mt-1 flex items-center gap-1 font-medium">
+                      <AlertCircle className="w-3.5 h-3.5" />{loginPasswordError}
+                    </p>
+                  )}
+                </div>
+
+                {/* Remind Me */}
+                <div className="flex items-center pt-1">
+                  <label className="flex items-center space-x-2 text-xs cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      checked={remindMe}
+                      onChange={(e) => { setRemindMe(e.target.checked); localStorage.setItem('polysafe_remind_me', String(e.target.checked)); }}
+                      className="w-4 h-4 rounded text-[#2B6E5E] focus:ring-[#2B6E5E] border-[#E7E1D3] cursor-pointer"
+                    />
+                    <span className="font-medium text-[#6B726C] hover:text-[#232724] transition-colors">Remind me on this device</span>
+                  </label>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={patientLoginMutation.isPending || lockoutSecsLeft > 0}
+                  className="btn-primary w-full text-base py-3.5 mt-1"
+                >
+                  {patientLoginMutation.isPending ? (
+                    <><Loader2 className="w-5 h-5 animate-spin" /><span>Signing In...</span></>
+                  ) : (
+                    <><KeyRound className="w-5 h-5" /><span>Sign In</span></>
+                  )}
+                </button>
+
+                {/* Don't have an account? Smooth redirect */}
+                <p className="text-center text-xs text-[#6B726C]">
+                  Don't have an account?{' '}
+                  <button
+                    type="button"
+                    onClick={() => checkEmailMutation.mutate({ email: patientEmail.trim(), role: selectedRole || 'PATIENT' })}
+                    className="font-bold text-[#2B6E5E] hover:underline cursor-pointer"
+                  >
+                    Create one
+                  </button>
+                </p>
+              </form>
+            )}
+
+            {/* ── Step 3: OTP Verification (new users only) ── */}
+            {pcStep === 'otp' && (
+              <form onSubmit={handleVerifyOtp} className="space-y-6">
+                <div className="space-y-1 text-center">
+                  <h2 className="text-2xl text-[#232724] font-bold" style={{ fontFamily: "'Fraunces', serif" }}>
+                    Enter Verification Code
+                  </h2>
+                  <p className="text-xs text-[#6B726C]">
+                    6-digit code sent to <span className="font-bold text-[#232724]">{patientEmail}</span>
+                  </p>
+                </div>
+
+                {/* Dev OTP hint */}
+                {devOtpHint && (
+                  <div className="p-3 bg-[#E4F2E9] border border-[#2B6E5E]/30 rounded-xl flex items-center justify-between text-xs text-[#2B6E5E]">
+                    <div className="flex items-center space-x-2">
+                      <Sparkles className="w-4 h-4" />
+                      <span><strong>Dev OTP:</strong> {devOtpHint}</span>
+                    </div>
+                    <button type="button" onClick={handleFillDevOtp} className="font-bold underline cursor-pointer">Autofill</button>
                   </div>
                 )}
 
@@ -753,10 +1069,7 @@ export default function LoginPage() {
                       inputMode="numeric"
                       maxLength={6}
                       value={digit}
-                      onChange={(e) => {
-                        handleOtpChange(index, e.target.value);
-                        if (errorMsg) setErrorMsg(null);
-                      }}
+                      onChange={(e) => { handleOtpChange(index, e.target.value); if (errorMsg) setErrorMsg(null); }}
                       onKeyDown={(e) => handleOtpKeyDown(index, e)}
                       className={`otp-box ${errorMsg ? 'input-error' : ''}`}
                       autoFocus={index === 0}
@@ -767,48 +1080,37 @@ export default function LoginPage() {
                 <div className="space-y-3">
                   <button
                     type="submit"
-                    disabled={verifyOtpMutation.isPending}
+                    disabled={verifySignupOtpMutation.isPending}
                     className="btn-primary w-full text-base py-3.5"
                   >
-                    {verifyOtpMutation.isPending ? (
-                      <>
-                        <Loader2 className="w-5 h-5 animate-spin" />
-                        <span>Verifying...</span>
-                      </>
+                    {verifySignupOtpMutation.isPending ? (
+                      <><Loader2 className="w-5 h-5 animate-spin" /><span>Verifying...</span></>
                     ) : (
-                      <>
-                        <CheckCircle2 className="w-5 h-5" />
-                        <span>Verify & Sign In</span>
-                      </>
+                      <><CheckCircle2 className="w-5 h-5" /><span>Verify & Create Account</span></>
                     )}
                   </button>
 
                   <div className="flex items-center justify-between pt-2 text-xs">
                     <button
                       type="button"
-                      onClick={() => {
-                        setOtpSent(false);
-                        setOtp(['', '', '', '', '', '']);
-                        setErrorMsg(null);
-                      }}
+                      onClick={() => { setPcStep('signup'); setOtp(['', '', '', '', '', '']); setErrorMsg(null); }}
                       className="font-bold text-[#6B726C] hover:text-[#2B6E5E] cursor-pointer"
                     >
-                      Change Email Address
+                      Change Password
                     </button>
 
                     {countdown > 0 ? (
                       <span className="text-[#6B726C] font-medium">
-                        Resend code in <strong className="text-[#232724]">0:{countdown < 10 ? `0${countdown}` : countdown}</strong>
+                        Resend in <strong className="text-[#232724]">0:{countdown < 10 ? `0${countdown}` : countdown}</strong>
                       </span>
                     ) : (
                       <button
                         type="button"
-                        onClick={handleSendOtp}
-                        disabled={sendOtpMutation.isPending}
+                        onClick={handleResendOtp}
+                        disabled={signupSendOtpMutation.isPending}
                         className="font-bold text-[#2B6E5E] hover:underline flex items-center space-x-1 cursor-pointer"
                       >
-                        <RefreshCw className="w-3.5 h-3.5" />
-                        <span>Resend Code</span>
+                        <RefreshCw className="w-3.5 h-3.5" /><span>Resend Code</span>
                       </button>
                     )}
                   </div>
@@ -870,6 +1172,22 @@ export default function LoginPage() {
             </div>
 
             <form onSubmit={handleDoctorSubmit} className="space-y-4">
+              {/* Doctor Lockout banner */}
+              {doctorMode === 'login' && lockoutSecsLeft > 0 && (
+                <div className="p-4 bg-[#FBEED9] border-2 border-[#B5791A] rounded-2xl text-sm text-[#7A4A0A] space-y-1 shadow-sm">
+                  <div className="flex items-center gap-2 font-bold text-[#7A4A0A]">
+                    <AlertCircle className="w-4 h-4 text-[#B5791A] flex-shrink-0" />
+                    Account temporarily locked
+                  </div>
+                  <p className="text-xs text-[#7A4A0A] pl-6">
+                    Too many failed attempts. Try again in{' '}
+                    <strong className="font-bold font-mono text-[#1C2B27]">
+                      {lockoutSecsLeft} second{lockoutSecsLeft !== 1 ? 's' : ''}
+                    </strong>.
+                  </p>
+                </div>
+              )}
+
               {doctorMode === 'signup' && (
                 <>
                   {/* Name field */}
@@ -1049,7 +1367,7 @@ export default function LoginPage() {
 
               <button
                 type="submit"
-                disabled={doctorLoginMutation.isPending || doctorSignupMutation.isPending}
+                disabled={doctorLoginMutation.isPending || doctorSignupMutation.isPending || (doctorMode === 'login' && lockoutSecsLeft > 0)}
                 className="btn-primary w-full text-base py-3.5 mt-2"
               >
                 {(doctorLoginMutation.isPending || doctorSignupMutation.isPending) ? (

@@ -190,18 +190,18 @@ function Skeleton({ className }) {
 function DrugCard({ med, score }) {
   if (!med) return null;
   return (
-    <div className="flex items-start space-x-3 p-3.5 bg-[#FDFBF7] border border-[#E7E1D3] rounded-xl">
-      <div className="p-2 bg-[#2B6E5E]/10 rounded-lg flex-shrink-0">
+    <div className="flex items-start space-x-3.5 p-4 bg-[#EDE8DC] shadow-[4px_4px_8px_rgba(191,180,155,0.45),-4px_-4px_8px_rgba(255,255,255,0.60)] rounded-2xl">
+      <div className="icon-well w-10 h-10 flex-shrink-0">
         <Pill className="w-4 h-4 text-[#2B6E5E]" />
       </div>
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 flex-wrap">
-          <p className="text-sm font-bold text-[#232724]">{med.name}</p>
+          <p className="text-sm font-bold text-[#1C2B27]">{med.name}</p>
           <TypeBadge type={med.type} />
         </div>
-        {med.dosage && <p className="text-[11px] text-[#6B726C] mt-0.5">{med.dosage}</p>}
+        {med.dosage && <p className="text-[11px] text-[#5C6B64] font-mono mt-0.5">{med.dosage}</p>}
         {score != null && (
-          <p className="text-[10px] text-[#6B726C] mt-1">
+          <p className="text-[10px] text-[#5C6B64] mt-1 font-mono">
             ACB burden score:{' '}
             <span className={`font-bold ${score >= 3 ? 'text-[#B23D25]' : score >= 1 ? 'text-[#B5791A]' : 'text-[#2B6E5E]'}`}>
               {score}
@@ -239,7 +239,7 @@ export default function RiskAnalysisPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-[88vh] bg-[#FBF8F2] pb-16">
+      <div className="min-h-[88vh] bg-[#EDE8DC] pb-16">
         <RiskAnalysisSkeleton />
       </div>
     );
@@ -247,11 +247,11 @@ export default function RiskAnalysisPage() {
 
   if (isError || !flag) {
     return (
-      <div className="min-h-[80vh] bg-[#FBF8F2] flex items-center justify-center p-4">
+      <div className="min-h-[80vh] bg-[#EDE8DC] flex items-center justify-center p-4">
         <div className="polysafe-card p-8 max-w-md w-full text-center space-y-4">
           <AlertCircle className="w-12 h-12 text-[#B23D25] mx-auto" />
-          <h2 className="text-xl font-bold text-[#232724]">Risk flag not found</h2>
-          <p className="text-sm text-[#6B726C]">
+          <h2 className="text-xl font-bold text-[#1C2B27]">Risk flag not found</h2>
+          <p className="text-sm text-[#5C6B64]">
             {error?.response?.data?.error || 'Could not load details for this interaction.'}
           </p>
           <button onClick={() => navigate('/home')} className="btn-primary px-6 py-2.5 text-sm mx-auto">
@@ -263,13 +263,13 @@ export default function RiskAnalysisPage() {
     );
   }
 
-  const cfg = SEVERITY_CFG[flag.severity] ?? SEVERITY_CFG.Unknown;
+  const cfg = SEVERITY_CONFIG[flag.severity] ?? SEVERITY_CONFIG.Unknown;
   const burdenCfg = BURDEN_LEVEL[cumulativeBurden?.level] ?? BURDEN_LEVEL.Normal;
   const burdenScore = cumulativeBurden?.totalScore ?? 0;
   const burdenPct = burdenBarPct(burdenScore);
 
   return (
-    <div className="bg-[#FBF8F2] min-h-[88vh] pb-24">
+    <div className="bg-[#EDE8DC] min-h-[88vh] pb-24">
       <div className="max-w-2xl mx-auto px-4 py-8 space-y-6">
 
         {/* ── Top navigation ─────────────────────────────────────────────────── */}
@@ -287,15 +287,15 @@ export default function RiskAnalysisPage() {
           </span>
         </div>
 
-        {/* ── Red/Amber header card ───────────────────────────────────────────── */}
+        {/* ── Red/Amber header card (SAFETY CARVE-OUT) ───────────────────────── */}
         <div
-          className="p-6 rounded-2xl border-2"
+          className="p-6 rounded-[32px] border-2 shadow-[6px_6px_14px_rgba(191,180,155,0.40),-6px_-6px_14px_rgba(255,255,255,0.50)]"
           style={{ backgroundColor: cfg.headerBg, borderColor: cfg.headerBorder }}
         >
           {/* Severity pill */}
           <div className="flex items-center gap-2 mb-4">
             <span
-              className="inline-flex items-center gap-1.5 text-[11px] font-extrabold px-3 py-1 rounded-full"
+              className="inline-flex items-center gap-1.5 text-[11px] font-extrabold px-3.5 py-1 rounded-full shadow-xs"
               style={{ backgroundColor: cfg.pillBg, color: cfg.pillText }}
             >
               {cfg.icon}
@@ -304,7 +304,7 @@ export default function RiskAnalysisPage() {
           </div>
 
           {/* Headline — Fraunces font, large */}
-          <h2 className="text-2xl font-bold leading-tight text-[#232724]" style={{ fontFamily: "'Fraunces', serif" }}>
+          <h2 className="text-2xl sm:text-3xl font-bold leading-tight text-[#1C2B27]" style={{ fontFamily: "'Fraunces', serif" }}>
             {flag.medicineA?.name} + {flag.medicineB?.name}
           </h2>
           <p className="text-sm text-[#4A4F4B] mt-2 leading-relaxed">
@@ -312,13 +312,13 @@ export default function RiskAnalysisPage() {
           </p>
 
           {/* Drug chips */}
-          <div className="flex items-center gap-2 mt-4 flex-wrap">
-            <span className="flex items-center gap-1.5 bg-white/70 px-3 py-1.5 rounded-xl text-xs font-bold text-[#232724] border border-black/10">
+          <div className="flex items-center gap-2.5 mt-4 flex-wrap">
+            <span className="flex items-center gap-1.5 bg-[#EDE8DC] shadow-[3px_3px_6px_rgba(191,180,155,0.45),-3px_-3px_6px_rgba(255,255,255,0.60)] px-3.5 py-1.5 rounded-2xl text-xs font-bold text-[#1C2B27]">
               <Pill className="w-3.5 h-3.5 text-[#2B6E5E]" />
               {flag.medicineA?.name}
             </span>
             <span className="text-lg text-[#4A4F4B] font-bold">+</span>
-            <span className="flex items-center gap-1.5 bg-white/70 px-3 py-1.5 rounded-xl text-xs font-bold text-[#232724] border border-black/10">
+            <span className="flex items-center gap-1.5 bg-[#EDE8DC] shadow-[3px_3px_6px_rgba(191,180,155,0.45),-3px_-3px_6px_rgba(255,255,255,0.60)] px-3.5 py-1.5 rounded-2xl text-xs font-bold text-[#1C2B27]">
               <Pill className="w-3.5 h-3.5 text-[#2B6E5E]" />
               {flag.medicineB?.name}
             </span>
@@ -348,17 +348,17 @@ export default function RiskAnalysisPage() {
                 Generating detailed explanation…
               </span>
             ) : flag.generatedBy === 'demo-mock' ? (
-              <span className="text-[10px] font-bold text-[#2B6E5E] bg-[#E4F2E9] border border-[#2F8558]/30 px-2 py-0.5 rounded-full">
+              <span className="text-[10px] font-bold text-[#2B6E5E] bg-[#E4F2E9] border border-[#2F8558]/30 px-2.5 py-0.5 rounded-full">
                 DEMO
               </span>
             ) : null
           }
           className="space-y-3"
         >
-          <div className="p-4 border-2 border-[#E7E1D3] bg-[#FDFBF7] rounded-xl">
+          <div className="p-4 bg-[#EDE8DC] shadow-[inset_3px_3px_6px_rgba(191,180,155,0.5),inset_-3px_-3px_6px_rgba(255,255,255,0.6)] rounded-2xl">
             {flag.generatedBy === 'timeout' ? (
               <div className="space-y-2">
-                <p className="text-sm text-[#232724] leading-relaxed font-medium">
+                <p className="text-sm text-[#1C2B27] leading-relaxed font-medium">
                   {flag.clinicalExplanation || `Interaction identified between ${flag.medicineA?.name} and ${flag.medicineB?.name} (${flag.severity}).`}
                 </p>
                 <p className="text-[11px] text-[#B5791A] italic">
@@ -366,7 +366,7 @@ export default function RiskAnalysisPage() {
                 </p>
               </div>
             ) : (
-              <p className="text-sm text-[#232724] leading-relaxed font-medium">
+              <p className="text-sm text-[#1C2B27] leading-relaxed font-medium">
                 {flag.clinicalExplanation || 'Clinical explanation not available.'}
               </p>
             )}
@@ -375,7 +375,7 @@ export default function RiskAnalysisPage() {
           {flag.patient?.conditions?.length > 0 && (
             <div className="flex flex-wrap gap-2 pt-1">
               {flag.patient.conditions.map((c) => (
-                <span key={c} className="text-[10px] px-2.5 py-1 bg-[#F5F0E8] border border-[#E7E1D3] rounded-lg text-[#6B726C] font-semibold">
+                <span key={c} className="text-[10px] px-3 py-1 bg-[#EDE8DC] shadow-[2px_2px_4px_rgba(191,180,155,0.4),-2px_-2px_4px_rgba(255,255,255,0.5)] rounded-xl text-[#5C6B64] font-semibold">
                   {c}
                 </span>
               ))}
@@ -400,29 +400,29 @@ export default function RiskAnalysisPage() {
         >
           {flag.generatedBy === 'timeout' ? (
             <div className="space-y-2">
-              <p className="text-[15px] text-[#232724] leading-relaxed">
+              <p className="text-[15px] text-[#1C2B27] leading-relaxed">
                 {flag.plainExplanation?.split('(This is an informational')[0].trim()
                   || `An interaction was detected between ${flag.medicineA?.name} and ${flag.medicineB?.name}. Severity: ${flag.severity}.`}
               </p>
-              <p className="text-[12px] text-[#B5791A] bg-amber-50 border border-amber-200 rounded-xl px-3 py-2">
+              <p className="text-[12px] text-[#B5791A] bg-amber-50 border border-amber-200 rounded-2xl px-3.5 py-2">
                 A personalised explanation is being generated for you. Refresh this page in a few seconds to see the full detail.
               </p>
             </div>
           ) : (
-            <p className="text-[15px] text-[#232724] leading-relaxed">
+            <p className="text-[15px] text-[#1C2B27] leading-relaxed">
               {flag.plainExplanation?.split('(This is an informational')[0].trim() || 'Plain explanation not available.'}
             </p>
           )}
 
-          <div className="flex items-start space-x-2 p-3 bg-[#F5F0E8] border border-[#E7E1D3] rounded-xl">
-            <ShieldCheck className="w-4 h-4 text-[#6B726C] flex-shrink-0 mt-0.5" />
-            <p className="text-[11px] text-[#6B726C] italic">
+          <div className="flex items-start space-x-2.5 p-3.5 bg-[#EDE8DC] shadow-[inset_2px_2px_5px_rgba(191,180,155,0.45),inset_-2px_-2px_5px_rgba(255,255,255,0.6)] rounded-2xl">
+            <ShieldCheck className="w-4 h-4 text-[#5C6B64] flex-shrink-0 mt-0.5" />
+            <p className="text-[11px] text-[#5C6B64] italic">
               This is an informational safety alert, not a medical diagnosis. Always consult your doctor before changing medicines.
             </p>
           </div>
         </Card>
 
-        {/* ── Cumulative Burden Meter ─────────────────────────────────────────── */}
+        {/* ── Cumulative Burden Meter (SAFETY CARVE-OUT) ───────────────────────── */}
         <Card
           title="Combined Sedative / Pressure Load"
           subtitle="Anticholinergic Cognitive Burden (ACB) Index"
@@ -434,44 +434,44 @@ export default function RiskAnalysisPage() {
           <div className="flex items-center justify-between">
             <div>
               <span
-                className="text-3xl font-black"
-                style={{ color: blvl.color, fontFamily: "'Fraunces', serif" }}
+                className="text-3xl font-black font-mono"
+                style={{ color: burdenCfg.color, fontFamily: "'Fraunces', serif" }}
               >
-                {burden?.totalScore ?? 0}
+                {burdenScore}
               </span>
-              <span className="text-sm text-[#6B726C] ml-2">/ 6+ scale</span>
+              <span className="text-sm text-[#5C6B64] ml-2">/ 6+ scale</span>
             </div>
             <span
-              className="text-xs font-extrabold px-3 py-1.5 rounded-full"
-              style={{ backgroundColor: blvl.bg, color: blvl.color, border: `1.5px solid ${blvl.border}` }}
+              className="text-xs font-extrabold px-3.5 py-1.5 rounded-full"
+              style={{ backgroundColor: burdenCfg.bg, color: burdenCfg.color, border: `1.5px solid ${burdenCfg.border}` }}
             >
-              {burden?.level ?? 'Normal'}
+              {cumulativeBurden?.level ?? 'Normal'}
             </span>
           </div>
 
-          {/* Horizontal progress bar */}
+          {/* Horizontal progress bar with Inset Well Track & High-Contrast Fill */}
           <div className="space-y-1.5">
-            <div className="h-3 bg-[#EDE9DF] rounded-full overflow-hidden">
+            <div className="h-3.5 bg-[#EDE8DC] shadow-[inset_2px_2px_4px_rgba(191,180,155,0.6),inset_-2px_-2px_4px_rgba(255,255,255,0.7)] rounded-full overflow-hidden">
               <motion.div
                 className="h-full rounded-full"
-                initial={shouldReduceMotion ? { width: `${pct}%` } : { width: '0%' }}
-                animate={{ width: `${pct}%` }}
+                initial={shouldReduceMotion ? { width: `${burdenPct}%` } : { width: '0%' }}
+                animate={{ width: `${burdenPct}%` }}
                 transition={{
                   duration: shouldReduceMotion ? 0 : 0.6,
                   ease: [0.16, 1, 0.3, 1],
                   delay: 0.1,
                 }}
                 style={{
-                  background: pct >= 70
+                  background: burdenPct >= 70
                     ? `linear-gradient(90deg, #B5791A, #B23D25)`
-                    : pct >= 35
+                    : burdenPct >= 35
                     ? `linear-gradient(90deg, #2B6E5E, #B5791A)`
                     : '#2B6E5E',
                 }}
               />
             </div>
             {/* Tick markers */}
-            <div className="flex justify-between text-[9px] text-[#9CA3AF] font-semibold px-0.5">
+            <div className="flex justify-between text-[9px] text-[#85948C] font-semibold px-1">
               <span>0 Normal</span>
               <span>1–2 Moderate</span>
               <span>3+ Critical</span>
@@ -479,52 +479,21 @@ export default function RiskAnalysisPage() {
           </div>
 
           {/* Level description */}
-          <p className="text-xs text-[#6B726C] leading-relaxed">
-            {burden?.explanation || blvl.text}
+          <p className="text-xs text-[#5C6B64] leading-relaxed">
+            {cumulativeBurden?.explanation || burdenCfg.text}
           </p>
 
-          {/* Per-drug breakdown */}
-          {burden?.breakdown?.filter((b) => b.score > 0).length > 0 && (
-            <div className="space-y-1.5 pt-1">
-              <p className="text-[10px] font-bold uppercase tracking-wider text-[#6B726C]">Contribution breakdown</p>
-              {burden.breakdown
-                .filter((b) => b.score > 0)
-                .map((b) => (
-                  <div key={b.medicineId} className="flex items-center justify-between text-xs">
-                    <span className="text-[#4A4F4B] truncate max-w-[200px]">{b.name}</span>
-                    <div className="flex items-center gap-2">
-                      <div className="flex gap-0.5">
-                        {[1, 2, 3].map((dot) => (
-                          <div
-                            key={dot}
-                            className="w-2.5 h-2.5 rounded-full"
-                            style={{
-                              backgroundColor: dot <= b.score
-                                ? (b.score >= 3 ? '#B23D25' : b.score >= 2 ? '#B5791A' : '#2B6E5E')
-                                : '#E7E1D3',
-                            }}
-                          />
-                        ))}
-                      </div>
-                      <span className="font-bold text-[#232724] w-3 text-center">{b.score}</span>
-                    </div>
-                  </div>
-                ))}
-            </div>
-          )}
-
           {/* Disclaimer note */}
-          <div className="flex items-start space-x-2 p-3 rounded-xl border border-[#E7E1D3] bg-[#FDFBF7]">
-            <Info className="w-3.5 h-3.5 text-[#6B726C] flex-shrink-0 mt-0.5" />
-            <p className="text-[11px] text-[#6B726C] leading-relaxed">
+          <div className="flex items-start space-x-2.5 p-3.5 rounded-2xl bg-[#EDE8DC] shadow-[inset_2px_2px_5px_rgba(191,180,155,0.45),inset_-2px_-2px_5px_rgba(255,255,255,0.6)]">
+            <Info className="w-3.5 h-3.5 text-[#5C6B64] flex-shrink-0 mt-0.5" />
+            <p className="text-[11px] text-[#5C6B64] leading-relaxed">
               <strong>No single medicine is unsafe alone</strong> — but together, cumulative anticholinergic and sedative load may increase risk of drowsiness, falls, and cognitive effects.
-              This is based on a recognized clinical scoring method, not a diagnosis.
             </p>
           </div>
         </Card>
 
         {/* ── Footer actions ──────────────────────────────────────────────────── */}
-        <div className="flex flex-col gap-2.5">
+        <div className="flex flex-col gap-2.5 pt-2">
           <Link to="/home" className="btn-primary py-3.5 flex items-center justify-center gap-2">
             <ArrowLeft className="w-4 h-4" />
             <span>Back to Dashboard</span>

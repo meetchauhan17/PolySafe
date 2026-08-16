@@ -164,18 +164,18 @@ export default function OnboardingPage() {
   };
 
   return (
-    <PageTransition className="min-h-[88vh] bg-[#FBF8F2] flex items-start justify-center px-4 py-10 md:py-16">
+    <PageTransition className="min-h-[88vh] bg-[#EDE8DC] flex items-start justify-center px-4 py-10 md:py-16">
       <div className="max-w-2xl w-full space-y-6">
 
         {/* ── Header ─────────────────────────────────────────────────────────── */}
         <div className="text-center space-y-2">
-          <div className="inline-flex items-center justify-center p-3 bg-[#2B6E5E]/10 rounded-2xl border-2 border-[#2B6E5E]/20 text-[#2B6E5E] mb-1">
-            <ShieldCheck className="w-7 h-7" />
+          <div className="icon-well w-14 h-14 mx-auto mb-1">
+            <ShieldCheck className="w-7 h-7 text-[#2B6E5E]" />
           </div>
-          <h1 className="text-3xl md:text-4xl text-[#232724] font-bold tracking-tight">
+          <h1 className="text-3xl md:text-4xl text-[#1C2B27] font-bold tracking-tight" style={{ fontFamily: "'Fraunces', serif" }}>
             Set Up Your PolySafe Profile
           </h1>
-          <p className="text-sm text-[#6B726C] max-w-md mx-auto leading-relaxed">
+          <p className="text-sm text-[#5C6B64] max-w-md mx-auto leading-relaxed">
             This helps PolySafe tailor interaction checks to your physiology —
             kidney impairment, for example, changes how dozens of drugs are
             metabolised and cleared.
@@ -183,7 +183,7 @@ export default function OnboardingPage() {
         </div>
 
         {/* ── "Only Age Required" Banner ─────────────────────────────────────── */}
-        <div className="flex items-start space-x-3 p-3.5 bg-[#2B6E5E]/8 border border-[#2B6E5E]/20 rounded-xl text-xs text-[#2B6E5E]">
+        <div className="flex items-start space-x-3 p-3.5 bg-[#2B6E5E]/10 border border-[#2B6E5E]/20 rounded-2xl text-xs text-[#2B6E5E] shadow-sm">
           <Info className="w-4 h-4 flex-shrink-0 mt-0.5" />
           <p>
             <strong>Only your age is required.</strong> All other fields are optional — skip anything you'd

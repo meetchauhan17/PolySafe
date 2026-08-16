@@ -232,22 +232,22 @@ export default function ConnectedPeoplePage() {
   };
 
   return (
-    <div className="min-h-[88vh] bg-[#FBF8F2] pb-16">
+    <div className="min-h-[88vh] bg-[#EDE8DC] pb-16">
       <div className="max-w-2xl mx-auto px-4 py-8 space-y-6">
 
         {/* Header */}
         <div className="flex items-center space-x-3">
           <button
             onClick={() => navigate('/home')}
-            className="p-2.5 rounded-xl border-2 border-[#E7E1D3] bg-white text-[#6B726C] hover:text-[#2B6E5E] hover:border-[#2B6E5E] hover:-translate-y-0.5 active:translate-y-0.5 transition-all duration-180 ease-out cursor-pointer"
+            className="btn-secondary p-2.5 rounded-2xl"
           >
             <ArrowLeft className="w-4 h-4" />
           </button>
           <div className="flex-1">
-            <h1 className="text-2xl font-bold text-[#232724]" style={{ fontFamily: "'Fraunces', serif" }}>
+            <h1 className="text-2xl font-bold text-[#1C2B27]" style={{ fontFamily: "'Fraunces', serif" }}>
               Connected People
             </h1>
-            <p className="text-xs text-[#6B726C]">Manage who can see your medication records</p>
+            <p className="text-xs text-[#5C6B64]">Manage who can see your medication records</p>
           </div>
         </div>
 

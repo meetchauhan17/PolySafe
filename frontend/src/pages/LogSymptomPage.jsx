@@ -39,7 +39,7 @@ function todayISO() {
 
 export default function LogSymptomPage() {
   const navigate  = useNavigate();
-  const { isGuest, requireAuth } = useAuth();
+  const { isGuest, openGuestLockModal } = useAuth();
   const textareaRef = useRef(null);
 
   const [description, setDescription] = useState('');
@@ -58,7 +58,7 @@ export default function LogSymptomPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (isGuest) {
-      requireAuth('log symptoms and cross-reference cascades');
+      openGuestLockModal('log symptoms and cross-reference cascades');
       return;
     }
     setError(null);
@@ -89,29 +89,29 @@ export default function LogSymptomPage() {
   };
 
   return (
-    <div className="min-h-[88vh] bg-[#FBF8F2] pb-12">
+    <div className="min-h-[88vh] bg-[#EDE8DC] pb-12">
       <div className="max-w-2xl mx-auto px-4 py-8 space-y-5">
 
         {/* ── Page header ──────────────────────────────────────────────────── */}
         <div className="flex items-center space-x-3">
           <button
             onClick={() => navigate('/home')}
-            className="p-2.5 rounded-xl border-2 border-[#E7E1D3] bg-white text-[#6B726C] hover:text-[#2B6E5E] hover:border-[#2B6E5E] hover:-translate-y-0.5 active:translate-y-0.5 transition-all duration-180 ease-out cursor-pointer"
+            className="btn-secondary p-2.5 rounded-2xl"
           >
             <ArrowLeft className="w-4 h-4" />
           </button>
           <div>
-            <h1 className="text-xl font-bold text-[#232724]" style={{ fontFamily: "'Fraunces', serif" }}>
+            <h1 className="text-xl font-bold text-[#1C2B27]" style={{ fontFamily: "'Fraunces', serif" }}>
               Log a Symptom
             </h1>
-            <p className="text-[11px] text-[#6B726C]">
+            <p className="text-[11px] text-[#5C6B64]">
               PolySafe checks if it could be a side effect of your medicines — a "prescribing cascade."
             </p>
           </div>
         </div>
 
         {/* ── Info card ────────────────────────────────────────────────────── */}
-        <div className="flex items-start space-x-3 p-4 bg-[#E4F2E9] border-2 border-[#2F8558]/30 rounded-2xl">
+        <div className="flex items-start space-x-3 p-4 bg-[#E4F2E9] border-2 border-[#2F8558]/30 rounded-2xl shadow-sm">
           <Info className="w-4 h-4 text-[#2B6E5E] flex-shrink-0 mt-0.5" />
           <p className="text-[12px] text-[#1A5C3A] leading-relaxed">
             A <strong>prescribing cascade</strong> happens when a medicine causes a side effect that looks like a new illness, 
@@ -143,15 +143,15 @@ export default function LogSymptomPage() {
                 placeholder="e.g. My ankles have been swelling for the past few days, and I feel a bit dizzy when I stand up..."
                 className={`input-field resize-none leading-relaxed ${error && !description.trim() ? 'input-error' : ''}`}
               />
-              <p className="text-[10px] text-[#9CA3AF] text-right">{description.length} characters</p>
+              <p className="text-[10px] text-[#5C6B64] font-mono text-right">{description.length} characters</p>
             </div>
 
             {/* Quick-select symptom chips */}
             <div className="space-y-2">
-              <p className="text-[10px] font-bold uppercase tracking-wider text-[#6B726C]">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-[#5C6B64]">
                 Common symptoms to tap and add
               </p>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-2.5">
                 {QUICK_SYMPTOMS.map((sym) => {
                   const isSelected = description.toLowerCase().includes(sym.toLowerCase());
                   return (
@@ -159,10 +159,10 @@ export default function LogSymptomPage() {
                       key={sym}
                       type="button"
                       onClick={() => handleQuickSelect(sym)}
-                      className={`text-xs px-3 py-1.5 rounded-full border-2 font-medium cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all duration-180 ease-out ${
+                      className={`text-xs px-3.5 py-1.5 rounded-full font-semibold cursor-pointer transition-all duration-180 ease-out ${
                         isSelected
-                          ? 'bg-[#2B6E5E] text-white border-[#2B6E5E]'
-                          : 'bg-white text-[#4A4F4B] border-[#E7E1D3] hover:border-[#2B6E5E] hover:text-[#2B6E5E]'
+                          ? 'bg-[#2B6E5E] text-white shadow-sm'
+                          : 'bg-[#EDE8DC] text-[#1C2B27] shadow-[2px_2px_5px_rgba(191,180,155,0.45),-2px_-2px_5px_rgba(255,255,255,0.6)] hover:shadow-[3px_3px_7px_rgba(191,180,155,0.55),-3px_-3px_7px_rgba(255,255,255,0.7)] active:shadow-[inset_2px_2px_4px_rgba(191,180,155,0.5)] hover:text-[#2B6E5E]'
                       }`}
                     >
                       {isSelected && <CheckCircle2 className="inline w-3 h-3 mr-1" />}

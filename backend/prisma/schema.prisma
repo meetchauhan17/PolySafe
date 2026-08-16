@@ -39,13 +39,15 @@ enum ConnectionStatus {
 // ─── Models ───────────────────────────────────────────────────────────────────
 
 model User {
-  id           String   @id @default(uuid())
-  name         String   @default("PolySafe User")
-  phone        String?  @unique
-  email        String   @unique
-  passwordHash String?  // Only for DOCTOR / PHARMACIST roles
-  role         Role     @default(PATIENT)
-  createdAt    DateTime @default(now())
+  id                   String    @id @default(uuid())
+  name                 String    @default("PolySafe User")
+  phone                String?   @unique
+  email                String    @unique
+  passwordHash         String?   // Used by ALL roles — Doctor (always), Patient/Caregiver (set at signup)
+  role                 Role      @default(PATIENT)
+  failedLoginAttempts  Int       @default(0)
+  lockedUntil          DateTime?
+  createdAt            DateTime  @default(now())
 
   // Relations
   patient      Patient?
@@ -64,6 +66,25 @@ model OtpCode {
   @@index([email])
   @@index([email, code])
   @@map("otp_code")
+}
+
+// Stores pending Patient/Caregiver signup data while OTP is in flight.
+// Row is created by signup-send-otp; deleted by verify-signup-otp on success.
+// Rows are never promoted to User until OTP is verified.
+model PendingSignup {
+  id           String   @id @default(uuid())
+  name         String
+  email        String
+  passwordHash String
+  role         Role
+  code         String
+  expiresAt    DateTime
+  used         Boolean  @default(false)
+  createdAt    DateTime @default(now())
+
+  @@index([email])
+  @@index([email, code])
+  @@map("pending_signup")
 }
 
 model Patient {
@@ -94,6 +115,7 @@ model Medicine {
   addedByUser      User         @relation("AddedByUser", fields: [addedBy], references: [id])
   dateAdded        DateTime     @default(now())
   dosage           String?
+  removedAt        DateTime?    // Soft-delete timestamp: set when medicine is discontinued
 
   // Relations
   symptoms              Symptom[]         @relation("PossibleCauseMedicine")
@@ -221,3 +243,19 @@ model HerbDrugReference {
   @@index([drugName])
   @@map("herb_drug_reference")
 }
+
+// ─── Pill Imprint Reference ──────────────────────────────────────────────────
+// Reference imprints for identifying loose pills via stamped markings.
+// Clearly defined as a limited demo dataset with mandatory safety disclaimers.
+model PillImprint {
+  id          String  @id @default(uuid())
+  imprintCode String  // e.g. "L484", "IP 109", "M367", "54 543"
+  drugName    String  // e.g. "Acetaminophen", "Ibuprofen", "Hydrocodone/Acetaminophen"
+  strength    String? // e.g. "500 mg", "800 mg", "10 mg / 325 mg"
+  shape       String? // e.g. "Oval", "Round", "Capsule-shaped", "Oblong"
+  color       String? // e.g. "White", "Blue", "Yellow", "Orange"
+
+  @@index([imprintCode])
+  @@map("pill_imprint")
+}
+

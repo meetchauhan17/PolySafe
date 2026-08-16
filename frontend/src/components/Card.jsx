@@ -1,15 +1,21 @@
 import React from 'react';
 
 /**
- * Card.jsx — Reusable container component for PolySafe
+ * Card.jsx — Reusable Neumorphic container component for PolySafe
  *
- * Enforces uniform visual standards across the entire application:
- * - background: #FFFFFF
- * - border: 2px solid #E7E1D3 (or variant border color)
- * - border-radius: 16px
+ * Neumorphic Standards:
+ * - background: #EDE8DC (warm clay molded surface)
+ * - border-radius: 32px (rounded-[32px])
  * - padding: 20px (p-5)
- * - box-shadow: 0 6px 16px rgba(28,43,39,0.10)
- * - height: h-full flex flex-col for consistent row/grid alignment
+ * - box-shadow: 9px 9px 16px rgba(191,180,155,0.55), -9px -9px 16px rgba(255,255,255,0.65)
+ * - icon: drilled-in circular well (inset deep shadow)
+ *
+ * SAFETY CARVE-OUT:
+ * - Risk statuses (safe, caution, danger) MUST NOT blend into the clay background.
+ * - They strictly keep real, visible high-contrast backgrounds with solid 2px borders:
+ *   - safe: #E4F2E9 with #2F8558 border
+ *   - caution: #FBEED9 with #B5791A border
+ *   - danger: #FBE4DE with #B23D25 border
  *
  * Props:
  * @param {string} [variant='default'] - 'default' | 'caution' | 'danger' | 'safe'
@@ -25,24 +31,37 @@ import React from 'react';
 
 const VARIANT_STYLES = {
   default: {
-    border: 'border-[#E7E1D3]',
-    bg:     'bg-white',
-    iconBg: 'bg-[#2B6E5E]/10 text-[#2B6E5E]',
+    border: 'border-transparent',
+    bg: 'bg-[#EDE8DC]',
+    iconBg: 'icon-well text-[#2B6E5E]',
+    shadow: '9px 9px 16px rgba(191, 180, 155, 0.55), -9px -9px 16px rgba(255, 255, 255, 0.65)',
+    titleColor: 'text-[#1C2B27]',
+    subtitleColor: 'text-[#5C6B64]',
   },
+  // ─── SAFETY CARVE-OUT STATUSES ──────────────────────────────────────────────
   caution: {
-    border: 'border-[#B5791A]',
-    bg:     'bg-white',
-    iconBg: 'bg-[#FBEED9] text-[#B5791A]',
+    border: 'border-[#B5791A] border-2',
+    bg: 'bg-[#FBEED9]',
+    iconBg: 'p-2.5 rounded-full bg-[#F5E2C4] text-[#B5791A] shadow-inner',
+    shadow: '6px 6px 14px rgba(191, 180, 155, 0.40), -6px -6px 14px rgba(255, 255, 255, 0.50)',
+    titleColor: 'text-[#7A4A0A]',
+    subtitleColor: 'text-[#8A5210]',
   },
   danger: {
-    border: 'border-[#B23D25]',
-    bg:     'bg-white',
-    iconBg: 'bg-[#FBE4DE] text-[#B23D25]',
+    border: 'border-[#B23D25] border-2',
+    bg: 'bg-[#FBE4DE]',
+    iconBg: 'p-2.5 rounded-full bg-[#F5D2C8] text-[#B23D25] shadow-inner',
+    shadow: '6px 6px 14px rgba(191, 180, 155, 0.40), -6px -6px 14px rgba(255, 255, 255, 0.50)',
+    titleColor: 'text-[#7A1A0A]',
+    subtitleColor: 'text-[#962615]',
   },
   safe: {
-    border: 'border-[#2F8558]',
-    bg:     'bg-white',
-    iconBg: 'bg-[#E4F2E9] text-[#2F8558]',
+    border: 'border-[#2F8558] border-2',
+    bg: 'bg-[#E4F2E9]',
+    iconBg: 'p-2.5 rounded-full bg-[#CCE9D6] text-[#2F8558] shadow-inner',
+    shadow: '6px 6px 14px rgba(191, 180, 155, 0.40), -6px -6px 14px rgba(255, 255, 255, 0.50)',
+    titleColor: 'text-[#1A5C3A]',
+    subtitleColor: 'text-[#206942]',
   },
 };
 
@@ -77,12 +96,12 @@ export default function Card({
           : undefined
       }
       style={{
-        boxShadow: '0 6px 16px rgba(28, 43, 39, 0.10)',
+        boxShadow: v.shadow,
         ...style,
       }}
-      className={`rounded-2xl border-2 ${v.border} ${v.bg} p-5 transition-all duration-200 ease-out flex flex-col ${
+      className={`rounded-[32px] ${v.border} ${v.bg} p-6 transition-all duration-200 ease-out flex flex-col ${
         onClick
-          ? 'cursor-pointer hover:border-[#2B6E5E] hover:-translate-y-0.5 hover:shadow-[0_10px_24px_rgba(43,110,94,0.14)] active:translate-y-0.5 active:shadow-[0_2px_8px_rgba(28,43,39,0.08)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2B6E5E]'
+          ? 'cursor-pointer hover:-translate-y-0.5 hover:shadow-[12px_12px_20px_rgba(191,180,155,0.65),-12px_-12px_20px_rgba(255,255,255,0.75)] active:translate-y-0.5 active:shadow-[inset_6px_6px_10px_rgba(191,180,155,0.55),inset_-6px_-6px_10px_rgba(255,255,255,0.65)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2B6E5E]'
           : ''
       } ${className}`}
       {...props}
@@ -92,20 +111,20 @@ export default function Card({
         <div className="flex items-start justify-between gap-3 mb-4 flex-shrink-0">
           <div className="flex items-center gap-3 min-w-0">
             {icon && (
-              <div className={`p-2.5 rounded-xl flex-shrink-0 ${v.iconBg}`}>
+              <div className={`p-2.5 rounded-full flex-shrink-0 ${v.iconBg}`}>
                 {icon}
               </div>
             )}
             {title && (
               <div className="min-w-0">
                 <h3
-                  className="text-base font-bold text-[#232724] tracking-tight leading-snug"
+                  className={`text-base sm:text-lg font-bold tracking-tight leading-snug ${v.titleColor}`}
                   style={{ fontFamily: "'Fraunces', serif" }}
                 >
                   {title}
                 </h3>
                 {subtitle && (
-                  <p className="text-xs text-[#6B726C] mt-0.5 leading-normal">
+                  <p className={`text-xs mt-0.5 leading-normal ${v.subtitleColor}`}>
                     {subtitle}
                   </p>
                 )}

@@ -1,0 +1,188 @@
+{
+  "_source": "Curated dataset of common pill imprints from FDA DailyMed and National Library of Medicine Pillbox reference data.",
+  "_disclaimer": "This is a limited reference lookup, not a medical identification. If you're not certain, do not take this pill — check with a pharmacist.",
+  "pills": [
+    {
+      "imprintCode": "L484",
+      "drugName": "Acetaminophen (Paracetamol)",
+      "strength": "500 mg",
+      "shape": "Capsule-shaped",
+      "color": "White"
+    },
+    {
+      "imprintCode": "IP 109",
+      "drugName": "Acetaminophen and Hydrocodone",
+      "strength": "325 mg / 5 mg",
+      "shape": "Oval",
+      "color": "White"
+    },
+    {
+      "imprintCode": "M367",
+      "drugName": "Hydrocodone and Acetaminophen",
+      "strength": "10 mg / 325 mg",
+      "shape": "Capsule-shaped",
+      "color": "White"
+    },
+    {
+      "imprintCode": "I-2",
+      "drugName": "Ibuprofen",
+      "strength": "200 mg",
+      "shape": "Round",
+      "color": "Brown / Orange"
+    },
+    {
+      "imprintCode": "IP 465",
+      "drugName": "Ibuprofen",
+      "strength": "600 mg",
+      "shape": "Oval",
+      "color": "White"
+    },
+    {
+      "imprintCode": "IP 466",
+      "drugName": "Ibuprofen",
+      "strength": "800 mg",
+      "shape": "Oval",
+      "color": "White"
+    },
+    {
+      "imprintCode": "54 543",
+      "drugName": "Prednisone",
+      "strength": "20 mg",
+      "shape": "Round",
+      "color": "Peach / Orange"
+    },
+    {
+      "imprintCode": "DAN 5620",
+      "drugName": "Cyclobenzaprine Hydrochloride",
+      "strength": "10 mg",
+      "shape": "Round",
+      "color": "Yellow"
+    },
+    {
+      "imprintCode": "H 126",
+      "drugName": "Amlodipine Besylate",
+      "strength": "5 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "H 127",
+      "drugName": "Amlodipine Besylate",
+      "strength": "10 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "109",
+      "drugName": "Metformin Hydrochloride",
+      "strength": "500 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "142",
+      "drugName": "Metformin Hydrochloride",
+      "strength": "850 mg",
+      "shape": "Oval",
+      "color": "White"
+    },
+    {
+      "imprintCode": "143",
+      "drugName": "Metformin Hydrochloride",
+      "strength": "1000 mg",
+      "shape": "Oval",
+      "color": "White"
+    },
+    {
+      "imprintCode": "LUPIN 10",
+      "drugName": "Lisinopril",
+      "strength": "10 mg",
+      "shape": "Round",
+      "color": "Pink"
+    },
+    {
+      "imprintCode": "LUPIN 20",
+      "drugName": "Lisinopril",
+      "strength": "20 mg",
+      "shape": "Round",
+      "color": "Pink / Peach"
+    },
+    {
+      "imprintCode": "A 01",
+      "drugName": "Atorvastatin Calcium",
+      "strength": "10 mg",
+      "shape": "Oval",
+      "color": "White"
+    },
+    {
+      "imprintCode": "A 02",
+      "drugName": "Atorvastatin Calcium",
+      "strength": "20 mg",
+      "shape": "Oval",
+      "color": "White"
+    },
+    {
+      "imprintCode": "A 03",
+      "drugName": "Atorvastatin Calcium",
+      "strength": "40 mg",
+      "shape": "Oval",
+      "color": "White"
+    },
+    {
+      "imprintCode": "20",
+      "drugName": "Omeprazole",
+      "strength": "20 mg",
+      "shape": "Capsule",
+      "color": "Purple / Gold"
+    },
+    {
+      "imprintCode": "C 51",
+      "drugName": "Cetirizine Hydrochloride",
+      "strength": "10 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "APO 020",
+      "drugName": "Levothyroxine Sodium",
+      "strength": "50 mcg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "WATSON 795",
+      "drugName": "Warfarin Sodium",
+      "strength": "5 mg",
+      "shape": "Round",
+      "color": "Peach"
+    },
+    {
+      "imprintCode": "TEVA 54",
+      "drugName": "Buspirone Hydrochloride",
+      "strength": "10 mg",
+      "shape": "Oval",
+      "color": "White"
+    },
+    {
+      "imprintCode": "E 613",
+      "drugName": "Escitalopram Oxalate",
+      "strength": "10 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "MYLAN 477",
+      "drugName": "Diazepam",
+      "strength": "10 mg",
+      "shape": "Round",
+      "color": "Blue"
+    },
+    {
+      "imprintCode": "G 3722",
+      "drugName": "Alprazolam",
+      "strength": "2 mg",
+      "shape": "Rectangle (Bar)",
+      "color": "White"
+    }
+  ]
+}

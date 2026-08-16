@@ -33,67 +33,10 @@ const upload = multer({
   },
 });
 
-// ─── Drug name heuristic parser ───────────────────────────────────────────────
-/**
- * Extracts a candidate drug name from raw OCR text.
- *
- * Heuristic rules (ordered by confidence):
- *   1. Common prescription label patterns — "Rx:", "Drug:", "Medicine:", "Tablet:", etc.
- *   2. Dose-number proximity — word immediately before a dose like "10mg", "5 mg"
- *   3. All-caps word that's at least 4 characters long (labels often print drug name in caps)
- *   4. First substantial word on the first non-blank line (fallback)
- *
- * Intentionally simple — the user always confirms before saving.
- *
- * @param {string} rawText  Full OCR output text
- * @returns {{ candidate: string|null, rawText: string, lines: string[] }}
- */
-function parseDrugName(rawText) {
-  const lines = rawText
-    .split(/\r?\n/)
-    .map((l) => l.trim())
-    .filter(Boolean);
-
-  const text = rawText.trim();
-
-  // Rule 1: explicit label patterns
-  const labelPattern = /(?:drug|medicine|medication|rx|tablet|capsule|syrup|injection|tab|cap)\s*[:\-]?\s*([A-Za-z][A-Za-z\s\-]{1,40}?)(?:\s+\d|\n|$)/i;
-  const labelMatch = text.match(labelPattern);
-  if (labelMatch?.[1]?.trim()) {
-    return { candidate: labelMatch[1].trim(), rawText, lines };
-  }
-
-  // Rule 2: word immediately before a dosage string (e.g. "Warfarin 5mg")
-  const dosePattern = /([A-Za-z][A-Za-z\-]{2,30})\s+\d+\s*(?:mg|mcg|ml|g|iu|unit)/i;
-  const doseMatch = text.match(dosePattern);
-  if (doseMatch?.[1]?.trim()) {
-    return { candidate: doseMatch[1].trim(), rawText, lines };
-  }
-
-  // Rule 3: first ALL-CAPS token ≥ 4 chars (common on printed prescription labels)
-  const capsPattern = /\b([A-Z]{4,})\b/;
-  const capsMatch = text.match(capsPattern);
-  if (capsMatch?.[1]) {
-    // Exclude common non-drug all-caps words
-    const stopWords = ['TAKE', 'DAILY', 'DOSE', 'ONCE', 'TWICE', 'REFILL', 'DATE', 'NAME', 'PATIENT'];
-    if (!stopWords.includes(capsMatch[1])) {
-      return { candidate: capsMatch[1], rawText, lines };
-    }
-  }
-
-  // Rule 4: first substantial word from the first non-blank line (fallback)
-  for (const line of lines) {
-    const words = line.split(/\s+/);
-    for (const word of words) {
-      const clean = word.replace(/[^A-Za-z\-]/g, '');
-      if (clean.length >= 4) {
-        return { candidate: clean, rawText, lines };
-      }
-    }
-  }
-
-  return { candidate: null, rawText, lines };
-}
+const {
+  extractAndRankCandidates,
+  verifyCandidatesWithRxNorm,
+} = require('../services/ocrCandidateExtractor');
 
 // ─── Temp file cleanup helper ─────────────────────────────────────────────────
 function cleanupFile(filePath) {
@@ -108,11 +51,11 @@ function cleanupFile(filePath) {
 
 // ═════════════════════════════════════════════════════════════════════════════
 // POST /medicine/scan
-// Multi-layered OCR pipeline:
+// Multi-layered OCR pipeline with RxNorm candidate verification:
 // 1. DEMO_MODE: Mock fixture returns instantly
 // 2. Local Tesseract OCR: Fast, offline, zero network dependency
 // 3. Cloud OCR.space API: Secondary fallback if Tesseract gives low confidence
-// 4. Fallback: Clear manual entry prompt
+// 4. Boilerplate filter + candidate ranking + RxNorm verification
 // ═════════════════════════════════════════════════════════════════════════════
 router.post(
   '/scan',
@@ -144,7 +87,6 @@ router.post(
 
     try {
       // ── 0. DEMO MODE: skip live OCR, return pre-set sample text ───────────
-      // ⚠ DEMO MOCK — controlled by DEMO_MODE=true in .env.
       if (isDemoMode()) {
         cleanupFile(filePath);
         const mock = getMockOcrResult();
@@ -152,6 +94,10 @@ router.post(
         return res.status(200).json({
           success:   true,
           candidate: mock.candidate,
+          standardizedCode: '11289',
+          verified:  true,
+          fallbackCandidates: [mock.candidate],
+          suggestedDosage: '5 mg',
           rawText:   mock.rawText,
           lineCount: mock.lineCount,
           note:      mock.note,
@@ -178,18 +124,25 @@ router.post(
 
       if (hasAlphanumeric && tesseractRawText.length >= 3) {
         cleanupFile(filePath);
-        const { candidate, lines } = parseDrugName(tesseractRawText);
-        console.log(`[scan] Layer 1 (Tesseract) succeeded: extracted ${lines.length} lines, candidate="${candidate || 'none'}"`);
+
+        const { rankedCandidates, suggestedDosage, lines } = extractAndRankCandidates(tesseractRawText);
+        const verification = await verifyCandidatesWithRxNorm(rankedCandidates, suggestedDosage);
+
+        console.log(`[scan] Layer 1 (Tesseract) succeeded: extracted ${lines.length} lines, verified candidate="${verification.candidate || 'none'}"`);
 
         return res.status(200).json({
           success: true,
-          candidate,
+          candidate: verification.candidate,
+          standardizedCode: verification.standardizedCode,
+          verified: verification.verified,
+          fallbackCandidates: verification.fallbackCandidates,
+          suggestedDosage: verification.suggestedDosage,
           rawText: tesseractRawText,
           lineCount: lines.length,
           engine: 'tesseract',
-          note: candidate
-            ? 'Drug name extracted via local OCR — please verify before saving.'
-            : 'Text recognized. Please review and confirm the medicine name.',
+          note: verification.verified
+            ? 'Drug name verified against standard drug database — please confirm details.'
+            : 'Text recognized. Select a suggested name below or enter manually.',
         });
       }
 
@@ -202,16 +155,21 @@ router.post(
 
       if (!apiKey) {
         cleanupFile(filePath);
-        // If Tesseract produced any partial text, return it as best-effort before failing
         if (tesseractRawText.length > 0) {
-          const { candidate, lines } = parseDrugName(tesseractRawText);
+          const { rankedCandidates, suggestedDosage, lines } = extractAndRankCandidates(tesseractRawText);
+          const verification = await verifyCandidatesWithRxNorm(rankedCandidates, suggestedDosage);
+
           return res.status(200).json({
             success: true,
-            candidate,
+            candidate: verification.candidate,
+            standardizedCode: verification.standardizedCode,
+            verified: verification.verified,
+            fallbackCandidates: verification.fallbackCandidates,
+            suggestedDosage: verification.suggestedDosage,
             rawText: tesseractRawText,
             lineCount: lines.length,
             engine: 'tesseract',
-            note: 'Partial text recognized via local OCR. Please verify medicine name.',
+            note: 'Partial text recognized via local OCR.',
           });
         }
 
@@ -243,12 +201,17 @@ router.post(
         cleanupFile(filePath);
         console.warn(`[scan] OCR.space cloud call failed: ${ocrErr.message}`);
 
-        // If Tesseract had partial text, return it
         if (tesseractRawText.length > 0) {
-          const { candidate, lines } = parseDrugName(tesseractRawText);
+          const { rankedCandidates, suggestedDosage, lines } = extractAndRankCandidates(tesseractRawText);
+          const verification = await verifyCandidatesWithRxNorm(rankedCandidates, suggestedDosage);
+
           return res.status(200).json({
             success: true,
-            candidate,
+            candidate: verification.candidate,
+            standardizedCode: verification.standardizedCode,
+            verified: verification.verified,
+            fallbackCandidates: verification.fallbackCandidates,
+            suggestedDosage: verification.suggestedDosage,
             rawText: tesseractRawText,
             lineCount: lines.length,
             engine: 'tesseract',
@@ -269,10 +232,16 @@ router.post(
 
       if (!parsed || ocrExitCode === 99 || parsed.FileParseExitCode < 0) {
         if (tesseractRawText.length > 0) {
-          const { candidate, lines } = parseDrugName(tesseractRawText);
+          const { rankedCandidates, suggestedDosage, lines } = extractAndRankCandidates(tesseractRawText);
+          const verification = await verifyCandidatesWithRxNorm(rankedCandidates, suggestedDosage);
+
           return res.status(200).json({
             success: true,
-            candidate,
+            candidate: verification.candidate,
+            standardizedCode: verification.standardizedCode,
+            verified: verification.verified,
+            fallbackCandidates: verification.fallbackCandidates,
+            suggestedDosage: verification.suggestedDosage,
             rawText: tesseractRawText,
             lineCount: lines.length,
             engine: 'tesseract',
@@ -296,18 +265,24 @@ router.post(
       }
 
       // Parse candidate from OCR.space output
-      const { candidate, lines } = parseDrugName(cloudRawText);
-      console.log(`[scan] Layer 2 (OCR.space) succeeded: extracted ${lines.length} lines, candidate="${candidate || 'none'}"`);
+      const { rankedCandidates, suggestedDosage, lines } = extractAndRankCandidates(cloudRawText);
+      const verification = await verifyCandidatesWithRxNorm(rankedCandidates, suggestedDosage);
+
+      console.log(`[scan] Layer 2 (OCR.space) succeeded: extracted ${lines.length} lines, verified candidate="${verification.candidate || 'none'}"`);
 
       return res.status(200).json({
         success: true,
-        candidate,
+        candidate: verification.candidate,
+        standardizedCode: verification.standardizedCode,
+        verified: verification.verified,
+        fallbackCandidates: verification.fallbackCandidates,
+        suggestedDosage: verification.suggestedDosage,
         rawText: cloudRawText,
         lineCount: lines.length,
         engine: 'ocrspace',
-        note: candidate
-          ? 'Drug name extracted via cloud OCR — please verify before saving.'
-          : 'Could not identify a drug name automatically. Please type it in manually.',
+        note: verification.verified
+          ? 'Drug name verified against standard drug database — please confirm details.'
+          : 'Could not identify a drug name automatically. Select a suggested name or type manually.',
       });
     } catch (err) {
       cleanupFile(filePath);
@@ -315,6 +290,154 @@ router.post(
       return res.status(500).json({
         error: 'Scan failed unexpectedly. Please enter the medicine name manually.',
         fallback: true,
+      });
+    }
+  }
+);
+
+// ═════════════════════════════════════════════════════════════════════════════
+// POST /medicine/identify-pill
+// Loose pill imprint code lookup via OCR photo or manual imprint code.
+// ALWAYS returns `possibleMatches` (plural), never a single definitive confirmation.
+// Includes mandatory safety caveat.
+// ═════════════════════════════════════════════════════════════════════════════
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
+
+const PILL_SAFETY_CAVEAT =
+  "This is a limited reference lookup, not a medical identification. If you're not certain, do not take this pill — check with a pharmacist.";
+
+router.post(
+  '/identify-pill',
+  auth,
+  (req, res, next) => {
+    upload.single('image')(req, res, (err) => {
+      if (err instanceof multer.MulterError) {
+        return res.status(400).json({ error: `Upload error: ${err.message}` });
+      }
+      if (err) {
+        return res.status(400).json({ error: err.message });
+      }
+      next();
+    });
+  },
+  async (req, res) => {
+    const filePath = req.file?.path;
+    const manualCode = req.body?.imprintCode || req.query?.imprintCode;
+
+    try {
+      let candidateTokens = [];
+      let extractedRawText = '';
+
+      if (manualCode && String(manualCode).trim()) {
+        const clean = String(manualCode).trim();
+        candidateTokens = [clean, clean.replace(/\s+/g, '')];
+        extractedRawText = clean;
+      } else if (filePath) {
+        // Run OCR on the pill photo
+        let ocrText = '';
+        try {
+          ocrText = await tesseract.recognize(filePath, tesseractConfig);
+        } catch (tessErr) {
+          console.warn('[identify-pill] Tesseract failed:', tessErr.message);
+        }
+
+        if (!ocrText || ocrText.trim().length === 0) {
+          // Cloud OCR fallback
+          const apiKey = process.env.OCR_SPACE_API_KEY || 'helloworld';
+          const form = new FormData();
+          form.append('file', fs.createReadStream(filePath));
+          form.append('apikey', apiKey);
+          form.append('OCREngine', '2');
+          form.append('scale', 'true');
+
+          const response = await axios.post('https://api.ocr.space/parse/image', form, {
+            headers: form.getHeaders(),
+            timeout: 10000,
+          });
+          const parsed = response.data?.ParsedResults?.[0];
+          ocrText = parsed?.ParsedText || '';
+        }
+
+        cleanupFile(filePath);
+        extractedRawText = ocrText.trim();
+
+        // Tokenize OCR text into potential imprint code strings (2 to 12 chars)
+        const rawTokens = extractedRawText
+          .replace(/[^A-Za-z0-9\s\-]/g, ' ')
+          .split(/\s+/)
+          .map((t) => t.trim())
+          .filter((t) => t.length >= 2 && t.length <= 12);
+
+        candidateTokens = Array.from(new Set(rawTokens));
+      } else {
+        return res.status(400).json({
+          error: 'Please upload a photo of the pill or enter the stamped imprint code.',
+        });
+      }
+
+      if (candidateTokens.length === 0) {
+        return res.status(200).json({
+          success: true,
+          extractedText: extractedRawText,
+          possibleMatches: [],
+          matchCount: 0,
+          caveat: PILL_SAFETY_CAVEAT,
+          message: 'Could not detect an imprint code from this image. Please enter the code manually.',
+        });
+      }
+
+      // Look up candidate imprint codes in PillImprint table
+      const allImprints = await prisma.pillImprint.findMany();
+      const matchedPills = [];
+      const seenIds = new Set();
+
+      for (const token of candidateTokens) {
+        const tokenLower = token.toLowerCase();
+        for (const item of allImprints) {
+          const itemCodeLower = item.imprintCode.toLowerCase();
+          const itemCodeNoSpace = itemCodeLower.replace(/\s+/g, '');
+          const tokenNoSpace = tokenLower.replace(/\s+/g, '');
+
+          if (
+            itemCodeLower === tokenLower ||
+            itemCodeNoSpace === tokenNoSpace ||
+            (tokenLower.length >= 3 && itemCodeLower.includes(tokenLower)) ||
+            (tokenNoSpace.length >= 3 && itemCodeNoSpace.includes(tokenNoSpace))
+          ) {
+            if (!seenIds.has(item.id)) {
+              seenIds.add(item.id);
+              matchedPills.push({
+                id:          item.id,
+                imprintCode: item.imprintCode,
+                drugName:    item.drugName,
+                strength:    item.strength,
+                shape:       item.shape,
+                color:       item.color,
+              });
+            }
+          }
+        }
+      }
+
+      // If manual code entered and no exact token match, return all fuzzy matches
+      return res.status(200).json({
+        success: true,
+        extractedText: extractedRawText,
+        candidateTokens,
+        possibleMatches: matchedPills,
+        matchCount: matchedPills.length,
+        caveat: PILL_SAFETY_CAVEAT,
+        note: matchedPills.length > 0
+          ? `Found ${matchedPills.length} possible reference match${matchedPills.length !== 1 ? 'es' : ''}. User confirmation is required before adding.`
+          : 'No reference matches found for this imprint code in our limited dataset. Please consult a pharmacist.',
+      });
+    } catch (err) {
+      cleanupFile(filePath);
+      console.error('[POST /medicine/identify-pill]', err);
+      return res.status(500).json({
+        error: 'Pill identification lookup failed. Please consult a licensed pharmacist.',
+        caveat: PILL_SAFETY_CAVEAT,
       });
     }
   }

@@ -95,10 +95,19 @@ router.post('/', auth, requireRole(['PATIENT', 'CAREGIVER']), async (req, res) =
 
   try {
     // ── 1. Resolve the patient row ────────────────────────────────────────────
-    const patient = await prisma.patient.findUnique({ where: { userId } });
+    let patient = await prisma.patient.findUnique({ where: { userId } });
     if (!patient) {
-      return res.status(404).json({
-        error: 'No patient profile found. Please complete onboarding first.',
+      const user = await prisma.user.findUnique({ where: { id: userId } });
+      if (!user) {
+        return res.status(401).json({ error: 'User account not found. Please sign in again.' });
+      }
+      patient = await prisma.patient.create({
+        data: {
+          userId,
+          age: 65,
+          conditions: [],
+          allergies: [],
+        },
       });
     }
 
@@ -383,7 +392,7 @@ router.post('/', auth, requireRole(['PATIENT', 'CAREGIVER']), async (req, res) =
 });
 
 // ═════════════════════════════════════════════════════════════════════════════
-// GET /medicine
+// GET /medicine (Returns only active, non-discontinued medicines)
 // ═════════════════════════════════════════════════════════════════════════════
 router.get('/', auth, async (req, res) => {
   const { userId } = req.user;
@@ -392,7 +401,7 @@ router.get('/', auth, async (req, res) => {
     if (!patient) return res.status(200).json({ medicines: [] });
 
     const medicines = await prisma.medicine.findMany({
-      where: { patientId: patient.id },
+      where: { patientId: patient.id, removedAt: null },
       orderBy: { dateAdded: 'desc' },
     });
 
@@ -414,7 +423,67 @@ router.get('/', auth, async (req, res) => {
 });
 
 // ═════════════════════════════════════════════════════════════════════════════
-// DELETE /medicine/:id
+// PUT /medicine/:id — Edit dosage and/or medicine type (Prescription/OTC/Herbal)
+// ═════════════════════════════════════════════════════════════════════════════
+router.put('/:id', auth, requireRole(['PATIENT']), async (req, res) => {
+  const { userId } = req.user;
+  const { id } = req.params;
+  const { dosage, type, name: prohibitedName, standardizedCode: prohibitedCode } = req.body;
+
+  if (prohibitedName !== undefined || prohibitedCode !== undefined) {
+    return res.status(400).json({
+      error: 'Drug name and code cannot be modified. If the drug is incorrect, discontinue it and add the new one.',
+    });
+  }
+
+  const validTypes = ['PRESCRIPTION', 'OTC', 'HERBAL'];
+  if (type && !validTypes.includes(type.toUpperCase())) {
+    return res.status(400).json({
+      error: `Invalid medicine type. Must be one of: ${validTypes.join(', ')}`,
+    });
+  }
+
+  try {
+    const patient = await prisma.patient.findUnique({ where: { userId } });
+    if (!patient) return res.status(404).json({ error: 'Patient profile not found.' });
+
+    const existing = await prisma.medicine.findFirst({
+      where: { id, patientId: patient.id, removedAt: null },
+    });
+    if (!existing) return res.status(404).json({ error: 'Active medicine not found in your list.' });
+
+    const updateData = {};
+    if (dosage !== undefined) updateData.dosage = dosage ? String(dosage).trim() : null;
+    if (type) updateData.type = type.toUpperCase();
+
+    const updatedMedicine = await prisma.medicine.update({
+      where: { id },
+      data: updateData,
+    });
+
+    // Recalculate cumulative burden score
+    const cumulativeBurden = await calculateCumulativeBurden(patient.id);
+
+    return res.status(200).json({
+      message: 'Medicine updated successfully.',
+      medicine: {
+        id:               updatedMedicine.id,
+        name:             updatedMedicine.name,
+        type:             updatedMedicine.type,
+        dosage:           updatedMedicine.dosage,
+        standardizedCode: updatedMedicine.standardizedCode,
+        dateAdded:        updatedMedicine.dateAdded,
+      },
+      cumulativeBurden,
+    });
+  } catch (err) {
+    console.error('[PUT /medicine/:id]', err);
+    res.status(500).json({ error: 'Failed to update medicine.' });
+  }
+});
+
+// ═════════════════════════════════════════════════════════════════════════════
+// DELETE /medicine/:id — Soft-delete (sets removedAt timestamp)
 // ═════════════════════════════════════════════════════════════════════════════
 router.delete('/:id', auth, requireRole(['PATIENT']), async (req, res) => {
   const { userId } = req.user;
@@ -424,12 +493,25 @@ router.delete('/:id', auth, requireRole(['PATIENT']), async (req, res) => {
     if (!patient) return res.status(404).json({ error: 'Patient profile not found.' });
 
     const medicine = await prisma.medicine.findFirst({
-      where: { id, patientId: patient.id },
+      where: { id, patientId: patient.id, removedAt: null },
     });
-    if (!medicine) return res.status(404).json({ error: 'Medicine not found in your list.' });
+    if (!medicine) return res.status(404).json({ error: 'Active medicine not found in your list.' });
 
-    await prisma.medicine.delete({ where: { id } });
-    return res.status(200).json({ message: 'Medicine removed from your list.' });
+    const removedAt = new Date();
+    await prisma.medicine.update({
+      where: { id },
+      data:  { removedAt },
+    });
+
+    // Recalculate cumulative burden after discontinuation
+    const cumulativeBurden = await calculateCumulativeBurden(patient.id);
+
+    return res.status(200).json({
+      message: `"${medicine.name}" has been marked as discontinued.`,
+      medicineId: id,
+      removedAt,
+      cumulativeBurden,
+    });
   } catch (err) {
     console.error('[DELETE /medicine/:id]', err);
     res.status(500).json({ error: 'Failed to remove medicine.' });

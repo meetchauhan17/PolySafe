@@ -6,12 +6,18 @@ const rateLimit = require('express-rate-limit');
 const prisma = require('../lib/prisma');
 const { signToken } = require('../lib/jwt');
 const { sendOtpEmail } = require('../lib/email');
+const { auth } = require('../middleware/auth');
 
 const router = express.Router();
 
-// ─── Rate limiter: max 5 OTP sends per email per hour ─────────────────────────
+const SALT_ROUNDS = 12;
+const DUMMY_HASH = '$2b$12$invalidhashpaddingtopreventinenumeration00000000000000000';
+
+// ─── Rate limiters ─────────────────────────────────────────────────────────────
+
+/** 5 OTP send requests per email per hour */
 const otpSendLimiter = rateLimit({
-  windowMs: 60 * 60 * 1000, // 1 hour
+  windowMs: 60 * 60 * 1000,
   max: 5,
   keyGenerator: (req) => {
     const email = req.body?.email?.toLowerCase()?.trim();
@@ -22,25 +28,49 @@ const otpSendLimiter = rateLimit({
   validate: { keyGeneratorIpFallback: false },
   standardHeaders: true,
   legacyHeaders: false,
-  handler: (req, res) => {
+  handler: (_req, res) => {
     res.status(429).json({
-      error: 'Too many verification code requests for this email address. Please wait 1 hour before trying again.',
+      error: 'Too many code requests for this email. Please wait 1 hour.',
     });
   },
 });
 
-// ─── Zod validation schemas ───────────────────────────────────────────────────
-
-const sendOtpSchema = z.object({
-  email: z.string().email('Invalid email address format'),
-  name: z.string().optional(),
+/** 10 login attempts per IP per 15 minutes */
+const loginIpLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  handler: (_req, res) => {
+    res.status(429).json({
+      error: 'Too many login attempts from this network. Please wait 15 minutes.',
+    });
+  },
 });
 
-const verifyOtpSchema = z.object({
-  email: z.string().email('Invalid email address format'),
+// ─── Zod schemas ───────────────────────────────────────────────────────────────
+
+const checkEmailSchema = z.object({
+  email: z.string().email('Invalid email address'),
+  role: z.enum(['PATIENT', 'CAREGIVER']),
+});
+
+const signupSendOtpSchema = z.object({
+  name: z.string().min(2, 'Full name must be at least 2 characters'),
+  email: z.string().email('Invalid email address'),
+  password: z.string().min(8, 'Password must be at least 8 characters'),
+  role: z.enum(['PATIENT', 'CAREGIVER']),
+});
+
+const verifySignupOtpSchema = z.object({
+  email: z.string().email('Invalid email address'),
   code: z.string().length(6, 'Verification code must be exactly 6 digits'),
-  name: z.string().optional(),
-  role: z.enum(['PATIENT', 'CAREGIVER']).optional(),
+});
+
+const patientLoginSchema = z.object({
+  email: z.string().email('Invalid email address'),
+  password: z.string().min(1, 'Password is required'),
+  role: z.enum(['PATIENT', 'CAREGIVER']),
 });
 
 const doctorSignupSchema = z.object({
@@ -70,143 +100,276 @@ function validate(schema, body, res) {
 }
 
 // ═════════════════════════════════════════════════════════════════════════════
-// POST /auth/patient/send-otp
+// POST /auth/check-email
+// Checks whether an email+role combination already has an account.
+// Frontend uses the response to decide: show signup form or login form.
 // ═════════════════════════════════════════════════════════════════════════════
-router.post('/patient/send-otp', otpSendLimiter, async (req, res) => {
-  const data = validate(sendOtpSchema, req.body, res);
+router.post('/check-email', async (req, res) => {
+  const data = validate(checkEmailSchema, req.body, res);
   if (!data) return;
 
   const targetEmail = data.email.toLowerCase().trim();
-  const userName = data.name?.trim() || undefined;
 
   try {
-    // Generate secure random 6-digit OTP code
-    const code = Math.floor(100000 + Math.random() * 900000).toString();
-    const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes from now
+    const user = await prisma.user.findFirst({
+      where: { email: targetEmail, role: data.role },
+      select: { id: true },
+    });
+    return res.status(200).json({ exists: !!user });
+  } catch (err) {
+    console.error('[check-email]', err);
+    res.status(500).json({ error: 'Could not check email. Please try again.' });
+  }
+});
 
-    // Invalidate previous unused codes for this email
-    await prisma.otpCode.updateMany({
-      where: {
-        email: targetEmail,
-        used: false,
-      },
-      data: {
-        used: true,
-      },
+// ═════════════════════════════════════════════════════════════════════════════
+// POST /auth/patient/signup-send-otp
+// New-account flow: validates password, hashes it, stores a PendingSignup
+// row (not a real User yet), then emails the OTP.
+// ═════════════════════════════════════════════════════════════════════════════
+router.post('/patient/signup-send-otp', otpSendLimiter, async (req, res) => {
+  const data = validate(signupSendOtpSchema, req.body, res);
+  if (!data) return;
+
+  const { name, password, role } = data;
+  const targetEmail = data.email.toLowerCase().trim();
+
+  try {
+    // Guard: don't let someone re-signup with an email that already exists for this role
+    const existing = await prisma.user.findFirst({
+      where: { email: targetEmail, role },
+      select: { id: true },
+    });
+    if (existing) {
+      return res.status(409).json({
+        error: 'An account with this email already exists. Please sign in instead.',
+      });
+    }
+
+    const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
+    const code = Math.floor(100000 + Math.random() * 900000).toString();
+    const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+
+    // Invalidate any previous pending signups for this email+role
+    await prisma.pendingSignup.updateMany({
+      where: { email: targetEmail, role, used: false },
+      data: { used: true },
     });
 
-    // Store new OTP in database
-    await prisma.otpCode.create({
+    // Create new pending signup row
+    await prisma.pendingSignup.create({
       data: {
+        name: name.trim(),
         email: targetEmail,
+        passwordHash,
+        role,
         code,
         expiresAt,
-        used: false,
       },
     });
 
-    // Send the verification code via Resend
-    await sendOtpEmail({
-      email: targetEmail,
-      name: userName,
-      code,
-    });
+    // Send OTP via Resend
+    await sendOtpEmail({ email: targetEmail, name: name.trim(), code });
 
     return res.status(200).json({
-      message: 'Verification code sent to your email.',
+      message: 'Verification code sent to your email. It expires in 10 minutes.',
       email: targetEmail,
-      // REMOVE _devOtp before production — included in non-production for testing convenience
+      // Dev-only hint so you can test without an inbox
       ...(process.env.NODE_ENV !== 'production' && { _devOtp: code }),
     });
   } catch (err) {
-    console.error('[send-otp]', err);
+    console.error('[signup-send-otp]', err);
     res.status(500).json({ error: 'Failed to send verification code. Please try again.' });
   }
 });
 
 // ═════════════════════════════════════════════════════════════════════════════
-// POST /auth/patient/verify-otp
+// POST /auth/patient/verify-signup-otp
+// Validates OTP, creates the real User record from PendingSignup, returns JWT.
 // ═════════════════════════════════════════════════════════════════════════════
-router.post('/patient/verify-otp', async (req, res) => {
-  const data = validate(verifyOtpSchema, req.body, res);
+router.post('/patient/verify-signup-otp', async (req, res) => {
+  const data = validate(verifySignupOtpSchema, req.body, res);
   if (!data) return;
 
   const targetEmail = data.email.toLowerCase().trim();
-  const { code, name, role } = data;
+  const { code } = data;
 
   try {
-    // Look up the active unexpired OTP code record
-    const otpRecord = await prisma.otpCode.findFirst({
+    // Find the most recent valid pending signup for this email+code
+    const pending = await prisma.pendingSignup.findFirst({
       where: {
         email: targetEmail,
         code,
         used: false,
-        expiresAt: {
-          gt: new Date(),
-        },
+        expiresAt: { gt: new Date() },
       },
-      orderBy: {
-        createdAt: 'desc',
-      },
+      orderBy: { createdAt: 'desc' },
     });
 
-    if (!otpRecord) {
+    if (!pending) {
       return res.status(400).json({
         error: 'Invalid or expired verification code. Please check the code or request a new one.',
       });
     }
 
-    // Mark the OTP as used
-    await prisma.otpCode.update({
-      where: { id: otpRecord.id },
+    // Mark pending signup as used
+    await prisma.pendingSignup.update({
+      where: { id: pending.id },
       data: { used: true },
     });
 
-    // Find or create User record
-    let user = await prisma.user.findUnique({
-      where: { email: targetEmail },
+    // Guard: parallel race — ensure the user hasn't been created already
+    let user = await prisma.user.findFirst({
+      where: { email: targetEmail, role: pending.role },
       include: { patient: true },
     });
-
-    const isNewUser = !user;
-    const assignedRole = role || 'PATIENT';
-    const displayName = name?.trim() || user?.name || 'PolySafe User';
 
     if (!user) {
       user = await prisma.user.create({
         data: {
           email: targetEmail,
-          name: displayName,
-          role: assignedRole,
+          name: pending.name,
+          passwordHash: pending.passwordHash,
+          role: pending.role,
+          ...(pending.role === 'PATIENT'
+            ? {
+                patient: {
+                  create: {
+                    age: 65,
+                    conditions: [],
+                    allergies: [],
+                  },
+                },
+              }
+            : {}),
         },
-        include: { patient: true },
-      });
-    } else if (name?.trim() && (user.name === 'PolySafe User' || !user.name)) {
-      user = await prisma.user.update({
-        where: { id: user.id },
-        data: { name: name.trim() },
         include: { patient: true },
       });
     }
 
     const token = signToken({ userId: user.id, role: user.role });
 
-    return res.status(200).json({
-      message: isNewUser ? 'Account created and signed in.' : 'Signed in successfully.',
-      isNewUser,
+    return res.status(201).json({
+      message: 'Account created and signed in.',
+      isNewUser: true,
       token,
       user: {
         id: user.id,
         name: user.name,
         email: user.email,
-        phone: user.phone,
         role: user.role,
         patient: user.patient,
       },
     });
   } catch (err) {
-    console.error('[verify-otp]', err);
+    console.error('[verify-signup-otp]', err);
     res.status(500).json({ error: 'Verification failed. Please try again.' });
+  }
+});
+
+// ═════════════════════════════════════════════════════════════════════════════
+// GET /auth/me
+// Returns current authenticated user and linked patient profile
+// ═════════════════════════════════════════════════════════════════════════════
+router.get('/me', auth, async (req, res) => {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: req.user.userId },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        phone: true,
+        role: true,
+        createdAt: true,
+        patient: true,
+      },
+    });
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found.' });
+    }
+
+    return res.status(200).json({ user, patient: user.patient });
+  } catch (err) {
+    console.error('[GET /auth/me]', err);
+    return res.status(500).json({ error: 'Failed to fetch user session.' });
+  }
+});
+
+// ═════════════════════════════════════════════════════════════════════════════
+// POST /auth/patient/login
+// Returning-user login: email + password only, no OTP.
+// Two-layer rate limiting: IP-level (above) + per-account lockout.
+// ═════════════════════════════════════════════════════════════════════════════
+router.post('/patient/login', loginIpLimiter, async (req, res) => {
+  const data = validate(patientLoginSchema, req.body, res);
+  if (!data) return;
+
+  const { password, role } = data;
+  const targetEmail = data.email.toLowerCase().trim();
+  const GENERIC_ERROR = 'Invalid email or password.';
+
+  try {
+    const user = await prisma.user.findFirst({
+      where: { email: targetEmail, role },
+      include: { patient: true },
+    });
+
+    // ── Per-account lockout check ──────────────────────────────────────────
+    if (user?.lockedUntil && user.lockedUntil > new Date()) {
+      const remainingMs = user.lockedUntil.getTime() - Date.now();
+      const remainingSecs = Math.ceil(remainingMs / 1000);
+      return res.status(429).json({
+        error: `Account is temporarily locked after too many failed attempts. Try again in ${remainingSecs} second${remainingSecs !== 1 ? 's' : ''}.`,
+        lockedUntil: user.lockedUntil.toISOString(),
+      });
+    }
+
+    // ── Password comparison (constant-time even if no user found) ──────────
+    const hashToCompare = user?.passwordHash ?? DUMMY_HASH;
+    const passwordMatch = await bcrypt.compare(password, hashToCompare);
+
+    if (!user || !passwordMatch) {
+      // Increment failed attempts (only if the user actually exists)
+      if (user) {
+        const newAttempts = (user.failedLoginAttempts ?? 0) + 1;
+        const lockout = newAttempts >= 5 ? new Date(Date.now() + 20 * 1000) : null;
+        await prisma.user.update({
+          where: { id: user.id },
+          data: {
+            failedLoginAttempts: newAttempts,
+            ...(lockout ? { lockedUntil: lockout } : {}),
+          },
+        });
+      }
+      return res.status(401).json({ error: GENERIC_ERROR });
+    }
+
+    // ── Success: reset lockout counters ────────────────────────────────────
+    if (user.failedLoginAttempts > 0 || user.lockedUntil) {
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { failedLoginAttempts: 0, lockedUntil: null },
+      });
+    }
+
+    const token = signToken({ userId: user.id, role: user.role });
+
+    return res.status(200).json({
+      message: 'Signed in successfully.',
+      token,
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        patient: user.patient,
+      },
+    });
+  } catch (err) {
+    console.error('[patient/login]', err);
+    res.status(500).json({ error: 'Login failed. Please try again.' });
   }
 });
 
@@ -221,13 +384,11 @@ router.post('/doctor/signup', async (req, res) => {
   const targetEmail = email.toLowerCase().trim();
 
   try {
-    // Check for duplicate email
     const existing = await prisma.user.findUnique({ where: { email: targetEmail } });
     if (existing) {
       return res.status(409).json({ error: 'An account with this email already exists.' });
     }
 
-    const SALT_ROUNDS = 12;
     const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
 
     const user = await prisma.user.create({
@@ -261,24 +422,51 @@ router.post('/doctor/signup', async (req, res) => {
 // ═════════════════════════════════════════════════════════════════════════════
 // POST /auth/doctor/login
 // ═════════════════════════════════════════════════════════════════════════════
-router.post('/doctor/login', async (req, res) => {
+router.post('/doctor/login', loginIpLimiter, async (req, res) => {
   const data = validate(doctorLoginSchema, req.body, res);
   if (!data) return;
 
   const { email, password } = data;
   const targetEmail = email.toLowerCase().trim();
+  const GENERIC_ERROR = 'Invalid email or password.';
 
   try {
     const user = await prisma.user.findUnique({ where: { email: targetEmail } });
 
-    // Constant-time dummy hash comparison to prevent user enumeration
-    const DUMMY_HASH = '$2b$12$invalidhashpaddingtopreventinenumeration00000000000000000';
-    const hashToCompare = user?.passwordHash ?? DUMMY_HASH;
+    // ── Per-account lockout check ──────────────────────────────────────────
+    if (user?.lockedUntil && user.lockedUntil > new Date()) {
+      const remainingMs = user.lockedUntil.getTime() - Date.now();
+      const remainingSecs = Math.ceil(remainingMs / 1000);
+      return res.status(429).json({
+        error: `Account is temporarily locked after too many failed attempts. Try again in ${remainingSecs} second${remainingSecs !== 1 ? 's' : ''}.`,
+        lockedUntil: user.lockedUntil.toISOString(),
+      });
+    }
 
+    const hashToCompare = user?.passwordHash ?? DUMMY_HASH;
     const passwordMatch = await bcrypt.compare(password, hashToCompare);
 
     if (!user || !passwordMatch || user.role !== 'DOCTOR') {
-      return res.status(401).json({ error: 'Invalid email or password.' });
+      if (user) {
+        const newAttempts = (user.failedLoginAttempts ?? 0) + 1;
+        const lockout = newAttempts >= 5 ? new Date(Date.now() + 20 * 1000) : null;
+        await prisma.user.update({
+          where: { id: user.id },
+          data: {
+            failedLoginAttempts: newAttempts,
+            ...(lockout ? { lockedUntil: lockout } : {}),
+          },
+        });
+      }
+      return res.status(401).json({ error: GENERIC_ERROR });
+    }
+
+    // ── Success: reset lockout counters ────────────────────────────────────
+    if (user.failedLoginAttempts > 0 || user.lockedUntil) {
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { failedLoginAttempts: 0, lockedUntil: null },
+      });
     }
 
     const token = signToken({ userId: user.id, role: user.role });

@@ -11,6 +11,7 @@ import {
   Sparkles,
   TrendingUp,
   Lock,
+  UserCircle,
 } from 'lucide-react';
 import { AnimatePresence } from 'framer-motion';
 import PageTransition from '../components/PageTransition';
@@ -18,13 +19,13 @@ import { useAuth } from '../context/AuthContext';
 import SignOutConfirmButton from '../components/SignOutConfirmButton';
 
 /**
- * PatientLayout.jsx — Mobile-first shell for Patient users
+ * PatientLayout.jsx — Mobile-first shell for Patient users (Neumorphic Edition)
  *
  * Structure:
  * - Persistent Guest Banner (if browsing as Guest)
- * - Clean Top Bar: Logo + App name + Sign Out
- * - Main content container: Single column, warm paper background (#FBF8F2), padded for bottom bar
- * - Fixed Bottom Tab Bar: 5 primary thumb-accessible destinations (Home, Add, Timeline, Symptoms, Connected)
+ * - Clean Top Bar: Logo + App name + Sign Out (molded clay styling)
+ * - Main content container: Single column, warm clay background (#EDE8DC), padded for bottom bar
+ * - Fixed Bottom Tab Bar: 5 primary thumb-accessible destinations with soft inset wells
  */
 export default function PatientLayout() {
   const location = useLocation();
@@ -82,7 +83,7 @@ export default function PatientLayout() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#FBF8F2] text-[#232724] flex flex-col font-sans selection:bg-[#2B6E5E] selection:text-white">
+    <div className="min-h-screen bg-[#EDE8DC] text-[#1C2B27] flex flex-col font-sans selection:bg-[#2B6E5E] selection:text-white">
       {/* ─── Persistent Guest Mode Notice Banner ─── */}
       {isGuest && (
         <aside
@@ -92,14 +93,14 @@ export default function PatientLayout() {
           <div className="max-w-2xl mx-auto flex items-center justify-between gap-3">
             <div className="flex items-center gap-2 min-w-0">
               <span className="inline-block w-2 h-2 rounded-full bg-[#E5A93C] flex-shrink-0 animate-pulse" />
-              <span className="text-[#E7E1D3] truncate">
+              <span className="text-[#EDE8DC] truncate">
                 You're browsing as a <strong className="text-white">guest</strong> — sign in to save real data
               </span>
             </div>
             <button
               type="button"
               onClick={handleSignOut}
-              className="underline font-bold text-[#E5A93C] hover:text-white transition-colors text-xs whitespace-nowrap"
+              className="underline font-bold text-[#E5A93C] hover:text-white transition-colors text-xs whitespace-nowrap cursor-pointer"
             >
               Sign In
             </button>
@@ -108,10 +109,12 @@ export default function PatientLayout() {
       )}
 
       {/* ─── Top Bar: Minimalist Branding & Sign Out ─── */}
-      <header className={`sticky ${isGuest ? 'top-[33px]' : 'top-0'} z-40 bg-[#FBF8F2]/90 backdrop-blur-md border-b-2 border-[#E7E1D3] px-4 py-3`}>
+      <header
+        className={`sticky ${isGuest ? 'top-[33px]' : 'top-0'} z-40 bg-[#EDE8DC]/90 backdrop-blur-md px-4 py-3 shadow-[0_4px_14px_rgba(191,180,155,0.40)]`}
+      >
         <div className="max-w-2xl mx-auto flex items-center justify-between">
           <Link to="/home" className="flex items-center gap-2.5 group">
-            <div className="p-2 bg-[#2B6E5E] text-white rounded-xl shadow-sm group-hover:scale-105 transition-transform">
+            <div className="p-2.5 bg-[#2B6E5E] text-white rounded-2xl shadow-[4px_4px_10px_rgba(191,180,155,0.55),-4px_-4px_10px_rgba(255,255,255,0.65)] group-hover:scale-105 transition-transform">
               <ShieldCheck className="w-5 h-5" />
             </div>
             <div>
@@ -121,24 +124,36 @@ export default function PatientLayout() {
               >
                 PolySafe
               </span>
-              <span className="text-[10px] block text-[#6B726C] font-semibold tracking-wide">
+              <span className="text-[10px] block text-[#5C6B64] font-semibold tracking-wide">
                 {isGuest ? 'Demo Patient Portal' : 'Patient Safety Portal'}
               </span>
             </div>
           </Link>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2.5">
             <Link
               to="/insights"
-              className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-xl border transition-all ${
+              className={`flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-bold rounded-2xl transition-all ${
                 location.pathname === '/insights' || location.pathname === '/trends'
-                  ? 'bg-[#2B6E5E] text-white border-[#2B6E5E] shadow-sm'
-                  : 'bg-white text-[#2B6E5E] border-[#E7E1D3] hover:border-[#2B6E5E] hover:bg-[#E4F2E9]/40'
+                  ? 'bg-[#2B6E5E] text-white shadow-[inset_2px_2px_4px_rgba(0,0,0,0.2)]'
+                  : 'btn-secondary py-1.5 px-3 text-xs'
               }`}
               title="View Safety Insights & Trends"
             >
-              <TrendingUp className="w-3.5 h-3.5" />
+              <TrendingUp className="w-3.5 h-3.5 text-[#2B6E5E]" />
               <span>Insights</span>
+            </Link>
+
+            <Link
+              to="/profile"
+              className={`flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-bold rounded-2xl transition-all ${
+                location.pathname === '/profile'
+                  ? 'bg-[#2B6E5E] text-white shadow-[inset_2px_2px_4px_rgba(0,0,0,0.2)]'
+                  : 'btn-secondary py-1.5 px-2.5 text-xs'
+              }`}
+              title="My Profile & Settings"
+            >
+              <UserCircle className="w-4 h-4 text-[#2B6E5E]" />
             </Link>
 
             <SignOutConfirmButton />
@@ -146,53 +161,37 @@ export default function PatientLayout() {
         </div>
       </header>
 
-      {/* ─── Page Content with AnimatePresence & PageTransition ─── */}
+      {/* ─── Page Content with PageTransition ─── */}
       <main className="flex-1 pb-24">
-        <AnimatePresence mode="wait" initial={false}>
-          <PageTransition key={location.pathname}>
-            <Outlet />
-          </PageTransition>
-        </AnimatePresence>
+        <PageTransition key={location.pathname}>
+          <Outlet />
+        </PageTransition>
       </main>
 
       {/* ─── Fixed Bottom Tab Bar ─── */}
       <nav
-        className="fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-t-2 border-[#E7E1D3] py-1.5 px-2 shadow-[0_-4px_20px_rgba(28,43,39,0.08)]"
+        className="fixed bottom-0 left-0 right-0 z-50 bg-[#EDE8DC]/95 backdrop-blur-md py-2 px-3 shadow-[0_-6px_16px_rgba(191,180,155,0.45),0_6px_16px_rgba(255,255,255,0.65)]"
         aria-label="Patient Navigation"
       >
-        <div className="max-w-md mx-auto grid grid-cols-5 gap-1">
+        <div className="max-w-md mx-auto grid grid-cols-5 gap-1.5">
           {navTabs.map((tab) => {
             const Icon = tab.icon;
             const isActive = tab.match(location.pathname);
-            const isLockedForGuest = isGuest && tab.isWrite;
-
-            const handleTabClick = (e) => {
-              if (isLockedForGuest) {
-                e.preventDefault();
-                openGuestLockModal(tab.featureName || 'access this feature');
-              }
-            };
 
             return (
               <Link
                 key={tab.id}
                 to={tab.path}
-                onClick={handleTabClick}
-                className={`flex flex-col items-center justify-center py-1.5 px-1 rounded-xl transition-all relative ${
+                className={`flex flex-col items-center justify-center py-2 px-1 rounded-2xl transition-all relative ${
                   isActive
-                    ? 'text-[#2B6E5E] font-bold bg-[#E4F2E9]'
-                    : 'text-[#6B726C] hover:text-[#232724] hover:bg-[#F5F0E8]'
+                    ? 'text-[#2B6E5E] font-bold bg-[#EDE8DC] shadow-[inset_3px_3px_6px_rgba(191,180,155,0.55),inset_-3px_-3px_6px_rgba(255,255,255,0.65)]'
+                    : 'text-[#5C6B64] hover:text-[#1C2B27] hover:shadow-[4px_4px_8px_rgba(191,180,155,0.3),-4px_-4px_8px_rgba(255,255,255,0.4)]'
                 }`}
               >
                 <div className="relative">
                   <Icon className={`w-5 h-5 ${isActive ? 'stroke-[2.5]' : 'stroke-2'}`} />
                   {isActive && (
                     <span className="absolute -top-1 -right-1 w-1.5 h-1.5 rounded-full bg-[#2B6E5E]" />
-                  )}
-                  {isLockedForGuest && (
-                    <span className="absolute -top-1 -right-1.5 bg-[#8A6D3B] text-white p-0.5 rounded-full ring-1 ring-white shadow-xs">
-                      <Lock className="w-2.5 h-2.5 stroke-[3]" />
-                    </span>
                   )}
                 </div>
                 <span className="text-[10px] mt-0.5 tracking-tight leading-none flex items-center gap-0.5">

@@ -13,7 +13,7 @@ import axios from 'axios';
 import {
   Stethoscope, ArrowLeft, Loader2, AlertCircle, CheckCircle2, Clock,
   Pill, Leaf, ShoppingBag, AlertOctagon, CalendarDays, ChevronRight,
-  Users, Shield, ShieldCheck, Info, TriangleAlert, Activity, Plus,
+  Users, Shield, ShieldCheck, Info, TriangleAlert, Activity, Plus, Search,
 } from 'lucide-react';
 import Card from '../components/Card';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
@@ -51,6 +51,115 @@ const SEV_CFG = {
   Moderate:        { badge: 'bg-amber-100 text-amber-800 border-amber-200', dot: '#B5791A', variant: 'caution' },
   Minor:           { badge: 'bg-yellow-100 text-yellow-800 border-yellow-200', dot: '#A16207', variant: 'default' },
 };
+
+// ─── Prescribing Safety Check Panel ──────────────────────────────────────────
+function PrescribingSafetyCheck({ patientId }) {
+  const [drug, setDrug] = useState('');
+  const [result, setResult] = useState(null);
+  const [checking, setChecking] = useState(false);
+  const [err, setErr] = useState('');
+
+  const SEV_BADGE = {
+    Major:           'bg-rose-100 text-rose-800 border-rose-200',
+    Contraindicated: 'bg-red-100 text-red-800 border-red-200',
+    Moderate:        'bg-amber-100 text-amber-800 border-amber-200',
+    Minor:           'bg-yellow-100 text-yellow-800 border-yellow-200',
+  };
+
+  const handleCheck = async (e) => {
+    e.preventDefault();
+    const trimmed = drug.trim();
+    if (!trimmed) return;
+    setChecking(true);
+    setErr('');
+    setResult(null);
+    try {
+      const { data } = await axios.post('/connection/doctor/prescribe-safety-check', {
+        patientId,
+        proposedMedicineName: trimmed,
+      });
+      setResult(data);
+    } catch (error) {
+      setErr(error?.response?.data?.error || 'Safety check failed. Please try again.');
+    } finally {
+      setChecking(false);
+    }
+  };
+
+  return (
+    <Card className="space-y-4">
+      <div className="flex items-center gap-2">
+        <div className="p-2 bg-[#1B4B66]/10 rounded-xl flex-shrink-0">
+          <Search className="w-4 h-4 text-[#1B4B66]" />
+        </div>
+        <div>
+          <p className="text-sm font-bold text-[#232724]">Prescribing Safety Check</p>
+          <p className="text-[11px] text-[#6B726C]">Test a new drug against this patient's current medications</p>
+        </div>
+      </div>
+
+      <form onSubmit={handleCheck} className="flex gap-2">
+        <input
+          type="text"
+          value={drug}
+          onChange={(e) => { setDrug(e.target.value); setErr(''); setResult(null); }}
+          placeholder="e.g. Metformin, Atorvastatin…"
+          className="input-field flex-1 text-sm py-2.5"
+        />
+        <button
+          type="submit"
+          disabled={!drug.trim() || checking}
+          className="btn-primary px-4 py-2.5 text-sm flex items-center gap-1.5"
+        >
+          {checking ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
+          Check
+        </button>
+      </form>
+
+      {err && (
+        <div className="flex items-center gap-2 p-3 bg-rose-50 border border-rose-200 rounded-xl text-xs text-rose-700">
+          <AlertCircle className="w-4 h-4 text-rose-400 flex-shrink-0" />
+          {err}
+        </div>
+      )}
+
+      {result && (
+        <div className="space-y-2">
+          {result.decision === 'SAFE' && (
+            <div className="flex items-start gap-2.5 p-3.5 bg-[#E4F2E9] border border-[#2F8558]/30 rounded-xl">
+              <CheckCircle2 className="w-4 h-4 text-[#2B6E5E] flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="text-xs font-bold text-[#1A5C3A]">
+                  {result.proposedDrug} — No interactions found
+                </p>
+                <p className="text-[11px] text-[#2B6E5E]/80 mt-0.5">{result.message}</p>
+              </div>
+            </div>
+          )}
+          {result.flags && result.flags.length > 0 && (
+            <div className="space-y-2">
+              <p className="text-xs font-extrabold uppercase tracking-wider text-[#B23D25]">
+                {result.flags.length} Interaction{result.flags.length !== 1 ? 's' : ''} Found for {result.proposedDrug}
+              </p>
+              {result.flags.map((ix, i) => (
+                <div key={i} className="p-3 bg-[#FBE4DE]/60 border border-[#B23D25]/30 rounded-xl space-y-1">
+                  <div className="flex items-center justify-between">
+                    <p className="text-xs font-bold text-[#232724]">{result.proposedDrug} ↔ {ix.interactingDrug}</p>
+                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${SEV_BADGE[ix.severity] || SEV_BADGE.Minor}`}>
+                      {ix.severity}
+                    </span>
+                  </div>
+                  {ix.note && <p className="text-[11px] text-[#6B726C] leading-relaxed">{ix.note}</p>}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+    </Card>
+  );
+}
+
 
 function fmt(dateStr) {
   if (!dateStr) return '—';
@@ -203,6 +312,9 @@ function PatientView({ patientId }) {
           READ-ONLY
         </div>
       </Card>
+
+      {/* Prescribing Safety Check */}
+      <PrescribingSafetyCheck patientId={patientId} />
 
       {/* Active Risk Flags */}
       {flags.length > 0 && (
@@ -381,10 +493,10 @@ function PatientTiltCard({ children, isSelected, onClick }) {
         }}
       >
         <Card
-          className={`p-3.5 transition-all duration-200 ${
+          className={`p-4 transition-all duration-200 ${
             isSelected
-              ? 'border-[#2B6E5E] bg-[#E4F2E9] shadow-md ring-1 ring-[#2B6E5E]'
-              : 'hover:border-[#2B6E5E] hover:bg-[#F4FAF8] hover:shadow-md'
+              ? 'bg-[#EDE8DC] shadow-[inset_4px_4px_8px_rgba(191,180,155,0.6),inset_-4px_-4px_8px_rgba(255,255,255,0.7)] ring-2 ring-[#2B6E5E]'
+              : 'hover:shadow-[12px_12px_20px_rgba(191,180,155,0.65),-12px_-12px_20px_rgba(255,255,255,0.75)]'
           }`}
         >
           {children}
@@ -410,10 +522,10 @@ function ConnectionsList({ onSelect, selectedId }) {
 
   if (connections.length === 0) {
     return (
-      <div className="p-6 text-center text-xs text-[#6B726C] bg-[#FDFBF7] rounded-2xl border-2 border-dashed border-[#E7E1D3] space-y-2">
+      <div className="p-6 text-center text-xs text-[#5C6B64] bg-[#EDE8DC] shadow-[inset_3px_3px_6px_rgba(191,180,155,0.5),inset_-3px_-3px_6px_rgba(255,255,255,0.6)] rounded-[32px] space-y-2">
         <EmptyDoctorListIllustration className="w-20 h-20 mx-auto" />
         <div>
-          <p className="font-bold text-[#232724]">No approved patients yet</p>
+          <p className="font-bold text-[#1C2B27]">No approved patients yet</p>
           <p className="mt-1 leading-relaxed text-[11px]">
             Click "+ Enter Code" above to link a patient via their 6-digit access code.
           </p>
@@ -441,12 +553,12 @@ function ConnectionsList({ onSelect, selectedId }) {
                 onClick={() => onSelect(c.patientId, c.connectionId)}
               >
                 <div className="flex items-center gap-2.5">
-                  <div className={`p-2 rounded-xl transition-colors ${isSelected ? 'bg-[#2B6E5E] text-white shadow-sm' : 'bg-[#2B6E5E]/10 text-[#2B6E5E]'}`}>
+                  <div className={`p-2 rounded-2xl transition-colors ${isSelected ? 'bg-[#2B6E5E] text-white shadow-sm' : 'icon-well w-8 h-8'}`}>
                     <Users className="w-4 h-4" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs font-bold text-[#232724] truncate">Anonymous Patient</p>
-                    <p className="text-[10px] text-[#6B726C]">
+                    <p className="text-xs font-bold text-[#1C2B27] truncate">Anonymous Patient</p>
+                    <p className="text-[10px] text-[#5C6B64]">
                       Age {c.patientAge || '—'} · {c.recentMeds?.length ?? 0} active meds
                     </p>
                   </div>

@@ -16,6 +16,7 @@ const QRCode  = require('qrcode');
 const crypto  = require('crypto');
 const prisma  = require('../lib/prisma');
 const { auth, requireRole } = require('../middleware/auth');
+const { lookupInteraction } = require('../services/interactionLookup');
 
 const router = express.Router();
 
@@ -99,9 +100,10 @@ router.post('/generate-code', auth, requireRole(['PATIENT']), async (req, res) =
 // ═════════════════════════════════════════════════════════════════════════════
 router.post('/claim-code', auth, requireRole(['DOCTOR']), async (req, res) => {
   const { userId } = req.user;
-  const { code } = req.body;
+  const rawCode = req.body.code || req.body.shareCode;
+  const code = rawCode ? String(rawCode).trim() : '';
 
-  if (!code || !/^\d{6}$/.test(String(code).trim())) {
+  if (!code || !/^\d{6}$/.test(code)) {
     return res.status(400).json({ error: 'Please provide a valid 6-digit code.' });
   }
 
@@ -360,6 +362,66 @@ router.get('/doctor-patient/:patientId/timeline', auth, requireRole(['DOCTOR']),
   } catch (err) {
     console.error('[doctor-patient timeline]', err);
     return res.status(500).json({ error: 'Failed to load patient data.' });
+  }
+});
+
+// ═════════════════════════════════════════════════════════════════════════════
+// POST /connection/doctor/prescribe-safety-check
+// Doctor-auth: test a proposed medication against the patient's existing regimen
+// ═════════════════════════════════════════════════════════════════════════════
+router.post('/doctor/prescribe-safety-check', auth, requireRole(['DOCTOR']), async (req, res) => {
+  const { userId } = req.user;
+  const { patientId, proposedMedicineName } = req.body;
+
+  if (!patientId || !proposedMedicineName?.trim()) {
+    return res.status(400).json({ error: 'patientId and proposedMedicineName are required.' });
+  }
+
+  const proposed = proposedMedicineName.trim();
+
+  try {
+    const connection = await prisma.connection.findFirst({
+      where: { connectedUserId: userId, patientId, status: 'APPROVED' },
+    });
+    if (!connection) {
+      return res.status(403).json({ error: 'No approved connection to this patient.' });
+    }
+
+    const activeMeds = await prisma.medicine.findMany({
+      where: { patientId, removedAt: null },
+      select: { id: true, name: true, type: true, dosage: true },
+    });
+
+    const detectedFlags = [];
+    for (const med of activeMeds) {
+      const match = await lookupInteraction(proposed, med.name);
+      if (match.found) {
+        detectedFlags.push({
+          proposedDrug: proposed,
+          interactingDrug: med.name,
+          severity: match.severity,
+          note: match.note,
+        });
+      }
+    }
+
+    const hasContraindicated = detectedFlags.some((f) => f.severity === 'Contraindicated');
+    const hasMajor = detectedFlags.some((f) => f.severity === 'Major');
+    const decision = hasContraindicated ? 'CONTRAINDICATED' : hasMajor ? 'CAUTION' : detectedFlags.length > 0 ? 'MODERATE_RISK' : 'SAFE';
+
+    return res.status(200).json({
+      decision,
+      proposedDrug: proposed,
+      activeMedCount: activeMeds.length,
+      flagCount: detectedFlags.length,
+      flags: detectedFlags,
+      message: decision === 'SAFE'
+        ? `No direct DDInter interaction detected between ${proposed} and patient's current ${activeMeds.length} medicines.`
+        : `Potential ${decision} interaction identified with current medications.`,
+    });
+  } catch (err) {
+    console.error('[doctor/prescribe-safety-check]', err);
+    return res.status(500).json({ error: 'Failed to run prescribing safety check.' });
   }
 });
 

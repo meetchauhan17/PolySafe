@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import axios from 'axios';
 import {
   CheckCircle2,
   AlertTriangle,
@@ -23,6 +24,9 @@ import {
   Lock,
   Bell,
   BellRing,
+  Pencil,
+  Trash2,
+  X,
 } from 'lucide-react';
 import { patientApi } from '../api/auth';
 import Card from '../components/Card';
@@ -120,8 +124,50 @@ const DEMO_DATA = {
 // ─── Main Component ──────────────────────────────────────────────────────────
 export default function HomePage() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const shouldReduceMotion = useReducedMotion();
   const { token, user, isGuest, openGuestLockModal } = useAuth();
+
+  // State for Edit / Discontinue modals
+  const [editingMed, setEditingMed] = useState(null);
+  const [discontinuingMed, setDiscontinuingMed] = useState(null);
+  const [remindersEnabled, setRemindersEnabled] = useState(() => {
+    try { return localStorage.getItem('polysafe_reminders') === 'true'; } catch { return false; }
+  });
+
+  const handleToggleAllReminders = () => {
+    if (isGuest) {
+      openGuestLockModal('medication reminders');
+      return;
+    }
+    setRemindersEnabled((prev) => {
+      const next = !prev;
+      try { localStorage.setItem('polysafe_reminders', String(next)); } catch {}
+      if (next) {
+        notify.success('Reminders Activated', 'Daily dose notifications are now active.');
+      } else {
+        notify.info('Reminders Paused', 'Medication reminders have been paused.');
+      }
+      return next;
+    });
+  };
+  const [remindedDoses, setRemindedDoses] = useState({});
+
+  const handleToggleDoseReminder = (doseKey, medicineName, time) => {
+    if (isGuest) {
+      openGuestLockModal('set individual dose reminders');
+      return;
+    }
+    setRemindedDoses((prev) => {
+      const next = { ...prev, [doseKey]: !prev[doseKey] };
+      if (next[doseKey]) {
+        notify.success('Dose Reminder Set', `You'll be reminded to take ${medicineName} at ${time}.`);
+      } else {
+        notify.info('Reminder Cleared', `Reminder for ${medicineName} at ${time} removed.`);
+      }
+      return next;
+    });
+  };
 
   const {
     data: summary,
@@ -136,6 +182,36 @@ export default function HomePage() {
     staleTime: 30_000,
   });
 
+  // ─── Mutations for Edit & Discontinue ──────────────────────────────────────
+  const editMutation = useMutation({
+    mutationFn: ({ id, dosage, type }) =>
+      axios.put(`/medicine/${id}`, { dosage, type }),
+    onSuccess: (res, vars) => {
+      queryClient.invalidateQueries(['home-summary']);
+      queryClient.invalidateQueries(['patient-timeline']);
+      queryClient.invalidateQueries(['patient-insights']);
+      setEditingMed(null);
+      notify.success('Medicine Updated', `Updated settings for "${vars.name || 'medicine'}".`);
+    },
+    onError: (err) => {
+      notify.error('Update Failed', err?.response?.data?.error || 'Could not update medicine.');
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id) => axios.delete(`/medicine/${id}`),
+    onSuccess: (res, id) => {
+      queryClient.invalidateQueries(['home-summary']);
+      queryClient.invalidateQueries(['patient-timeline']);
+      queryClient.invalidateQueries(['patient-insights']);
+      setDiscontinuingMed(null);
+      notify.success('Medicine Discontinued', 'Marked as discontinued and preserved on your timeline.');
+    },
+    onError: (err) => {
+      notify.error('Discontinue Failed', err?.response?.data?.error || 'Could not discontinue medicine.');
+    },
+  });
+
   // Use real data when authenticated, demo data otherwise
   const isDemo = !token || user?.isGuest;
   const data = isDemo ? DEMO_DATA : (summary || DEMO_DATA);
@@ -146,11 +222,11 @@ export default function HomePage() {
 
   if (isError && token) {
     return (
-      <div className="min-h-[80vh] flex items-center justify-center bg-[#FBF8F2] px-4">
+      <div className="min-h-[80vh] flex items-center justify-center bg-[#EDE8DC] px-4">
         <div className="polysafe-card p-8 max-w-md w-full text-center space-y-4">
           <AlertCircle className="w-12 h-12 text-rose-500 mx-auto" />
-          <h2 className="text-xl font-bold text-[#232724]">Couldn't load your data</h2>
-          <p className="text-sm text-[#6B726C]">
+          <h2 className="text-xl font-bold text-[#1C2B27]">Couldn't load your data</h2>
+          <p className="text-sm text-[#5C6B64]">
             {error?.response?.data?.error || 'Something went wrong. Please try again.'}
           </p>
           <button onClick={() => refetch()} className="btn-primary px-6 py-2.5 text-sm mx-auto">
@@ -173,12 +249,12 @@ export default function HomePage() {
   });
 
   return (
-    <div className="bg-[#FBF8F2] min-h-[88vh] pb-28">
+    <div className="bg-[#EDE8DC] min-h-[88vh] pb-28">
       <div className="max-w-2xl mx-auto px-4 py-8 space-y-5">
 
         {/* ── Demo mode banner ─────────────────────────────────────────────── */}
         {isDemo && (
-          <div className="flex items-start space-x-3 p-3.5 bg-[#2B6E5E]/8 border border-[#2B6E5E]/20 rounded-xl text-xs text-[#2B6E5E]">
+          <div className="flex items-start space-x-3 p-3.5 bg-[#2B6E5E]/10 border border-[#2B6E5E]/20 rounded-2xl text-xs text-[#2B6E5E] shadow-sm">
             <FlaskConical className="w-4 h-4 flex-shrink-0 mt-0.5" />
             <p>
               <strong>Demo Mode</strong> — this is a sample data preview. <Link to="/login" className="underline font-bold">Sign in</Link> to see your real medication summary.
@@ -189,13 +265,13 @@ export default function HomePage() {
         {/* ── Page Header ──────────────────────────────────────────────────── */}
         <div className="flex items-start justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-[#232724]">My Dashboard</h1>
-            <p className="text-xs text-[#6B726C] mt-0.5">{todayLabel}</p>
+            <h1 className="text-2xl sm:text-3xl font-bold text-[#1C2B27]">My Dashboard</h1>
+            <p className="text-xs text-[#5C6B64] mt-0.5">{todayLabel}</p>
           </div>
           <button
             onClick={() => refetch()}
             disabled={isLoading || !token}
-            className="p-2.5 rounded-xl border-2 border-[#E7E1D3] bg-white text-[#6B726C] hover:text-[#2B6E5E] hover:border-[#2B6E5E] transition-colors disabled:opacity-40"
+            className="btn-secondary p-2.5 rounded-2xl disabled:opacity-40"
             title="Refresh"
           >
             <RefreshCw className="w-4 h-4" />
@@ -326,22 +402,22 @@ export default function HomePage() {
                         animate={{ opacity: 1, y: 0 }}
                         exit={shouldReduceMotion ? undefined : { opacity: 0, scale: 0.95 }}
                         transition={{ duration: 0.2 }}
-                        className="flex items-center space-x-3.5 p-3.5 rounded-xl bg-[#FDFBF7] border border-[#E7E1D3] hover:border-[#2B6E5E]/30 transition-colors"
+                        className="flex items-center space-x-3.5 p-3.5 rounded-2xl bg-[#EDE8DC] shadow-[4px_4px_8px_rgba(191,180,155,0.45),-4px_-4px_8px_rgba(255,255,255,0.60)] transition-all"
                       >
                         {/* Time bubble */}
                         <div className="flex-shrink-0 w-16 text-center">
-                          <span className="text-[11px] font-bold text-[#2B6E5E] bg-[#2B6E5E]/10 px-2 py-1 rounded-lg block leading-snug">
+                          <span className="text-[11px] font-bold text-[#2B6E5E] bg-[#EDE8DC] shadow-[inset_2px_2px_4px_rgba(191,180,155,0.5),inset_-2px_-2px_4px_rgba(255,255,255,0.6)] px-2 py-1 rounded-xl block leading-snug font-mono">
                             {item.time}
                           </span>
                         </div>
 
                         {/* Divider dot */}
-                        <div className="w-1.5 h-1.5 rounded-full bg-[#E7E1D3] flex-shrink-0" />
+                        <div className="w-1.5 h-1.5 rounded-full bg-[#BFB49B] flex-shrink-0" />
 
                         {/* Medicine info */}
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm font-bold text-[#232724] truncate">{item.name}</p>
-                          <p className="text-[11px] text-[#6B726C]">{item.dosage}</p>
+                          <p className="text-sm font-bold text-[#1C2B27] truncate">{item.name}</p>
+                          <p className="text-[11px] text-[#5C6B64] font-mono">{item.dosage}</p>
                         </div>
 
                         <MedicineTypeBadge type={item.type} />
@@ -351,14 +427,14 @@ export default function HomePage() {
                           type="button"
                           onClick={() => handleToggleDoseReminder(doseKey, item.name, item.time)}
                           title={isDoseReminded ? 'Reminder active - click to mute' : 'Click to set dose reminder'}
-                          className={`p-2 rounded-lg border text-xs transition-colors cursor-pointer ${
+                          className={`p-2 rounded-xl text-xs transition-colors cursor-pointer ${
                             isDoseReminded
-                              ? 'bg-[#E4F2E9] text-[#2B6E5E] border-[#2B6E5E]/30'
-                              : 'bg-white text-[#9CA3AF] border-[#E7E1D3] hover:text-[#2B6E5E] hover:border-[#2B6E5E]/30'
+                              ? 'bg-[#2B6E5E] text-white shadow-sm'
+                              : 'bg-[#EDE8DC] text-[#5C6B64] shadow-[inset_2px_2px_4px_rgba(191,180,155,0.4),inset_-2px_-2px_4px_rgba(255,255,255,0.5)] hover:text-[#2B6E5E]'
                           }`}
                         >
                           {isDoseReminded ? (
-                            <BellRing className="w-3.5 h-3.5 text-[#2B6E5E]" />
+                            <BellRing className="w-3.5 h-3.5 text-white" />
                           ) : (
                             <Bell className="w-3.5 h-3.5" />
                           )}
@@ -377,13 +453,13 @@ export default function HomePage() {
               title="Active Medicines"
               icon={<Pill className="w-4 h-4 text-[#2B6E5E]" />}
               badge={
-                <span className="text-[11px] font-bold text-[#6B726C] bg-[#EFEBE0] px-2.5 py-1 rounded-lg">
+                <span className="text-[11px] font-bold text-[#5C6B64] bg-[#EDE8DC] shadow-[inset_2px_2px_4px_rgba(191,180,155,0.45),inset_-2px_-2px_4px_rgba(255,255,255,0.6)] px-2.5 py-1 rounded-xl">
                   {medicines.length} total
                 </span>
               }
               className="space-y-4"
             >
-              <div className="grid grid-cols-2 gap-2.5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <AnimatePresence initial={false}>
                   {medicines.map((med) => (
                     <motion.div
@@ -393,20 +469,56 @@ export default function HomePage() {
                       animate={{ opacity: 1, scale: 1 }}
                       exit={shouldReduceMotion ? undefined : { opacity: 0, scale: 0.95 }}
                       transition={{ duration: 0.2 }}
-                      className="p-3.5 rounded-xl bg-[#FDFBF7] border border-[#E7E1D3] space-y-2 hover:border-[#2B6E5E]/30 transition-colors"
+                      className="p-4 rounded-2xl bg-[#EDE8DC] shadow-[4px_4px_8px_rgba(191,180,155,0.45),-4px_-4px_8px_rgba(255,255,255,0.60)] space-y-2 flex flex-col justify-between"
                     >
-                      <div className="flex items-start justify-between gap-1">
-                        <p className="text-sm font-bold text-[#232724] leading-tight flex-1 min-w-0 truncate">
-                          {med.name}
+                      <div className="space-y-1.5">
+                        <div className="flex items-start justify-between gap-1">
+                          <p className="text-sm font-bold text-[#1C2B27] leading-tight flex-1 min-w-0 truncate">
+                            {med.name}
+                          </p>
+                          <MedicineTypeBadge type={med.type} />
+                        </div>
+                        {med.dosage && (
+                          <p className="text-[11px] text-[#5C6B64] font-mono">{med.dosage}</p>
+                        )}
+                        <p className="text-[10px] text-[#5C6B64]/70">
+                          Added {new Date(med.dateAdded).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}
                         </p>
-                        <MedicineTypeBadge type={med.type} />
                       </div>
-                      {med.dosage && (
-                        <p className="text-[11px] text-[#6B726C]">{med.dosage}</p>
-                      )}
-                      <p className="text-[10px] text-[#6B726C]/60">
-                        Added {new Date(med.dateAdded).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}
-                      </p>
+
+                      {/* Edit & Discontinue Action Bar */}
+                      <div className="flex items-center justify-end gap-2 pt-2 border-t border-[rgba(191,180,155,0.35)]">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (isGuest) {
+                              openGuestLockModal('edit medication dosage and type');
+                              return;
+                            }
+                            setEditingMed(med);
+                          }}
+                          className="inline-flex items-center gap-1 px-3 py-1.5 text-[11px] font-bold text-[#2B6E5E] bg-[#EDE8DC] shadow-[2px_2px_5px_rgba(191,180,155,0.5),-2px_-2px_5px_rgba(255,255,255,0.6)] hover:shadow-[3px_3px_7px_rgba(191,180,155,0.6),-3px_-3px_7px_rgba(255,255,255,0.7)] active:shadow-[inset_2px_2px_4px_rgba(191,180,155,0.5)] rounded-xl transition-all cursor-pointer"
+                          title="Edit dosage or type"
+                        >
+                          <Pencil className="w-3 h-3" />
+                          <span>Edit</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (isGuest) {
+                              openGuestLockModal('discontinue medication');
+                              return;
+                            }
+                            setDiscontinuingMed(med);
+                          }}
+                          className="inline-flex items-center gap-1 px-3 py-1.5 text-[11px] font-bold text-[#B23D25] bg-[#EDE8DC] shadow-[2px_2px_5px_rgba(191,180,155,0.5),-2px_-2px_5px_rgba(255,255,255,0.6)] hover:bg-rose-50 hover:shadow-[3px_3px_7px_rgba(191,180,155,0.6),-3px_-3px_7px_rgba(255,255,255,0.7)] active:shadow-[inset_2px_2px_4px_rgba(191,180,155,0.5)] rounded-xl transition-all cursor-pointer"
+                          title="Discontinue medicine"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                          <span>Discontinue</span>
+                        </button>
+                      </div>
                     </motion.div>
                   ))}
                 </AnimatePresence>
@@ -552,6 +664,182 @@ export default function HomePage() {
             </div>
           </>
         )}
+
+        {/* ─── Edit Medicine Modal ─── */}
+        <EditMedicineModal
+          med={editingMed}
+          isOpen={!!editingMed}
+          onClose={() => setEditingMed(null)}
+          onSave={(vars) => editMutation.mutate(vars)}
+          isPending={editMutation.isPending}
+        />
+
+        {/* ─── Discontinue Medicine Modal ─── */}
+        <DiscontinueMedicineModal
+          med={discontinuingMed}
+          isOpen={!!discontinuingMed}
+          onClose={() => setDiscontinuingMed(null)}
+          onConfirm={(id) => deleteMutation.mutate(id)}
+          isPending={deleteMutation.isPending}
+        />
+      </div>
+    </div>
+  );
+}
+
+// ─── Sub-Component: Edit Medicine Modal ──────────────────────────────────────
+function EditMedicineModal({ med, isOpen, onClose, onSave, isPending }) {
+  const [dosage, setDosage] = useState('');
+  const [type, setType] = useState('PRESCRIPTION');
+
+  // Sync state when editingMed changes
+  React.useEffect(() => {
+    if (med) {
+      setDosage(med.dosage || '');
+      setType(med.type || 'PRESCRIPTION');
+    }
+  }, [med]);
+
+  if (!isOpen || !med) return null;
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onSave({ id: med.id, name: med.name, dosage, type });
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs">
+      <div className="polysafe-card p-6 max-w-md w-full bg-[#EDE8DC] space-y-4 shadow-[12px_12px_24px_rgba(191,180,155,0.7),-12px_-12px_24px_rgba(255,255,255,0.8)] border-transparent rounded-[32px]">
+        <div className="flex items-center justify-between border-b border-[rgba(191,180,155,0.35)] pb-3">
+          <div className="flex items-center gap-2">
+            <div className="icon-well w-9 h-9">
+              <Pill className="w-4 h-4 text-[#2B6E5E]" />
+            </div>
+            <h2 className="text-lg font-bold text-[#1C2B27]" style={{ fontFamily: "'Fraunces', serif" }}>
+              Edit Medication
+            </h2>
+          </div>
+          <button type="button" onClick={onClose} className="p-1 text-[#5C6B64] hover:text-[#1C2B27] cursor-pointer">
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Drug Name (Fixed) */}
+          <div className="space-y-1">
+            <label className="text-xs font-bold text-[#5C6B64] uppercase tracking-wider">Medicine Name</label>
+            <div className="p-3.5 bg-[#EDE8DC] rounded-2xl shadow-[inset_3px_3px_6px_rgba(191,180,155,0.5),inset_-3px_-3px_6px_rgba(255,255,255,0.6)] text-sm font-bold text-[#1C2B27]">
+              {med.name}
+            </div>
+            <p className="text-[11px] text-[#5C6B64]">
+              Drug name cannot be changed directly to protect clinical history. To replace with a different drug, discontinue this one and add the new medicine.
+            </p>
+          </div>
+
+          {/* Type Segmented Toggle */}
+          <div className="space-y-1.5">
+            <label className="text-xs font-bold text-[#5C6B64] uppercase tracking-wider">Medicine Type</label>
+            <div className="flex p-1 bg-[#EDE8DC] rounded-2xl shadow-[inset_3px_3px_6px_rgba(191,180,155,0.5),inset_-3px_-3px_6px_rgba(255,255,255,0.6)] gap-1">
+              {[
+                { value: 'PRESCRIPTION', label: 'Rx (Prescription)' },
+                { value: 'OTC', label: 'OTC' },
+                { value: 'HERBAL', label: 'Herbal' },
+              ].map((t) => (
+                <button
+                  key={t.value}
+                  type="button"
+                  onClick={() => setType(t.value)}
+                  className={`flex-1 py-1.5 text-xs font-bold rounded-xl transition-all cursor-pointer ${
+                    type === t.value
+                      ? 'bg-[#EDE8DC] text-[#2B6E5E] shadow-[3px_3px_6px_rgba(191,180,155,0.55),-3px_-3px_6px_rgba(255,255,255,0.65)]'
+                      : 'text-[#5C6B64] hover:text-[#1C2B27]'
+                  }`}
+                >
+                  {t.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Dosage Input */}
+          <div className="space-y-1.5">
+            <label className="text-xs font-bold text-[#5C6B64] uppercase tracking-wider">Dosage Instructions</label>
+            <input
+              type="text"
+              value={dosage}
+              onChange={(e) => setDosage(e.target.value)}
+              placeholder="e.g. 10mg once daily, 500mg at bedtime"
+              className="input-field text-sm font-mono"
+            />
+          </div>
+
+          <div className="flex gap-2.5 pt-2">
+            <button
+              type="button"
+              onClick={onClose}
+              className="btn-secondary flex-1 py-2.5 text-sm"
+              disabled={isPending}
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="btn-primary flex-1 py-2.5 text-sm"
+              disabled={isPending}
+            >
+              {isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Save Changes'}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+// ─── Sub-Component: Discontinue Medicine Modal ───────────────────────────────
+function DiscontinueMedicineModal({ med, isOpen, onClose, onConfirm, isPending }) {
+  if (!isOpen || !med) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs">
+      <div className="polysafe-card p-6 max-w-md w-full bg-[#EDE8DC] space-y-4 shadow-[12px_12px_24px_rgba(191,180,155,0.7),-12px_-12px_24px_rgba(255,255,255,0.8)] border-transparent rounded-[32px]">
+        <div className="flex items-start gap-3">
+          <div className="p-2.5 bg-[#FBE4DE] text-[#B23D25] border border-[#B23D25]/30 rounded-2xl flex-shrink-0 shadow-sm">
+            <Trash2 className="w-6 h-6" />
+          </div>
+          <div>
+            <h2 className="text-lg font-bold text-[#1C2B27]" style={{ fontFamily: "'Fraunces', serif" }}>
+              Discontinue Medicine?
+            </h2>
+            <p className="text-xs text-[#5C6B64] mt-1 leading-relaxed">
+              Are you sure you want to stop tracking <strong>{med.name}</strong>?
+            </p>
+          </div>
+        </div>
+
+        <div className="p-3.5 bg-[#EDE8DC] shadow-[inset_3px_3px_6px_rgba(191,180,155,0.5),inset_-3px_-3px_6px_rgba(255,255,255,0.6)] rounded-2xl text-xs text-[#5C6B64] space-y-1">
+          <p>• It will be removed from your active schedule and current interaction alerts.</p>
+          <p>• It will be preserved on your <strong>Medication Timeline</strong> as discontinued for your doctors to review.</p>
+        </div>
+
+        <div className="flex gap-2.5 pt-2">
+          <button
+            type="button"
+            onClick={onClose}
+            className="btn-secondary flex-1 py-2.5 text-sm"
+            disabled={isPending}
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            onClick={() => onConfirm(med.id)}
+            className="btn-danger flex-1 py-2.5 text-sm"
+            disabled={isPending}
+          >
+            {isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Yes, Discontinue'}
+          </button>
+        </div>
       </div>
     </div>
   );

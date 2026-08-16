@@ -145,7 +145,7 @@ export default function InsightsPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-[88vh] bg-[#FBF8F2] pb-16">
+      <div className="min-h-[88vh] bg-[#EDE8DC] pb-16">
         <InsightsSkeleton />
       </div>
     );
@@ -166,13 +166,13 @@ export default function InsightsPage() {
   const currentLevel = summary.currentBurdenLevel ?? (currentScore >= 3 ? 'Critical' : currentScore >= 1 ? 'Moderate' : 'Normal');
 
   return (
-    <div className="min-h-[88vh] bg-[#FBF8F2] pb-16">
+    <div className="min-h-[88vh] bg-[#EDE8DC] pb-16">
       <div className="max-w-3xl mx-auto px-4 py-8 space-y-6">
         {/* ─── Header ─── */}
         <div className="flex items-center space-x-3">
           <button
             onClick={() => navigate('/home')}
-            className="p-2.5 rounded-xl border-2 border-[#E7E1D3] bg-white text-[#6B726C] hover:text-[#2B6E5E] hover:border-[#2B6E5E] transition-colors"
+            className="btn-secondary p-2.5 rounded-2xl"
           >
             <ArrowLeft className="w-4 h-4" />
           </button>

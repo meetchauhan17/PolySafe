@@ -9,62 +9,100 @@
     min-height: 100vh;
     margin: 0;
     padding: 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   h1, h2, h3, h4, h5, h6, .font-serif-heading {
     font-family: var(--font-heading);
     font-weight: 700;
+    color: var(--brand-text);
+  }
+
+  code, pre, .font-mono, [data-mono] {
+    font-family: var(--font-mono);
   }
 }
 
-/* ─── Design System Interactive Utilities ────────────────────────────────────── */
+/* ─── PolySafe Neumorphic Design System (Soft UI) ────────────────────────────── */
 
-/* Base Card */
+/* ── Base Molded Card ── */
 .polysafe-card {
   background-color: var(--brand-card);
   border: 2px solid var(--brand-border);
-  border-radius: var(--radius-interactive);
-  box-shadow: var(--shadow-card);
-  transition: all 180ms cubic-bezier(0.16, 1, 0.3, 1);
+  border-radius: var(--radius-card);
+  box-shadow: var(--neu-extruded);
+  transition: transform 220ms cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 220ms cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 220ms ease-out;
 }
 
-/* Clickable / Interactive Card */
+/* ── Interactive Molded Card ── */
 .polysafe-card-interactive {
   background-color: var(--brand-card);
   border: 2px solid var(--brand-border);
   border-radius: var(--radius-interactive);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
-  transition: all 180ms cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: var(--neu-extruded);
+  transition: transform 180ms cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 180ms cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 180ms ease-out;
   cursor: pointer;
   user-select: none;
 }
 
 .polysafe-card-interactive:hover {
-  border-color: var(--brand-primary);
-  box-shadow: var(--shadow-card-hover);
+  box-shadow: var(--neu-extruded-hover);
   transform: translateY(-2px);
 }
 
 .polysafe-card-interactive:active {
   transform: translateY(1px);
-  box-shadow: 0 2px 6px rgba(28, 43, 39, 0.08);
+  box-shadow: var(--neu-inset);
 }
 
 .polysafe-card-interactive:focus-visible {
   outline: none;
-  border-color: var(--brand-primary);
-  box-shadow: 0 0 0 3px rgba(43, 110, 94, 0.2);
+  box-shadow: var(--neu-extruded-hover), 0 0 0 3px rgba(43, 110, 94, 0.3);
 }
 
 .polysafe-card-interactive.active {
-  border-color: var(--brand-primary);
-  background-color: #F4FAF8;
-  box-shadow: 0 0 0 1px var(--brand-primary), 0 8px 20px rgba(43, 110, 94, 0.1);
+  box-shadow: var(--neu-inset-deep), 0 0 0 2px var(--brand-primary);
+}
+
+/* ─── Icon Wells ("Drilled Into Surface" Inset Deep Look) ────────────────────── */
+.icon-well {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-well);
+  background-color: var(--brand-card);
+  box-shadow: var(--neu-inset-deep);
+  color: var(--brand-primary);
+  flex-shrink: 0;
+  transition: box-shadow 180ms ease-out, transform 180ms ease-out;
+}
+
+.icon-well-sm {
+  width: 2.25rem;
+  height: 2.25rem;
+  box-shadow: var(--neu-inset);
+}
+
+.icon-well-md {
+  width: 2.75rem;
+  height: 2.75rem;
+  box-shadow: var(--neu-inset-deep);
+}
+
+.icon-well-lg {
+  width: 3.5rem;
+  height: 3.5rem;
+  box-shadow: var(--neu-inset-deep);
 }
 
 /* ─── Buttons ─────────────────────────────────────────────────────────────── */
 
-/* Primary Action Button (Brand Deep Teal) */
+/* Primary Action Button (Brand Deep Teal with Neumorphic Tactile Lift/Press) */
 .btn-primary {
   background-color: var(--brand-primary);
   color: #ffffff;
@@ -76,27 +114,30 @@
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  box-shadow: var(--shadow-button);
-  transition: transform 180ms ease-out, box-shadow 180ms ease-out, background-color 180ms ease-out, opacity 180ms ease-out;
+  box-shadow: 6px 6px 14px rgba(191, 180, 155, 0.65), -6px -6px 14px rgba(255, 255, 255, 0.70);
+  transition: transform 160ms cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 160ms cubic-bezier(0.16, 1, 0.3, 1),
+              background-color 160ms ease-out,
+              opacity 160ms ease-out;
   cursor: pointer;
   user-select: none;
 }
 
 .btn-primary:hover:not(:disabled) {
   background-color: var(--brand-primary-hover);
-  box-shadow: 0 8px 20px rgba(43, 110, 94, 0.32);
-  transform: translateY(-1.5px);
+  box-shadow: 9px 9px 18px rgba(191, 180, 155, 0.75), -9px -9px 18px rgba(255, 255, 255, 0.80);
+  transform: translateY(-1px);
 }
 
 .btn-primary:active:not(:disabled) {
   background-color: var(--brand-primary-active);
-  transform: translateY(2px);
-  box-shadow: 0 2px 6px rgba(43, 110, 94, 0.4);
+  transform: translateY(0.5px);
+  box-shadow: inset 4px 4px 8px rgba(0, 0, 0, 0.35), inset -4px -4px 8px rgba(255, 255, 255, 0.20);
 }
 
 .btn-primary:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(43, 110, 94, 0.35);
+  box-shadow: 0 0 0 3px rgba(43, 110, 94, 0.4);
 }
 
 .btn-primary:disabled {
@@ -106,40 +147,42 @@
   box-shadow: none;
 }
 
-/* Secondary Button (Warm Outline) */
+/* Secondary Button (Clay Molded Soft Extrusion) */
 .btn-secondary {
   background-color: var(--brand-card);
-  color: var(--brand-primary);
+  color: var(--brand-text);
   font-weight: 700;
   border-radius: var(--radius-button);
   padding: 0.85rem 1.5rem;
-  border: 2px solid var(--brand-border);
+  border: 1px solid rgba(255, 255, 255, 0.4);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  transition: transform 180ms ease-out, box-shadow 180ms ease-out, border-color 180ms ease-out, background-color 180ms ease-out;
+  box-shadow: var(--neu-extruded-sm);
+  transition: transform 160ms cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 160ms cubic-bezier(0.16, 1, 0.3, 1),
+              color 160ms ease-out,
+              background-color 160ms ease-out;
   cursor: pointer;
   user-select: none;
 }
 
 .btn-secondary:hover:not(:disabled) {
-  border-color: var(--brand-primary);
-  background-color: #F8F5EE;
-  box-shadow: 0 4px 12px rgba(28, 43, 39, 0.08);
-  transform: translateY(-1.5px);
+  color: var(--brand-primary);
+  box-shadow: var(--neu-extruded);
+  transform: translateY(-1px);
 }
 
 .btn-secondary:active:not(:disabled) {
-  transform: translateY(2px);
-  background-color: var(--brand-surface-subtle);
-  box-shadow: 0 1px 3px rgba(28, 43, 39, 0.05);
+  transform: translateY(0.5px);
+  box-shadow: var(--neu-inset);
+  color: var(--brand-primary);
 }
 
 .btn-secondary:focus-visible {
   outline: none;
-  border-color: var(--brand-primary);
-  box-shadow: 0 0 0 3px rgba(43, 110, 94, 0.2);
+  box-shadow: var(--neu-extruded), 0 0 0 3px rgba(43, 110, 94, 0.25);
 }
 
 .btn-secondary:disabled {
@@ -161,27 +204,29 @@
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  box-shadow: 0 4px 12px rgba(178, 61, 37, 0.25);
-  transition: transform 180ms ease-out, box-shadow 180ms ease-out, background-color 180ms ease-out;
+  box-shadow: 6px 6px 14px rgba(191, 180, 155, 0.60), -6px -6px 14px rgba(255, 255, 255, 0.65);
+  transition: transform 160ms cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 160ms cubic-bezier(0.16, 1, 0.3, 1),
+              background-color 160ms ease-out;
   cursor: pointer;
   user-select: none;
 }
 
 .btn-danger:hover:not(:disabled) {
   background-color: #9c331d;
-  box-shadow: 0 6px 16px rgba(178, 61, 37, 0.35);
-  transform: translateY(-1.5px);
+  box-shadow: 8px 8px 18px rgba(191, 180, 155, 0.70), -8px -8px 18px rgba(255, 255, 255, 0.75);
+  transform: translateY(-1px);
 }
 
 .btn-danger:active:not(:disabled) {
   background-color: #822915;
-  transform: translateY(2px);
-  box-shadow: 0 1px 4px rgba(178, 61, 37, 0.4);
+  transform: translateY(0.5px);
+  box-shadow: inset 4px 4px 8px rgba(0, 0, 0, 0.40), inset -4px -4px 8px rgba(255, 255, 255, 0.20);
 }
 
 /* Danger Outline Button */
 .btn-outline-danger {
-  background-color: #ffffff;
+  background-color: var(--brand-card);
   color: var(--status-danger);
   font-weight: 700;
   border-radius: var(--radius-button);
@@ -191,43 +236,50 @@
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  transition: transform 180ms ease-out, box-shadow 180ms ease-out, border-color 180ms ease-out, background-color 180ms ease-out;
+  box-shadow: var(--neu-extruded-sm);
+  transition: transform 160ms cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 160ms cubic-bezier(0.16, 1, 0.3, 1),
+              background-color 160ms ease-out;
   cursor: pointer;
   user-select: none;
 }
 
 .btn-outline-danger:hover:not(:disabled) {
-  border-color: var(--status-danger);
   background-color: var(--status-danger-bg);
-  box-shadow: 0 4px 12px rgba(178, 61, 37, 0.12);
+  box-shadow: var(--neu-extruded);
   transform: translateY(-1px);
 }
 
 .btn-outline-danger:active:not(:disabled) {
-  transform: translateY(2px);
-  background-color: #f7d4cb;
+  transform: translateY(0.5px);
+  box-shadow: var(--neu-inset);
 }
 
-/* ─── Form Inputs ─────────────────────────────────────────────────────────── */
+/* ─── Form Inputs (Inset Deep Clay Molding) ────────────────────────────────── */
 
 .input-field {
   background-color: var(--brand-card);
-  border: 2px solid var(--brand-border);
+  border: 2px solid transparent;
   border-radius: var(--radius-input);
-  padding: 0.75rem 1rem;
+  padding: 0.85rem 1.15rem;
   color: var(--brand-text);
   font-size: 0.95rem;
-  transition: border-color 180ms ease-out, box-shadow 180ms ease-out, background-color 180ms ease-out;
+  box-shadow: var(--neu-inset);
+  transition: border-color 180ms ease-out, box-shadow 180ms ease-out;
   width: 100%;
 }
 
-/* Enforce left/right padding when input has absolute icons to prevent text overlap */
+.input-field::placeholder {
+  color: var(--brand-muted);
+  opacity: 0.8;
+}
+
 .input-field.has-icon-left,
 .input-field.pl-10,
 .input-field.pl-11,
 .input-field.pl-12,
 .has-icon-left {
-  padding-left: 2.75rem !important;
+  padding-left: 2.85rem !important;
 }
 
 .input-field.has-icon-right,
@@ -235,20 +287,19 @@
 .input-field.pr-11,
 .input-field.pr-12,
 .has-icon-right {
-  padding-right: 2.75rem !important;
+  padding-right: 2.85rem !important;
 }
 
 .input-field:focus {
   outline: none;
   border-color: var(--brand-primary);
-  box-shadow: 0 0 0 3px rgba(43, 110, 94, 0.18);
-  background-color: #ffffff;
+  box-shadow: var(--neu-inset-deep), 0 0 0 3px rgba(43, 110, 94, 0.20);
 }
 
 .input-field:disabled {
   background-color: var(--brand-surface-subtle);
   cursor: not-allowed;
-  opacity: 0.7;
+  opacity: 0.65;
 }
 
 /* OTP 6-Digit Box */
@@ -259,17 +310,18 @@
   font-weight: 700;
   text-align: center;
   background-color: var(--brand-card);
-  border: 2px solid var(--brand-border);
+  border: 2px solid transparent;
   border-radius: var(--radius-input);
   color: var(--brand-primary);
+  box-shadow: var(--neu-inset);
   transition: border-color 180ms ease-out, box-shadow 180ms ease-out, transform 180ms ease-out;
 }
 
 .otp-box:focus {
   outline: none;
   border-color: var(--brand-primary);
-  box-shadow: 0 0 0 3px rgba(43, 110, 94, 0.2);
-  transform: scale(1.04);
+  box-shadow: var(--neu-inset-deep), 0 0 0 3px rgba(43, 110, 94, 0.22);
+  transform: scale(1.03);
 }
 
 /* Validation Error State + Shake Animation */
@@ -277,11 +329,12 @@
   border-color: var(--status-danger) !important;
   background-color: var(--status-danger-bg) !important;
   color: var(--status-danger-text) !important;
+  box-shadow: var(--neu-inset) !important;
   animation: input-shake 320ms cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
 }
 
 .input-error:focus {
-  box-shadow: 0 0 0 3px rgba(178, 61, 37, 0.25) !important;
+  box-shadow: var(--neu-inset-deep), 0 0 0 3px rgba(178, 61, 37, 0.25) !important;
 }
 
 @keyframes input-shake {
@@ -295,16 +348,17 @@
 
 .segmented-toggle-container {
   display: inline-flex;
-  padding: 4px;
-  border-radius: 16px;
-  background-color: #F5F0E8;
-  border: 2px solid var(--brand-border);
+  padding: 5px;
+  border-radius: 20px;
+  background-color: var(--brand-card);
+  box-shadow: var(--neu-inset-sm);
+  border: none;
   gap: 4px;
 }
 
 .segmented-toggle-btn {
   padding: 8px 16px;
-  border-radius: 12px;
+  border-radius: 14px;
   font-size: 0.875rem;
   font-weight: 700;
   color: var(--brand-muted);
@@ -319,13 +373,27 @@
 
 .segmented-toggle-btn:hover:not(.active) {
   color: var(--brand-text);
-  background-color: rgba(255, 255, 255, 0.5);
 }
 
 .segmented-toggle-btn.active {
-  background-color: #ffffff;
+  background-color: var(--brand-card);
   color: var(--brand-primary);
-  box-shadow: 0 2px 8px rgba(28, 43, 39, 0.08);
+  box-shadow: var(--neu-extruded-sm);
+}
+
+/* ─── Neumorphic Inner Elements & Tiles ──────────────────────────────────── */
+
+.neu-tile {
+  background-color: var(--brand-card);
+  border-radius: var(--radius-inner);
+  box-shadow: var(--neu-extruded-sm);
+  transition: transform 180ms ease-out, box-shadow 180ms ease-out;
+}
+
+.neu-well {
+  background-color: var(--brand-card);
+  border-radius: var(--radius-inner);
+  box-shadow: var(--neu-inset-sm);
 }
 
 /* ─── Subtle Status Pulse / Breathing Glow ───────────────────────────────── */
@@ -371,7 +439,7 @@
   }
 }
 
-/* ─── Skeleton Loading Shimmer (Muted Warm Token Palette) ─────────────────── */
+/* ─── Skeleton Loading Shimmer (Muted Warm Clay Palette) ─────────────────── */
 
 @keyframes skeleton-shimmer {
   0% {
@@ -385,25 +453,23 @@
 .skeleton-shimmer {
   background: linear-gradient(
     90deg,
-    #EDE9DF 0%,
-    #F8F5EE 50%,
-    #EDE9DF 100%
+    #E4DECE 0%,
+    #F3EFE6 50%,
+    #E4DECE 100%
   );
   background-size: 200% 100%;
   animation: skeleton-shimmer 1.5s ease-in-out infinite;
 }
 
 .skeleton-shimmer-card {
-  background-color: #FFFFFF;
-  border: 2px solid #E7E1D3;
-  border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(28, 43, 39, 0.05);
+  background-color: var(--brand-card);
+  border-radius: var(--radius-card);
+  box-shadow: var(--neu-extruded);
 }
 
 @media (prefers-reduced-motion: reduce) {
   .skeleton-shimmer {
     animation: none !important;
-    background: #EDE9DF !important;
+    background: #E4DECE !important;
   }
 }
-

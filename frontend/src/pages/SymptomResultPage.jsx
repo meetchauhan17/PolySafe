@@ -223,22 +223,22 @@ export default function SymptomResultPage() {
   }
 
   return (
-    <div className="min-h-[88vh] bg-[#FBF8F2] pb-12">
+    <div className="min-h-[88vh] bg-[#EDE8DC] pb-12">
       <div className="max-w-2xl mx-auto px-4 py-8 space-y-5">
 
         {/* ── Back nav ───────────────────────────────────────────────────────── */}
         <div className="flex items-center space-x-3">
           <button
             onClick={() => navigate('/log-symptom')}
-            className="p-2.5 rounded-xl border-2 border-[#E7E1D3] bg-white text-[#6B726C] hover:text-[#2B6E5E] hover:border-[#2B6E5E] transition-colors"
+            className="btn-secondary p-2.5 rounded-2xl"
           >
             <ArrowLeft className="w-4 h-4" />
           </button>
           <div>
-            <h1 className="text-xl font-bold text-[#232724]" style={{ fontFamily: "'Fraunces', serif" }}>
+            <h1 className="text-xl font-bold text-[#1C2B27]" style={{ fontFamily: "'Fraunces', serif" }}>
               Symptom Analysis Result
             </h1>
-            <p className="text-[11px] text-[#6B726C]">
+            <p className="text-[11px] text-[#5C6B64]">
               "{description.length > 60 ? description.slice(0, 60) + '…' : description}"
             </p>
           </div>

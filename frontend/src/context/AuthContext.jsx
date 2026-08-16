@@ -5,6 +5,7 @@ import GuestLockModal from '../components/GuestLockModal';
 const TOKEN_KEY = 'polysafe_token';
 const USER_KEY = 'polysafe_user';
 const ROLE_KEY = 'polysafe_role';
+const GUEST_KEY = 'polysafe_is_guest';
 
 const AuthContext = createContext(null);
 
@@ -74,6 +75,7 @@ export function AuthProvider({ children }) {
     try {
       const storedToken = localStorage.getItem(TOKEN_KEY);
       const storedRole = localStorage.getItem(ROLE_KEY);
+      const isGuestStored = localStorage.getItem(GUEST_KEY) === 'true';
       let storedUser = {};
       try {
         storedUser = JSON.parse(localStorage.getItem(USER_KEY) || '{}');
@@ -104,15 +106,26 @@ export function AuthProvider({ children }) {
           localStorage.removeItem(TOKEN_KEY);
           localStorage.removeItem(USER_KEY);
           localStorage.removeItem(ROLE_KEY);
+          localStorage.removeItem(GUEST_KEY);
           setAxiosAuthHeader(null);
           setToken(null);
           setUser(null);
           return null;
         }
+      } else if (isGuestStored) {
+        setAxiosAuthHeader(null);
+        setToken(null);
+        const guestUser = {
+          userId: null,
+          role: 'PATIENT',
+          isGuest: true,
+        };
+        setUser(guestUser);
+        return guestUser;
       } else {
         setAxiosAuthHeader(null);
         setToken(null);
-        setUser((prev) => (prev?.isGuest ? prev : null));
+        setUser(null);
         return null;
       }
     } catch (err) {
@@ -151,6 +164,7 @@ export function AuthProvider({ children }) {
 
     localStorage.setItem(TOKEN_KEY, newToken);
     localStorage.setItem(ROLE_KEY, resolvedRole);
+    localStorage.removeItem(GUEST_KEY);
     if (userData && Object.keys(userData).length > 0) {
       localStorage.setItem(USER_KEY, JSON.stringify(userData));
     }
@@ -174,6 +188,7 @@ export function AuthProvider({ children }) {
     localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem(USER_KEY);
     localStorage.removeItem(ROLE_KEY);
+    localStorage.removeItem(GUEST_KEY);
     setAxiosAuthHeader(null);
     setToken(null);
     setUser(null);
@@ -184,11 +199,12 @@ export function AuthProvider({ children }) {
     localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem(USER_KEY);
     localStorage.removeItem(ROLE_KEY);
+    localStorage.setItem(GUEST_KEY, 'true');
     setAxiosAuthHeader(null);
     setToken(null);
     setUser({
       userId: null,
-      role: null,
+      role: 'PATIENT',
       isGuest: true,
     });
   }, []);

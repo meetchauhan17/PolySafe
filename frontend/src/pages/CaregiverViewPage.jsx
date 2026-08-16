@@ -173,23 +173,23 @@ function PatientSummaryCard({ patientId, patientAge }) {
                   animate={{ opacity: 1, y: 0 }}
                   exit={shouldReduceMotion ? undefined : { opacity: 0, scale: 0.95 }}
                   transition={{ duration: 0.2 }}
-                  className="p-3.5 rounded-xl border border-[#E7E1D3] bg-[#FDFBF7] flex items-center gap-3"
+                  className="p-3.5 rounded-2xl bg-[#EDE8DC] shadow-[4px_4px_8px_rgba(191,180,155,0.45),-4px_-4px_8px_rgba(255,255,255,0.60)] flex items-center gap-3"
                 >
                   {/* Time */}
-                  <div className="flex flex-col items-center bg-[#F5F0E8] rounded-xl px-3 py-2 min-w-[70px] text-center">
+                  <div className="flex flex-col items-center bg-[#EDE8DC] shadow-[inset_2px_2px_4px_rgba(191,180,155,0.5),inset_-2px_-2px_4px_rgba(255,255,255,0.6)] rounded-xl px-3 py-2 min-w-[70px] text-center font-mono">
                     <Clock className="w-3.5 h-3.5 text-[#E0824B] mb-0.5" />
-                    <span className="text-[11px] font-black text-[#232724]">{item.time}</span>
+                    <span className="text-[11px] font-black text-[#1C2B27]">{item.time}</span>
                   </div>
                   {/* Type label — NO medicine name */}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-1.5">
                       <TypeIcon label={item.typeLabel} />
-                      <span className="text-sm font-bold text-[#232724] truncate">{item.typeLabel}</span>
+                      <span className="text-sm font-bold text-[#1C2B27] truncate">{item.typeLabel}</span>
                     </div>
-                    <span className="text-xs text-[#6B726C]">{item.dosage}</span>
+                    <span className="text-xs text-[#5C6B64] font-mono">{item.dosage}</span>
                   </div>
                   {/* Index */}
-                  <span className="text-[10px] font-bold text-[#6B726C] bg-[#F5F0E8] rounded-full px-2 py-0.5">
+                  <span className="text-[10px] font-bold text-[#5C6B64] bg-[#EDE8DC] shadow-[inset_1px_1px_3px_rgba(191,180,155,0.4),inset_-1px_-1px_3px_rgba(255,255,255,0.5)] rounded-full px-2.5 py-0.5 font-mono">
                     #{item.scheduleIndex}
                   </span>
                 </motion.div>

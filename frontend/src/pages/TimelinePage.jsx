@@ -126,7 +126,7 @@ export default function TimelinePage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-[88vh] bg-[#FBF8F2] pb-16">
+      <div className="min-h-[88vh] bg-[#EDE8DC] pb-16">
         <TimelineSkeleton />
       </div>
     );
@@ -137,22 +137,22 @@ export default function TimelinePage() {
   const herbalCount = medicines.filter((m) => m.type === 'HERBAL').length;
 
   return (
-    <div className="min-h-[88vh] bg-[#FBF8F2] pb-16">
+    <div className="min-h-[88vh] bg-[#EDE8DC] pb-16">
       <div className="max-w-2xl mx-auto px-4 py-8 space-y-6">
 
         {/* ── Header ───────────────────────────────────────────────────────── */}
         <div className="flex items-center space-x-3">
           <button
             onClick={() => navigate('/home')}
-            className="p-2.5 rounded-xl border-2 border-[#E7E1D3] bg-white text-[#6B726C] hover:text-[#2B6E5E] hover:border-[#2B6E5E] transition-colors"
+            className="btn-secondary p-2.5 rounded-2xl"
           >
             <ArrowLeft className="w-4 h-4" />
           </button>
           <div className="flex-1">
-            <h1 className="text-2xl font-bold text-[#232724]" style={{ fontFamily: "'Fraunces', serif" }}>
+            <h1 className="text-2xl font-bold text-[#1C2B27]" style={{ fontFamily: "'Fraunces', serif" }}>
               Medication Timeline
             </h1>
-            <p className="text-xs text-[#6B726C]">
+            <p className="text-xs text-[#5C6B64]">
               {isGuest ? 'Sample interactive prescription and cascade timeline' : 'Complete chronological prescription and supplement history'}
             </p>
           </div>
@@ -168,7 +168,7 @@ export default function TimelinePage() {
           >
             <Plus className="w-4 h-4" />
             <span>Add Medicine</span>
-            {isGuest && <Lock className="w-3 h-3 text-[#E7E1D3] ml-0.5" />}
+            {isGuest && <Lock className="w-3 h-3 text-[#EDE8DC] ml-0.5" />}
           </Link>
         </div>
 
@@ -254,7 +254,8 @@ export default function TimelinePage() {
             <div className="space-y-6">
               <AnimatePresence initial={false}>
                 {medicines.map((med, index) => {
-                  const isFlagged = med.flagged && med.flags?.length > 0;
+                  const isDiscontinued = !!med.discontinued || !!med.removedAt;
+                  const isFlagged = !isDiscontinued && med.flagged && med.flags?.length > 0;
 
                   return (
                     <motion.div
@@ -270,35 +271,48 @@ export default function TimelinePage() {
                       }}
                       className="relative z-10 flex items-start gap-4"
                     >
-                      {/* Circular Dot Marker: white fill, colored border (teal #2B6E5E for normal, red #B23D25 for flagged) */}
+                      {/* Circular Dot Marker: white fill, colored border (teal #2B6E5E for normal, red #B23D25 for flagged, gray #9CA3AF for discontinued) */}
                       <div
                         className="w-[18px] h-[18px] rounded-full bg-white flex-shrink-0 mt-4 shadow-sm"
                         style={{
-                          border: `3.5px solid ${isFlagged ? '#B23D25' : '#2B6E5E'}`,
+                          border: `3.5px solid ${isDiscontinued ? '#9CA3AF' : isFlagged ? '#B23D25' : '#2B6E5E'}`,
                         }}
                       />
 
                       {/* Content Card */}
                       <Card
-                        variant={isFlagged ? 'danger' : 'default'}
-                        className="flex-1 space-y-2.5 transition-shadow hover:shadow-md"
+                        variant={isDiscontinued ? 'default' : isFlagged ? 'danger' : 'default'}
+                        className={`flex-1 space-y-2.5 transition-shadow hover:shadow-md ${
+                          isDiscontinued ? 'bg-[#F9F7F2] opacity-85 border-[#D8D2C4]' : ''
+                        }`}
                       >
-                        {/* Source Label (uppercase, small, teal) */}
-                        <div className="flex items-center justify-between gap-2">
-                          <span className="text-[11px] font-extrabold uppercase tracking-wider text-[#2B6E5E]">
+                        {/* Source Label (uppercase, small, teal or muted) */}
+                        <div className="flex items-center justify-between gap-2 flex-wrap">
+                          <span
+                            className={`text-[11px] font-extrabold uppercase tracking-wider ${
+                              isDiscontinued ? 'text-[#6B726C]' : 'text-[#2B6E5E]'
+                            }`}
+                          >
                             {med.sourceLabel || 'Self-logged'}
                           </span>
                           
                           {/* Date Added */}
-                          <span className="flex items-center gap-1 text-xs text-[#6B726C]">
-                            <CalendarDays className="w-3.5 h-3.5 text-[#9CA3AF]" />
-                            {formatDate(med.dateAdded)}
-                          </span>
+                          <div className="flex items-center gap-2">
+                            {isDiscontinued && (
+                              <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-[#EFEBE0] text-[#6B726C] border border-[#E7E1D3]">
+                                Discontinued {med.removedAt ? `on ${formatDate(med.removedAt)}` : ''}
+                              </span>
+                            )}
+                            <span className="flex items-center gap-1 text-xs text-[#6B726C]">
+                              <CalendarDays className="w-3.5 h-3.5 text-[#9CA3AF]" />
+                              Started {formatDate(med.dateAdded)}
+                            </span>
+                          </div>
                         </div>
 
                         {/* Medicine Name (bold) */}
                         <div className="flex items-baseline gap-2 flex-wrap">
-                          <h3 className="text-base sm:text-lg font-bold text-[#232724]">
+                          <h3 className={`text-base sm:text-lg font-bold ${isDiscontinued ? 'text-[#4A4F4B] line-through decoration-[#9CA3AF]/60' : 'text-[#232724]'}`}>
                             {med.name}
                           </h3>
                           {med.dosage && (
