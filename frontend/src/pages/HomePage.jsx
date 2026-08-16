@@ -21,6 +21,8 @@ import {
   QrCode,
   TrendingUp,
   Lock,
+  Bell,
+  BellRing,
 } from 'lucide-react';
 import { patientApi } from '../api/auth';
 import Card from '../components/Card';
@@ -28,6 +30,7 @@ import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { EmptyMedicinesIllustration } from '../components/EmptyIllustrations';
 import { HomeSkeleton } from '../components/Skeletons';
 import { useAuth } from '../context/AuthContext';
+import { notify } from '../utils/toast';
 
 // ─── Severity colour map ─────────────────────────────────────────────────────
 const SEVERITY_STYLES = {
@@ -280,43 +283,89 @@ export default function HomePage() {
               title="Today's Schedule"
               icon={<Clock className="w-4 h-4 text-[#2B6E5E]" />}
               badge={
-                <span className="text-[11px] font-bold text-[#6B726C] bg-[#EFEBE0] px-2.5 py-1 rounded-lg">
-                  {schedule.length} dose{schedule.length !== 1 ? 's' : ''}
-                </span>
+                <div className="flex items-center space-x-2">
+                  <button
+                    type="button"
+                    onClick={handleToggleAllReminders}
+                    className={`text-[11px] font-bold px-2.5 py-1 rounded-lg border flex items-center space-x-1.5 transition-all duration-180 cursor-pointer ${
+                      remindersEnabled
+                        ? 'bg-[#2B6E5E] text-white border-[#2B6E5E]'
+                        : 'bg-[#E4F2E9] text-[#2B6E5E] border-[#2B6E5E]/20 hover:bg-[#2B6E5E] hover:text-white'
+                    }`}
+                  >
+                    {remindersEnabled ? (
+                      <>
+                        <BellRing className="w-3 h-3 text-white animate-pulse" />
+                        <span>Reminding Active</span>
+                      </>
+                    ) : (
+                      <>
+                        <Bell className="w-3 h-3 text-[#2B6E5E]" />
+                        <span>Remind Me</span>
+                      </>
+                    )}
+                  </button>
+                  <span className="text-[11px] font-bold text-[#6B726C] bg-[#EFEBE0] px-2.5 py-1 rounded-lg">
+                    {schedule.length} dose{schedule.length !== 1 ? 's' : ''}
+                  </span>
+                </div>
               }
               className="space-y-4"
             >
               <div className="space-y-2.5">
                 <AnimatePresence initial={false}>
-                  {schedule.map((item, i) => (
-                    <motion.div
-                      key={item.medicineId + i}
-                      layout={!shouldReduceMotion}
-                      initial={shouldReduceMotion ? false : { opacity: 0, y: 8 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={shouldReduceMotion ? undefined : { opacity: 0, scale: 0.95 }}
-                      transition={{ duration: 0.2 }}
-                      className="flex items-center space-x-3.5 p-3.5 rounded-xl bg-[#FDFBF7] border border-[#E7E1D3] hover:border-[#2B6E5E]/30 transition-colors"
-                    >
-                      {/* Time bubble */}
-                      <div className="flex-shrink-0 w-16 text-center">
-                        <span className="text-[11px] font-bold text-[#2B6E5E] bg-[#2B6E5E]/10 px-2 py-1 rounded-lg block leading-snug">
-                          {item.time}
-                        </span>
-                      </div>
+                  {schedule.map((item, i) => {
+                    const doseKey = `${item.medicineId}-${item.time}-${i}`;
+                    const isDoseReminded = remindersEnabled || remindedDoses[doseKey];
 
-                      {/* Divider dot */}
-                      <div className="w-1.5 h-1.5 rounded-full bg-[#E7E1D3] flex-shrink-0" />
+                    return (
+                      <motion.div
+                        key={item.medicineId + i}
+                        layout={!shouldReduceMotion}
+                        initial={shouldReduceMotion ? false : { opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={shouldReduceMotion ? undefined : { opacity: 0, scale: 0.95 }}
+                        transition={{ duration: 0.2 }}
+                        className="flex items-center space-x-3.5 p-3.5 rounded-xl bg-[#FDFBF7] border border-[#E7E1D3] hover:border-[#2B6E5E]/30 transition-colors"
+                      >
+                        {/* Time bubble */}
+                        <div className="flex-shrink-0 w-16 text-center">
+                          <span className="text-[11px] font-bold text-[#2B6E5E] bg-[#2B6E5E]/10 px-2 py-1 rounded-lg block leading-snug">
+                            {item.time}
+                          </span>
+                        </div>
 
-                      {/* Medicine info */}
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-bold text-[#232724] truncate">{item.name}</p>
-                        <p className="text-[11px] text-[#6B726C]">{item.dosage}</p>
-                      </div>
+                        {/* Divider dot */}
+                        <div className="w-1.5 h-1.5 rounded-full bg-[#E7E1D3] flex-shrink-0" />
 
-                      <MedicineTypeBadge type={item.type} />
-                    </motion.div>
-                  ))}
+                        {/* Medicine info */}
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-bold text-[#232724] truncate">{item.name}</p>
+                          <p className="text-[11px] text-[#6B726C]">{item.dosage}</p>
+                        </div>
+
+                        <MedicineTypeBadge type={item.type} />
+
+                        {/* Individual Dose Remind Me Button */}
+                        <button
+                          type="button"
+                          onClick={() => handleToggleDoseReminder(doseKey, item.name, item.time)}
+                          title={isDoseReminded ? 'Reminder active - click to mute' : 'Click to set dose reminder'}
+                          className={`p-2 rounded-lg border text-xs transition-colors cursor-pointer ${
+                            isDoseReminded
+                              ? 'bg-[#E4F2E9] text-[#2B6E5E] border-[#2B6E5E]/30'
+                              : 'bg-white text-[#9CA3AF] border-[#E7E1D3] hover:text-[#2B6E5E] hover:border-[#2B6E5E]/30'
+                          }`}
+                        >
+                          {isDoseReminded ? (
+                            <BellRing className="w-3.5 h-3.5 text-[#2B6E5E]" />
+                          ) : (
+                            <Bell className="w-3.5 h-3.5" />
+                          )}
+                        </button>
+                      </motion.div>
+                    );
+                  })}
                 </AnimatePresence>
               </div>
             </Card>

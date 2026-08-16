@@ -221,6 +221,23 @@
   width: 100%;
 }
 
+/* Enforce left/right padding when input has absolute icons to prevent text overlap */
+.input-field.has-icon-left,
+.input-field.pl-10,
+.input-field.pl-11,
+.input-field.pl-12,
+.has-icon-left {
+  padding-left: 2.75rem !important;
+}
+
+.input-field.has-icon-right,
+.input-field.pr-10,
+.input-field.pr-11,
+.input-field.pr-12,
+.has-icon-right {
+  padding-right: 2.75rem !important;
+}
+
 .input-field:focus {
   outline: none;
   border-color: var(--brand-primary);

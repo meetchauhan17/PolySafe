@@ -77,8 +77,22 @@ export default function LoginPage() {
     registrationNumber: false,
   });
 
-  // Error & Status Messages
-  const [errorMsg, setErrorMsg] = useState(null);
+  // Remind Me state
+  const [remindMe, setRemindMe] = useState(() => {
+    return localStorage.getItem('polysafe_remind_me') !== 'false';
+  });
+
+  // Load remembered credentials on mount
+  useEffect(() => {
+    const savedEmail = localStorage.getItem('polysafe_saved_email');
+    const savedName = localStorage.getItem('polysafe_saved_name');
+    if (savedEmail && !patientEmail) {
+      setPatientEmail(savedEmail);
+    }
+    if (savedName && !patientName) {
+      setPatientName(savedName);
+    }
+  }, []);
 
   // ─── Countdown Timer for OTP Resend ─────────────────────────────────────────
   useEffect(() => {
@@ -206,6 +220,14 @@ export default function LoginPage() {
     mutationFn: ({ email, code, role, name }) => authApi.verifyPatientOtp({ email, code, role, name }),
     onSuccess: (data) => {
       setErrorMsg(null);
+      if (remindMe) {
+        localStorage.setItem('polysafe_saved_email', patientEmail.trim());
+        localStorage.setItem('polysafe_saved_name', patientName.trim());
+      } else {
+        localStorage.removeItem('polysafe_saved_email');
+        localStorage.removeItem('polysafe_saved_name');
+      }
+
       if (data.token) {
         login(data.token, selectedRole || 'PATIENT', data.user);
       }
@@ -233,6 +255,12 @@ export default function LoginPage() {
     mutationFn: ({ email, password }) => authApi.doctorLogin({ email, password }),
     onSuccess: (data) => {
       setErrorMsg(null);
+      if (remindMe) {
+        localStorage.setItem('polysafe_saved_doctor_email', doctorForm.email.trim());
+      } else {
+        localStorage.removeItem('polysafe_saved_doctor_email');
+      }
+
       if (data.token) {
         login(data.token, 'DOCTOR', data.user);
       }
@@ -599,8 +627,8 @@ export default function LoginPage() {
                   <label className="block text-xs font-bold text-[#232724] uppercase tracking-wider">
                     Full Name
                   </label>
-                  <div className="relative">
-                    <User className="w-4 h-4 text-[#6B726C] absolute left-3.5 top-3.5" />
+                  <div className="relative flex items-center">
+                    <User className="w-4 h-4 text-[#6B726C] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none z-10" />
                     <input
                       type="text"
                       required
@@ -611,7 +639,7 @@ export default function LoginPage() {
                         if (errorMsg) setErrorMsg(null);
                       }}
                       placeholder="e.g. Priya Sharma"
-                      className={`input-field pl-10 text-base ${patientErrors.name ? 'input-error' : ''}`}
+                      className={`input-field has-icon-left pl-11 text-base ${patientErrors.name ? 'input-error' : ''}`}
                     />
                   </div>
                   {patientErrors.name && (
@@ -627,8 +655,8 @@ export default function LoginPage() {
                   <label className="block text-xs font-bold text-[#232724] uppercase tracking-wider">
                     Email Address
                   </label>
-                  <div className="relative">
-                    <Mail className="w-4 h-4 text-[#6B726C] absolute left-3.5 top-3.5" />
+                  <div className="relative flex items-center">
+                    <Mail className="w-4 h-4 text-[#6B726C] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none z-10" />
                     <input
                       type="email"
                       required
@@ -639,7 +667,7 @@ export default function LoginPage() {
                         if (errorMsg) setErrorMsg(null);
                       }}
                       placeholder="priya@example.com"
-                      className={`input-field pl-10 text-base ${patientErrors.email ? 'input-error' : ''}`}
+                      className={`input-field has-icon-left pl-11 text-base ${patientErrors.email ? 'input-error' : ''}`}
                     />
                   </div>
                   {patientErrors.email && (
@@ -648,6 +676,24 @@ export default function LoginPage() {
                       {patientErrors.email}
                     </p>
                   )}
+                </div>
+
+                {/* Remind Me / Keep me signed in */}
+                <div className="flex items-center justify-between pt-1">
+                  <label className="flex items-center space-x-2 text-xs text-[#232724] cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      checked={remindMe}
+                      onChange={(e) => {
+                        setRemindMe(e.target.checked);
+                        localStorage.setItem('polysafe_remind_me', String(e.target.checked));
+                      }}
+                      className="w-4 h-4 rounded text-[#2B6E5E] focus:ring-[#2B6E5E] border-[#E7E1D3] cursor-pointer"
+                    />
+                    <span className="font-medium text-[#6B726C] hover:text-[#232724] transition-colors">
+                      Remind me on this device (Save login)
+                    </span>
+                  </label>
                 </div>
 
                 <button
@@ -831,8 +877,8 @@ export default function LoginPage() {
                     <label className="block text-xs font-bold text-[#232724] uppercase tracking-wider">
                       Physician Full Name
                     </label>
-                    <div className="relative">
-                      <User className="w-4 h-4 text-[#6B726C] absolute left-3.5 top-3.5" />
+                    <div className="relative flex items-center">
+                      <User className="w-4 h-4 text-[#6B726C] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none z-10" />
                       <input
                         type="text"
                         required
@@ -843,7 +889,7 @@ export default function LoginPage() {
                           if (errorMsg) setErrorMsg(null);
                         }}
                         placeholder="Dr. Priya Sharma, MD"
-                        className={`input-field pl-10 ${doctorErrors.name ? 'input-error' : ''}`}
+                        className={`input-field has-icon-left pl-11 ${doctorErrors.name ? 'input-error' : ''}`}
                       />
                     </div>
                     {doctorErrors.name && (
@@ -859,8 +905,8 @@ export default function LoginPage() {
                     <label className="block text-xs font-bold text-[#232724] uppercase tracking-wider">
                       Medical Registration / License No.
                     </label>
-                    <div className="relative">
-                      <FileText className="w-4 h-4 text-[#6B726C] absolute left-3.5 top-3.5" />
+                    <div className="relative flex items-center">
+                      <FileText className="w-4 h-4 text-[#6B726C] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none z-10" />
                       <input
                         type="text"
                         required
@@ -871,7 +917,7 @@ export default function LoginPage() {
                           if (errorMsg) setErrorMsg(null);
                         }}
                         placeholder="MCI-2024-88492"
-                        className={`input-field pl-10 ${doctorErrors.registrationNumber ? 'input-error' : ''}`}
+                        className={`input-field has-icon-left pl-11 ${doctorErrors.registrationNumber ? 'input-error' : ''}`}
                       />
                     </div>
                     {doctorErrors.registrationNumber && (
@@ -889,8 +935,8 @@ export default function LoginPage() {
                 <label className="block text-xs font-bold text-[#232724] uppercase tracking-wider">
                   Professional Email Address
                 </label>
-                <div className="relative">
-                  <Mail className="w-4 h-4 text-[#6B726C] absolute left-3.5 top-3.5" />
+                <div className="relative flex items-center">
+                  <Mail className="w-4 h-4 text-[#6B726C] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none z-10" />
                   <input
                     type="email"
                     required
@@ -901,7 +947,7 @@ export default function LoginPage() {
                       if (errorMsg) setErrorMsg(null);
                     }}
                     placeholder="dr.sharma@hospital.org"
-                    className={`input-field pl-10 ${doctorErrors.email ? 'input-error' : ''}`}
+                    className={`input-field has-icon-left pl-11 ${doctorErrors.email ? 'input-error' : ''}`}
                   />
                 </div>
                 {doctorErrors.email && (
@@ -917,8 +963,8 @@ export default function LoginPage() {
                 <label className="block text-xs font-bold text-[#232724] uppercase tracking-wider">
                   Password {doctorMode === 'signup' && '(min. 8 characters)'}
                 </label>
-                <div className="relative">
-                  <Lock className="w-4 h-4 text-[#6B726C] absolute left-3.5 top-3.5" />
+                <div className="relative flex items-center">
+                  <Lock className="w-4 h-4 text-[#6B726C] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none z-10" />
                   <input
                     type="password"
                     required
@@ -929,7 +975,7 @@ export default function LoginPage() {
                       if (errorMsg) setErrorMsg(null);
                     }}
                     placeholder="••••••••••••"
-                    className={`input-field pl-10 ${doctorErrors.password ? 'input-error' : ''}`}
+                    className={`input-field has-icon-left pl-11 ${doctorErrors.password ? 'input-error' : ''}`}
                   />
                 </div>
                 {doctorErrors.password && (
@@ -938,6 +984,24 @@ export default function LoginPage() {
                     {doctorErrors.password}
                   </p>
                 )}
+
+                {/* Remind Me / Stay signed in */}
+                <div className="flex items-center justify-between pt-1">
+                  <label className="flex items-center space-x-2 text-xs text-[#232724] cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      checked={remindMe}
+                      onChange={(e) => {
+                        setRemindMe(e.target.checked);
+                        localStorage.setItem('polysafe_remind_me', String(e.target.checked));
+                      }}
+                      className="w-4 h-4 rounded text-[#1B4B66] focus:ring-[#1B4B66] border-[#E7E1D3] cursor-pointer"
+                    />
+                    <span className="font-medium text-[#6B726C] hover:text-[#232724] transition-colors">
+                      Remind me on this device (Save login)
+                    </span>
+                  </label>
+                </div>
 
                 {/* Password strength meter — Visible during signup only */}
                 {doctorMode === 'signup' && doctorForm.password && (
