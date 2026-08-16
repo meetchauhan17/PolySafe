@@ -1,39 +1,45 @@
-# 🛡️ PolySafe — AI-Powered Polypharmacy Risk & Prescribing Cascade Engine
+<div align="center">
 
-> **IEEE WIE ILS 2026 National Hackathon | Track 2: HealthTech | Problem Statement #4: The Polypharmacy Crisis**  
-> *"Harm doesn't come from one bad prescription — it comes from what nobody is watching together."*
+# 🛡️ PolySafe
 
----
+### *AI-Powered Polypharmacy Risk & Prescribing Cascade Engine*
 
-## 📋 Table of Contents
-1. [Overview & Insight](#-overview--insight)
-2. [The Four Core Innovations](#-the-four-core-innovations)
-3. [System Architecture & Tech Stack](#-system-architecture--tech-stack)
-4. [Permission Matrix (Who Sees What)](#-permission-matrix-who-sees-what)
-5. [Local Development Setup](#-local-development-setup)
-6. [Demo Mode (Live Demo Reliability)](#-demo-mode-live-demo-reliability)
-7. [Deployment Guide](#-deployment-guide)
-   - [Backend to Render](#backend-deployment-render)
-   - [Frontend to Vercel](#frontend-deployment-vercel)
-8. [Security, Safety & Privacy](#-security-safety--privacy)
-9. [Known Gaps & Future Roadmap (TODOs)](#-known-gaps--future-roadmap-todos)
+<p align="center">
+  <strong>Harm doesn't come from one bad prescription — it comes from what nobody is watching together.</strong>
+</p>
 
----
+[![React](https://img.shields.io/badge/React_19-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://react.dev/)
+[![Vite](https://img.shields.io/badge/Vite_8-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
+[![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)](https://nodejs.org/)
+[![Express](https://img.shields.io/badge/Express_5-000000?style=for-the-badge&logo=express&logoColor=white)](https://expressjs.com/)
+[![Prisma](https://img.shields.io/badge/Prisma_ORM-2D3748?style=for-the-badge&logo=prisma&logoColor=white)](https://www.prisma.io/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
+[![Socket.IO](https://img.shields.io/badge/Socket.io-010101?style=for-the-badge&logo=socketdotio&logoColor=white)](https://socket.io/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
 
-## 🌟 Overview & Insight
+<br/>
 
-Standard drug interaction checkers only evaluate medications **two at a time** in isolation. They miss the real clinical drivers of polypharmacy harm in elderly and multi-condition patients:
-
-1. **Care Fragmentation:** A cardiologist prescribes Drug A; a GP prescribes Drug B two months later; neither doctor sees the other's complete list.
-2. **Prescribing Cascades:** A drug's side effect is mistaken for a new medical condition, prompting a second prescription to treat it.
-3. **The "Not Real Medicine" Blind Spot:** Herbal supplements, Ayurvedic preparations, and OTC medications are almost never reported during physician visits.
-4. **Cumulative Burden Blind Spot:** Multiple mild sedative or anticholinergic drugs combine into critical fall and delirium risks, even when every pairwise check shows "safe."
-
-**PolySafe** provides a unified, persistent medication timeline that watches all four gaps simultaneously and provides dual explanations: **clinical** for the doctor, and **plain-language** for the patient.
+[🌟 Features](#-key-innovations) • [🏗️ Architecture](#-system-architecture) • [🔒 Permission Matrix](#-consent-driven-permission-matrix) • [⚡ Quickstart](#-getting-started) • [🚀 Deployment](#-deployment-guide) • [📚 Clinical Evidence](#-clinical-datasets--evidence)
 
 ---
 
-## 💡 The Four Core Innovations
+</div>
+
+## 📌 The Problem We Solve
+
+In elderly and multi-condition patients, standard drug interaction checkers fail because they only check medications **two-at-a-time in isolation**. They miss the 4 real drivers of polypharmacy hospitalizations:
+
+1. **Care Fragmentation:** A cardiologist prescribes *Drug A*; an orthopedist prescribes *Drug B* two months later. Neither physician has access to the full, active medication list.
+2. **Prescribing Cascades:** A drug's adverse effect (e.g. Amlodipine causing peripheral ankle edema) is misdiagnosed as a new clinical condition, triggering a second unnecessary prescription (e.g. Furosemide).
+3. **The "Not Real Medicine" Blind Spot:** Herbal supplements (Turmeric, Ashwagandha, Ginkgo Biloba) and OTC drugs are rarely reported during 10-minute clinic visits, despite severe bleeding and metabolic risks with anticoagulants.
+4. **Cumulative Anticholinergic / Sedative Burden:** Multiple mild drugs add up to a dangerous cumulative load, causing confusion, fall fractures, and acute delirium even when every pairwise check is "safe."
+
+**PolySafe** unifies the patient's entire medication lifecycle into a chronological, continuous safety timeline that catches all 4 gaps before harm occurs.
+
+---
+
+## 💡 Key Innovations
 
 ```
                                   ┌──────────────────────────────┐
@@ -43,216 +49,188 @@ Standard drug interaction checkers only evaluate medications **two at a time** i
       ┌─────────────────────────┬────────────────┼─────────────────────────┬─────────────────────────┐
       │                         │                │                         │                         │
 ┌─────▼──────────────┐   ┌──────▼─────────────┐  │                  ┌──────▼─────────────┐   ┌──────▼─────────────┐
-│ 1. Cross-Doctor    │   │ 2. Prescribing     │  │                  │ 3. Herb/OTC        │   │ 4. Cumulative      │
-│    Timeline        │   │    Cascade Checker │  │                  │    Blind-Spot      │   │    Burden Index    │
+│ 1. Cross-Doctor    │   │ 2. Prescribing     │  │                  │ 3. Herb / OTC      │   │ 4. Cumulative      │
+│    Timeline        │   │    Cascade Engine  │  │                  │    Interaction DB  │   │    Burden (ACB)    │
 ├────────────────────┤   ├────────────────────┤  │                  ├────────────────────┤   ├────────────────────┤
-│ Tracks prescribing │   │ Matches symptoms   │  │                  │ Cross-checks herbs │   │ Computes ACB       │
-│ source (Dr/Self)   │   │ against drug start │  │                  │ against clinical   │   │ sedative score     │
-│ with consent RBAC  │   │ dates & cascades   │  │                  │ interaction refs   │   │ across all drugs   │
+│ Chronological feed │   │ Maps symptom onset │  │                  │ Cross-checks herbs │   │ Scores cumulative  │
+│ with consent-based │   │ to drug start date │  │                  │ against clinical   │   │ anticholinergic    │
+│ role permissions   │   │ & known cascades   │  │                  │ interaction refs   │   │ sedative load (0-6)│
 └────────────────────┘   └────────────────────┘  │                  └────────────────────┘   └────────────────────┘
                                                  │
                                      ┌───────────▼───────────┐
-                                     │  Dual LLM Explanation │
+                                     │  Dual Explanation LLM │
                                      ├───────────────────────┤
-                                     │ • Doctor (Clinical)   │
-                                     │ • Patient (Plain)     │
+                                     │ • Plain-Language      │
+                                     │ • Clinical Rationale  │
+                                     │ • 3 Doctor Questions  │
                                      └───────────────────────┘
 ```
 
-1. **Cross-Doctor Medication Timeline:** Visual chronological feed tracking every prescription, OTC, and herbal addition, highlighting which doctor prescribed each drug, interaction flags, and active links.
-2. **Prescribing Cascade Detector:** Evaluates logged symptoms against documented literature pairs (e.g. Amlodipine leg swelling, NSAID hypertension), cross-referenced with medication start dates.
-3. **Herb-Drug Interaction Engine:** Explicitly checks herbal products and supplements against clinical interaction registries (e.g. Turmeric + Anticoagulants, St. John's Wort + Antidepressants).
-4. **Cumulative Anticholinergic / Sedative Burden (ACB) Index:** Calculates cumulative sedative and anticholinergic load across all active medicines on a 0–3+ scale (Normal, Moderate, Critical).
+### 1. 📅 Cross-Doctor Chronological Timeline
+Tracks every prescription, OTC, and herbal addition chronologically with distinct visual markers, source attribution, dosage history, and strike-through preservation for discontinued drugs.
+
+### 2. ⚡ Prescribing Cascade Detection Engine
+When a patient logs a symptom (e.g. *leg swelling*, *dizziness*, *dry mouth*), PolySafe correlates symptom onset with preceding medication additions, warning physicians against treating a side effect with another drug.
+
+### 3. 🌿 Herb-Drug & OTC Interaction Database
+Built-in curated knowledge base cross-referencing Ayurvedic and herbal supplements against mainstream pharmaceuticals (e.g. *Turmeric + Warfarin*, *Ginkgo + Aspirin*, *St. John's Wort + SSRIs*).
+
+### 4. 🧠 Cumulative Anticholinergic / Sedative Burden (ACB)
+Computes cumulative anticholinergic cognitive load across all active regimens (0 to 6+ scale: `Normal`, `Moderate`, `Critical`), flagging delirium and fall risks before pairwise checks would trigger.
+
+### 5. 📷 Smart Dual-Engine Prescription Label Scanner
+Extracts active drug names, strengths, and dosages from camera photos or blister pack images using local Tesseract OCR, NLM RxNorm approximate fuzzy matching, and Indian combination brand resolution (e.g. *Naxdom 500* → *Naproxen 500mg + Domperidone 10mg*).
+
+### 6. 🩺 Doctor Dashboard & Prescribing Safety Simulator
+Physicians can enter a 6-digit patient share code to review read-only records and simulate proposed new prescriptions against the patient's existing regimen in real time before writing a script.
+
+### 7. 🛡️ Privacy-Preserved Caregiver View
+Empowers family members with high-level safety statuses (`SAFE` / `CAUTION` / `CRITICAL`) and daily dosage schedules **without exposing confidential drug names or diagnoses**.
 
 ---
 
-## 🏗️ System Architecture & Tech Stack
+## 🔒 Consent-Driven Permission Matrix
 
-### Frontend
-- **Framework:** React 19 + Vite 8
-- **Styling:** Vanilla Tailwind CSS v4 (Warm clinical theme: `#FBF8F2` parchment, `#2B6E5E` sage green, `#B23D25` crimson caution, Fraunces serif headings)
-- **State & Data:** TanStack React Query v5 + Axios
-- **Real-Time:** Socket.IO Client
-- **Icons:** Lucide React
+PolySafe adheres to strict zero-trust, patient-consent principles:
 
-### Backend
-- **Runtime:** Node.js (ESM/CJS) + Express 5
-- **ORM & Database:** Prisma ORM + PostgreSQL (compatible with SQLite/Postgres)
-- **Real-Time:** Socket.IO Server
-- **AI / LLM:** Groq API (`llama-3.3-70b-versatile`) with strict 8s timeout and structured fallback
-- **Drug Standardization:** NLM RxNorm / RxNav REST API
-- **Prescription Scanning:** OCR.space Engine 2 + Heuristic Label Parser
-- **Authentication:** JWT + Role-Based Access Control (RBAC) + Console OTP / Firebase Phone Auth
-
----
-
-## 🔒 Permission Matrix (Who Sees What)
-
-PolySafe is strictly **consent-based**. No healthcare provider or family member sees patient data without explicit, patient-approved access:
-
-| Feature / Data | Patient | Doctor (Connected) | Caregiver (Connected) |
+| Data / Feature | 👤 Patient | 🩺 Doctor (Connected) | 🤝 Caregiver (Connected) |
 |---|:---:|:---:|:---:|
-| **Medication Timeline** | Full Read/Write | Full Read-Only | ❌ No Drug Names |
+| **Medication Timeline** | Full Read / Write | Full Read-Only | ❌ No Drug Names |
 | **Risk Explanations** | Plain-Language | Clinical + Plain | ❌ Hidden |
-| **Safety Status (Safe/Caution/Critical)** | ✅ Yes | ✅ Yes | ✅ Yes |
-| **Daily Reminders (Time + Dosage Type)** | ✅ Yes | ✅ Yes | ✅ Generic Type Only |
+| **Safety Status (Safe / Caution)** | ✅ Yes | ✅ Yes | ✅ Yes |
+| **Daily Dose Schedule** | ✅ Exact Names & Times | ✅ Exact Names & Times | ✅ Time & Type Only |
 | **Symptom Logs & Cascade Analysis** | Full Access | Full Access | ❌ Hidden |
+| **Prescribing Safety Check** | ❌ N/A | ✅ Test Proposed Drugs | ❌ N/A |
 | **Add / Edit / Remove Medicines** | ✅ Yes | ❌ Read-Only (Liability) | ❌ Read-Only |
-| **Connection Approval & Revocation** | ✅ Full Control | ❌ Cannot manage others | ❌ Cannot manage others |
+| **Revoke Access Permissions** | ✅ Instant One-Click | ❌ Cannot manage others | ❌ Cannot manage others |
 
 ---
 
-## 🚀 Local Development Setup
+## 🏗️ System Architecture
 
-### 1. Prerequisites
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                            FRONTEND (React 19 + Vite)                       │
+│  • Warm Clay Neumorphic UI (#EDE8DC)    • TanStack React Query v5           │
+│  • Recharts Trends & Burden Trajectory • Framer Motion Micro-Animations     │
+│  • Real-time Socket.IO updates         • Route-level lazyWithRetry Recovery │
+└──────────────────────────────────────┬──────────────────────────────────────┘
+                                       │ HTTP / WebSockets
+┌──────────────────────────────────────▼──────────────────────────────────────┐
+│                        BACKEND API (Node.js + Express 5)                    │
+│  • RBAC Auth & JWT Middleware          • Socket.IO Live Room Broadcaster    │
+│  • Prescription OCR Engine             • Prescribing Cascade Correlator     │
+│  • DDInter 2024 Pairwise Checker       • ACB Burden Index Calculator        │
+│  • Indian Brand Alias Resolver         • Dual-Persona Explanation Formatter │
+└──────────────────────┬───────────────────────────────┬──────────────────────┘
+                       │                               │
+┌──────────────────────▼───────┐             ┌─────────▼──────────────────────┐
+│    DATABASE (Prisma ORM)     │             │    EXTERNAL MEDICAL APIS       │
+│  • PostgreSQL / SQLite       │             │  • NLM RxNorm / RxNav REST API │
+│  • DDInter Reference Table   │             │  • Groq LLM (Dual Explanation) │
+│  • ACB Burden Scoring Map    │             │  • Local Tesseract OCR Engine  │
+│  • Cascade Rule Registry     │             │  • OCR.space Cloud Fallback    │
+└──────────────────────────────┘             └────────────────────────────────┘
+```
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
 - **Node.js:** v18.0.0 or higher
-- **PostgreSQL:** Local instance or cloud database (e.g. Supabase, Neon, Railway)
+- **npm:** v9.0.0 or higher
 - **Git**
 
-### 2. Clone Repository
+### 1. Clone the Repository
 ```bash
-git clone https://github.com/your-username/PolySafe.git
+git clone https://github.com/meetchauhan17/PolySafe.git
 cd PolySafe
 ```
 
-### 3. Backend Setup
+### 2. Backend Setup
 ```bash
 cd backend
 npm install
 
-# Create environment file from example
-cp .env.example .env
-```
+# Push Prisma schema to database (auto-generates SQLite / Postgres tables)
+npx prisma db push
 
-Edit `backend/.env` with your values:
-```env
-DATABASE_URL="postgresql://postgres:password@localhost:5432/polysafe?schema=public"
-JWT_SECRET="your-super-secret-jwt-key"
-JWT_EXPIRES_IN="7d"
-PORT=5000
-NODE_ENV="development"
-
-# LLM & OCR Service Keys (Optional - mocks exist)
-GROQ_API_KEY="gsk_your_groq_api_key"
-OCR_SPACE_API_KEY="your_ocr_space_key"
-
-# OTP Mode: "false" for stub (console OTP printed in terminal), "true" for Firebase
-USE_FIREBASE_OTP="false"
-
-# Demo Mode: set "true" before live demo for 100% offline fixture resilience
-DEMO_MODE="false"
-```
-
-Initialize database and seed all reference datasets:
-```bash
-# Push Prisma schema to database
-npm run prisma:push
-
-# Run unified seeder (DDInter CSV, Burden Scores, Cascade References, Herb-Drug Pairs)
+# Seed DDInter, ACB burden scores, herb-drug pairs, and cascade rules
 npm run seed
 
-# Start backend dev server (runs on http://localhost:5000)
-npm run dev
+# Start backend server (runs on http://localhost:5000)
+npm start
 ```
 
-### 4. Frontend Setup
+### 3. Frontend Setup
 ```bash
+# In a new terminal window
 cd ../frontend
 npm install
 
-# Start Vite frontend dev server (runs on http://localhost:3000)
+# Start Vite dev server (runs on http://localhost:3000)
 npm run dev
 ```
 
-Visit **`http://localhost:3000`** in your browser.
+Open **`http://localhost:3000`** in your browser.
 
 ---
 
-## 🎭 Demo Mode (Live Demo Reliability)
+## 🧪 Testing with Included Sample Prescriptions
 
-When presenting in environments with unreliable venue Wi-Fi, you can enable **Demo Mode** with **zero code changes**:
-
-1. Open `backend/.env`
-2. Set `DEMO_MODE="true"`
-3. Restart the backend: `npm run dev`
-
-### What happens in Demo Mode:
-- **OCR Scan:** `POST /medicine/scan` immediately returns a parsed `Warfarin 5mg` sample prescription without calling OCR.space.
-- **RxNorm Standardization:** Drug name queries resolve via an internal static map of known medications without external RxNav HTTP requests.
-- **Groq LLM Explanations:** Clinical and plain explanations are returned instantly using pre-compiled pharmacological models with a `DEMO` indicator.
-- **Error Handling:** If an API times out (>8s) or is unreachable, the raw severity and cumulative burden score are displayed immediately alongside a *"Generating detailed explanation..."* notice.
+PolySafe includes test samples for instant OCR validation without needing a physical prescription:
+- Navigate to **Add Medicine** (`http://localhost:3000/add-medicine`).
+- Click **`⚡ Try Sample (Naxdom 500)`** to run a live scan on the included multi-ingredient blister pack fixture (`Naproxen 500mg + Domperidone 10mg`).
+- Watch PolySafe extract the drug, verify it via RxNorm, and check for interactions against your active regimen.
 
 ---
 
 ## 🚢 Deployment Guide
 
-### Backend Deployment (Render)
+### Backend on Render
+The backend includes a root `render.yaml` Blueprint for 1-click deployment on [Render](https://render.com):
+1. Connect your GitHub repository to Render.
+2. Choose **New → Blueprint** and select `render.yaml`.
+3. Render automatically provisions the PostgreSQL database and Node.js Web Service.
 
-The backend is fully configured for [Render](https://render.com) deployment using the root `render.yaml` Blueprint or manual web service creation.
-
-#### Option A: Blueprint Deploy (`render.yaml`)
-1. Push this repository to GitHub.
-2. Go to **Render Dashboard → Blueprints → New Blueprint Instance**.
-3. Connect your repository — Render will automatically provision:
-   - A managed PostgreSQL instance (`polysafe-db`)
-   - A Node.js Web Service (`polysafe-backend`)
-   - Automatic build (`npm install && npx prisma generate && npx prisma db push`) and start commands (`node src/index.js`).
-
-#### Option B: Manual Web Service
-- **Environment:** Node
-- **Root Directory:** `backend`
-- **Build Command:** `npm install && npx prisma generate && npx prisma db push`
-- **Start Command:** `node src/index.js`
-- **Environment Variables:**
-  - `DATABASE_URL`: Your PostgreSQL connection string
-  - `JWT_SECRET`: Random 32+ character string
-  - `NODE_ENV`: `production`
-  - `PORT`: `5000` (or leave default; Render injects `$PORT`)
-  - `USE_FIREBASE_OTP`: `false`
-  - `GROQ_API_KEY`: Your Groq API key
-  - `OCR_SPACE_API_KEY`: Your OCR.space key
-
----
-
-### Frontend Deployment (Vercel)
-
-The frontend is built with Vite and includes `vercel.json` for Single Page Application client-side routing.
-
+### Frontend on Vercel
 1. Import the repository on [Vercel](https://vercel.com).
-2. Configure project settings:
-   - **Framework Preset:** `Vite`
-   - **Root Directory:** `frontend`
-   - **Build Command:** `npm run build`
-   - **Output Directory:** `dist`
-3. Add Environment Variable:
-   - `VITE_API_URL`: URL of your deployed Render backend (e.g. `https://polysafe-backend.onrender.com`)
-4. Deploy.
+2. Set **Root Directory** to `frontend`.
+3. Set **Framework Preset** to `Vite`.
+4. Add Environment Variable:
+   - `VITE_API_URL` = `https://your-polysafe-backend.onrender.com`
+5. Deploy.
 
 ---
 
-## 🛡️ Security, Safety & Privacy
+## 📚 Clinical Datasets & Evidence
 
-- **No Hardcoded Secrets:** All credentials (`GROQ_API_KEY`, `OCR_SPACE_API_KEY`, `JWT_SECRET`, Firebase credentials) are injected exclusively via environment variables.
-- **Data Minimization in OCR:** Uploaded prescription images are processed in a temporary local folder and **immediately unlinked and deleted** from disk via `finally` blocks upon completion or error.
-- **Non-Diagnostic Framing:** Every patient-facing explanation explicitly includes the mandatory framing: *(This is an informational safety alert, not a medical diagnosis. Always consult your doctor before changing medicines.)*
-- **Tamper-Resistant Doctor Access:** Doctors have read-only access to connected patient timelines and cannot edit patient lists, preventing unauthorized prescription modifications.
-
----
-
-## 📌 Known Gaps & Future Roadmap (TODOs)
-
-The following items are documented for transparency prior to live judging and post-hackathon scaling:
-
-| Area | Current Status | Post-Hackathon Roadmap (v2) |
+| Component | Source / Protocol | Clinical Role |
 |---|---|---|
-| **SMS OTP Delivery** | Console log stub (development) + Firebase Admin adapter | Production SMS gateway integration (e.g. Twilio / MSG91) |
-| **Doctor Credential Verification** | Form validation on Medical Registration Number | Automated integration with the National Medical Commission (NMC) registry API |
-| **Prescription OCR** | OCR.space Engine 2 + Heuristic regex parsing | Dedicated fine-tuned Vision-LLM (e.g. Gemini 1.5 Flash Vision) for handwritten Indian doctor scripts |
-| **Dosage Scheduling** | Time slots derived deterministically across day segments | Customizable multi-frequency scheduling (e.g., TID, PRN, tapering doses) with push notifications |
-| **FHIR / ABDM Integration** | Standalone PostgreSQL schema | Ayushman Bharat Digital Mission (ABDM) / HL7 FHIR M1/M2/M3 compliance for EHR data interchange |
+| **Drug-Drug Interactions** | **DDInter 2024 Database** | Validated pairwise pharmacological interaction references |
+| **Drug Standardization** | **NLM RxNorm & RxNav** | Standardized RxCUI concept mapping & synonym normalization |
+| **Anticholinergic Burden** | **ACB Cognitive Scale (Boustani et al.)** | Cumulative anticholinergic load scoring (0, 1, 2, 3+) |
+| **Herb-Drug Interactions** | **MSKCC & Natural Medicines Database** | Botanical and supplement cross-reactivity mapping |
+| **Prescribing Cascades** | **Canadian Deprescribing Network (CaDeN)** | Documented drug-induced symptom cascade rules |
 
 ---
 
-## 👥 Authors & Acknowledgements
-- **Team PolySafe** — IEEE WIE ILS 2026 National Hackathon
-- **Clinical Datasets:** DDInter (Drug-Drug Interaction Database), Canadian Deprescribing Network, ACB Scoring Protocol, MSKCC Integrative Medicine Database.
+## 🛡️ Security, Privacy & Ethics
+
+- **Zero Diagnostic Overreach:** Every patient-facing summary includes mandatory clinical disclaimers. PolySafe acts as an informational safety buffer, not a diagnostic replacement.
+- **Immediate Data Minimization:** Uploaded prescription label photos are processed in temporary memory/disk and **instantly unlinked and removed** upon scan completion.
+- **Strict Role-Based Access Control:** Role boundaries (Patient, Doctor, Caregiver) are enforced cryptographically via signed JWTs and server-side route guards.
+
+---
+
+## 👥 Authors
+
+- **Meet Chauhan** ([@meetchauhan17](https://github.com/meetchauhan17))
+- **PolySafe Team** — *IEEE WIE ILS 2026 National Hackathon (Track 2: HealthTech)*
+
+---
+
+<div align="center">
+  <sub>Built with ❤️ for safer geriatric and multi-condition polypharmacy care.</sub>
+</div>
