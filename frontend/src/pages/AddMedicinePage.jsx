@@ -455,6 +455,20 @@ export default function AddMedicinePage() {
       setScanState('confirm');
       if (data.candidate) {
         setName(data.candidate);
+        if (data.standardizedCode || data.genericName) {
+          setSelectedDrugInfo({
+            name: data.candidate,
+            generic: data.genericName || data.candidate,
+            rxcui: data.standardizedCode,
+            dosage: data.suggestedDosage,
+            category: data.category || 'Prescription Drug',
+            safetyTip: data.safetyTip || 'Verify dosage and instructions with your doctor or pharmacist.',
+            dosageOptions: data.dosageOptions || [],
+            source: data.standardizedCode ? 'rxnorm' : 'local',
+          });
+        }
+        if (data.commonFrequency) setFrequency(data.commonFrequency);
+        if (data.foodInstruction) setNotes(data.foodInstruction);
         notify.success('Drug Identified', `Found "${data.candidate}". Please verify details below.`);
       } else if (data.fallbackCandidates?.length > 0) {
         notify.info('Review Suggestions', 'Could not verify exact drug name with RxNorm. Choose from suggestions or type manually.');
@@ -543,7 +557,53 @@ export default function AddMedicinePage() {
     }
     setSubmitError(null);
     if (!name.trim()) { setSubmitError('Please enter or confirm the medicine name.'); return; }
-    addMutation.mutate({ name: name.trim(), type, dosage: dosage.trim() || undefined });
+
+    // Build rich, formatted dosage summary for clinical record
+    let formattedDosage = dosage.trim();
+    const scheduleParts = [];
+
+    if (frequency) {
+      const freqMap = {
+        once: 'Once daily',
+        twice: 'Twice daily',
+        thrice: '3x daily',
+        four: '4x daily',
+        weekly: 'Weekly',
+        asneeded: 'As needed (PRN)',
+        alternate: 'Alternate days',
+      };
+      const freqLabel = freqMap[frequency] || frequency;
+      if (timings.length > 0) {
+        const timingLabels = timings.map(t => t.charAt(0).toUpperCase() + t.slice(1)).join(', ');
+        scheduleParts.push(`${freqLabel} (${timingLabels})`);
+      } else {
+        scheduleParts.push(freqLabel);
+      }
+    }
+
+    if (notes) {
+      const noteMap = {
+        before_food: 'Before food',
+        after_food: 'After food',
+        with_food: 'With food',
+        empty_stomach: 'Empty stomach',
+        with_water: 'With water',
+        avoid_dairy: 'Avoid dairy',
+      };
+      scheduleParts.push(noteMap[notes] || notes);
+    }
+
+    if (prescriber.trim()) {
+      scheduleParts.push(`Rx: ${prescriber.trim()}`);
+    }
+
+    if (scheduleParts.length > 0) {
+      formattedDosage = formattedDosage
+        ? `${formattedDosage} • ${scheduleParts.join(' • ')}`
+        : scheduleParts.join(' • ');
+    }
+
+    addMutation.mutate({ name: name.trim(), type, dosage: formattedDosage || undefined });
   };
 
   const handleAddAnother = () => {
@@ -1168,57 +1228,81 @@ export default function AddMedicinePage() {
               )}
             </div>
 
-            {/* Drug Verification Info Card — appears after selecting from autocomplete */}
+            {/* Drug Verification Info Card — appears after selecting from autocomplete or OCR */}
             {selectedDrugInfo && name && (
-              <div className="p-3.5 rounded-2xl border-2 border-[#2B6E5E]/20 bg-[#F4FAF8] space-y-2">
+              <div className="p-4 rounded-2xl border-2 border-[#2B6E5E]/25 bg-[#F4FAF8] space-y-3 shadow-sm">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <ShieldCheck className="w-4 h-4 text-[#2B6E5E]" />
+                    <ShieldCheck className="w-5 h-5 text-[#2B6E5E]" />
                     <span className="text-xs font-bold text-[#1C2B27]">
-                      {selectedDrugInfo.rxcui ? 'RxNorm Verified Drug' : 'Identified Drug'}
+                      {selectedDrugInfo.rxcui ? 'RxNorm Verified Medication' : 'Identified Medication'}
                     </span>
                   </div>
-                  <button type="button" onClick={() => setSelectedDrugInfo(null)} className="text-[#6B726C] hover:text-[#232724] cursor-pointer">
-                    <X className="w-3.5 h-3.5" />
+                  <button type="button" onClick={() => setSelectedDrugInfo(null)} className="text-[#6B726C] hover:text-[#232724] cursor-pointer p-1">
+                    <X className="w-4 h-4" />
                   </button>
                 </div>
-                <div className="grid grid-cols-2 gap-2">
-                  <div className="text-[11px]">
-                    <span className="text-[#6B726C]">Drug Name</span>
-                    <p className="font-bold text-[#232724]">{selectedDrugInfo.name}</p>
+
+                <div className="grid grid-cols-2 gap-2.5">
+                  <div className="text-xs bg-white/70 p-2.5 rounded-xl border border-[#2B6E5E]/15">
+                    <span className="text-[10px] uppercase font-bold text-[#6B726C] block">Drug Name</span>
+                    <p className="font-bold text-[#232724] mt-0.5 truncate">{selectedDrugInfo.name}</p>
                   </div>
-                  {selectedDrugInfo.generic !== selectedDrugInfo.name && (
-                    <div className="text-[11px]">
-                      <span className="text-[#6B726C]">Generic Name</span>
-                      <p className="font-bold text-[#232724]">{selectedDrugInfo.generic}</p>
+                  {selectedDrugInfo.generic && selectedDrugInfo.generic !== selectedDrugInfo.name && (
+                    <div className="text-xs bg-white/70 p-2.5 rounded-xl border border-[#2B6E5E]/15">
+                      <span className="text-[10px] uppercase font-bold text-[#6B726C] block">Active Generic</span>
+                      <p className="font-bold text-[#2B6E5E] mt-0.5 truncate">{selectedDrugInfo.generic}</p>
+                    </div>
+                  )}
+                  {selectedDrugInfo.category && (
+                    <div className="text-xs bg-white/70 p-2.5 rounded-xl border border-[#2B6E5E]/15">
+                      <span className="text-[10px] uppercase font-bold text-[#6B726C] block">Clinical Class</span>
+                      <p className="font-bold text-[#1C2B27] mt-0.5 truncate">{selectedDrugInfo.category}</p>
                     </div>
                   )}
                   {selectedDrugInfo.rxcui && (
-                    <div className="text-[11px]">
-                      <span className="text-[#6B726C]">RxNorm CUI</span>
-                      <p className="font-bold text-[#2B6E5E]">#{selectedDrugInfo.rxcui}</p>
-                    </div>
-                  )}
-                  {selectedDrugInfo.dosage && (
-                    <div className="text-[11px]">
-                      <span className="text-[#6B726C]">Standard Dosage</span>
-                      <p className="font-bold text-[#232724]">{selectedDrugInfo.dosage}</p>
+                    <div className="text-xs bg-white/70 p-2.5 rounded-xl border border-[#2B6E5E]/15">
+                      <span className="text-[10px] uppercase font-bold text-[#6B726C] block">RxNorm CUI</span>
+                      <p className="font-bold text-[#2B6E5E] mt-0.5">#{selectedDrugInfo.rxcui}</p>
                     </div>
                   )}
                 </div>
-                <div className="flex items-center gap-1.5">
-                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                    selectedDrugInfo.source === 'rxnorm' ? 'bg-[#E4F2E9] text-[#2B6E5E]' :
-                    selectedDrugInfo.source === 'herbal' ? 'bg-[#2B6E5E]/10 text-[#2B6E5E]' :
-                    selectedDrugInfo.source === 'ddinter' ? 'bg-[#FBEED9] text-[#7A4A0A]' :
-                    'bg-gray-100 text-gray-600'
-                  }`}>
-                    {selectedDrugInfo.source === 'rxnorm' ? '✓ Verified in NLM RxNorm' :
-                     selectedDrugInfo.source === 'herbal' ? '🌿 Herbal / Ayurvedic' :
-                     selectedDrugInfo.source === 'ddinter' ? '📊 In DDInter Interaction DB' :
-                     '💊 Drug Database Match'}
-                  </span>
-                </div>
+
+                {/* Clinical Safety Tip */}
+                {selectedDrugInfo.safetyTip && (
+                  <div className="flex items-start gap-2 p-2.5 bg-[#EDE8DC]/80 border border-[#E7E1D3] rounded-xl text-xs text-[#5C6B64]">
+                    <Info className="w-4 h-4 text-[#2B6E5E] flex-shrink-0 mt-0.5" />
+                    <p className="leading-relaxed"><strong className="text-[#1C2B27]">Safety Note:</strong> {selectedDrugInfo.safetyTip}</p>
+                  </div>
+                )}
+
+                {/* Quick Dosage Presets */}
+                {selectedDrugInfo.dosageOptions?.length > 0 && (
+                  <div className="space-y-1.5 pt-1">
+                    <span className="text-[10px] font-bold text-[#5C6B64] uppercase tracking-wider block">
+                      Quick Strength Presets:
+                    </span>
+                    <div className="flex flex-wrap gap-1.5">
+                      {selectedDrugInfo.dosageOptions.map((opt) => (
+                        <button
+                          key={opt}
+                          type="button"
+                          onClick={() => {
+                            setDosage(opt);
+                            notify.info('Dosage Set', `Set dosage to ${opt}`);
+                          }}
+                          className={`px-3 py-1 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                            dosage === opt
+                              ? 'bg-[#2B6E5E] text-white shadow-sm'
+                              : 'bg-white text-[#2B6E5E] border border-[#2B6E5E]/30 hover:bg-[#F4FAF8]'
+                          }`}
+                        >
+                          {opt}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 
@@ -1245,7 +1329,7 @@ export default function AddMedicinePage() {
                       }`}
                     >
                       <span className="flex-shrink-0">{t.toggleIcon}</span>
-                      <span className="hidden sm:inline">{t.shortLabel}</span>
+                      <span>{t.shortLabel}</span>
                     </button>
                   );
                 })}
@@ -1261,27 +1345,30 @@ export default function AddMedicinePage() {
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5">
                 <label className="block text-xs font-bold text-[#232724] uppercase tracking-wider">
-                  Dosage <span className="normal-case font-normal text-[#6B726C]">— optional</span>
+                  Dosage / Strength <span className="normal-case font-normal text-[#6B726C]">— optional</span>
                 </label>
-                <input
-                  type="text"
-                  value={dosage}
-                  onChange={(e) => setDosage(e.target.value)}
-                  placeholder="e.g. 5mg, 500mg"
-                  className="input-field"
-                />
+                <div className="relative flex items-center">
+                  <Pill className="w-4 h-4 text-[#6B726C] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                  <input
+                    type="text"
+                    value={dosage}
+                    onChange={(e) => setDosage(e.target.value)}
+                    placeholder="e.g. 500mg, 10ml"
+                    className="input-field pl-10"
+                  />
+                </div>
               </div>
 
               <div className="space-y-1.5">
                 <label className="block text-xs font-bold text-[#232724] uppercase tracking-wider">
-                  Frequency
+                  Frequency Schedule
                 </label>
-                <div className="relative">
-                  <Clock className="w-4 h-4 text-[#6B726C] absolute left-3 top-3" />
+                <div className="relative flex items-center">
+                  <Clock className="w-4 h-4 text-[#6B726C] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                   <select
                     value={frequency}
                     onChange={(e) => setFrequency(e.target.value)}
-                    className="input-field pl-9 pr-3 appearance-none cursor-pointer bg-white"
+                    className="input-field pl-10 pr-6 appearance-none cursor-pointer bg-white"
                   >
                     <option value="once">Once daily</option>
                     <option value="twice">Twice daily</option>
@@ -1298,7 +1385,7 @@ export default function AddMedicinePage() {
             {/* Time of Day chips */}
             <div className="space-y-2">
               <label className="block text-xs font-bold text-[#232724] uppercase tracking-wider">
-                Time of Day <span className="normal-case font-normal text-[#6B726C]">— select when you take it</span>
+                Time of Day <span className="normal-case font-normal text-[#6B726C]">— select dosage times</span>
               </label>
               <div className="flex flex-wrap gap-2">
                 {[
@@ -1321,47 +1408,47 @@ export default function AddMedicinePage() {
                       }}
                       className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer border-2 ${
                         isActive
-                          ? 'bg-[#EDE8DC] shadow-[3px_3px_6px_rgba(191,180,155,0.55),-3px_-3px_6px_rgba(255,255,255,0.65)] text-[#2B6E5E] border-[#2B6E5E]/30'
+                          ? 'bg-[#EDE8DC] shadow-[3px_3px_6px_rgba(191,180,155,0.55),-3px_-3px_6px_rgba(255,255,255,0.65)] text-[#2B6E5E] border-[#2B6E5E]/40'
                           : 'bg-[#EDE8DC] shadow-[inset_2px_2px_4px_rgba(191,180,155,0.4),inset_-2px_-2px_4px_rgba(255,255,255,0.5)] text-[#6B726C] border-transparent'
                       }`}
                     >
                       {slot.icon}
                       <span>{slot.label}</span>
-                      <span className="text-[10px] font-normal opacity-60">{slot.time}</span>
+                      <span className="text-[10px] font-normal opacity-60">({slot.time})</span>
                     </button>
                   );
                 })}
               </div>
             </div>
 
-            {/* Prescriber + Notes side by side */}
+            {/* Prescriber + Instructions side by side */}
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5">
                 <label className="block text-xs font-bold text-[#232724] uppercase tracking-wider">
                   Prescribed By <span className="normal-case font-normal text-[#6B726C]">— optional</span>
                 </label>
-                <div className="relative">
-                  <User className="w-4 h-4 text-[#6B726C] absolute left-3 top-3" />
+                <div className="relative flex items-center">
+                  <User className="w-4 h-4 text-[#6B726C] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                   <input
                     type="text"
                     value={prescriber}
                     onChange={(e) => setPrescriber(e.target.value)}
-                    placeholder="Dr. name or Self"
-                    className="input-field pl-9"
+                    placeholder="Doctor name or Self"
+                    className="input-field pl-10"
                   />
                 </div>
               </div>
 
               <div className="space-y-1.5">
                 <label className="block text-xs font-bold text-[#232724] uppercase tracking-wider">
-                  Instructions <span className="normal-case font-normal text-[#6B726C]">— optional</span>
+                  Meal Instructions <span className="normal-case font-normal text-[#6B726C]">— optional</span>
                 </label>
-                <div className="relative">
-                  <CalendarDays className="w-4 h-4 text-[#6B726C] absolute left-3 top-3" />
+                <div className="relative flex items-center">
+                  <CalendarDays className="w-4 h-4 text-[#6B726C] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                   <select
                     value={notes}
                     onChange={(e) => setNotes(e.target.value)}
-                    className="input-field pl-9 pr-3 appearance-none cursor-pointer bg-white"
+                    className="input-field pl-10 pr-6 appearance-none cursor-pointer bg-white"
                   >
                     <option value="">No special instructions</option>
                     <option value="before_food">Take before food</option>
@@ -1376,11 +1463,11 @@ export default function AddMedicinePage() {
             </div>
           </Card>
 
-          {/* Submit */}
+          {/* Submit Button */}
           <button
             type="submit"
             disabled={addMutation.isPending || !name.trim()}
-            className="btn-primary w-full py-4 text-base"
+            className="btn-primary w-full py-4 text-base shadow-[4px_4px_8px_rgba(191,180,155,0.6),-4px_-4px_8px_rgba(255,255,255,0.7)] hover:shadow-[6px_6px_12px_rgba(191,180,155,0.7),-6px_-6px_12px_rgba(255,255,255,0.8)]"
           >
             {addMutation.isPending ? (
               <><Loader2 className="w-5 h-5 animate-spin" /><span>Checking RxNorm & saving...</span></>
@@ -1391,7 +1478,7 @@ export default function AddMedicinePage() {
 
           {addMutation.isPending && (
             <p className="text-center text-[11px] text-[#6B726C]">
-              Standardizing with RxNorm · checking for duplicates · saving…
+              Standardizing with RxNorm · checking for duplicates · evaluating DDInter drug safety…
             </p>
           )}
         </form>

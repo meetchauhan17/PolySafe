@@ -321,23 +321,23 @@ async function verifyCandidatesWithRxNorm(candidates, suggestedDosage = null) {
 
 // Curated common brand name & combination product aliases
 const COMMON_BRAND_ALIASES = {
-  'naxdom': { name: 'Naxdom 500 (Naproxen + Domperidone)', genericName: 'Naproxen', dosage: '500 mg', standardizedCode: '7258' },
-  'nexdom': { name: 'Naxdom 500 (Naproxen + Domperidone)', genericName: 'Naproxen', dosage: '500 mg', standardizedCode: '7258' },
-  'naxdom 500': { name: 'Naxdom 500 (Naproxen + Domperidone)', genericName: 'Naproxen', dosage: '500 mg', standardizedCode: '7258' },
-  'naxdom 250': { name: 'Naxdom 250 (Naproxen + Domperidone)', genericName: 'Naproxen', dosage: '250 mg', standardizedCode: '7258' },
-  'dolo': { name: 'Dolo 650 (Paracetamol)', genericName: 'Acetaminophen', dosage: '650 mg', standardizedCode: '161' },
-  'dolo 650': { name: 'Dolo 650 (Paracetamol)', genericName: 'Acetaminophen', dosage: '650 mg', standardizedCode: '161' },
-  'crocin': { name: 'Crocin (Paracetamol)', genericName: 'Acetaminophen', dosage: '500 mg', standardizedCode: '161' },
-  'pan-d': { name: 'Pan-D (Pantoprazole + Domperidone)', genericName: 'Pantoprazole', dosage: '40 mg', standardizedCode: '40790' },
-  'pand': { name: 'Pan-D (Pantoprazole + Domperidone)', genericName: 'Pantoprazole', dosage: '40 mg', standardizedCode: '40790' },
-  'pan d': { name: 'Pan-D (Pantoprazole + Domperidone)', genericName: 'Pantoprazole', dosage: '40 mg', standardizedCode: '40790' },
-  'augmentin': { name: 'Augmentin (Amoxicillin + Clavulanate)', genericName: 'Amoxicillin', dosage: '625 mg', standardizedCode: '723' },
-  'augmentin 625': { name: 'Augmentin (Amoxicillin + Clavulanate)', genericName: 'Amoxicillin', dosage: '625 mg', standardizedCode: '723' },
-  'ecosprin': { name: 'Ecosprin (Aspirin)', genericName: 'Aspirin', dosage: '75 mg', standardizedCode: '1191' },
-  'combiflam': { name: 'Combiflam (Ibuprofen + Paracetamol)', genericName: 'Ibuprofen', dosage: '400 mg', standardizedCode: '5640' },
-  'telma': { name: 'Telma (Telmisartan)', genericName: 'Telmisartan', dosage: '40 mg', standardizedCode: '42355' },
-  'voveran': { name: 'Voveran (Diclofenac)', genericName: 'Diclofenac', dosage: '50 mg', standardizedCode: '3355' },
-  'shelcal': { name: 'Shelcal 500 (Calcium + Vitamin D3)', genericName: 'Calcium Carbonate', dosage: '500 mg', standardizedCode: '1895' },
+  'naxdom': { name: 'Naxdom 500 (Naproxen + Domperidone)', genericName: 'Naproxen', dosage: '500 mg', standardizedCode: '7258', category: 'NSAID / Migraine', safetyTip: 'Take after meals with water. Avoid combining with other NSAIDs (aspirin/ibuprofen).', dosageOptions: ['250 mg', '500 mg'], commonFrequency: 'twice', foodInstruction: 'after_food' },
+  'nexdom': { name: 'Naxdom 500 (Naproxen + Domperidone)', genericName: 'Naproxen', dosage: '500 mg', standardizedCode: '7258', category: 'NSAID / Migraine', safetyTip: 'Take after meals with water. Avoid combining with other NSAIDs (aspirin/ibuprofen).', dosageOptions: ['250 mg', '500 mg'], commonFrequency: 'twice', foodInstruction: 'after_food' },
+  'naxdom 500': { name: 'Naxdom 500 (Naproxen + Domperidone)', genericName: 'Naproxen', dosage: '500 mg', standardizedCode: '7258', category: 'NSAID / Migraine', safetyTip: 'Take after meals with water. Avoid combining with other NSAIDs (aspirin/ibuprofen).', dosageOptions: ['250 mg', '500 mg'], commonFrequency: 'twice', foodInstruction: 'after_food' },
+  'naxdom 250': { name: 'Naxdom 250 (Naproxen + Domperidone)', genericName: 'Naproxen', dosage: '250 mg', standardizedCode: '7258', category: 'NSAID / Migraine', safetyTip: 'Take after meals with water. Avoid combining with other NSAIDs (aspirin/ibuprofen).', dosageOptions: ['250 mg', '500 mg'], commonFrequency: 'twice', foodInstruction: 'after_food' },
+  'dolo': { name: 'Dolo 650 (Paracetamol)', genericName: 'Acetaminophen', dosage: '650 mg', standardizedCode: '161', category: 'Analgesic / Antipyretic', safetyTip: 'Do not exceed 4,000 mg (4g) daily total from all paracetamol sources to protect liver.', dosageOptions: ['500 mg', '650 mg'], commonFrequency: 'thrice', foodInstruction: 'after_food' },
+  'dolo 650': { name: 'Dolo 650 (Paracetamol)', genericName: 'Acetaminophen', dosage: '650 mg', standardizedCode: '161', category: 'Analgesic / Antipyretic', safetyTip: 'Do not exceed 4,000 mg (4g) daily total from all paracetamol sources to protect liver.', dosageOptions: ['500 mg', '650 mg'], commonFrequency: 'thrice', foodInstruction: 'after_food' },
+  'crocin': { name: 'Crocin (Paracetamol)', genericName: 'Acetaminophen', dosage: '500 mg', standardizedCode: '161', category: 'Analgesic / Antipyretic', safetyTip: 'Monitor total daily paracetamol intake across all cold/fever formulations.', dosageOptions: ['500 mg', '650 mg'], commonFrequency: 'thrice', foodInstruction: 'after_food' },
+  'pan-d': { name: 'Pan-D (Pantoprazole + Domperidone)', genericName: 'Pantoprazole', dosage: '40 mg', standardizedCode: '40790', category: 'PPI / Antacid', safetyTip: 'Best taken 30-60 minutes before morning breakfast on an empty stomach.', dosageOptions: ['20 mg', '40 mg'], commonFrequency: 'once', foodInstruction: 'empty_stomach' },
+  'pand': { name: 'Pan-D (Pantoprazole + Domperidone)', genericName: 'Pantoprazole', dosage: '40 mg', standardizedCode: '40790', category: 'PPI / Antacid', safetyTip: 'Best taken 30-60 minutes before morning breakfast on an empty stomach.', dosageOptions: ['20 mg', '40 mg'], commonFrequency: 'once', foodInstruction: 'empty_stomach' },
+  'pan d': { name: 'Pan-D (Pantoprazole + Domperidone)', genericName: 'Pantoprazole', dosage: '40 mg', standardizedCode: '40790', category: 'PPI / Antacid', safetyTip: 'Best taken 30-60 minutes before morning breakfast on an empty stomach.', dosageOptions: ['20 mg', '40 mg'], commonFrequency: 'once', foodInstruction: 'empty_stomach' },
+  'augmentin': { name: 'Augmentin (Amoxicillin + Clavulanate)', genericName: 'Amoxicillin', dosage: '625 mg', standardizedCode: '723', category: 'Antibiotic', safetyTip: 'Complete the entire course prescribed even if symptoms improve early.', dosageOptions: ['375 mg', '625 mg', '1000 mg'], commonFrequency: 'twice', foodInstruction: 'with_food' },
+  'augmentin 625': { name: 'Augmentin (Amoxicillin + Clavulanate)', genericName: 'Amoxicillin', dosage: '625 mg', standardizedCode: '723', category: 'Antibiotic', safetyTip: 'Complete the entire course prescribed even if symptoms improve early.', dosageOptions: ['375 mg', '625 mg', '1000 mg'], commonFrequency: 'twice', foodInstruction: 'with_food' },
+  'ecosprin': { name: 'Ecosprin (Aspirin)', genericName: 'Aspirin', dosage: '75 mg', standardizedCode: '1191', category: 'Antiplatelet / Cardio', safetyTip: 'Low-dose cardio-protective. Take with food to minimize gastric bleeding risk.', dosageOptions: ['75 mg', '150 mg'], commonFrequency: 'once', foodInstruction: 'with_food' },
+  'combiflam': { name: 'Combiflam (Ibuprofen + Paracetamol)', genericName: 'Ibuprofen', dosage: '400 mg', standardizedCode: '5640', category: 'NSAID / Pain Relief', safetyTip: 'Take after meals. Avoid if you have active peptic ulcer or renal impairment.', dosageOptions: ['400 mg'], commonFrequency: 'twice', foodInstruction: 'after_food' },
+  'telma': { name: 'Telma (Telmisartan)', genericName: 'Telmisartan', dosage: '40 mg', standardizedCode: '42355', category: 'Antihypertensive (ARB)', safetyTip: 'Take consistently at the same time each day; monitor blood pressure regularly.', dosageOptions: ['20 mg', '40 mg', '80 mg'], commonFrequency: 'once', foodInstruction: 'before_food' },
+  'voveran': { name: 'Voveran (Diclofenac)', genericName: 'Diclofenac', dosage: '50 mg', standardizedCode: '3355', category: 'NSAID / Anti-inflammatory', safetyTip: 'Potent anti-inflammatory. Take with food or antacid to avoid stomach irritation.', dosageOptions: ['50 mg', '75 mg', '100 mg'], commonFrequency: 'twice', foodInstruction: 'after_food' },
+  'shelcal': { name: 'Shelcal 500 (Calcium + Vitamin D3)', genericName: 'Calcium Carbonate', dosage: '500 mg', standardizedCode: '1895', category: 'Bone Health / Mineral', safetyTip: 'Take with or after lunch for optimal absorption; separate from iron supplements by 2 hours.', dosageOptions: ['250 mg', '500 mg'], commonFrequency: 'once', foodInstruction: 'after_food' },
 };
 
   for (const cand of topCandidates) {
@@ -354,6 +354,11 @@ const COMMON_BRAND_ALIASES = {
         verified: true,
         fallbackCandidates,
         suggestedDosage: suggestedDosage || alias.dosage,
+        category: alias.category,
+        safetyTip: alias.safetyTip,
+        dosageOptions: alias.dosageOptions,
+        commonFrequency: alias.commonFrequency,
+        foodInstruction: alias.foodInstruction,
       };
     }
 
