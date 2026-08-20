@@ -518,4 +518,196 @@ router.delete('/:id', auth, requireRole(['PATIENT']), async (req, res) => {
   }
 });
 
+// ═════════════════════════════════════════════════════════════════════════════
+// GET /medicine/search?q=<query> — Real-time drug name autocomplete
+// Queries: 1) Curated brand alias dictionary  2) RxNorm Suggest API
+//          3) Local DDInter reference database
+// Returns up to 10 unique suggestions with source + standardized code
+// ═════════════════════════════════════════════════════════════════════════════
+const BRAND_ALIASES = {
+  'naxdom':      { display: 'Naxdom 500 (Naproxen + Domperidone)', generic: 'Naproxen', rxcui: '7258', dosage: '500 mg' },
+  'nexdom':      { display: 'Naxdom 500 (Naproxen + Domperidone)', generic: 'Naproxen', rxcui: '7258', dosage: '500 mg' },
+  'dolo':        { display: 'Dolo 650 (Paracetamol)', generic: 'Acetaminophen', rxcui: '161', dosage: '650 mg' },
+  'crocin':      { display: 'Crocin (Paracetamol)', generic: 'Acetaminophen', rxcui: '161', dosage: '500 mg' },
+  'pan-d':       { display: 'Pan-D (Pantoprazole + Domperidone)', generic: 'Pantoprazole', rxcui: '40790', dosage: '40 mg' },
+  'pand':        { display: 'Pan-D (Pantoprazole + Domperidone)', generic: 'Pantoprazole', rxcui: '40790', dosage: '40 mg' },
+  'augmentin':   { display: 'Augmentin (Amoxicillin + Clavulanate)', generic: 'Amoxicillin', rxcui: '723', dosage: '625 mg' },
+  'ecosprin':    { display: 'Ecosprin (Aspirin)', generic: 'Aspirin', rxcui: '1191', dosage: '75 mg' },
+  'combiflam':   { display: 'Combiflam (Ibuprofen + Paracetamol)', generic: 'Ibuprofen', rxcui: '5640', dosage: '400 mg' },
+  'telma':       { display: 'Telma (Telmisartan)', generic: 'Telmisartan', rxcui: '42355', dosage: '40 mg' },
+  'voveran':     { display: 'Voveran (Diclofenac)', generic: 'Diclofenac', rxcui: '3355', dosage: '50 mg' },
+  'shelcal':     { display: 'Shelcal 500 (Calcium + Vitamin D3)', generic: 'Calcium Carbonate', rxcui: '1895', dosage: '500 mg' },
+  'warfarin':    { display: 'Warfarin', generic: 'Warfarin', rxcui: '11289', dosage: '5 mg' },
+  'aspirin':     { display: 'Aspirin', generic: 'Aspirin', rxcui: '1191', dosage: '75 mg' },
+  'metformin':   { display: 'Metformin', generic: 'Metformin', rxcui: '6809', dosage: '500 mg' },
+  'atorvastatin':{ display: 'Atorvastatin', generic: 'Atorvastatin', rxcui: '83367', dosage: '10 mg' },
+  'lisinopril':  { display: 'Lisinopril', generic: 'Lisinopril', rxcui: '29046', dosage: '10 mg' },
+  'amlodipine':  { display: 'Amlodipine', generic: 'Amlodipine', rxcui: '17767', dosage: '5 mg' },
+  'simvastatin': { display: 'Simvastatin', generic: 'Simvastatin', rxcui: '36567', dosage: '20 mg' },
+  'omeprazole':  { display: 'Omeprazole', generic: 'Omeprazole', rxcui: '40790', dosage: '20 mg' },
+  'ibuprofen':   { display: 'Ibuprofen', generic: 'Ibuprofen', rxcui: '5640', dosage: '400 mg' },
+  'fluconazole': { display: 'Fluconazole', generic: 'Fluconazole', rxcui: '4450', dosage: '150 mg' },
+  'losartan':    { display: 'Losartan', generic: 'Losartan', rxcui: '52175', dosage: '50 mg' },
+  'metoprolol':  { display: 'Metoprolol', generic: 'Metoprolol', rxcui: '6918', dosage: '50 mg' },
+  'prednisone':  { display: 'Prednisone', generic: 'Prednisone', rxcui: '8640', dosage: '10 mg' },
+  'levothyroxine':{ display: 'Levothyroxine', generic: 'Levothyroxine', rxcui: '10582', dosage: '50 mcg' },
+  'azithromycin':{ display: 'Azithromycin', generic: 'Azithromycin', rxcui: '18631', dosage: '500 mg' },
+  'cetirizine':  { display: 'Cetirizine', generic: 'Cetirizine', rxcui: '20610', dosage: '10 mg' },
+  'pantoprazole':{ display: 'Pantoprazole', generic: 'Pantoprazole', rxcui: '40790', dosage: '40 mg' },
+  'ranitidine':  { display: 'Ranitidine', generic: 'Ranitidine', rxcui: '9143', dosage: '150 mg' },
+  'montelukast': { display: 'Montelukast', generic: 'Montelukast', rxcui: '88249', dosage: '10 mg' },
+  'gabapentin':  { display: 'Gabapentin', generic: 'Gabapentin', rxcui: '25480', dosage: '300 mg' },
+  'clopidogrel': { display: 'Clopidogrel', generic: 'Clopidogrel', rxcui: '32968', dosage: '75 mg' },
+  'rosuvastatin':{ display: 'Rosuvastatin', generic: 'Rosuvastatin', rxcui: '301542', dosage: '10 mg' },
+  'amoxicillin': { display: 'Amoxicillin', generic: 'Amoxicillin', rxcui: '723', dosage: '500 mg' },
+  'ciprofloxacin':{ display: 'Ciprofloxacin', generic: 'Ciprofloxacin', rxcui: '2551', dosage: '500 mg' },
+  'diclofenac':  { display: 'Diclofenac', generic: 'Diclofenac', rxcui: '3355', dosage: '50 mg' },
+  'naproxen':    { display: 'Naproxen', generic: 'Naproxen', rxcui: '7258', dosage: '500 mg' },
+  'tramadol':    { display: 'Tramadol', generic: 'Tramadol', rxcui: '10689', dosage: '50 mg' },
+  'sertraline':  { display: 'Sertraline', generic: 'Sertraline', rxcui: '36437', dosage: '50 mg' },
+  'fluoxetine':  { display: 'Fluoxetine', generic: 'Fluoxetine', rxcui: '4493', dosage: '20 mg' },
+  'clonazepam':  { display: 'Clonazepam', generic: 'Clonazepam', rxcui: '2598', dosage: '0.5 mg' },
+  'alprazolam':  { display: 'Alprazolam', generic: 'Alprazolam', rxcui: '596', dosage: '0.25 mg' },
+  'hydrochlorothiazide': { display: 'Hydrochlorothiazide', generic: 'Hydrochlorothiazide', rxcui: '5487', dosage: '25 mg' },
+  'furosemide':  { display: 'Furosemide', generic: 'Furosemide', rxcui: '4603', dosage: '40 mg' },
+  'paracetamol': { display: 'Paracetamol (Acetaminophen)', generic: 'Acetaminophen', rxcui: '161', dosage: '500 mg' },
+  'acetaminophen':{ display: 'Acetaminophen (Paracetamol)', generic: 'Acetaminophen', rxcui: '161', dosage: '500 mg' },
+  'turmeric':    { display: 'Turmeric (Curcumin)', generic: 'Turmeric', rxcui: null, dosage: '500 mg' },
+  'ashwagandha': { display: 'Ashwagandha (Withania somnifera)', generic: 'Ashwagandha', rxcui: null, dosage: '300 mg' },
+  'ginkgo':      { display: 'Ginkgo Biloba', generic: 'Ginkgo', rxcui: null, dosage: '120 mg' },
+  'ginseng':     { display: 'Ginseng (Panax ginseng)', generic: 'Ginseng', rxcui: null, dosage: '200 mg' },
+  'st john':     { display: "St. John's Wort", generic: "St. John's Wort", rxcui: null, dosage: '300 mg' },
+  'fish oil':    { display: 'Fish Oil (Omega-3)', generic: 'Omega-3 Fatty Acids', rxcui: null, dosage: '1000 mg' },
+  'vitamin d':   { display: 'Vitamin D3 (Cholecalciferol)', generic: 'Cholecalciferol', rxcui: '11253', dosage: '1000 IU' },
+  'vitamin c':   { display: 'Vitamin C (Ascorbic Acid)', generic: 'Ascorbic Acid', rxcui: '1151', dosage: '500 mg' },
+  'calcium':     { display: 'Calcium Carbonate', generic: 'Calcium Carbonate', rxcui: '1895', dosage: '500 mg' },
+  'iron':        { display: 'Ferrous Sulfate (Iron)', generic: 'Ferrous Sulfate', rxcui: '4471', dosage: '325 mg' },
+  'melatonin':   { display: 'Melatonin', generic: 'Melatonin', rxcui: null, dosage: '3 mg' },
+  'multivitamin':{ display: 'Multivitamin', generic: 'Multivitamin', rxcui: null, dosage: '1 tablet' },
+  'zinc':        { display: 'Zinc Sulfate', generic: 'Zinc', rxcui: null, dosage: '50 mg' },
+  'folic acid':  { display: 'Folic Acid', generic: 'Folic Acid', rxcui: '4511', dosage: '5 mg' },
+  'b12':         { display: 'Vitamin B12 (Methylcobalamin)', generic: 'Cyanocobalamin', rxcui: '11248', dosage: '1500 mcg' },
+  'aloe vera':   { display: 'Aloe Vera', generic: 'Aloe Vera', rxcui: null, dosage: '500 mg' },
+  'garlic':      { display: 'Garlic Extract (Allium sativum)', generic: 'Garlic', rxcui: null, dosage: '600 mg' },
+  'echinacea':   { display: 'Echinacea', generic: 'Echinacea', rxcui: null, dosage: '400 mg' },
+  'valerian':    { display: 'Valerian Root', generic: 'Valerian', rxcui: null, dosage: '500 mg' },
+};
+
+router.get('/search', auth, async (req, res) => {
+  const query = (req.query.q || '').trim();
+  if (query.length < 2) {
+    return res.json({ suggestions: [] });
+  }
+
+  const qLower = query.toLowerCase();
+  const seen = new Set();
+  const suggestions = [];
+
+  // ── 1. Local brand alias dictionary (instant, no network) ─────────────────
+  for (const [key, val] of Object.entries(BRAND_ALIASES)) {
+    if (key.includes(qLower) || val.display.toLowerCase().includes(qLower) || val.generic.toLowerCase().includes(qLower)) {
+      const id = val.display.toLowerCase();
+      if (!seen.has(id)) {
+        seen.add(id);
+        suggestions.push({
+          name: val.display,
+          generic: val.generic,
+          rxcui: val.rxcui,
+          dosage: val.dosage,
+          source: val.rxcui ? 'rxnorm' : 'herbal',
+        });
+      }
+    }
+  }
+
+  // ── 2. Local DDInter database matches ────────────────────────────────────
+  try {
+    const dbMatches = await prisma.drugInteractionReference.findMany({
+      where: {
+        OR: [
+          { drugAName: { startsWith: query, mode: 'insensitive' } },
+          { drugBName: { startsWith: query, mode: 'insensitive' } },
+        ],
+      },
+      select: { drugAName: true, drugBName: true },
+      take: 10,
+    });
+
+    for (const match of dbMatches) {
+      for (const drugName of [match.drugAName, match.drugBName]) {
+        if (drugName.toLowerCase().startsWith(qLower)) {
+          const id = drugName.toLowerCase();
+          if (!seen.has(id)) {
+            seen.add(id);
+            suggestions.push({
+              name: drugName,
+              generic: drugName,
+              rxcui: null,
+              dosage: null,
+              source: 'ddinter',
+            });
+          }
+        }
+      }
+    }
+  } catch (dbErr) {
+    console.warn('[search] DDInter lookup error:', dbErr.message);
+  }
+
+  // ── 3. RxNorm Suggest API (live network — only if we need more results) ──
+  if (suggestions.length < 8 && !isDemoMode()) {
+    try {
+      const rxUrl = `https://rxnav.nlm.nih.gov/REST/spellingsuggestions.json?name=${encodeURIComponent(query)}`;
+      const { data } = await axios.get(rxUrl, { timeout: 3000 });
+      const rxSuggestions = data?.suggestionGroup?.suggestionList?.suggestion ?? [];
+
+      for (const sug of rxSuggestions.slice(0, 6)) {
+        const id = sug.toLowerCase();
+        if (!seen.has(id)) {
+          seen.add(id);
+          suggestions.push({
+            name: sug,
+            generic: sug,
+            rxcui: null,
+            dosage: null,
+            source: 'rxnorm-suggest',
+          });
+        }
+      }
+    } catch (rxErr) {
+      // Non-critical — silent fail, local results still serve
+    }
+
+    // Also try RxNorm approximate term for top suggestion with actual RxCUI
+    if (suggestions.length < 6) {
+      try {
+        const approxUrl = `https://rxnav.nlm.nih.gov/REST/approximateTerm.json?term=${encodeURIComponent(query)}&maxEntries=5`;
+        const { data } = await axios.get(approxUrl, { timeout: 3000 });
+        const candidates = data?.approximateGroup?.candidate ?? [];
+
+        for (const c of candidates) {
+          if (c.rxcui && parseFloat(c.score || '0') >= 4.0) {
+            const displayName = c.name || query;
+            const id = displayName.toLowerCase();
+            if (!seen.has(id)) {
+              seen.add(id);
+              suggestions.push({
+                name: displayName,
+                generic: displayName,
+                rxcui: c.rxcui,
+                dosage: null,
+                source: 'rxnorm',
+              });
+            }
+          }
+        }
+      } catch (approxErr) {
+        // Non-critical — silent fail
+      }
+    }
+  }
+
+  return res.json({ suggestions: suggestions.slice(0, 10) });
+});
+
 module.exports = router;

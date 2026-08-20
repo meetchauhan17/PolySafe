@@ -247,6 +247,80 @@ export default function AddMedicinePage() {
   const [submitSuccess, setSubmitSuccess] = useState(null);
   const [savedMedicineName, setSavedMedicineName] = useState('');
 
+  // ─── Drug Autocomplete state ────────────────────────────────────────────────
+  const [suggestions, setSuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [searchLoading, setSearchLoading] = useState(false);
+  const [selectedIdx, setSelectedIdx] = useState(-1);
+  const debounceRef = useRef(null);
+  const suggestionsRef = useRef(null);
+  const nameInputRef = useRef(null);
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    function handleClickOutside(e) {
+      if (suggestionsRef.current && !suggestionsRef.current.contains(e.target) &&
+          nameInputRef.current && !nameInputRef.current.contains(e.target)) {
+        setShowSuggestions(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const fetchSuggestions = useCallback(async (query) => {
+    if (!query || query.length < 2) {
+      setSuggestions([]);
+      setShowSuggestions(false);
+      return;
+    }
+    setSearchLoading(true);
+    try {
+      const { data } = await axios.get(`/medicine/search?q=${encodeURIComponent(query)}`);
+      setSuggestions(data.suggestions || []);
+      setShowSuggestions((data.suggestions || []).length > 0);
+      setSelectedIdx(-1);
+    } catch {
+      setSuggestions([]);
+    } finally {
+      setSearchLoading(false);
+    }
+  }, []);
+
+  const handleNameChange = useCallback((value) => {
+    setName(value);
+    if (submitError) setSubmitError(null);
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => fetchSuggestions(value), 300);
+  }, [fetchSuggestions, submitError]);
+
+  const handleSelectSuggestion = useCallback((sug) => {
+    setName(sug.name);
+    if (sug.dosage && !dosage) setDosage(sug.dosage);
+    if (!sug.rxcui && (sug.source === 'herbal' || sug.name.toLowerCase().includes('turmeric') || sug.name.toLowerCase().includes('ashwagandha') || sug.name.toLowerCase().includes('ginkgo'))) {
+      setType('HERBAL');
+    }
+    setShowSuggestions(false);
+    setSuggestions([]);
+    notify.success('Drug Selected', `Selected "${sug.name}"${sug.dosage ? ` — ${sug.dosage}` : ''}`);
+  }, [dosage]);
+
+  const handleNameKeyDown = useCallback((e) => {
+    if (!showSuggestions || suggestions.length === 0) return;
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      setSelectedIdx(prev => Math.min(prev + 1, suggestions.length - 1));
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      setSelectedIdx(prev => Math.max(prev - 1, -1));
+    } else if (e.key === 'Enter' && selectedIdx >= 0) {
+      e.preventDefault();
+      handleSelectSuggestion(suggestions[selectedIdx]);
+    } else if (e.key === 'Escape') {
+      setShowSuggestions(false);
+    }
+  }, [showSuggestions, suggestions, selectedIdx, handleSelectSuggestion]);
+
   // ─── Loose Pill Imprint Lookup state ─────────────────────────────────────────
   const pillFileInputRef = useRef(null);
   const [pillModeOpen, setPillModeOpen] = useState(false);
@@ -997,30 +1071,94 @@ export default function AddMedicinePage() {
               </div>
             )}
 
-            {/* Name */}
+            {/* Name with Autocomplete */}
             <div className="space-y-1.5">
               <label className="block text-xs font-bold text-[#232724] uppercase tracking-wider">
                 Medicine Name <span className="text-rose-500">*</span>
               </label>
               <div className="relative">
-                <Pill className="w-4 h-4 text-[#6B726C] absolute left-3.5 top-3.5" />
+                <Pill className="w-4 h-4 text-[#6B726C] absolute left-3.5 top-3.5 z-10" />
+                {searchLoading && (
+                  <Loader2 className="w-4 h-4 text-[#2B6E5E] absolute right-3.5 top-3.5 animate-spin z-10" />
+                )}
                 <input
+                  ref={nameInputRef}
                   type="text"
                   required
+                  autoComplete="off"
                   value={name}
-                  onChange={(e) => {
-                    setName(e.target.value);
-                    if (submitError) setSubmitError(null);
-                  }}
-                  placeholder="e.g. Warfarin, Ashwagandha, Metformin"
-                  className={`input-field pl-10 ${submitError && !name.trim() ? 'border-rose-300 bg-rose-50' : ''} ${scanState === 'confirm' && (scanResult?.candidate || name) ? 'border-[#2B6E5E] bg-[#F4FAF8]' : ''}`}
+                  onChange={(e) => handleNameChange(e.target.value)}
+                  onFocus={() => { if (suggestions.length > 0) setShowSuggestions(true); }}
+                  onKeyDown={handleNameKeyDown}
+                  placeholder="Start typing — e.g. Warfarin, Ashwagandha, Dolo 650"
+                  className={`input-field pl-10 pr-10 ${submitError && !name.trim() ? 'border-rose-300 bg-rose-50' : ''} ${scanState === 'confirm' && (scanResult?.candidate || name) ? 'border-[#2B6E5E] bg-[#F4FAF8]' : ''}`}
                 />
                 {scanState === 'confirm' && (scanResult?.candidate || name) && (
-                  <div className="absolute right-3 top-2.5 text-[10px] font-bold text-[#2B6E5E] bg-[#2B6E5E]/10 px-2 py-1 rounded-md">
+                  <div className="absolute right-3 top-2.5 text-[10px] font-bold text-[#2B6E5E] bg-[#2B6E5E]/10 px-2 py-1 rounded-md z-10">
                     From scan ✓
                   </div>
                 )}
+
+                {/* Autocomplete dropdown */}
+                {showSuggestions && suggestions.length > 0 && (
+                  <div
+                    ref={suggestionsRef}
+                    className="absolute z-50 left-0 right-0 top-full mt-1 bg-white border-2 border-[#E7E1D3] rounded-2xl shadow-lg overflow-hidden max-h-72 overflow-y-auto"
+                  >
+                    {suggestions.map((sug, idx) => {
+                      const isSelected = idx === selectedIdx;
+                      const sourceColor = sug.source === 'rxnorm' ? 'bg-[#E4F2E9] text-[#2B6E5E]'
+                        : sug.source === 'herbal' ? 'bg-[#2B6E5E]/10 text-[#2B6E5E]'
+                        : sug.source === 'ddinter' ? 'bg-[#FBEED9] text-[#7A4A0A]'
+                        : 'bg-gray-100 text-gray-600';
+                      const sourceLabel = sug.source === 'rxnorm' ? '✓ RxNorm'
+                        : sug.source === 'herbal' ? '🌿 Herbal'
+                        : sug.source === 'ddinter' ? '📊 DDInter'
+                        : sug.source === 'rxnorm-suggest' ? '💊 RxNorm'
+                        : '—';
+                      return (
+                        <button
+                          key={`${sug.name}-${idx}`}
+                          type="button"
+                          onMouseDown={(e) => e.preventDefault()}
+                          onClick={() => handleSelectSuggestion(sug)}
+                          onMouseEnter={() => setSelectedIdx(idx)}
+                          className={`w-full flex items-center justify-between px-4 py-3 text-left transition-colors cursor-pointer ${
+                            isSelected ? 'bg-[#F4FAF8]' : 'hover:bg-[#FDFBF7]'
+                          } ${idx > 0 ? 'border-t border-[#E7E1D3]/50' : ''}`}
+                        >
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-bold text-[#232724] truncate">{sug.name}</p>
+                            {sug.generic !== sug.name && (
+                              <p className="text-[11px] text-[#6B726C] truncate">Generic: {sug.generic}</p>
+                            )}
+                          </div>
+                          <div className="flex items-center gap-2 ml-3 flex-shrink-0">
+                            {sug.dosage && (
+                              <span className="text-[10px] font-bold text-[#5C6B64] bg-[#EDE8DC] px-1.5 py-0.5 rounded-md">
+                                {sug.dosage}
+                              </span>
+                            )}
+                            <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-md ${sourceColor}`}>
+                              {sourceLabel}
+                            </span>
+                          </div>
+                        </button>
+                      );
+                    })}
+                    <div className="px-4 py-2 bg-[#FDFBF7] border-t border-[#E7E1D3]">
+                      <p className="text-[10px] text-[#6B726C] text-center">
+                        {searchLoading ? 'Searching drug databases…' : `${suggestions.length} result${suggestions.length !== 1 ? 's' : ''} · type to refine`}
+                      </p>
+                    </div>
+                  </div>
+                )}
               </div>
+              {!showSuggestions && name.length === 0 && (
+                <p className="text-[10px] text-[#6B726C] px-1">
+                  ⚡ Smart search — matches 60+ common drugs, Indian brands, herbs & supplements instantly
+                </p>
+              )}
             </div>
 
             {/* Type — 3-way pill toggle ─────────────────────────────────── */}
