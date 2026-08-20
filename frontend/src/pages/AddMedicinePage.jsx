@@ -962,12 +962,39 @@ export default function AddMedicinePage() {
                 <button
                   type="button"
                   onClick={() => {
-                    if (scanResult.candidate) setName(scanResult.candidate);
+                    if (scanResult?.candidate) {
+                      setName(scanResult.candidate);
+                      if (scanResult.suggestedType) setType(scanResult.suggestedType);
+                      if (scanResult.suggestedDosage) setDosage(scanResult.suggestedDosage);
+                      if (scanResult.commonFrequency) setFrequency(scanResult.commonFrequency);
+                      if (scanResult.foodInstruction) setNotes(scanResult.foodInstruction);
+                      if (scanResult.extractedTimings && scanResult.extractedTimings.length > 0) {
+                        setTimings(scanResult.extractedTimings);
+                      } else if (scanResult.commonFrequency === 'twice') {
+                        setTimings(['morning', 'evening']);
+                      } else if (scanResult.commonFrequency === 'thrice') {
+                        setTimings(['morning', 'afternoon', 'evening']);
+                      } else if (scanResult.commonFrequency === 'once') {
+                        setTimings(['morning']);
+                      }
+                      if (scanResult.prescriber) setPrescriber(scanResult.prescriber);
+                      setSelectedDrugInfo({
+                        name: scanResult.candidate,
+                        generic: scanResult.genericName || scanResult.candidate,
+                        rxcui: scanResult.standardizedCode,
+                        dosage: scanResult.suggestedDosage,
+                        category: scanResult.category || (scanResult.suggestedType === 'HERBAL' ? 'Ayurvedic / Herbal' : 'Prescription Drug'),
+                        safetyTip: scanResult.safetyTip || 'Verify dosage and administration instructions with your physician.',
+                        dosageOptions: scanResult.dosageOptions || [],
+                        source: scanResult.standardizedCode ? 'rxnorm' : (scanResult.suggestedType === 'HERBAL' ? 'herbal' : 'local'),
+                      });
+                      notify.success('Pre-filled Confirmed', `Auto-populated form with ${scanResult.candidate}`);
+                    }
                     setScanState('idle');
                   }}
                   className="btn-primary flex-1 py-2 text-xs"
                 >
-                  {scanResult.candidate ? 'Confirm & Use Pre-filled' : 'Done Reviewing'}
+                  {scanResult?.candidate ? 'Confirm & Use Pre-filled' : 'Done Reviewing'}
                 </button>
               </div>
             </div>
