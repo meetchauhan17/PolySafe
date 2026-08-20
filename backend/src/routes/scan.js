@@ -125,20 +125,33 @@ router.post(
       if (hasAlphanumeric && tesseractRawText.length >= 3) {
         cleanupFile(filePath);
 
-        const { rankedCandidates, suggestedDosage, lines } = extractAndRankCandidates(tesseractRawText);
-        const verification = await verifyCandidatesWithRxNorm(rankedCandidates, suggestedDosage);
+        const extraction = extractAndRankCandidates(tesseractRawText);
+        const verification = await verifyCandidatesWithRxNorm(
+          extraction.rankedCandidates,
+          extraction.suggestedDosage,
+          extraction
+        );
 
-        console.log(`[scan] Layer 1 (Tesseract) succeeded: extracted ${lines.length} lines, verified candidate="${verification.candidate || 'none'}"`);
+        console.log(`[scan] Layer 1 (Tesseract) succeeded: extracted ${extraction.lines.length} lines, verified candidate="${verification.candidate || 'none'}"`);
 
         return res.status(200).json({
           success: true,
           candidate: verification.candidate,
+          genericName: verification.genericName,
           standardizedCode: verification.standardizedCode,
           verified: verification.verified,
           fallbackCandidates: verification.fallbackCandidates,
           suggestedDosage: verification.suggestedDosage,
+          category: verification.category,
+          safetyTip: verification.safetyTip,
+          dosageOptions: verification.dosageOptions || [],
+          commonFrequency: verification.commonFrequency || 'once',
+          foodInstruction: verification.foodInstruction || '',
+          suggestedType: verification.suggestedType || 'PRESCRIPTION',
+          extractedTimings: verification.extractedTimings || [],
+          prescriber: verification.prescriber || null,
           rawText: tesseractRawText,
-          lineCount: lines.length,
+          lineCount: extraction.lines.length,
           engine: 'tesseract',
           note: verification.verified
             ? 'Drug name verified against standard drug database — please confirm details.'
@@ -156,18 +169,31 @@ router.post(
       if (!apiKey) {
         cleanupFile(filePath);
         if (tesseractRawText.length > 0) {
-          const { rankedCandidates, suggestedDosage, lines } = extractAndRankCandidates(tesseractRawText);
-          const verification = await verifyCandidatesWithRxNorm(rankedCandidates, suggestedDosage);
+          const extraction = extractAndRankCandidates(tesseractRawText);
+          const verification = await verifyCandidatesWithRxNorm(
+            extraction.rankedCandidates,
+            extraction.suggestedDosage,
+            extraction
+          );
 
           return res.status(200).json({
             success: true,
             candidate: verification.candidate,
+            genericName: verification.genericName,
             standardizedCode: verification.standardizedCode,
             verified: verification.verified,
             fallbackCandidates: verification.fallbackCandidates,
             suggestedDosage: verification.suggestedDosage,
+            category: verification.category,
+            safetyTip: verification.safetyTip,
+            dosageOptions: verification.dosageOptions || [],
+            commonFrequency: verification.commonFrequency || 'once',
+            foodInstruction: verification.foodInstruction || '',
+            suggestedType: verification.suggestedType || 'PRESCRIPTION',
+            extractedTimings: verification.extractedTimings || [],
+            prescriber: verification.prescriber || null,
             rawText: tesseractRawText,
-            lineCount: lines.length,
+            lineCount: extraction.lines.length,
             engine: 'tesseract',
             note: 'Partial text recognized via local OCR.',
           });
@@ -202,18 +228,31 @@ router.post(
         console.warn(`[scan] OCR.space cloud call failed: ${ocrErr.message}`);
 
         if (tesseractRawText.length > 0) {
-          const { rankedCandidates, suggestedDosage, lines } = extractAndRankCandidates(tesseractRawText);
-          const verification = await verifyCandidatesWithRxNorm(rankedCandidates, suggestedDosage);
+          const extraction = extractAndRankCandidates(tesseractRawText);
+          const verification = await verifyCandidatesWithRxNorm(
+            extraction.rankedCandidates,
+            extraction.suggestedDosage,
+            extraction
+          );
 
           return res.status(200).json({
             success: true,
             candidate: verification.candidate,
+            genericName: verification.genericName,
             standardizedCode: verification.standardizedCode,
             verified: verification.verified,
             fallbackCandidates: verification.fallbackCandidates,
             suggestedDosage: verification.suggestedDosage,
+            category: verification.category,
+            safetyTip: verification.safetyTip,
+            dosageOptions: verification.dosageOptions || [],
+            commonFrequency: verification.commonFrequency || 'once',
+            foodInstruction: verification.foodInstruction || '',
+            suggestedType: verification.suggestedType || 'PRESCRIPTION',
+            extractedTimings: verification.extractedTimings || [],
+            prescriber: verification.prescriber || null,
             rawText: tesseractRawText,
-            lineCount: lines.length,
+            lineCount: extraction.lines.length,
             engine: 'tesseract',
             note: 'Local OCR result used (cloud OCR unavailable).',
           });
@@ -232,18 +271,31 @@ router.post(
 
       if (!parsed || ocrExitCode === 99 || parsed.FileParseExitCode < 0) {
         if (tesseractRawText.length > 0) {
-          const { rankedCandidates, suggestedDosage, lines } = extractAndRankCandidates(tesseractRawText);
-          const verification = await verifyCandidatesWithRxNorm(rankedCandidates, suggestedDosage);
+          const extraction = extractAndRankCandidates(tesseractRawText);
+          const verification = await verifyCandidatesWithRxNorm(
+            extraction.rankedCandidates,
+            extraction.suggestedDosage,
+            extraction
+          );
 
           return res.status(200).json({
             success: true,
             candidate: verification.candidate,
+            genericName: verification.genericName,
             standardizedCode: verification.standardizedCode,
             verified: verification.verified,
             fallbackCandidates: verification.fallbackCandidates,
             suggestedDosage: verification.suggestedDosage,
+            category: verification.category,
+            safetyTip: verification.safetyTip,
+            dosageOptions: verification.dosageOptions || [],
+            commonFrequency: verification.commonFrequency || 'once',
+            foodInstruction: verification.foodInstruction || '',
+            suggestedType: verification.suggestedType || 'PRESCRIPTION',
+            extractedTimings: verification.extractedTimings || [],
+            prescriber: verification.prescriber || null,
             rawText: tesseractRawText,
-            lineCount: lines.length,
+            lineCount: extraction.lines.length,
             engine: 'tesseract',
             note: 'Local OCR result used.',
           });
@@ -265,20 +317,33 @@ router.post(
       }
 
       // Parse candidate from OCR.space output
-      const { rankedCandidates, suggestedDosage, lines } = extractAndRankCandidates(cloudRawText);
-      const verification = await verifyCandidatesWithRxNorm(rankedCandidates, suggestedDosage);
+      const extraction = extractAndRankCandidates(cloudRawText);
+      const verification = await verifyCandidatesWithRxNorm(
+        extraction.rankedCandidates,
+        extraction.suggestedDosage,
+        extraction
+      );
 
-      console.log(`[scan] Layer 2 (OCR.space) succeeded: extracted ${lines.length} lines, verified candidate="${verification.candidate || 'none'}"`);
+      console.log(`[scan] Layer 2 (OCR.space) succeeded: extracted ${extraction.lines.length} lines, verified candidate="${verification.candidate || 'none'}"`);
 
       return res.status(200).json({
         success: true,
         candidate: verification.candidate,
+        genericName: verification.genericName,
         standardizedCode: verification.standardizedCode,
         verified: verification.verified,
         fallbackCandidates: verification.fallbackCandidates,
         suggestedDosage: verification.suggestedDosage,
+        category: verification.category,
+        safetyTip: verification.safetyTip,
+        dosageOptions: verification.dosageOptions || [],
+        commonFrequency: verification.commonFrequency || 'once',
+        foodInstruction: verification.foodInstruction || '',
+        suggestedType: verification.suggestedType || 'PRESCRIPTION',
+        extractedTimings: verification.extractedTimings || [],
+        prescriber: verification.prescriber || null,
         rawText: cloudRawText,
-        lineCount: lines.length,
+        lineCount: extraction.lines.length,
         engine: 'ocrspace',
         note: verification.verified
           ? 'Drug name verified against standard drug database — please confirm details.'

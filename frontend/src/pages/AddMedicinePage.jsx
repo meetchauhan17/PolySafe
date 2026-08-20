@@ -302,15 +302,34 @@ export default function AddMedicinePage() {
 
   const handleSelectSuggestion = useCallback((sug) => {
     setName(sug.name);
-    if (sug.dosage && !dosage) setDosage(sug.dosage);
-    if (!sug.rxcui && (sug.source === 'herbal' || sug.name.toLowerCase().includes('turmeric') || sug.name.toLowerCase().includes('ashwagandha') || sug.name.toLowerCase().includes('ginkgo'))) {
-      setType('HERBAL');
+    if (sug.dosage) setDosage(sug.dosage);
+    if (sug.commonFrequency) setFrequency(sug.commonFrequency);
+    if (sug.foodInstruction) setNotes(sug.foodInstruction);
+
+    // Auto-fill time of day chips
+    if (sug.extractedTimings?.length > 0) {
+      setTimings(sug.extractedTimings);
+    } else if (sug.commonFrequency === 'twice') {
+      setTimings(['morning', 'evening']);
+    } else if (sug.commonFrequency === 'thrice') {
+      setTimings(['morning', 'afternoon', 'evening']);
+    } else if (sug.commonFrequency === 'four') {
+      setTimings(['morning', 'afternoon', 'evening', 'bedtime']);
+    } else if (sug.commonFrequency === 'once') {
+      setTimings(['morning']);
     }
+
+    if (sug.source === 'herbal' || sug.name.toLowerCase().includes('turmeric') || sug.name.toLowerCase().includes('ashwagandha') || sug.name.toLowerCase().includes('ginkgo')) {
+      setType('HERBAL');
+    } else {
+      setType('PRESCRIPTION');
+    }
+
     setSelectedDrugInfo(sug);
     setShowSuggestions(false);
     setSuggestions([]);
-    notify.success('Drug Selected', `Selected "${sug.name}"${sug.dosage ? ` — ${sug.dosage}` : ''}`);
-  }, [dosage]);
+    notify.success('Drug Details Auto-Filled', `Auto-filled details for "${sug.name}"${sug.dosage ? ` (${sug.dosage})` : ''}`);
+  }, []);
 
   const handleNameKeyDown = useCallback((e) => {
     if (!showSuggestions || suggestions.length === 0) return;
@@ -455,28 +474,69 @@ export default function AddMedicinePage() {
       setScanState('confirm');
       if (data.candidate) {
         setName(data.candidate);
-        if (data.standardizedCode || data.genericName) {
-          setSelectedDrugInfo({
-            name: data.candidate,
-            generic: data.genericName || data.candidate,
-            rxcui: data.standardizedCode,
-            dosage: data.suggestedDosage,
-            category: data.category || 'Prescription Drug',
-            safetyTip: data.safetyTip || 'Verify dosage and instructions with your doctor or pharmacist.',
-            dosageOptions: data.dosageOptions || [],
-            source: data.standardizedCode ? 'rxnorm' : 'local',
-          });
+
+        // Auto-fill medicine type
+        if (data.suggestedType) {
+          setType(data.suggestedType);
+        } else if (data.candidate.toLowerCase().includes('turmeric') || data.candidate.toLowerCase().includes('ashwagandha') || data.candidate.toLowerCase().includes('herbal')) {
+          setType('HERBAL');
+        } else {
+          setType('PRESCRIPTION');
         }
+
+        // Auto-fill dosage
+        if (data.suggestedDosage) {
+          setDosage(data.suggestedDosage);
+        }
+
+        // Auto-fill frequency schedule
+        if (data.commonFrequency) {
+          setFrequency(data.commonFrequency);
+        }
+
+        // Auto-fill meal instructions
+        if (data.foodInstruction) {
+          setNotes(data.foodInstruction);
+        }
+
+        // Auto-fill time of day chips
+        if (data.extractedTimings && data.extractedTimings.length > 0) {
+          setTimings(data.extractedTimings);
+        } else if (data.commonFrequency === 'twice') {
+          setTimings(['morning', 'evening']);
+        } else if (data.commonFrequency === 'thrice') {
+          setTimings(['morning', 'afternoon', 'evening']);
+        } else if (data.commonFrequency === 'once') {
+          setTimings(['morning']);
+        }
+
+        // Auto-fill prescriber
+        if (data.prescriber) {
+          setPrescriber(data.prescriber);
+        }
+
+        // Auto-populate drug verification card
+        setSelectedDrugInfo({
+          name: data.candidate,
+          generic: data.genericName || data.candidate,
+          rxcui: data.standardizedCode,
+          dosage: data.suggestedDosage,
+          category: data.category || (data.suggestedType === 'HERBAL' ? 'Ayurvedic / Herbal' : 'Prescription Drug'),
+          safetyTip: data.safetyTip || 'Verify dosage and administration instructions with your physician.',
+          dosageOptions: data.dosageOptions || [],
+          source: data.standardizedCode ? 'rxnorm' : (data.suggestedType === 'HERBAL' ? 'herbal' : 'local'),
+        });
+
+        notify.success('Prescription Scanned & Auto-Filled', `Auto-filled details for "${data.candidate}". Please review below.`);
+      } else if (data.fallbackCandidates?.length > 0) {
+        if (data.suggestedDosage) setDosage(data.suggestedDosage);
         if (data.commonFrequency) setFrequency(data.commonFrequency);
         if (data.foodInstruction) setNotes(data.foodInstruction);
-        notify.success('Drug Identified', `Found "${data.candidate}". Please verify details below.`);
-      } else if (data.fallbackCandidates?.length > 0) {
+        if (data.extractedTimings?.length > 0) setTimings(data.extractedTimings);
+        if (data.prescriber) setPrescriber(data.prescriber);
         notify.info('Review Suggestions', 'Could not verify exact drug name with RxNorm. Choose from suggestions or type manually.');
       } else {
         notify.info('Text Extracted', 'Please verify or enter the medicine name below.');
-      }
-      if (data.suggestedDosage && !dosage) {
-        setDosage(data.suggestedDosage);
       }
     },
     onError: (err) => {
@@ -1125,7 +1185,12 @@ export default function AddMedicinePage() {
                       type="button"
                       onClick={() => {
                         setName(cand);
-                        if (scanResult.suggestedDosage && !dosage) setDosage(scanResult.suggestedDosage);
+                        if (scanResult.suggestedDosage) setDosage(scanResult.suggestedDosage);
+                        if (scanResult.suggestedType) setType(scanResult.suggestedType);
+                        if (scanResult.commonFrequency) setFrequency(scanResult.commonFrequency);
+                        if (scanResult.foodInstruction) setNotes(scanResult.foodInstruction);
+                        if (scanResult.extractedTimings?.length > 0) setTimings(scanResult.extractedTimings);
+                        if (scanResult.prescriber) setPrescriber(scanResult.prescriber);
                         notify.info('Pre-filled', `Selected "${cand}".`);
                       }}
                       className="px-3 py-1.5 rounded-xl text-xs font-bold text-[#1C2B27] bg-[#EDE8DC] shadow-[3px_3px_6px_rgba(191,180,155,0.5),-3px_-3px_6px_rgba(255,255,255,0.6)] hover:text-[#2B6E5E] active:shadow-[inset_2px_2px_4px_rgba(191,180,155,0.5)] transition-all cursor-pointer flex items-center gap-1.5"

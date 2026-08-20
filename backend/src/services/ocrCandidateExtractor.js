@@ -158,6 +158,79 @@ function extractDosage(text) {
   return null;
 }
 
+function extractPrescriber(text) {
+  if (!text) return null;
+  const match = text.match(/(?:dr\.|doctor|physician|prescribed\s+by)\s*[:\-]?\s*([A-Za-z\s.]{3,30})/i);
+  if (match && match[1]) {
+    const clean = match[1].replace(/[\r\n].*$/, '').trim();
+    if (clean.length >= 3 && !/^(the|hospital|clinic|pharmacy|center|department)$/i.test(clean)) {
+      return clean.startsWith('Dr.') || clean.startsWith('dr.') ? clean : `Dr. ${clean}`;
+    }
+  }
+  return null;
+}
+
+function extractFrequency(text) {
+  if (!text) return null;
+  if (/\b(1-0-1|1\s*-\s*0\s*-\s*1|b\.?i\.?d\.?|b\.?d\.?|twice\s+daily|2\s+times\s+daily|every\s+12\s+hours?)\b/i.test(text)) return 'twice';
+  if (/\b(1-1-1|1\s*-\s*1\s*-\s*1|t\.?i\.?d\.?|t\.?d\.?s\.?|thrice\s+daily|3\s+times\s+daily|every\s+8\s+hours?)\b/i.test(text)) return 'thrice';
+  if (/\b(1-1-1-1|q\.?i\.?d\.?|q\.?d\.?s\.?|4\s+times\s+daily|every\s+6\s+hours?)\b/i.test(text)) return 'four';
+  if (/\b(p\.?r\.?n\.?|s\.?o\.?s\.?|as\s+needed|when\s+required)\b/i.test(text)) return 'asneeded';
+  if (/\b(weekly|once\s+a\s+week)\b/i.test(text)) return 'weekly';
+  if (/\b(alternate\s+days?|qod)\b/i.test(text)) return 'alternate';
+  if (/\b(1-0-0|0-1-0|0-0-1|o\.?d\.?|q\.?d\.?|once\s+daily|1\s+time\s+daily|every\s+24\s+hours?|at\s+bedtime|h\.?s\.?)\b/i.test(text)) return 'once';
+  return null;
+}
+
+function extractInstructions(text) {
+  if (!text) return null;
+  if (/\b(after\s+food|after\s+meals?|post[\s\-]prandial|p\.?c\.?)\b/i.test(text)) return 'after_food';
+  if (/\b(before\s+food|before\s+meals?|pre[\s\-]prandial|a\.?c\.?)\b/i.test(text)) return 'before_food';
+  if (/\b(with\s+food|with\s+meals?)\b/i.test(text)) return 'with_food';
+  if (/\b(empty\s+stomach|fasting)\b/i.test(text)) return 'empty_stomach';
+  if (/\b(plenty\s+of\s+water|with\s+water)\b/i.test(text)) return 'with_water';
+  if (/\b(avoid\s+milk|avoid\s+dairy)\b/i.test(text)) return 'avoid_dairy';
+  return null;
+}
+
+function extractTimings(text, freq) {
+  if (!text) {
+    if (freq === 'twice') return ['morning', 'evening'];
+    if (freq === 'thrice') return ['morning', 'afternoon', 'evening'];
+    if (freq === 'once') return ['morning'];
+    return [];
+  }
+  const slots = [];
+  if (/\b(1-0-1|1\s*-\s*0\s*-\s*1)\b/.test(text)) return ['morning', 'evening'];
+  if (/\b(1-1-1|1\s*-\s*1\s*-\s*1)\b/.test(text)) return ['morning', 'afternoon', 'evening'];
+  if (/\b(1-0-0)\b/.test(text)) return ['morning'];
+  if (/\b(0-1-0)\b/.test(text)) return ['afternoon'];
+  if (/\b(0-0-1|at\s+bedtime|h\.?s\.?)\b/i.test(text)) return ['bedtime'];
+
+  if (/\b(morning|breakfast)\b/i.test(text)) slots.push('morning');
+  if (/\b(afternoon|lunch|noon)\b/i.test(text)) slots.push('afternoon');
+  if (/\b(evening|dinner)\b/i.test(text)) slots.push('evening');
+  if (/\b(bedtime|night)\b/i.test(text)) slots.push('bedtime');
+
+  if (slots.length === 0) {
+    if (freq === 'twice') return ['morning', 'evening'];
+    if (freq === 'thrice') return ['morning', 'afternoon', 'evening'];
+    if (freq === 'once') return ['morning'];
+  }
+  return slots;
+}
+
+function extractMedicineType(text, candidateName) {
+  if (/\b(ayurvedic|ayush|herbal|proprietary\s+ayurvedic|churna|taila|bhasma|ashwagandha|curcumin|turmeric|ginkgo|ginseng|neem|tulsi)\b/i.test(text) ||
+      (candidateName && /\b(turmeric|ashwagandha|ginkgo|ginseng|curcumin|herbal)\b/i.test(candidateName))) {
+    return 'HERBAL';
+  }
+  if (/\b(otc|over\s+the\s+counter|non[\s\-]prescription)\b/i.test(text)) {
+    return 'OTC';
+  }
+  return 'PRESCRIPTION';
+}
+
 /**
  * Checks if a candidate token or line matches boilerplate.
  */
@@ -166,16 +239,13 @@ function isBoilerplate(text) {
   const trimmed = text.trim();
   if (trimmed.length < 3) return true;
 
-  // Single word in stop words
   const lower = trimmed.toLowerCase();
   if (STOP_WORDS.has(lower)) return true;
 
-  // Check regex patterns
   for (const pattern of BOILERPLATE_PATTERNS) {
     if (pattern.test(trimmed)) return true;
   }
 
-  // Pure numbers or symbols
   if (/^[\d\s.,\-+*/#()]+$/.test(trimmed)) return true;
 
   return false;
@@ -185,11 +255,20 @@ function isBoilerplate(text) {
  * Generates and ranks candidate drug name phrases from raw OCR text.
  *
  * @param {string} rawText
- * @returns {{ rankedCandidates: string[], suggestedDosage: string|null, lines: string[] }}
+ * @returns {{ rankedCandidates: string[], suggestedDosage: string|null, lines: string[], extractedPrescriber: string|null, extractedFrequency: string|null, extractedInstructions: string|null, extractedTimings: string[], extractedType: string }}
  */
 function extractAndRankCandidates(rawText) {
   if (!rawText || typeof rawText !== 'string') {
-    return { rankedCandidates: [], suggestedDosage: null, lines: [] };
+    return { 
+        rankedCandidates: [], 
+        suggestedDosage: null, 
+        lines: [], 
+        extractedPrescriber: null, 
+        extractedFrequency: null, 
+        extractedInstructions: null, 
+        extractedTimings: [], 
+        extractedType: 'PRESCRIPTION' 
+    };
   }
 
   const lines = rawText
@@ -198,9 +277,14 @@ function extractAndRankCandidates(rawText) {
     .filter(Boolean);
 
   const suggestedDosage = extractDosage(rawText);
-  const candidateScores = new Map(); // candidateString -> score
+  const extractedPrescriber = extractPrescriber(rawText);
+  const extractedFrequency = extractFrequency(rawText);
+  const extractedInstructions = extractInstructions(rawText);
+  const extractedTimings = extractTimings(rawText, extractedFrequency);
+  const extractedType = extractMedicineType(rawText);
 
-  // 1. Explicit Rx / Drug pattern regex matching
+  const candidateScores = new Map();
+
   const explicitPatterns = [
     /(?:rx|drug|medicine|medication)\s*[:\-]?\s*([A-Za-z0-9\s\-]{2,35})/gi,
     /([A-Za-z][A-Za-z0-9\-]{2,30})\s+(?:\d+(?:\.\d+)?\s*(?:mg|mcg|ml|g|iu|unit))/gi,
@@ -219,12 +303,9 @@ function extractAndRankCandidates(rawText) {
     }
   }
 
-  // 2. Line by line n-gram generation (1-gram, 2-gram, 3-gram)
   lines.forEach((line, lineIndex) => {
-    // If the entire line is obvious boilerplate, skip n-gram generation from it
     if (isBoilerplate(line)) return;
 
-    // Clean line of non-alphanumeric punctuation at ends
     const words = line
       .split(/\s+/)
       .map((w) => w.replace(/^[^A-Za-z0-9]+|[^A-Za-z0-9]+$/g, ''))
@@ -232,7 +313,6 @@ function extractAndRankCandidates(rawText) {
 
     const linePositionBonus = Math.max(0, (lines.length - lineIndex) / lines.length) * 5;
 
-    // Generate 1-word, 2-word, 3-word n-grams
     for (let len = 1; len <= 3; len++) {
       for (let i = 0; i <= words.length - len; i++) {
         const nGramWords = words.slice(i, i + len);
@@ -241,24 +321,19 @@ function extractAndRankCandidates(rawText) {
         if (phrase.length < 3) continue;
         if (isBoilerplate(phrase)) continue;
 
-        // Check if all words in nGram are stop words
         const allStop = nGramWords.every((w) => STOP_WORDS.has(w.toLowerCase()) || /^\d+$/.test(w));
         if (allStop) continue;
 
-        // First word must start with an alphabetic character
         if (!/^[A-Za-z]/.test(phrase)) continue;
 
-        // Frequency count across rawText
         const regex = new RegExp(`\\b${escapeRegExp(phrase)}\\b`, 'gi');
         const matches = rawText.match(regex);
         const frequency = matches ? matches.length : 1;
 
-        // Prominence bonuses
         let formattingBonus = 0;
-        if (phrase[0] === phrase[0].toUpperCase()) formattingBonus += 2; // Title Case
-        if (phrase === phrase.toUpperCase() && phrase.length >= 4) formattingBonus += 3; // ALL CAPS
+        if (phrase[0] === phrase[0].toUpperCase()) formattingBonus += 2;
+        if (phrase === phrase.toUpperCase() && phrase.length >= 4) formattingBonus += 3;
 
-        // Proximity to dosage
         let doseBonus = 0;
         if (/\d+/.test(phrase)) doseBonus += 3;
 
@@ -272,12 +347,10 @@ function extractAndRankCandidates(rawText) {
     }
   });
 
-  // Sort candidates by score descending
   const sorted = Array.from(candidateScores.entries())
     .sort((a, b) => b[1] - a[1])
     .map(([phrase]) => phrase);
 
-  // Deduplicate case-insensitively and remove nested substrings if lower ranked
   const deduped = [];
   const seenLower = new Set();
 
@@ -292,6 +365,11 @@ function extractAndRankCandidates(rawText) {
   return {
     rankedCandidates: deduped.slice(0, 8),
     suggestedDosage,
+    extractedPrescriber,
+    extractedFrequency,
+    extractedInstructions,
+    extractedTimings,
+    extractedType,
     lines,
   };
 }
@@ -302,9 +380,18 @@ function extractAndRankCandidates(rawText) {
  *
  * @param {string[]} candidates
  * @param {string|null} suggestedDosage
- * @returns {Promise<{ candidate: string|null, standardizedCode: string|null, verified: boolean, fallbackCandidates: string[], suggestedDosage: string|null }>}
+ * @param {object} [extraExtraction={}]
+ * @returns {Promise<{ candidate: string|null, standardizedCode: string|null, verified: boolean, fallbackCandidates: string[], suggestedDosage: string|null, category: string|null, safetyTip: string|null, dosageOptions: string[], commonFrequency: string|null, foodInstruction: string|null, suggestedType: string, extractedTimings: string[], prescriber: string|null }>}
  */
-async function verifyCandidatesWithRxNorm(candidates, suggestedDosage = null) {
+async function verifyCandidatesWithRxNorm(candidates, suggestedDosage = null, extraExtraction = {}) {
+  const {
+    extractedPrescriber = null,
+    extractedFrequency = null,
+    extractedInstructions = null,
+    extractedTimings = [],
+    extractedType = 'PRESCRIPTION',
+  } = extraExtraction;
+
   if (!candidates || candidates.length === 0) {
     return {
       candidate: null,
@@ -312,33 +399,39 @@ async function verifyCandidatesWithRxNorm(candidates, suggestedDosage = null) {
       verified: false,
       fallbackCandidates: [],
       suggestedDosage,
+      category: null,
+      safetyTip: null,
+      dosageOptions: [],
+      commonFrequency: extractedFrequency || 'once',
+      foodInstruction: extractedInstructions || '',
+      suggestedType: extractedType || 'PRESCRIPTION',
+      extractedTimings: extractedTimings || [],
+      prescriber: extractedPrescriber || null,
     };
   }
 
-  // Top 3-5 candidates to verify in rank order
   const topCandidates = candidates.slice(0, 5);
   const fallbackCandidates = topCandidates.slice(0, 3);
 
-// Curated common brand name & combination product aliases
-const COMMON_BRAND_ALIASES = {
-  'naxdom': { name: 'Naxdom 500 (Naproxen + Domperidone)', genericName: 'Naproxen', dosage: '500 mg', standardizedCode: '7258', category: 'NSAID / Migraine', safetyTip: 'Take after meals with water. Avoid combining with other NSAIDs (aspirin/ibuprofen).', dosageOptions: ['250 mg', '500 mg'], commonFrequency: 'twice', foodInstruction: 'after_food' },
-  'nexdom': { name: 'Naxdom 500 (Naproxen + Domperidone)', genericName: 'Naproxen', dosage: '500 mg', standardizedCode: '7258', category: 'NSAID / Migraine', safetyTip: 'Take after meals with water. Avoid combining with other NSAIDs (aspirin/ibuprofen).', dosageOptions: ['250 mg', '500 mg'], commonFrequency: 'twice', foodInstruction: 'after_food' },
-  'naxdom 500': { name: 'Naxdom 500 (Naproxen + Domperidone)', genericName: 'Naproxen', dosage: '500 mg', standardizedCode: '7258', category: 'NSAID / Migraine', safetyTip: 'Take after meals with water. Avoid combining with other NSAIDs (aspirin/ibuprofen).', dosageOptions: ['250 mg', '500 mg'], commonFrequency: 'twice', foodInstruction: 'after_food' },
-  'naxdom 250': { name: 'Naxdom 250 (Naproxen + Domperidone)', genericName: 'Naproxen', dosage: '250 mg', standardizedCode: '7258', category: 'NSAID / Migraine', safetyTip: 'Take after meals with water. Avoid combining with other NSAIDs (aspirin/ibuprofen).', dosageOptions: ['250 mg', '500 mg'], commonFrequency: 'twice', foodInstruction: 'after_food' },
-  'dolo': { name: 'Dolo 650 (Paracetamol)', genericName: 'Acetaminophen', dosage: '650 mg', standardizedCode: '161', category: 'Analgesic / Antipyretic', safetyTip: 'Do not exceed 4,000 mg (4g) daily total from all paracetamol sources to protect liver.', dosageOptions: ['500 mg', '650 mg'], commonFrequency: 'thrice', foodInstruction: 'after_food' },
-  'dolo 650': { name: 'Dolo 650 (Paracetamol)', genericName: 'Acetaminophen', dosage: '650 mg', standardizedCode: '161', category: 'Analgesic / Antipyretic', safetyTip: 'Do not exceed 4,000 mg (4g) daily total from all paracetamol sources to protect liver.', dosageOptions: ['500 mg', '650 mg'], commonFrequency: 'thrice', foodInstruction: 'after_food' },
-  'crocin': { name: 'Crocin (Paracetamol)', genericName: 'Acetaminophen', dosage: '500 mg', standardizedCode: '161', category: 'Analgesic / Antipyretic', safetyTip: 'Monitor total daily paracetamol intake across all cold/fever formulations.', dosageOptions: ['500 mg', '650 mg'], commonFrequency: 'thrice', foodInstruction: 'after_food' },
-  'pan-d': { name: 'Pan-D (Pantoprazole + Domperidone)', genericName: 'Pantoprazole', dosage: '40 mg', standardizedCode: '40790', category: 'PPI / Antacid', safetyTip: 'Best taken 30-60 minutes before morning breakfast on an empty stomach.', dosageOptions: ['20 mg', '40 mg'], commonFrequency: 'once', foodInstruction: 'empty_stomach' },
-  'pand': { name: 'Pan-D (Pantoprazole + Domperidone)', genericName: 'Pantoprazole', dosage: '40 mg', standardizedCode: '40790', category: 'PPI / Antacid', safetyTip: 'Best taken 30-60 minutes before morning breakfast on an empty stomach.', dosageOptions: ['20 mg', '40 mg'], commonFrequency: 'once', foodInstruction: 'empty_stomach' },
-  'pan d': { name: 'Pan-D (Pantoprazole + Domperidone)', genericName: 'Pantoprazole', dosage: '40 mg', standardizedCode: '40790', category: 'PPI / Antacid', safetyTip: 'Best taken 30-60 minutes before morning breakfast on an empty stomach.', dosageOptions: ['20 mg', '40 mg'], commonFrequency: 'once', foodInstruction: 'empty_stomach' },
-  'augmentin': { name: 'Augmentin (Amoxicillin + Clavulanate)', genericName: 'Amoxicillin', dosage: '625 mg', standardizedCode: '723', category: 'Antibiotic', safetyTip: 'Complete the entire course prescribed even if symptoms improve early.', dosageOptions: ['375 mg', '625 mg', '1000 mg'], commonFrequency: 'twice', foodInstruction: 'with_food' },
-  'augmentin 625': { name: 'Augmentin (Amoxicillin + Clavulanate)', genericName: 'Amoxicillin', dosage: '625 mg', standardizedCode: '723', category: 'Antibiotic', safetyTip: 'Complete the entire course prescribed even if symptoms improve early.', dosageOptions: ['375 mg', '625 mg', '1000 mg'], commonFrequency: 'twice', foodInstruction: 'with_food' },
-  'ecosprin': { name: 'Ecosprin (Aspirin)', genericName: 'Aspirin', dosage: '75 mg', standardizedCode: '1191', category: 'Antiplatelet / Cardio', safetyTip: 'Low-dose cardio-protective. Take with food to minimize gastric bleeding risk.', dosageOptions: ['75 mg', '150 mg'], commonFrequency: 'once', foodInstruction: 'with_food' },
-  'combiflam': { name: 'Combiflam (Ibuprofen + Paracetamol)', genericName: 'Ibuprofen', dosage: '400 mg', standardizedCode: '5640', category: 'NSAID / Pain Relief', safetyTip: 'Take after meals. Avoid if you have active peptic ulcer or renal impairment.', dosageOptions: ['400 mg'], commonFrequency: 'twice', foodInstruction: 'after_food' },
-  'telma': { name: 'Telma (Telmisartan)', genericName: 'Telmisartan', dosage: '40 mg', standardizedCode: '42355', category: 'Antihypertensive (ARB)', safetyTip: 'Take consistently at the same time each day; monitor blood pressure regularly.', dosageOptions: ['20 mg', '40 mg', '80 mg'], commonFrequency: 'once', foodInstruction: 'before_food' },
-  'voveran': { name: 'Voveran (Diclofenac)', genericName: 'Diclofenac', dosage: '50 mg', standardizedCode: '3355', category: 'NSAID / Anti-inflammatory', safetyTip: 'Potent anti-inflammatory. Take with food or antacid to avoid stomach irritation.', dosageOptions: ['50 mg', '75 mg', '100 mg'], commonFrequency: 'twice', foodInstruction: 'after_food' },
-  'shelcal': { name: 'Shelcal 500 (Calcium + Vitamin D3)', genericName: 'Calcium Carbonate', dosage: '500 mg', standardizedCode: '1895', category: 'Bone Health / Mineral', safetyTip: 'Take with or after lunch for optimal absorption; separate from iron supplements by 2 hours.', dosageOptions: ['250 mg', '500 mg'], commonFrequency: 'once', foodInstruction: 'after_food' },
-};
+  const COMMON_BRAND_ALIASES = {
+    'naxdom': { name: 'Naxdom 500 (Naproxen + Domperidone)', genericName: 'Naproxen', dosage: '500 mg', standardizedCode: '7258', category: 'NSAID / Migraine', safetyTip: 'Take after meals with water. Avoid combining with other NSAIDs (aspirin/ibuprofen).', dosageOptions: ['250 mg', '500 mg'], commonFrequency: 'twice', foodInstruction: 'after_food' },
+    'nexdom': { name: 'Naxdom 500 (Naproxen + Domperidone)', genericName: 'Naproxen', dosage: '500 mg', standardizedCode: '7258', category: 'NSAID / Migraine', safetyTip: 'Take after meals with water. Avoid combining with other NSAIDs (aspirin/ibuprofen).', dosageOptions: ['250 mg', '500 mg'], commonFrequency: 'twice', foodInstruction: 'after_food' },
+    'naxdom 500': { name: 'Naxdom 500 (Naproxen + Domperidone)', genericName: 'Naproxen', dosage: '500 mg', standardizedCode: '7258', category: 'NSAID / Migraine', safetyTip: 'Take after meals with water. Avoid combining with other NSAIDs (aspirin/ibuprofen).', dosageOptions: ['250 mg', '500 mg'], commonFrequency: 'twice', foodInstruction: 'after_food' },
+    'naxdom 250': { name: 'Naxdom 250 (Naproxen + Domperidone)', genericName: 'Naproxen', dosage: '250 mg', standardizedCode: '7258', category: 'NSAID / Migraine', safetyTip: 'Take after meals with water. Avoid combining with other NSAIDs (aspirin/ibuprofen).', dosageOptions: ['250 mg', '500 mg'], commonFrequency: 'twice', foodInstruction: 'after_food' },
+    'dolo': { name: 'Dolo 650 (Paracetamol)', genericName: 'Acetaminophen', dosage: '650 mg', standardizedCode: '161', category: 'Analgesic / Antipyretic', safetyTip: 'Do not exceed 4,000 mg (4g) daily total from all paracetamol sources to protect liver.', dosageOptions: ['500 mg', '650 mg'], commonFrequency: 'thrice', foodInstruction: 'after_food' },
+    'dolo 650': { name: 'Dolo 650 (Paracetamol)', genericName: 'Acetaminophen', dosage: '650 mg', standardizedCode: '161', category: 'Analgesic / Antipyretic', safetyTip: 'Do not exceed 4,000 mg (4g) daily total from all paracetamol sources to protect liver.', dosageOptions: ['500 mg', '650 mg'], commonFrequency: 'thrice', foodInstruction: 'after_food' },
+    'crocin': { name: 'Crocin (Paracetamol)', genericName: 'Acetaminophen', dosage: '500 mg', standardizedCode: '161', category: 'Analgesic / Antipyretic', safetyTip: 'Monitor total daily paracetamol intake across all cold/fever formulations.', dosageOptions: ['500 mg', '650 mg'], commonFrequency: 'thrice', foodInstruction: 'after_food' },
+    'pan-d': { name: 'Pan-D (Pantoprazole + Domperidone)', genericName: 'Pantoprazole', dosage: '40 mg', standardizedCode: '40790', category: 'PPI / Antacid', safetyTip: 'Best taken 30-60 minutes before morning breakfast on an empty stomach.', dosageOptions: ['20 mg', '40 mg'], commonFrequency: 'once', foodInstruction: 'empty_stomach' },
+    'pand': { name: 'Pan-D (Pantoprazole + Domperidone)', genericName: 'Pantoprazole', dosage: '40 mg', standardizedCode: '40790', category: 'PPI / Antacid', safetyTip: 'Best taken 30-60 minutes before morning breakfast on an empty stomach.', dosageOptions: ['20 mg', '40 mg'], commonFrequency: 'once', foodInstruction: 'empty_stomach' },
+    'pan d': { name: 'Pan-D (Pantoprazole + Domperidone)', genericName: 'Pantoprazole', dosage: '40 mg', standardizedCode: '40790', category: 'PPI / Antacid', safetyTip: 'Best taken 30-60 minutes before morning breakfast on an empty stomach.', dosageOptions: ['20 mg', '40 mg'], commonFrequency: 'once', foodInstruction: 'empty_stomach' },
+    'augmentin': { name: 'Augmentin (Amoxicillin + Clavulanate)', genericName: 'Amoxicillin', dosage: '625 mg', standardizedCode: '723', category: 'Antibiotic', safetyTip: 'Complete the entire course prescribed even if symptoms improve early.', dosageOptions: ['375 mg', '625 mg', '1000 mg'], commonFrequency: 'twice', foodInstruction: 'with_food' },
+    'augmentin 625': { name: 'Augmentin (Amoxicillin + Clavulanate)', genericName: 'Amoxicillin', dosage: '625 mg', standardizedCode: '723', category: 'Antibiotic', safetyTip: 'Complete the entire course prescribed even if symptoms improve early.', dosageOptions: ['375 mg', '625 mg', '1000 mg'], commonFrequency: 'twice', foodInstruction: 'with_food' },
+    'ecosprin': { name: 'Ecosprin (Aspirin)', genericName: 'Aspirin', dosage: '75 mg', standardizedCode: '1191', category: 'Antiplatelet / Cardio', safetyTip: 'Low-dose cardio-protective. Take with food to minimize gastric bleeding risk.', dosageOptions: ['75 mg', '150 mg'], commonFrequency: 'once', foodInstruction: 'with_food' },
+    'combiflam': { name: 'Combiflam (Ibuprofen + Paracetamol)', genericName: 'Ibuprofen', dosage: '400 mg', standardizedCode: '5640', category: 'NSAID / Pain Relief', safetyTip: 'Take after meals. Avoid if you have active peptic ulcer or renal impairment.', dosageOptions: ['400 mg'], commonFrequency: 'twice', foodInstruction: 'after_food' },
+    'telma': { name: 'Telma (Telmisartan)', genericName: 'Telmisartan', dosage: '40 mg', standardizedCode: '42355', category: 'Antihypertensive (ARB)', safetyTip: 'Take consistently at the same time each day; monitor blood pressure regularly.', dosageOptions: ['20 mg', '40 mg', '80 mg'], commonFrequency: 'once', foodInstruction: 'before_food' },
+    'voveran': { name: 'Voveran (Diclofenac)', genericName: 'Diclofenac', dosage: '50 mg', standardizedCode: '3355', category: 'NSAID / Anti-inflammatory', safetyTip: 'Potent anti-inflammatory. Take with food or antacid to avoid stomach irritation.', dosageOptions: ['50 mg', '75 mg', '100 mg'], commonFrequency: 'twice', foodInstruction: 'after_food' },
+    'shelcal': { name: 'Shelcal 500 (Calcium + Vitamin D3)', genericName: 'Calcium Carbonate', dosage: '500 mg', standardizedCode: '1895', category: 'Bone Health / Mineral', safetyTip: 'Take with or after lunch for optimal absorption; separate from iron supplements by 2 hours.', dosageOptions: ['250 mg', '500 mg'], commonFrequency: 'once', foodInstruction: 'after_food' },
+  };
 
   for (const cand of topCandidates) {
     const candLower = cand.toLowerCase().trim();
