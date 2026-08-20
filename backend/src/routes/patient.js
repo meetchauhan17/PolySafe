@@ -169,7 +169,52 @@ router.get('/home-summary', auth, async (req, res) => {
       });
     }
 
-    const { medicines, interactionFlags } = patient;
+    const { medicines } = patient;
+    let interactionFlags = [...(patient.interactionFlags || [])];
+
+    // Auto-reconcile pairwise DDInter interactions across active medicines
+    if (medicines.length >= 2) {
+      for (let i = 0; i < medicines.length; i++) {
+        for (let j = i + 1; j < medicines.length; j++) {
+          const medA = medicines[i];
+          const medB = medicines[j];
+          const alreadyFlagged = interactionFlags.some(
+            (f) =>
+              (f.medicineAId === medA.id && f.medicineBId === medB.id) ||
+              (f.medicineAId === medB.id && f.medicineBId === medA.id)
+          );
+          if (!alreadyFlagged) {
+            const match = await lookupInteraction(medA.name, medB.name);
+            if (match.found) {
+              const explanation = await generateExplanation({
+                drugA: medA.name,
+                drugB: medB.name,
+                severity: match.severity,
+                patientAge: patient.age,
+                patientConditions: patient.conditions || [],
+              });
+              const newFlag = await prisma.interactionFlag.create({
+                data: {
+                  patientId: patient.id,
+                  medicineAId: medA.id,
+                  medicineBId: medB.id,
+                  severity: match.severity,
+                  clinicalExplanation: explanation.clinical,
+                  plainExplanation: explanation.plain,
+                  generatedBy: explanation.generatedBy ?? 'fallback',
+                  dateFlagged: new Date(),
+                },
+                include: {
+                  medicineA: { select: { id: true, name: true, type: true, dosage: true } },
+                  medicineB: { select: { id: true, name: true, type: true, dosage: true } },
+                },
+              });
+              interactionFlags.push(newFlag);
+            }
+          }
+        }
+      }
+    }
 
     // 2. Derive "today's schedule" from the active medicine list
     //    Rule: cycle through TIME_SLOTS using the medicine's index in the list.
