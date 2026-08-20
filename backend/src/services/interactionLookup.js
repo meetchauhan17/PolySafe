@@ -16,6 +16,7 @@
 'use strict';
 
 const prisma = require('../lib/prisma');
+const { resolveDrugCandidates } = require('./drugAliases');
 
 // ─── Types (JSDoc for IDE autocomplete) ──────────────────────────────────────
 /**
@@ -50,7 +51,7 @@ function pickHighestSeverity(severities) {
 
 /**
  * Look up a drug-drug pair in the DDInter reference table.
- * Matches in both A→B and B→A directions.
+ * Matches in both A→B and B→A directions across all generic/brand candidates.
  *
  * @param {string} drugA  First drug name (any casing)
  * @param {string} drugB  Second drug name (any casing)
@@ -73,22 +74,22 @@ async function lookupInteraction(drugA, drugB) {
     };
   }
 
+  const candsA = resolveDrugCandidates(a);
+  const candsB = resolveDrugCandidates(b);
+
   try {
-    // Postgres case-insensitive match via mode: 'insensitive'
-    // Checks both orderings: (A,B) and (B,A) in a single OR query
+    const orConditions = [];
+    for (const candA of candsA) {
+      for (const candB of candsB) {
+        orConditions.push(
+          { drugAName: { equals: candA, mode: 'insensitive' }, drugBName: { equals: candB, mode: 'insensitive' } },
+          { drugAName: { equals: candB, mode: 'insensitive' }, drugBName: { equals: candA, mode: 'insensitive' } }
+        );
+      }
+    }
+
     const matches = await prisma.drugInteractionReference.findMany({
-      where: {
-        OR: [
-          {
-            drugAName: { equals: a, mode: 'insensitive' },
-            drugBName: { equals: b, mode: 'insensitive' },
-          },
-          {
-            drugAName: { equals: b, mode: 'insensitive' },
-            drugBName: { equals: a, mode: 'insensitive' },
-          },
-        ],
-      },
+      where: { OR: orConditions },
       select: {
         id: true,
         drugAName: true,

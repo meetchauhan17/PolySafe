@@ -51,8 +51,12 @@ app.use((err, _req, res, _next) => {
 io.on('connection', (socket) => {
   console.log('Socket connected:', socket.id);
 
-  socket.on('join-patient-room', (patientId) => {
-    socket.join(`patient-${patientId}`);
+  socket.on('join-patient-room', (data) => {
+    const id = typeof data === 'object' ? (data?.patientId || data?.userId) : data;
+    if (id) {
+      socket.join(`patient-${id}`);
+      console.log(`[socket] Socket ${socket.id} joined room: patient-${id}`);
+    }
   });
 
   socket.on('disconnect', () => {

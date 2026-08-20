@@ -434,13 +434,16 @@ export default function AddMedicinePage() {
     });
 
     socket.on('connect', () => {
-      socket.emit('join-patient-room', { userId: currentUserId });
+      socket.emit('join-patient-room', { userId: currentUserId, patientId: currentUserId });
     });
 
-    socket.on('interaction-check-result', (data) => {
+    const handleResult = (data) => {
       setCheckResult(data);
       setCheckState('done');
-    });
+    };
+
+    socket.on('interaction-checked', handleResult);
+    socket.on('interaction-check-result', handleResult);
 
     socket.on('connect_error', (err) => {
       console.warn('[socket] connect_error:', err.message);
@@ -448,7 +451,7 @@ export default function AddMedicinePage() {
       setCheckState('done');
       setCheckResult({
         summary: 'check-error',
-        message: 'Could not connect to real-time check service. Please refresh the page.',
+        message: 'Real-time notification delayed. You can view full interaction summary on your Dashboard.',
       });
     });
 
