@@ -7,7 +7,8 @@ import {
   Camera, Pill, Plus, ArrowRight, ArrowLeft, Loader2, AlertCircle,
   CheckCircle2, X, Stethoscope, ShoppingBag, Leaf, Info, ScanLine,
   FileImage, TriangleAlert, Edit3, ShieldCheck, Zap, ExternalLink,
-  Activity, AlertOctagon, Search, HelpCircle,
+  Activity, AlertOctagon, Search, HelpCircle, Clock, User, CalendarDays,
+  Sun, Sunset, Moon, Coffee,
 } from 'lucide-react';
 import Card from '../components/Card';
 import { notify } from '../utils/toast';
@@ -233,6 +234,11 @@ export default function AddMedicinePage() {
   const [name, setName] = useState('');
   const [type, setType] = useState('PRESCRIPTION');
   const [dosage, setDosage] = useState('');
+  const [frequency, setFrequency] = useState('once');
+  const [timings, setTimings] = useState([]);
+  const [prescriber, setPrescriber] = useState('');
+  const [notes, setNotes] = useState('');
+  const [selectedDrugInfo, setSelectedDrugInfo] = useState(null); // { name, generic, rxcui, dosage, source }
 
   // Scan state: 'idle' | 'scanning' | 'confirm' | 'error'
   const [scanState, setScanState] = useState('idle');
@@ -300,6 +306,7 @@ export default function AddMedicinePage() {
     if (!sug.rxcui && (sug.source === 'herbal' || sug.name.toLowerCase().includes('turmeric') || sug.name.toLowerCase().includes('ashwagandha') || sug.name.toLowerCase().includes('ginkgo'))) {
       setType('HERBAL');
     }
+    setSelectedDrugInfo(sug);
     setShowSuggestions(false);
     setSuggestions([]);
     notify.success('Drug Selected', `Selected "${sug.name}"${sug.dosage ? ` — ${sug.dosage}` : ''}`);
@@ -1161,6 +1168,60 @@ export default function AddMedicinePage() {
               )}
             </div>
 
+            {/* Drug Verification Info Card — appears after selecting from autocomplete */}
+            {selectedDrugInfo && name && (
+              <div className="p-3.5 rounded-2xl border-2 border-[#2B6E5E]/20 bg-[#F4FAF8] space-y-2">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <ShieldCheck className="w-4 h-4 text-[#2B6E5E]" />
+                    <span className="text-xs font-bold text-[#1C2B27]">
+                      {selectedDrugInfo.rxcui ? 'RxNorm Verified Drug' : 'Identified Drug'}
+                    </span>
+                  </div>
+                  <button type="button" onClick={() => setSelectedDrugInfo(null)} className="text-[#6B726C] hover:text-[#232724] cursor-pointer">
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="text-[11px]">
+                    <span className="text-[#6B726C]">Drug Name</span>
+                    <p className="font-bold text-[#232724]">{selectedDrugInfo.name}</p>
+                  </div>
+                  {selectedDrugInfo.generic !== selectedDrugInfo.name && (
+                    <div className="text-[11px]">
+                      <span className="text-[#6B726C]">Generic Name</span>
+                      <p className="font-bold text-[#232724]">{selectedDrugInfo.generic}</p>
+                    </div>
+                  )}
+                  {selectedDrugInfo.rxcui && (
+                    <div className="text-[11px]">
+                      <span className="text-[#6B726C]">RxNorm CUI</span>
+                      <p className="font-bold text-[#2B6E5E]">#{selectedDrugInfo.rxcui}</p>
+                    </div>
+                  )}
+                  {selectedDrugInfo.dosage && (
+                    <div className="text-[11px]">
+                      <span className="text-[#6B726C]">Standard Dosage</span>
+                      <p className="font-bold text-[#232724]">{selectedDrugInfo.dosage}</p>
+                    </div>
+                  )}
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                    selectedDrugInfo.source === 'rxnorm' ? 'bg-[#E4F2E9] text-[#2B6E5E]' :
+                    selectedDrugInfo.source === 'herbal' ? 'bg-[#2B6E5E]/10 text-[#2B6E5E]' :
+                    selectedDrugInfo.source === 'ddinter' ? 'bg-[#FBEED9] text-[#7A4A0A]' :
+                    'bg-gray-100 text-gray-600'
+                  }`}>
+                    {selectedDrugInfo.source === 'rxnorm' ? '✓ Verified in NLM RxNorm' :
+                     selectedDrugInfo.source === 'herbal' ? '🌿 Herbal / Ayurvedic' :
+                     selectedDrugInfo.source === 'ddinter' ? '📊 In DDInter Interaction DB' :
+                     '💊 Drug Database Match'}
+                  </span>
+                </div>
+              </div>
+            )}
+
             {/* Type — 3-way pill toggle ─────────────────────────────────── */}
             <div className="space-y-2">
               <label className="block text-xs font-bold text-[#1C2B27] uppercase tracking-wider">
@@ -1196,18 +1257,122 @@ export default function AddMedicinePage() {
               </p>
             </div>
 
-            {/* Dosage */}
-            <div className="space-y-1.5">
+            {/* Dosage + Frequency side by side */}
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <label className="block text-xs font-bold text-[#232724] uppercase tracking-wider">
+                  Dosage <span className="normal-case font-normal text-[#6B726C]">— optional</span>
+                </label>
+                <input
+                  type="text"
+                  value={dosage}
+                  onChange={(e) => setDosage(e.target.value)}
+                  placeholder="e.g. 5mg, 500mg"
+                  className="input-field"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="block text-xs font-bold text-[#232724] uppercase tracking-wider">
+                  Frequency
+                </label>
+                <div className="relative">
+                  <Clock className="w-4 h-4 text-[#6B726C] absolute left-3 top-3" />
+                  <select
+                    value={frequency}
+                    onChange={(e) => setFrequency(e.target.value)}
+                    className="input-field pl-9 pr-3 appearance-none cursor-pointer bg-white"
+                  >
+                    <option value="once">Once daily</option>
+                    <option value="twice">Twice daily</option>
+                    <option value="thrice">3 times daily</option>
+                    <option value="four">4 times daily</option>
+                    <option value="weekly">Weekly</option>
+                    <option value="asneeded">As needed (PRN)</option>
+                    <option value="alternate">Alternate days</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            {/* Time of Day chips */}
+            <div className="space-y-2">
               <label className="block text-xs font-bold text-[#232724] uppercase tracking-wider">
-                Dosage <span className="normal-case font-normal text-[#6B726C]">— optional</span>
+                Time of Day <span className="normal-case font-normal text-[#6B726C]">— select when you take it</span>
               </label>
-              <input
-                type="text"
-                value={dosage}
-                onChange={(e) => setDosage(e.target.value)}
-                placeholder="e.g. 5mg, 10ml, 500mg"
-                className="input-field"
-              />
+              <div className="flex flex-wrap gap-2">
+                {[
+                  { id: 'morning', label: 'Morning', icon: <Sun className="w-3.5 h-3.5" />, time: '8:00 AM' },
+                  { id: 'afternoon', label: 'Afternoon', icon: <Coffee className="w-3.5 h-3.5" />, time: '1:00 PM' },
+                  { id: 'evening', label: 'Evening', icon: <Sunset className="w-3.5 h-3.5" />, time: '6:00 PM' },
+                  { id: 'bedtime', label: 'Bedtime', icon: <Moon className="w-3.5 h-3.5" />, time: '10:00 PM' },
+                ].map((slot) => {
+                  const isActive = timings.includes(slot.id);
+                  return (
+                    <button
+                      key={slot.id}
+                      type="button"
+                      onClick={() => {
+                        setTimings(prev =>
+                          prev.includes(slot.id)
+                            ? prev.filter(t => t !== slot.id)
+                            : [...prev, slot.id]
+                        );
+                      }}
+                      className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer border-2 ${
+                        isActive
+                          ? 'bg-[#EDE8DC] shadow-[3px_3px_6px_rgba(191,180,155,0.55),-3px_-3px_6px_rgba(255,255,255,0.65)] text-[#2B6E5E] border-[#2B6E5E]/30'
+                          : 'bg-[#EDE8DC] shadow-[inset_2px_2px_4px_rgba(191,180,155,0.4),inset_-2px_-2px_4px_rgba(255,255,255,0.5)] text-[#6B726C] border-transparent'
+                      }`}
+                    >
+                      {slot.icon}
+                      <span>{slot.label}</span>
+                      <span className="text-[10px] font-normal opacity-60">{slot.time}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Prescriber + Notes side by side */}
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <label className="block text-xs font-bold text-[#232724] uppercase tracking-wider">
+                  Prescribed By <span className="normal-case font-normal text-[#6B726C]">— optional</span>
+                </label>
+                <div className="relative">
+                  <User className="w-4 h-4 text-[#6B726C] absolute left-3 top-3" />
+                  <input
+                    type="text"
+                    value={prescriber}
+                    onChange={(e) => setPrescriber(e.target.value)}
+                    placeholder="Dr. name or Self"
+                    className="input-field pl-9"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="block text-xs font-bold text-[#232724] uppercase tracking-wider">
+                  Instructions <span className="normal-case font-normal text-[#6B726C]">— optional</span>
+                </label>
+                <div className="relative">
+                  <CalendarDays className="w-4 h-4 text-[#6B726C] absolute left-3 top-3" />
+                  <select
+                    value={notes}
+                    onChange={(e) => setNotes(e.target.value)}
+                    className="input-field pl-9 pr-3 appearance-none cursor-pointer bg-white"
+                  >
+                    <option value="">No special instructions</option>
+                    <option value="before_food">Take before food</option>
+                    <option value="after_food">Take after food</option>
+                    <option value="with_food">Take with food</option>
+                    <option value="empty_stomach">Take on empty stomach</option>
+                    <option value="with_water">Take with plenty of water</option>
+                    <option value="avoid_dairy">Avoid dairy products</option>
+                  </select>
+                </div>
+              </div>
             </div>
           </Card>
 
