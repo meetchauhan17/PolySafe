@@ -316,7 +316,7 @@ export default function HomePage() {
                 variant="safe"
                 className="flex-row items-start space-x-4 bg-[#E4F2E9]/40"
               >
-                <div className="flex-shrink-0 p-2.5 rounded-full bg-white/80 border border-[#2F8558]/20 shadow-sm">
+                <div className="flex-shrink-0 p-2.5 rounded-full bg-[#CCE9D6] border border-[#2F8558]/30 shadow-inner">
                   <CheckCircle2 className="w-7 h-7 text-[#2F8558]" />
                 </div>
                 <div className="flex-1 min-w-0">
@@ -341,7 +341,7 @@ export default function HomePage() {
                 variant="caution"
                 className="flex-row items-start space-x-4 bg-[#FBEED9]/40"
               >
-                <div className="flex-shrink-0 p-2.5 rounded-full bg-white/80 border border-[#B5791A]/20 shadow-sm animate-breathe-caution">
+                <div className="flex-shrink-0 p-2.5 rounded-full bg-[#F5E2C4] border border-[#B5791A]/30 shadow-inner animate-breathe-caution">
                   <AlertTriangle className="w-7 h-7 text-[#B5791A]" />
                 </div>
                 <div className="flex-1 min-w-0">
@@ -505,7 +505,7 @@ export default function HomePage() {
                         <DrugHarmPanel medicine={med} flags={flags} className="mt-1" />
 
                         {med.safetyTip && (
-                          <p className="text-[10px] text-[#5C6B64] bg-white/50 p-2 rounded-xl border border-[rgba(191,180,155,0.3)] leading-tight">
+                          <p className="text-[10px] text-[#5C6B64] bg-[#E6E0D3] shadow-[inset_2px_2px_4px_rgba(191,180,155,0.4),inset_-2px_-2px_4px_rgba(255,255,255,0.5)] p-2.5 rounded-xl border border-[rgba(191,180,155,0.3)] leading-tight">
                             💡 {med.safetyTip}
                           </p>
                         )}

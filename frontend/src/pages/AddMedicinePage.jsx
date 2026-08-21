@@ -27,7 +27,7 @@ const MEDICINE_TYPES = [
     accent: 'text-[#1B4B66] bg-[#1B4B66]/10 border-[#1B4B66]/20',
     activeAccent: 'border-[#1B4B66] bg-[#1B4B66]/10 ring-2 ring-[#1B4B66]/30',
     // Pill toggle — active pill style
-    toggleActive: 'bg-white text-[#1B4B66] shadow-sm ring-1 ring-[#1B4B66]/30',
+    toggleActive: 'bg-[#EDE8DC] text-[#1B4B66] shadow-[2px_2px_4px_rgba(191,180,155,0.5),-2px_-2px_4px_rgba(255,255,255,0.6)] ring-1 ring-[#1B4B66]/30',
   },
   {
     value: 'OTC',
@@ -38,7 +38,7 @@ const MEDICINE_TYPES = [
     toggleIcon: <ShoppingBag className="w-4 h-4" />,
     accent: 'text-[#8A6D3B] bg-[#8A6D3B]/10 border-[#8A6D3B]/20',
     activeAccent: 'border-[#8A6D3B] bg-[#8A6D3B]/10 ring-2 ring-[#8A6D3B]/30',
-    toggleActive: 'bg-white text-[#8A6D3B] shadow-sm ring-1 ring-[#8A6D3B]/30',
+    toggleActive: 'bg-[#EDE8DC] text-[#8A6D3B] shadow-[2px_2px_4px_rgba(191,180,155,0.5),-2px_-2px_4px_rgba(255,255,255,0.6)] ring-1 ring-[#8A6D3B]/30',
   },
   {
     value: 'HERBAL',
@@ -49,7 +49,7 @@ const MEDICINE_TYPES = [
     toggleIcon: <Leaf className="w-4 h-4" />,
     accent: 'text-[#2B6E5E] bg-[#2B6E5E]/10 border-[#2B6E5E]/20',
     activeAccent: 'border-[#2B6E5E] bg-[#2B6E5E]/10 ring-2 ring-[#2B6E5E]/30',
-    toggleActive: 'bg-white text-[#2B6E5E] shadow-sm ring-1 ring-[#2B6E5E]/30',
+    toggleActive: 'bg-[#EDE8DC] text-[#2B6E5E] shadow-[2px_2px_4px_rgba(191,180,155,0.5),-2px_-2px_4px_rgba(255,255,255,0.6)] ring-1 ring-[#2B6E5E]/30',
   },
 ];
 
@@ -306,7 +306,7 @@ function ScanResultsReviewCard({ scanResult, onDismiss }) {
 
       {/* Extracted Details Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-        <div className="p-2.5 bg-white rounded-xl border border-[#E7E1D3] space-y-0.5">
+        <div className="p-2.5 bg-[#E6E0D3] shadow-[inset_2px_2px_4px_rgba(191,180,155,0.4),inset_-2px_-2px_4px_rgba(255,255,255,0.5)] rounded-xl border border-[rgba(191,180,155,0.3)] space-y-0.5">
           <span className="text-[10px] uppercase tracking-wider font-bold text-[#6B726C]">Identified Medicine</span>
           <p className="font-bold text-[#1C2B27] text-sm truncate">{drugName || '—'}</p>
           {scanResult.generic_name && scanResult.generic_name !== drugName && (
@@ -314,7 +314,7 @@ function ScanResultsReviewCard({ scanResult, onDismiss }) {
           )}
         </div>
 
-        <div className="p-2.5 bg-white rounded-xl border border-[#E7E1D3] space-y-0.5">
+        <div className="p-2.5 bg-[#E6E0D3] shadow-[inset_2px_2px_4px_rgba(191,180,155,0.4),inset_-2px_-2px_4px_rgba(255,255,255,0.5)] rounded-xl border border-[rgba(191,180,155,0.3)] space-y-0.5">
           <span className="text-[10px] uppercase tracking-wider font-bold text-[#6B726C]">Strength & Form</span>
           <p className="font-bold text-[#1C2B27] text-sm">
             {strength || '—'} {scanResult.form ? `(${scanResult.form})` : ''}
@@ -324,7 +324,7 @@ function ScanResultsReviewCard({ scanResult, onDismiss }) {
 
       {/* Prescriber line if extracted */}
       {prescriber && (
-        <div className="flex items-center gap-2 p-2.5 bg-white rounded-xl border border-[#E7E1D3] text-xs">
+        <div className="flex items-center gap-2 p-2.5 bg-[#E6E0D3] shadow-[inset_2px_2px_4px_rgba(191,180,155,0.4),inset_-2px_-2px_4px_rgba(255,255,255,0.5)] rounded-xl border border-[rgba(191,180,155,0.3)] text-xs">
           <span className="font-bold text-[#2B6E5E]">Prescriber:</span>
           <span className="text-[#1C2B27] font-semibold">{prescriber.startsWith('Dr.') ? prescriber : `Dr. ${prescriber}`}</span>
         </div>
@@ -954,7 +954,7 @@ export default function AddMedicinePage() {
         <div className="flex items-center space-x-3">
           <button
             onClick={() => navigate('/home')}
-            className="p-2.5 rounded-xl border-2 border-[#E7E1D3] bg-white text-[#6B726C] hover:text-[#2B6E5E] hover:border-[#2B6E5E] transition-colors"
+            className="p-2.5 rounded-xl border border-[rgba(191,180,155,0.5)] bg-[#EDE8DC] shadow-[2px_2px_4px_rgba(191,180,155,0.4),-2px_-2px_4px_rgba(255,255,255,0.6)] text-[#5C6B64] hover:text-[#2B6E5E] transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
           </button>
@@ -1077,7 +1077,7 @@ export default function AddMedicinePage() {
             <div className="space-y-3">
               {previewUrl && (
                 <div className="relative">
-                  <img src={previewUrl} alt="Prescription" className="w-full max-h-44 object-contain rounded-xl border border-[#E7E1D3] bg-white p-1" />
+                  <img src={previewUrl} alt="Prescription" className="w-full max-h-44 object-contain rounded-xl border border-[rgba(191,180,155,0.4)] bg-[#EDE8DC] p-1 shadow-[inset_2px_2px_4px_rgba(191,180,155,0.4)]" />
                   <span className="absolute top-2 right-2 inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#E4F2E9] text-[#2B6E5E] border border-[#2F8558]/30 shadow-xs">
                     <Camera className="w-3 h-3" /> From scan
                   </span>
@@ -1266,7 +1266,7 @@ export default function AddMedicinePage() {
                       {pillMatches.map((match) => (
                         <div
                           key={match.id}
-                          className="p-3.5 rounded-xl bg-white border-2 border-[#E7E1D3] hover:border-[#2B6E5E] space-y-2.5 transition-all shadow-xs"
+                          className="p-3.5 rounded-xl bg-[#EDE8DC] shadow-[3px_3px_6px_rgba(191,180,155,0.5),-3px_-3px_6px_rgba(255,255,255,0.6)] border border-[rgba(191,180,155,0.3)] hover:border-[#2B6E5E] space-y-2.5 transition-all"
                         >
                           <div className="flex items-start justify-between gap-2">
                             <div>
@@ -1407,7 +1407,7 @@ export default function AddMedicinePage() {
                 {showSuggestions && suggestions.length > 0 && (
                   <div
                     ref={suggestionsRef}
-                    className="absolute z-50 left-0 right-0 top-full mt-1 bg-white border-2 border-[#E7E1D3] rounded-2xl shadow-lg overflow-hidden max-h-72 overflow-y-auto"
+                    className="absolute z-50 left-0 right-0 top-full mt-1 bg-[#F0EBE0] border border-[#DCD5C6] rounded-2xl shadow-xl overflow-hidden max-h-72 overflow-y-auto"
                   >
                     {suggestions.map((sug, idx) => {
                       const isSelected = idx === selectedIdx;
@@ -1487,7 +1487,7 @@ export default function AddMedicinePage() {
                 </div>
 
                 {/* Pre-Add Warning Banner */}
-                <div className="p-2.5 rounded-xl bg-white/80 border border-[#2B6E5E]/20 flex items-center justify-between">
+                <div className="p-2.5 rounded-xl bg-[#E6E0D3] shadow-[inset_2px_2px_4px_rgba(191,180,155,0.4),inset_-2px_-2px_4px_rgba(255,255,255,0.5)] border border-[rgba(191,180,155,0.3)] flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <AlertTriangle className="w-4 h-4 text-[#B5791A]" />
                     <span className="text-xs font-bold text-[#1C2B27]">Pre-Add Harm Classification:</span>
@@ -1496,24 +1496,24 @@ export default function AddMedicinePage() {
                 </div>
 
                 <div className="grid grid-cols-2 gap-2.5">
-                  <div className="text-xs bg-white/70 p-2.5 rounded-xl border border-[#2B6E5E]/15">
+                  <div className="text-xs bg-[#E6E0D3] shadow-[inset_2px_2px_4px_rgba(191,180,155,0.4),inset_-2px_-2px_4px_rgba(255,255,255,0.5)] p-2.5 rounded-xl border border-[rgba(191,180,155,0.3)]">
                     <span className="text-[10px] uppercase font-bold text-[#6B726C] block">Drug Name</span>
                     <p className="font-bold text-[#232724] mt-0.5 truncate">{selectedDrugInfo.name}</p>
                   </div>
                   {selectedDrugInfo.generic && selectedDrugInfo.generic !== selectedDrugInfo.name && (
-                    <div className="text-xs bg-white/70 p-2.5 rounded-xl border border-[#2B6E5E]/15">
+                    <div className="text-xs bg-[#E6E0D3] shadow-[inset_2px_2px_4px_rgba(191,180,155,0.4),inset_-2px_-2px_4px_rgba(255,255,255,0.5)] p-2.5 rounded-xl border border-[rgba(191,180,155,0.3)]">
                       <span className="text-[10px] uppercase font-bold text-[#6B726C] block">Active Generic</span>
                       <p className="font-bold text-[#2B6E5E] mt-0.5 truncate">{selectedDrugInfo.generic}</p>
                     </div>
                   )}
                   {selectedDrugInfo.category && (
-                    <div className="text-xs bg-white/70 p-2.5 rounded-xl border border-[#2B6E5E]/15">
+                    <div className="text-xs bg-[#E6E0D3] shadow-[inset_2px_2px_4px_rgba(191,180,155,0.4),inset_-2px_-2px_4px_rgba(255,255,255,0.5)] p-2.5 rounded-xl border border-[rgba(191,180,155,0.3)]">
                       <span className="text-[10px] uppercase font-bold text-[#6B726C] block">Clinical Class</span>
                       <p className="font-bold text-[#1C2B27] mt-0.5 truncate">{selectedDrugInfo.category}</p>
                     </div>
                   )}
                   {selectedDrugInfo.rxcui && (
-                    <div className="text-xs bg-white/70 p-2.5 rounded-xl border border-[#2B6E5E]/15">
+                    <div className="text-xs bg-[#E6E0D3] shadow-[inset_2px_2px_4px_rgba(191,180,155,0.4),inset_-2px_-2px_4px_rgba(255,255,255,0.5)] p-2.5 rounded-xl border border-[rgba(191,180,155,0.3)]">
                       <span className="text-[10px] uppercase font-bold text-[#6B726C] block">RxNorm CUI</span>
                       <p className="font-bold text-[#2B6E5E] mt-0.5">#{selectedDrugInfo.rxcui}</p>
                     </div>
@@ -1546,7 +1546,7 @@ export default function AddMedicinePage() {
                           className={`px-3 py-1 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                             dosage === opt
                               ? 'bg-[#2B6E5E] text-white shadow-sm'
-                              : 'bg-white text-[#2B6E5E] border border-[#2B6E5E]/30 hover:bg-[#F4FAF8]'
+                              : 'bg-[#EDE8DC] shadow-[2px_2px_4px_rgba(191,180,155,0.4),-2px_-2px_4px_rgba(255,255,255,0.6)] text-[#2B6E5E] border border-[#2B6E5E]/30 hover:bg-[#F4FAF8]'
                           }`}
                         >
                           {opt}
@@ -1620,7 +1620,7 @@ export default function AddMedicinePage() {
                   <select
                     value={frequency}
                     onChange={(e) => setFrequency(e.target.value)}
-                    className="input-field pl-10 pr-6 appearance-none cursor-pointer bg-white"
+                    className="input-field pl-10 pr-6 appearance-none cursor-pointer"
                   >
                     <option value="once">Once daily</option>
                     <option value="twice">Twice daily</option>
@@ -1700,7 +1700,7 @@ export default function AddMedicinePage() {
                   <select
                     value={notes}
                     onChange={(e) => setNotes(e.target.value)}
-                    className="input-field pl-10 pr-6 appearance-none cursor-pointer bg-white"
+                    className="input-field pl-10 pr-6 appearance-none cursor-pointer"
                   >
                     <option value="">No special instructions</option>
                     <option value="before_food">Take before food</option>

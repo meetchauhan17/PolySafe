@@ -197,11 +197,11 @@ export default function TimelinePage() {
         {!isLoading && medicines.length > 0 && (
           <div className="flex items-center gap-6 px-1">
             <span className="flex items-center gap-2 text-xs text-[#6B726C] font-semibold">
-              <span className="w-3.5 h-3.5 rounded-full bg-white border-[3px] border-[#2B6E5E]" />
+              <span className="w-3.5 h-3.5 rounded-full bg-[#EDE8DC] border-[3px] border-[#2B6E5E]" />
               Safe / Normal Entry
             </span>
             <span className="flex items-center gap-2 text-xs text-[#6B726C] font-semibold">
-              <span className="w-3.5 h-3.5 rounded-full bg-white border-[3px] border-[#B23D25]" />
+              <span className="w-3.5 h-3.5 rounded-full bg-[#EDE8DC] border-[3px] border-[#B23D25]" />
               Interaction Flagged
             </span>
           </div>
@@ -273,7 +273,7 @@ export default function TimelinePage() {
                     >
                       {/* Circular Dot Marker: white fill, colored border (teal #2B6E5E for normal, red #B23D25 for flagged, gray #9CA3AF for discontinued) */}
                       <div
-                        className="w-[18px] h-[18px] rounded-full bg-white flex-shrink-0 mt-4 shadow-sm"
+                        className="w-[18px] h-[18px] rounded-full bg-[#EDE8DC] flex-shrink-0 mt-4 shadow-sm"
                         style={{
                           border: `3.5px solid ${isDiscontinued ? '#9CA3AF' : isFlagged ? '#B23D25' : '#2B6E5E'}`,
                         }}

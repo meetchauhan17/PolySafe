@@ -67,7 +67,7 @@ export default function Navbar() {
         <div className="flex items-center space-x-2">
           <Link
             to="/onboarding"
-            className="px-3 py-1.5 text-xs font-bold text-[#2B6E5E] bg-[#ffffff] hover:bg-[#F4FAF8] rounded-xl border-2 border-[#E7E1D3] transition-colors flex items-center space-x-1"
+            className="px-3 py-1.5 text-xs font-bold text-[#2B6E5E] bg-[#EDE8DC] shadow-[2px_2px_4px_rgba(191,180,155,0.4),-2px_-2px_4px_rgba(255,255,255,0.6)] hover:bg-[#F4FAF8] rounded-xl border border-[rgba(191,180,155,0.4)] transition-colors flex items-center space-x-1"
           >
             <UserCheck className="w-3.5 h-3.5" />
             <span>Onboarding</span>

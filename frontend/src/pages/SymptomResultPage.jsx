@@ -57,7 +57,7 @@ function CascadeMatchCard({ match, description }) {
         </p>
 
         {/* Key callout */}
-        <div className="p-4 bg-white/80 border border-[#B5791A]/20 rounded-xl flex items-start gap-2.5">
+        <div className="p-4 bg-[#E6E0D3] shadow-[inset_3px_3px_6px_rgba(191,180,155,0.5),inset_-3px_-3px_6px_rgba(255,255,255,0.6)] border border-[#B5791A]/30 rounded-xl flex items-start gap-2.5">
           <MessageSquare className="w-4 h-4 text-[#B5791A] flex-shrink-0 mt-0.5" />
           <p className="text-sm font-bold text-[#7A4A0A] leading-relaxed">
             Worth asking your doctor before treating this as something new —
@@ -159,7 +159,7 @@ function NoCascadeCard({ description }) {
           PolySafe checked your symptom description against documented prescribing cascade patterns and didn't find a close match with your current medicine list.
         </p>
 
-        <div className="p-4 bg-white/70 border border-[#2F8558]/20 rounded-xl space-y-1.5">
+        <div className="p-4 bg-[#E6E0D3] shadow-[inset_3px_3px_6px_rgba(191,180,155,0.5),inset_-3px_-3px_6px_rgba(255,255,255,0.6)] border border-[#2F8558]/30 rounded-xl space-y-1.5">
           <div className="flex items-center gap-2">
             <MessageSquare className="w-4 h-4 text-[#2B6E5E] flex-shrink-0" />
             <p className="text-sm font-bold text-[#1A5C3A]">

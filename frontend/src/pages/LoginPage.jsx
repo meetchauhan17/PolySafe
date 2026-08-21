@@ -676,7 +676,7 @@ export default function LoginPage() {
               }}
               className="p-4 rounded-2xl border-2 border-[#E7E1D3] hover:border-[#2B6E5E] bg-[#FAF8F5] hover:bg-[#E4F2E9]/20 flex items-center space-x-3.5 group cursor-pointer transition-all duration-180"
             >
-              <div className="p-2.5 bg-white border border-[#E7E1D3] text-[#2B6E5E] rounded-xl group-hover:bg-[#2B6E5E] group-hover:text-white transition-colors">
+              <div className="p-2.5 bg-[#EDE8DC] shadow-[inset_2px_2px_4px_rgba(191,180,155,0.5),inset_-2px_-2px_4px_rgba(255,255,255,0.6)] border border-[rgba(191,180,155,0.3)] text-[#2B6E5E] rounded-xl group-hover:bg-[#2B6E5E] group-hover:text-white transition-colors">
                 <Compass className="w-5 h-5" />
               </div>
               <div className="flex-1">
@@ -684,7 +684,7 @@ export default function LoginPage() {
                   <h4 className="text-sm font-bold text-[#232724] group-hover:text-[#2B6E5E] transition-colors">
                     Continue as Guest
                   </h4>
-                  <span className="text-[10px] font-bold text-[#2B6E5E] bg-white px-2 py-0.5 rounded-full border border-[#2B6E5E]/20">
+                  <span className="text-[10px] font-bold text-[#2B6E5E] bg-[#E4F2E9] px-2 py-0.5 rounded-full border border-[#2B6E5E]/30">
                     Instant Demo
                   </span>
                 </div>

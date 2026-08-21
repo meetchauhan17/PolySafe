@@ -118,7 +118,7 @@ function PatientSummaryCard({ patientId, patientAge }) {
       {/* Status hero card */}
       <Card variant={variant} className={`p-6 ${cfg.bg} space-y-4`}>
         <div className="flex items-start gap-4">
-          <div className={`p-3 rounded-2xl bg-white/60 border ${cfg.border}`}>
+          <div className={`p-3 rounded-2xl ${cfg.bg} border ${cfg.border} shadow-inner`}>
             {cfg.icon}
           </div>
           <div className="flex-1">

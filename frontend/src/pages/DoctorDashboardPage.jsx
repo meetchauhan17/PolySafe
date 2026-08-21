@@ -107,7 +107,7 @@ function DoctorSafetyCheckModal({ isOpen, onClose, patientId, patientAge }) {
         initial={{ opacity: 0, scale: 0.95, y: 10 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 10 }}
-        className="w-full max-w-2xl bg-[#EDE8DC] border border-[rgba(191,180,155,0.6)] shadow-[10px_10px_30px_rgba(0,0,0,0.25)] rounded-3xl p-6 sm:p-8 space-y-6 max-h-[90vh] overflow-y-auto"
+        className="w-full max-w-2xl bg-[#E8E2D6] border border-[rgba(191,180,155,0.6)] shadow-[10px_10px_30px_rgba(0,0,0,0.25)] rounded-[32px] p-6 sm:p-8 space-y-6 max-h-[90vh] overflow-y-auto"
       >
         {/* Header */}
         <div className="flex items-start justify-between gap-4">
@@ -340,7 +340,7 @@ function DoctorSafetyCheckModal({ isOpen, onClose, patientId, patientAge }) {
                   {result.flags.map((flag, idx) => (
                     <div
                       key={idx}
-                      className="p-3 rounded-xl bg-white border border-[#E7E1D3] shadow-xs space-y-1"
+                      className="p-3 rounded-xl bg-[#EDE8DC] shadow-[4px_4px_8px_rgba(191,180,155,0.5),-4px_-4px_8px_rgba(255,255,255,0.65)] border border-[rgba(191,180,155,0.3)] space-y-1"
                     >
                       <div className="flex items-center justify-between gap-2">
                         <p className="text-xs font-bold text-[#1C2B27]">
@@ -633,7 +633,7 @@ function PatientView({ patientId }) {
                   >
                     {/* Dot */}
                     <div
-                      className="w-10 h-10 rounded-full bg-white border-[3px] flex items-center justify-center flex-shrink-0 shadow-sm"
+                      className="w-10 h-10 rounded-full bg-[#EDE8DC] shadow-[inset_2px_2px_4px_rgba(191,180,155,0.5),inset_-2px_-2px_4px_rgba(255,255,255,0.6)] border-[3px] flex items-center justify-center flex-shrink-0"
                       style={{
                         borderColor: med.flagged ? '#B23D25' : '#2B6E5E',
                       }}
@@ -936,7 +936,7 @@ export default function DoctorDashboardPage() {
                   exit={shouldReduceMotion ? undefined : { opacity: 0, scale: 0.98 }}
                   transition={{ duration: 0.2 }}
                 >
-                  <Card className="flex flex-col items-center justify-center p-12 text-center py-16 bg-white/80 backdrop-blur-sm space-y-4">
+                  <Card className="flex flex-col items-center justify-center p-12 text-center py-16 space-y-4">
                     <EmptyDoctorPatientIllustration className="w-36 h-36 mx-auto mb-1" />
                     <div>
                       <h3

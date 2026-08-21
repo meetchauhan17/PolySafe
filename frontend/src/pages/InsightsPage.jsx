@@ -53,8 +53,8 @@ function CustomChartTooltip({ active, payload, label, mode = 'flags' }) {
     const isModerate = score >= 1 && score < 3;
 
     return (
-      <div className="bg-white border-2 border-[#E7E1D3] rounded-xl p-3.5 shadow-lg max-w-xs space-y-1.5 font-sans">
-        <div className="flex items-center justify-between gap-2 border-b border-[#E7E1D3] pb-1.5">
+      <div className="bg-[#F0EBE0] border border-[#DCD5C6] rounded-xl p-3.5 shadow-md max-w-xs space-y-1.5 font-sans">
+        <div className="flex items-center justify-between gap-2 border-b border-[#DCD5C6] pb-1.5">
           <span className="text-xs font-bold text-[#232724]">{data.label}</span>
           <span
             className="text-[10px] font-extrabold px-2 py-0.5 rounded-full"
@@ -78,8 +78,8 @@ function CustomChartTooltip({ active, payload, label, mode = 'flags' }) {
   }
 
   return (
-    <div className="bg-white border-2 border-[#E7E1D3] rounded-xl p-3.5 shadow-lg max-w-xs space-y-2 font-sans">
-      <p className="text-xs font-bold text-[#232724] border-b border-[#E7E1D3] pb-1">
+    <div className="bg-[#F0EBE0] border border-[#DCD5C6] rounded-xl p-3.5 shadow-md max-w-xs space-y-2 font-sans">
+      <p className="text-xs font-bold text-[#232724] border-b border-[#DCD5C6] pb-1">
         {label || data.period}
       </p>
       <div className="space-y-1 text-xs">

@@ -50,7 +50,7 @@ export default function SignOutConfirmButton({
     return (
       <div
         ref={containerRef}
-        className="inline-flex items-center gap-1.5 p-1 bg-white border-2 border-[#B23D25]/40 rounded-xl shadow-sm animate-fadeIn z-20"
+        className="inline-flex items-center gap-1.5 p-1 bg-[#FBE4DE] border border-[#B23D25]/40 rounded-xl shadow-md animate-fadeIn z-20"
       >
         <span className="text-[11px] font-bold text-[#B23D25] px-1.5 whitespace-nowrap">
           {isGuest ? 'Exit demo?' : 'Sign out?'}
