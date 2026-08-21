@@ -20,7 +20,8 @@ import {
   Users, Shield, Info, TriangleAlert, Plus, Search, X,
   FileText, Activity, Brain, ArrowDownCircle, Printer,
   Sparkles, Check, HeartHandshake, AlertTriangle, Trash2,
-  Calendar, RefreshCw, Layers
+  Calendar, RefreshCw, Layers, Heart, Zap, FlaskConical,
+  ArrowLeftRight, Send, MessageSquare, BarChart2,
 } from 'lucide-react';
 import Card from '../components/Card';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
@@ -54,6 +55,16 @@ async function fetchPatientTimeline(patientId) {
 
 async function fetchPatientClinicalSummary(patientId) {
   const { data } = await axios.get(`/connection/doctor-patient/${patientId}/clinical-summary`);
+  return data;
+}
+
+async function substitutePatientDrug(payload) {
+  const { data } = await axios.post('/connection/doctor-substitute', payload);
+  return data;
+}
+
+async function publishDirective(payload) {
+  const { data } = await axios.post('/connection/doctor-directive', payload);
   return data;
 }
 
@@ -424,6 +435,372 @@ function DoctorSafetyCheckModal({ isOpen, onClose, patientId, patientAge, onPres
         )}
       </motion.div>
     </div>
+  );
+}
+
+// ─── 2b. Drug Substitution Modal ─────────────────────────────────────────────────
+function DrugSubstituteModal({ isOpen, onClose, patientId, medicines, onSuccess }) {
+  const [oldMedId, setOldMedId] = useState('');
+  const [newDrug, setNewDrug]   = useState('');
+  const [newDosage, setNewDosage] = useState('');
+  const [rationale, setRationale] = useState('');
+  const [err, setErr] = useState('');
+
+  const substituteMutation = useMutation({
+    mutationFn: substitutePatientDrug,
+    onSuccess: (res) => {
+      notify.success('Drug Substituted', res.message || 'Substitution complete.');
+      onSuccess?.();
+      onClose();
+    },
+    onError: (e) => {
+      const msg = e?.response?.data?.error || 'Substitution failed.';
+      setErr(msg);
+      notify.error('Substitution Failed', msg);
+    },
+  });
+
+  if (!isOpen) return null;
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setErr('');
+    if (!oldMedId || !newDrug.trim()) {
+      setErr('Please select the current medicine and enter a replacement name.');
+      return;
+    }
+    substituteMutation.mutate({ patientId, oldMedicineId: oldMedId, substituteDrugName: newDrug, substituteDosage: newDosage, rationale });
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.96 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.96 }}
+        className="w-full max-w-lg bg-[#FDFBF7] border border-[#D5CEBF] shadow-2xl rounded-[28px] p-6 space-y-5"
+      >
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <ArrowLeftRight className="w-5 h-5 text-blue-600" />
+            <h3 className="text-base font-bold text-[#1C2B27]">Drug Substitution Order</h3>
+          </div>
+          <button onClick={onClose} className="p-1.5 rounded-xl hover:bg-[#EDE8DC]"><X className="w-4 h-4" /></button>
+        </div>
+
+        {err && (
+          <div className="flex items-center gap-2 p-3 bg-rose-50 border border-rose-200 rounded-xl text-xs text-rose-700">
+            <AlertCircle className="w-4 h-4 flex-shrink-0" />
+            <span>{err}</span>
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-1.5">
+            <label className="text-xs font-extrabold uppercase tracking-wider text-[#5C6B64]">Discontinue (Current Medicine)</label>
+            <select
+              value={oldMedId}
+              onChange={e => setOldMedId(e.target.value)}
+              className="input-field w-full text-sm"
+            >
+              <option value="">Select medicine to replace…</option>
+              {medicines.map(m => (
+                <option key={m.id} value={m.id}>{m.name} {m.dosage ? `(${m.dosage})` : ''}</option>
+              ))}
+            </select>
+          </div>
+
+          <div className="space-y-1.5">
+            <label className="text-xs font-extrabold uppercase tracking-wider text-[#5C6B64]">Replacement Drug Name</label>
+            <input
+              type="text"
+              placeholder="e.g. Ramipril, Amlodipine…"
+              value={newDrug}
+              onChange={e => setNewDrug(e.target.value)}
+              className="input-field w-full text-sm"
+            />
+          </div>
+
+          <div className="space-y-1.5">
+            <label className="text-xs font-extrabold uppercase tracking-wider text-[#5C6B64]">Dosage (optional)</label>
+            <input
+              type="text"
+              placeholder="e.g. 5mg once daily"
+              value={newDosage}
+              onChange={e => setNewDosage(e.target.value)}
+              className="input-field w-full text-sm"
+            />
+          </div>
+
+          <div className="space-y-1.5">
+            <label className="text-xs font-extrabold uppercase tracking-wider text-[#5C6B64]">Clinical Rationale (optional)</label>
+            <textarea
+              placeholder="Reason for substitution…"
+              value={rationale}
+              onChange={e => setRationale(e.target.value)}
+              rows={2}
+              className="input-field w-full text-sm resize-none"
+            />
+          </div>
+
+          <button
+            type="submit"
+            disabled={substituteMutation.isPending}
+            className="btn-primary w-full py-3 flex items-center justify-center gap-2"
+          >
+            {substituteMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <ArrowLeftRight className="w-4 h-4" />}
+            <span>Confirm Substitution</span>
+          </button>
+        </form>
+      </motion.div>
+    </div>
+  );
+}
+
+// ─── 2c. Write Clinical Directive Panel ───────────────────────────────────────────
+function WriteDirectivePanel({ patientId, onClose }) {
+  const [text, setText] = useState('');
+  const [category, setCategory] = useState('REGIMEN_ADVICE');
+  const [priority, setPriority] = useState('HIGH');
+  const [err, setErr] = useState('');
+
+  const directiveMutation = useMutation({
+    mutationFn: publishDirective,
+    onSuccess: () => {
+      notify.success('Directive Sent', 'Clinical directive published to patient.');
+      onClose();
+    },
+    onError: (e) => {
+      const msg = e?.response?.data?.error || 'Failed to publish directive.';
+      setErr(msg);
+      notify.error('Failed', msg);
+    },
+  });
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setErr('');
+    if (!text.trim()) { setErr('Directive text cannot be empty.'); return; }
+    directiveMutation.mutate({ patientId, text, category, priority });
+  };
+
+  const CATEGORIES = [
+    { value: 'REGIMEN_ADVICE', label: '💊 Regimen Advice' },
+    { value: 'DIETARY_INSTRUCTION', label: '🥗 Dietary Instruction' },
+    { value: 'LIFESTYLE_ORDER', label: '🏃 Lifestyle Order' },
+    { value: 'MONITORING_INSTRUCTION', label: '📊 Monitoring Instruction' },
+    { value: 'FOLLOW_UP', label: '📅 Follow-Up Notice' },
+  ];
+
+  return (
+    <Card className="space-y-4 border-l-4 border-[#2B6E5E]">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <MessageSquare className="w-4 h-4 text-[#2B6E5E]" />
+          <p className="text-sm font-bold text-[#1C2B27]">Write Clinical Directive</p>
+        </div>
+        <button onClick={onClose} className="p-1 rounded-lg hover:bg-[#EDE8DC]"><X className="w-4 h-4 text-[#5C6B64]" /></button>
+      </div>
+      {err && <p className="text-xs text-rose-700 bg-rose-50 border border-rose-200 rounded-xl p-2.5">{err}</p>}
+      <form onSubmit={handleSubmit} className="space-y-3">
+        <textarea
+          rows={3}
+          placeholder="e.g. Avoid grapefruit juice while on Atorvastatin. Take with food. INR check in 7 days…"
+          value={text}
+          onChange={e => setText(e.target.value)}
+          className="input-field w-full text-sm resize-none"
+        />
+        <div className="grid grid-cols-2 gap-2">
+          <div className="space-y-1">
+            <label className="text-[10px] font-extrabold uppercase tracking-wider text-[#5C6B64]">Category</label>
+            <select value={category} onChange={e => setCategory(e.target.value)} className="input-field w-full text-xs">
+              {CATEGORIES.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
+            </select>
+          </div>
+          <div className="space-y-1">
+            <label className="text-[10px] font-extrabold uppercase tracking-wider text-[#5C6B64]">Priority</label>
+            <select value={priority} onChange={e => setPriority(e.target.value)} className="input-field w-full text-xs">
+              <option value="URGENT">🔴 Urgent</option>
+              <option value="HIGH">🟠 High</option>
+              <option value="NORMAL">🟢 Normal</option>
+            </select>
+          </div>
+        </div>
+        <button type="submit" disabled={directiveMutation.isPending} className="btn-primary w-full py-2.5 text-xs flex items-center justify-center gap-2">
+          {directiveMutation.isPending ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Send className="w-3.5 h-3.5" />}
+          <span>Publish Directive to Patient</span>
+        </button>
+      </form>
+    </Card>
+  );
+}
+
+// ─── 2d. Organ Toxicity Radar Panel ───────────────────────────────────────────────
+function OrganToxicityPanel({ patientId, medicines }) {
+  const { data, isLoading } = useQuery({
+    queryKey: ['clinical-summary-report', patientId],
+    queryFn: () => fetchPatientClinicalSummary(patientId),
+    enabled: !!patientId,
+    staleTime: 30_000,
+  });
+
+  const organTox = data?.organToxicity;
+
+  const ORGANS = [
+    {
+      key: 'renal',
+      label: 'Renal',
+      icon: <FlaskConical className="w-4 h-4" />,
+      color: { Low: '#2B6E5E', Moderate: '#B5791A', High: '#B23D25', Critical: '#7A1C0E' },
+      bgColor: { Low: 'bg-emerald-50', Moderate: 'bg-amber-50', High: 'bg-rose-50', Critical: 'bg-red-100' },
+      borderColor: { Low: 'border-emerald-200', Moderate: 'border-amber-200', High: 'border-rose-300', Critical: 'border-red-400' },
+      description: 'Nephrotoxic drug burden (NSAIDs, loop diuretics, aminoglycosides)',
+    },
+    {
+      key: 'hepatic',
+      label: 'Hepatic',
+      icon: <Activity className="w-4 h-4" />,
+      color: { Low: '#2B6E5E', Moderate: '#B5791A', High: '#B23D25', Critical: '#7A1C0E' },
+      bgColor: { Low: 'bg-emerald-50', Moderate: 'bg-amber-50', High: 'bg-rose-50', Critical: 'bg-red-100' },
+      borderColor: { Low: 'border-emerald-200', Moderate: 'border-amber-200', High: 'border-rose-300', Critical: 'border-red-400' },
+      description: 'Hepatotoxic drug burden (statins, methotrexate, acetaminophen)',
+    },
+    {
+      key: 'cardiovascular',
+      label: 'Cardiovascular',
+      icon: <Heart className="w-4 h-4" />,
+      color: { Low: '#2B6E5E', Moderate: '#B5791A', High: '#B23D25', Critical: '#7A1C0E' },
+      bgColor: { Low: 'bg-emerald-50', Moderate: 'bg-amber-50', High: 'bg-rose-50', Critical: 'bg-red-100' },
+      borderColor: { Low: 'border-emerald-200', Moderate: 'border-amber-200', High: 'border-rose-300', Critical: 'border-red-400' },
+      description: 'QT-prolonging / proarrhythmic drug burden',
+    },
+    {
+      key: 'cnsCognitive',
+      label: 'CNS / Cognitive',
+      icon: <Brain className="w-4 h-4" />,
+      color: { Low: '#2B6E5E', Moderate: '#B5791A', High: '#B23D25', Critical: '#7A1C0E' },
+      bgColor: { Low: 'bg-emerald-50', Moderate: 'bg-amber-50', High: 'bg-rose-50', Critical: 'bg-red-100' },
+      borderColor: { Low: 'border-emerald-200', Moderate: 'border-amber-200', High: 'border-rose-300', Critical: 'border-red-400' },
+      description: 'Anticholinergic Cognitive Burden (ACB scale 0-3)',
+    },
+  ];
+
+  if (isLoading) {
+    return (
+      <Card className="space-y-4">
+        <div className="flex items-center gap-2">
+          <BarChart2 className="w-4 h-4 text-[#2B6E5E]" />
+          <p className="text-xs font-extrabold uppercase tracking-wider text-[#1C2B27]">Organ Toxicity Radar</p>
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          {[1,2,3,4].map(i => (
+            <div key={i} className="h-20 bg-[#EDE8DC] rounded-2xl animate-pulse" />
+          ))}
+        </div>
+      </Card>
+    );
+  }
+
+  return (
+    <Card className="space-y-5">
+      <div className="flex items-center justify-between gap-2">
+        <div className="flex items-center gap-2">
+          <BarChart2 className="w-4 h-4 text-[#2B6E5E]" />
+          <p className="text-xs font-extrabold uppercase tracking-wider text-[#1C2B27]">Organ & System Toxicity Radar</p>
+        </div>
+        <span className="text-[10px] text-[#5C6B64] font-semibold">Based on active medication burden</span>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        {ORGANS.map(organ => {
+          const organData = organTox?.[organ.key];
+          const score = organData?.score ?? 0;
+          const level = organData?.level ?? 'Low';
+          const flaggedMeds = organData?.flaggedMeds || organData?.explanation ? [organData.explanation] : [];
+          const barColor = organ.color[level] || '#2B6E5E';
+          const bg = organ.bgColor[level] || 'bg-emerald-50';
+          const border = organ.borderColor[level] || 'border-emerald-200';
+
+          return (
+            <motion.div
+              key={organ.key}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.2, ease: 'easeOut' }}
+              className={`p-4 rounded-2xl border ${bg} ${border} space-y-2.5`}
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2" style={{ color: barColor }}>
+                  {organ.icon}
+                  <span className="text-xs font-extrabold">{organ.label}</span>
+                </div>
+                <span
+                  className={`text-[10px] font-extrabold px-2 py-0.5 rounded-full border ${
+                    level === 'Critical' ? 'bg-red-200 text-red-900 border-red-400' :
+                    level === 'High' ? 'bg-rose-100 text-rose-800 border-rose-300' :
+                    level === 'Moderate' ? 'bg-amber-100 text-amber-800 border-amber-300' :
+                    'bg-emerald-100 text-emerald-800 border-emerald-300'
+                  }`}
+                >
+                  {level}
+                </span>
+              </div>
+
+              {/* Score bar */}
+              <div className="space-y-1">
+                <div className="h-2 bg-white/70 rounded-full overflow-hidden border border-black/10">
+                  <motion.div
+                    className="h-full rounded-full"
+                    style={{ backgroundColor: barColor }}
+                    initial={{ width: 0 }}
+                    animate={{ width: `${score}%` }}
+                    transition={{ duration: 0.7, ease: 'easeOut' }}
+                  />
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-[10px] text-[#5C6B64]">{organ.description}</span>
+                  <span className="text-[10px] font-bold" style={{ color: barColor }}>{score}/100</span>
+                </div>
+              </div>
+
+              {flaggedMeds.length > 0 && (
+                <div className="flex flex-wrap gap-1">
+                  {flaggedMeds.slice(0, 3).map((m, i) => (
+                    <span key={i} className="text-[10px] px-2 py-0.5 bg-white/80 border border-black/10 rounded-full font-semibold text-[#1C2B27]">
+                      {m}
+                    </span>
+                  ))}
+                  {flaggedMeds.length > 3 && (
+                    <span className="text-[10px] px-2 py-0.5 bg-white/80 border border-black/10 rounded-full text-[#5C6B64]">
+                      +{flaggedMeds.length - 3} more
+                    </span>
+                  )}
+                </div>
+              )}
+            </motion.div>
+          );
+        })}
+      </div>
+
+      {/* ACB detail */}
+      {data?.anticholinergicBurden && (
+        <div className="p-3.5 bg-[#EDE8DC] rounded-2xl border border-[#D5CEBF] space-y-1.5">
+          <p className="text-xs font-extrabold text-[#1C2B27] flex items-center gap-1.5">
+            <Brain className="w-3.5 h-3.5 text-purple-600" />
+            Anticholinergic Cognitive Burden (ACB)
+          </p>
+          <div className="flex items-center gap-3">
+            <span className="text-2xl font-black text-[#1C2B27]" style={{ fontFamily: "'Fraunces', serif" }}>
+              {data.anticholinergicBurden.totalScore ?? 0}
+            </span>
+            <div>
+              <p className="text-xs font-bold text-[#1C2B27]">{data.anticholinergicBurden.level}</p>
+              <p className="text-[11px] text-[#5C6B64]">{data.anticholinergicBurden.explanation}</p>
+            </div>
+          </div>
+        </div>
+      )}
+    </Card>
   );
 }
 
@@ -838,9 +1215,11 @@ function PatientSymptomsPanel({ patientId }) {
 function PatientView({ patientId }) {
   const shouldReduceMotion = useReducedMotion();
   const queryClient = useQueryClient();
-  const [activeTab, setActiveTab] = useState('timeline'); // 'timeline' | 'deprescribing' | 'symptoms'
+  const [activeTab, setActiveTab] = useState('timeline'); // 'timeline' | 'deprescribing' | 'symptoms' | 'toxicity' | 'directives'
   const [showSafetyCheckModal, setShowSafetyCheckModal] = useState(false);
   const [showReportModal, setShowReportModal] = useState(false);
+  const [showSubstituteModal, setShowSubstituteModal] = useState(false);
+  const [showDirectivePanel, setShowDirectivePanel] = useState(false);
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ['patient-timeline', patientId],
@@ -905,6 +1284,24 @@ function PatientView({ patientId }) {
 
             <button
               type="button"
+              onClick={() => setShowSubstituteModal(true)}
+              className="btn-secondary py-2 px-3.5 text-xs flex items-center gap-1.5 cursor-pointer shadow-xs"
+            >
+              <ArrowLeftRight className="w-3.5 h-3.5 text-blue-600" />
+              <span>Substitute Drug</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setShowDirectivePanel(prev => !prev)}
+              className="btn-secondary py-2 px-3.5 text-xs flex items-center gap-1.5 cursor-pointer shadow-xs"
+            >
+              <MessageSquare className="w-3.5 h-3.5 text-purple-600" />
+              <span>Write Directive</span>
+            </button>
+
+            <button
+              type="button"
               onClick={() => setShowSafetyCheckModal(true)}
               className="btn-primary py-2 px-4 text-xs flex items-center gap-2 shadow-md cursor-pointer"
             >
@@ -913,6 +1310,11 @@ function PatientView({ patientId }) {
             </button>
           </div>
         </div>
+
+        {/* Write Directive inline panel */}
+        {showDirectivePanel && (
+          <WriteDirectivePanel patientId={patientId} onClose={() => setShowDirectivePanel(false)} />
+        )}
 
         {/* Tab Navigation */}
         <div className="flex items-center gap-2 border-t border-[rgba(191,180,155,0.3)] pt-3 overflow-x-auto">
@@ -953,6 +1355,19 @@ function PatientView({ patientId }) {
             <Activity className="w-3.5 h-3.5" />
             <span>Patient Symptoms</span>
           </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveTab('toxicity')}
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
+              activeTab === 'toxicity'
+                ? 'bg-[#2B6E5E] text-white shadow-xs'
+                : 'text-[#5C6B64] hover:bg-[#EDE8DC]'
+            }`}
+          >
+            <BarChart2 className="w-3.5 h-3.5" />
+            <span>Organ Toxicity</span>
+          </button>
         </div>
       </Card>
 
@@ -963,6 +1378,18 @@ function PatientView({ patientId }) {
         patientId={patientId}
         patientAge={patient.age}
         onPrescribeSuccess={() => {
+          queryClient.invalidateQueries(['patient-timeline', patientId]);
+          queryClient.invalidateQueries(['clinical-summary-report', patientId]);
+        }}
+      />
+
+      {/* Drug Substitution Modal */}
+      <DrugSubstituteModal
+        isOpen={showSubstituteModal}
+        onClose={() => setShowSubstituteModal(false)}
+        patientId={patientId}
+        medicines={medicines}
+        onSuccess={() => {
           queryClient.invalidateQueries(['patient-timeline', patientId]);
           queryClient.invalidateQueries(['clinical-summary-report', patientId]);
         }}
@@ -1133,6 +1560,11 @@ function PatientView({ patientId }) {
       {/* Tab 3: Patient Logged Symptoms */}
       {activeTab === 'symptoms' && (
         <PatientSymptomsPanel patientId={patientId} />
+      )}
+
+      {/* Tab 4: Organ Toxicity Radar */}
+      {activeTab === 'toxicity' && (
+        <OrganToxicityPanel patientId={patientId} medicines={medicines} />
       )}
     </div>
   );

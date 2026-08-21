@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
@@ -26,6 +26,10 @@ import {
   Pencil,
   Trash2,
   X,
+  MessageSquare,
+  ArrowLeftRight,
+  ClipboardList,
+  Megaphone,
 } from 'lucide-react';
 import { patientApi } from '../api/auth';
 import Card from '../components/Card';
@@ -120,6 +124,116 @@ const DEMO_DATA = {
     },
   ],
 };
+
+// ─── Physician Directives Banner ────────────────────────────────────────────
+function PhysicianDirectivesBanner({ patientId, token }) {
+  const shouldReduceMotion = useReducedMotion();
+  // Live events from Socket.IO (via window-level event bus)
+  const [liveEvents, setLiveEvents] = useState([]);
+  const [dismissed, setDismissed] = useState(new Set());
+
+  // Fetch persisted directives from API
+  const { data: directivesData } = useQuery({
+    queryKey: ['patient-directives', patientId],
+    queryFn: () => patientId ? axios.get(`/connection/doctor-patient/${patientId}/directives`).then(r => r.data) : null,
+    enabled: !!patientId && !!token,
+    refetchInterval: 30_000,
+    staleTime: 15_000,
+  });
+
+  // Listen for Socket.IO-pushed doctor events on the window event bus
+  useEffect(() => {
+    const handler = (e) => {
+      const evt = e.detail;
+      if (!evt) return;
+      setLiveEvents(prev => [{
+        id: `live-${Date.now()}`,
+        ...evt,
+        issuedAt: new Date().toISOString(),
+        isLive: true,
+      }, ...prev].slice(0, 8));
+    };
+    window.addEventListener('polysafe:doctor-event', handler);
+    return () => window.removeEventListener('polysafe:doctor-event', handler);
+  }, []);
+
+  const directives = directivesData?.directives || [];
+  const allEvents = [...liveEvents, ...directives.map(d => ({ ...d, isLive: false }))];
+  const visible = allEvents.filter(e => !dismissed.has(e.id));
+
+  if (visible.length === 0) return null;
+
+  const getEventStyle = (evt) => {
+    const action = evt.action || evt.category || '';
+    if (action.includes('PRESCRIBED') || action === 'REGIMEN_ADVICE') {
+      return { bg: 'bg-[#E4F2E9]', border: 'border-[#2B6E5E]/30', text: 'text-[#1A5C3A]', icon: <Stethoscope className="w-4 h-4 text-[#2B6E5E] flex-shrink-0" />, label: 'Physician Prescription' };
+    }
+    if (action.includes('DEPRESCRIBED') || action.includes('TAPER')) {
+      return { bg: 'bg-amber-50', border: 'border-amber-200', text: 'text-amber-800', icon: <ArrowLeftRight className="w-4 h-4 text-amber-600 flex-shrink-0" />, label: 'Deprescribing Order' };
+    }
+    if (action.includes('SUBSTITUTED')) {
+      return { bg: 'bg-blue-50', border: 'border-blue-200', text: 'text-blue-800', icon: <ArrowLeftRight className="w-4 h-4 text-blue-600 flex-shrink-0" />, label: 'Drug Substitution' };
+    }
+    return { bg: 'bg-[#EDE8DC]', border: 'border-[#D5CEBF]', text: 'text-[#1C2B27]', icon: <ClipboardList className="w-4 h-4 text-[#5C6B64] flex-shrink-0" />, label: 'Clinical Directive' };
+  };
+
+  const formatEvent = (evt) => {
+    const action = evt.action || '';
+    if (action === 'DOCTOR_PRESCRIBED') return `${evt.doctorLabel || 'Your doctor'} prescribed ${evt.medicine?.name || evt.prescribed || 'a new medication'}.`;
+    if (action === 'DOCTOR_DEPRESCRIBED') return `${evt.doctorLabel || 'Your doctor'} discontinued ${evt.medicine?.name || evt.discontinued || 'a medication'}.`;
+    if (action === 'DOCTOR_SUBSTITUTED') return `${evt.doctorLabel || 'Your doctor'} substituted ${evt.discontinued || '...'} → ${evt.prescribed || '...'}. ${evt.rationale ? `Reason: ${evt.rationale}` : ''}`;
+    return evt.text || evt.note || 'New clinical update from your physician.';
+  };
+
+  return (
+    <div className="space-y-2">
+      <div className="flex items-center gap-2">
+        <Megaphone className="w-3.5 h-3.5 text-[#2B6E5E]" />
+        <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#2B6E5E]">Physician Directives & Updates</span>
+        <span className="text-[10px] font-bold text-white bg-[#2B6E5E] px-2 py-0.5 rounded-full">{visible.length}</span>
+      </div>
+      <AnimatePresence initial={false}>
+        {visible.map((evt) => {
+          const style = getEventStyle(evt);
+          return (
+            <motion.div
+              key={evt.id}
+              initial={shouldReduceMotion ? false : { opacity: 0, y: -8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={shouldReduceMotion ? undefined : { opacity: 0, scale: 0.96 }}
+              transition={{ duration: 0.2, ease: 'easeOut' }}
+              className={`relative flex items-start gap-3 p-3.5 rounded-2xl border ${style.bg} ${style.border} shadow-sm`}
+            >
+              {evt.isLive && (
+                <span className="absolute top-2 right-9 text-[9px] font-extrabold bg-green-500 text-white px-1.5 py-0.5 rounded-full animate-pulse">
+                  LIVE
+                </span>
+              )}
+              <div className="mt-0.5">{style.icon}</div>
+              <div className="flex-1 min-w-0">
+                <p className={`text-[10px] font-extrabold uppercase tracking-wider mb-0.5 ${style.text}`}>{style.label}</p>
+                <p className={`text-xs font-semibold leading-relaxed ${style.text}`}>{formatEvent(evt)}</p>
+                {evt.rationale && evt.action !== 'DOCTOR_SUBSTITUTED' && (
+                  <p className="text-[11px] text-[#5C6B64] mt-0.5">{evt.rationale}</p>
+                )}
+                <p className="text-[10px] text-[#9CA3AF] mt-1">
+                  {evt.doctorName || evt.doctorLabel || 'Physician'} · {new Date(evt.issuedAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                </p>
+              </div>
+              <button
+                onClick={() => setDismissed(prev => new Set([...prev, evt.id]))}
+                className="p-1 rounded-lg hover:bg-black/10 transition-colors flex-shrink-0 mt-0.5"
+                aria-label="Dismiss"
+              >
+                <X className="w-3.5 h-3.5 text-[#5C6B64]" />
+              </button>
+            </motion.div>
+          );
+        })}
+      </AnimatePresence>
+    </div>
+  );
+}
 
 // ─── Main Component ──────────────────────────────────────────────────────────
 export default function HomePage() {
@@ -299,6 +413,13 @@ export default function HomePage() {
           </Card>
         ) : (
           <>
+            {/* ═══════════════════════════════════════════════════════════════
+                PHYSICIAN DIRECTIVES BANNER (live doctor updates)
+               ═══════════════════════════════════════════════════════════════ */}
+            {!isDemo && data?.patientId && (
+              <PhysicianDirectivesBanner patientId={data.patientId} token={token} />
+            )}
+
             {/* ═══════════════════════════════════════════════════════════════
                 POLYPHARMACY RISK OVERVIEW (Harm Level Dashboard)
                ═══════════════════════════════════════════════════════════════ */}
