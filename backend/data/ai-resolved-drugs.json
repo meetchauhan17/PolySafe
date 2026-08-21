@@ -4558,5 +4558,43 @@
     "safetyTip": "Take at least 1 hour before or 2 hours after a meal. Avoid grapefruit and grapefruit juice during treatment.",
     "standardizedCode": "1430441",
     "layer": "Layer 5 (gemini_gemini-3.5-flash-lite)"
+  },
+  "amitriptyline": {
+    "resolvedName": "Amitriptyline 25mg",
+    "genericName": "Amitriptyline 25mg",
+    "genericSalts": [
+      "Amitriptyline 25mg"
+    ],
+    "constituents": [
+      "Amitriptyline 25mg"
+    ],
+    "harmLevel": 4,
+    "class": "RxNorm Standard Drug",
+    "foodInstruction": "after_food",
+    "dosageOptions": [
+      "Standard dose"
+    ],
+    "safetyTip": "RxNorm validated medication. Take as directed.",
+    "standardizedCode": "704",
+    "layer": "Layer 4 (RxNorm REST API)"
+  },
+  "cholecalciferol": {
+    "resolvedName": "Cholecalciferol",
+    "genericName": "Cholecalciferol",
+    "genericSalts": [
+      "Cholecalciferol"
+    ],
+    "constituents": [
+      "Cholecalciferol"
+    ],
+    "harmLevel": 1,
+    "class": "RxNorm Standard Drug",
+    "foodInstruction": "after_food",
+    "dosageOptions": [
+      "Standard dose"
+    ],
+    "safetyTip": "RxNorm validated medication. Take as directed.",
+    "standardizedCode": "2418",
+    "layer": "Layer 4 (RxNorm REST API)"
   }
 }

@@ -708,4 +708,379 @@ router.get('/my-connections', auth, requireRole(['PATIENT']), async (req, res) =
   }
 });
 
+// ═════════════════════════════════════════════════════════════════════════════
+// POST /connection/doctor-prescribe
+// Doctor-auth: Prescribes and directly adds a medicine to a connected patient's
+// active medication list with clinical provenance ("Prescribed by Dr. ...").
+// ═════════════════════════════════════════════════════════════════════════════
+router.post('/doctor-prescribe', auth, requireRole(['DOCTOR']), async (req, res) => {
+  const { userId } = req.user;
+  const { patientId, name, dosage, type = 'PRESCRIPTION', foodInstruction, notes } = req.body;
+
+  if (!patientId || !name || !name.trim()) {
+    return res.status(400).json({ error: 'patientId and medication name are required.' });
+  }
+
+  try {
+    // 1. Verify approved connection
+    const connection = await prisma.connection.findFirst({
+      where: { connectedUserId: userId, patientId, status: 'APPROVED' },
+    });
+    if (!connection) {
+      return res.status(403).json({ error: 'No approved connection to this patient.' });
+    }
+
+    const patient = await prisma.patient.findUnique({ where: { id: patientId } });
+    if (!patient) return res.status(404).json({ error: 'Patient profile not found.' });
+
+    // 2. Fetch doctor info
+    const doctorUser = await prisma.user.findUnique({ where: { id: userId } });
+    const doctorLabel = doctorUser?.email ? `Dr. ${doctorUser.email.split('@')[0]}` : 'Connected Doctor';
+
+    // 3. Resolve drug via 5-layer AI / Indian formulary resolver
+    const { resolveDrugWithAI } = require('../services/aiDrugResolver');
+    const { getDrugHarmLevel, calculateRegimenRisk } = require('../services/regimenRisk');
+    const { calculateCumulativeBurden } = require('../services/burdenIndex');
+
+    const resolved = await resolveDrugWithAI(name.trim());
+    const standardizedCode = resolved.standardizedCode || null;
+    const resolvedName = resolved.resolvedName || name.trim();
+    const harmLevel = resolved.harmLevel || getDrugHarmLevel(resolvedName, resolved.class);
+
+    // 4. Check for duplicate in patient's active medicines
+    const existing = await prisma.medicine.findFirst({
+      where: {
+        patientId,
+        removedAt: null,
+        OR: [
+          ...(standardizedCode ? [{ standardizedCode }] : []),
+          { name: { equals: name.trim(), mode: 'insensitive' } },
+          { name: { equals: resolvedName, mode: 'insensitive' } },
+        ],
+      },
+    });
+
+    if (existing) {
+      const updated = await prisma.medicine.update({
+        where: { id: existing.id },
+        data: {
+          dosage: dosage?.trim() || existing.dosage,
+          type: type || existing.type,
+          harmLevel,
+          addedBy: userId,
+        },
+      });
+      return res.status(200).json({
+        message: `Updated existing medication "${existing.name}".`,
+        medicine: updated,
+        doctorLabel,
+      });
+    }
+
+    // 5. Create new medicine record
+    const medicine = await prisma.medicine.create({
+      data: {
+        patientId,
+        name: resolvedName,
+        standardizedCode,
+        type: type || 'PRESCRIPTION',
+        dosage: dosage?.trim() || (resolved.dosageOptions?.[0] || 'Standard dose'),
+        harmLevel,
+        addedBy: userId,
+        dateAdded: new Date(),
+      },
+    });
+
+    // 6. Check interactions with existing active medications
+    const otherMeds = await prisma.medicine.findMany({
+      where: { patientId, id: { not: medicine.id }, removedAt: null },
+    });
+
+    const newFlags = [];
+    for (const other of otherMeds) {
+      let match = await lookupInteraction(medicine.name, other.name);
+      if (!match.found && resolved.genericSalts?.length) {
+        for (const salt of resolved.genericSalts) {
+          const saltMatch = await lookupInteraction(salt, other.name);
+          if (saltMatch.found) {
+            match = saltMatch;
+            break;
+          }
+        }
+      }
+
+      if (match.found) {
+        const flag = await prisma.interactionFlag.create({
+          data: {
+            patientId,
+            medicineAId: medicine.id,
+            medicineBId: other.id,
+            severity: match.severity || 'Moderate',
+            clinicalExplanation: match.note || `Potential ${match.severity || 'Moderate'} interaction between ${medicine.name} and ${other.name}.`,
+          },
+        });
+        newFlags.push(flag);
+      }
+    }
+
+    // 7. Calculate updated burden & risk
+    const cumulativeBurden = await calculateCumulativeBurden(patientId);
+    const regimenRisk = await calculateRegimenRisk(patientId);
+
+    // 8. Emit real-time Socket notification to patient room
+    const io = req.app.get('io');
+    if (io) {
+      io.to(`patient-${patient.userId}`).emit('patient-regimen-updated', {
+        action: 'DOCTOR_PRESCRIBED',
+        medicine,
+        doctorLabel,
+        newFlagsCount: newFlags.length,
+        regimenRisk,
+        cumulativeBurden,
+      });
+    }
+
+    return res.status(201).json({
+      message: `Successfully prescribed ${medicine.name} for patient.`,
+      medicine,
+      doctorLabel,
+      newFlags,
+      regimenRisk,
+      cumulativeBurden,
+    });
+  } catch (err) {
+    console.error('[POST /connection/doctor-prescribe]', err);
+    return res.status(500).json({ error: 'Failed to prescribe medication.' });
+  }
+});
+
+// ═════════════════════════════════════════════════════════════════════════════
+// POST /connection/doctor-deprescribe
+// Doctor-auth: Soft-discontinues a high-risk or redundant medication with clinical
+// deprescribing rationale & taper guidance.
+// ═════════════════════════════════════════════════════════════════════════════
+router.post('/doctor-deprescribe', auth, requireRole(['DOCTOR']), async (req, res) => {
+  const { userId } = req.user;
+  const { patientId, medicineId, rationale, taperPlan } = req.body;
+
+  if (!patientId || !medicineId) {
+    return res.status(400).json({ error: 'patientId and medicineId are required.' });
+  }
+
+  try {
+    const connection = await prisma.connection.findFirst({
+      where: { connectedUserId: userId, patientId, status: 'APPROVED' },
+    });
+    if (!connection) {
+      return res.status(403).json({ error: 'No approved connection to this patient.' });
+    }
+
+    const patient = await prisma.patient.findUnique({ where: { id: patientId } });
+    if (!patient) return res.status(404).json({ error: 'Patient profile not found.' });
+
+    const med = await prisma.medicine.findFirst({
+      where: { id: medicineId, patientId, removedAt: null },
+    });
+    if (!med) return res.status(404).json({ error: 'Active medicine not found.' });
+
+    // Soft delete
+    const discontinued = await prisma.medicine.update({
+      where: { id: medicineId },
+      data: { removedAt: new Date() },
+    });
+
+    // Delete associated interaction flags
+    await prisma.interactionFlag.deleteMany({
+      where: {
+        OR: [{ medicineAId: medicineId }, { medicineBId: medicineId }],
+      },
+    });
+
+    const { calculateRegimenRisk } = require('../services/regimenRisk');
+    const { calculateCumulativeBurden } = require('../services/burdenIndex');
+
+    const updatedBurden = await calculateCumulativeBurden(patientId);
+    const updatedRisk = await calculateRegimenRisk(patientId);
+
+    const io = req.app.get('io');
+    if (io) {
+      io.to(`patient-${patient.userId}`).emit('patient-regimen-updated', {
+        action: 'DOCTOR_DEPRESCRIBED',
+        medicineId,
+        medicineName: med.name,
+        rationale: rationale || 'Discontinued by physician to optimize regimen safety.',
+        taperPlan,
+      });
+    }
+
+    return res.status(200).json({
+      message: `Successfully deprescribed ${med.name}.`,
+      discontinued,
+      updatedBurden,
+      updatedRisk,
+    });
+  } catch (err) {
+    console.error('[POST /connection/doctor-deprescribe]', err);
+    return res.status(500).json({ error: 'Failed to deprescribe medication.' });
+  }
+});
+
+// ═════════════════════════════════════════════════════════════════════════════
+// GET /connection/doctor-patient/:patientId/clinical-summary
+// Doctor-auth: Comprehensive clinical assessment report for consultation & review.
+// ═════════════════════════════════════════════════════════════════════════════
+router.get('/doctor-patient/:patientId/clinical-summary', auth, requireRole(['DOCTOR']), async (req, res) => {
+  const { userId } = req.user;
+  const { patientId } = req.params;
+
+  try {
+    const connection = await prisma.connection.findFirst({
+      where: { connectedUserId: userId, patientId, status: 'APPROVED' },
+    });
+    if (!connection) {
+      return res.status(403).json({ error: 'No approved connection to this patient.' });
+    }
+
+    const patient = await prisma.patient.findUnique({
+      where: { id: patientId },
+      include: {
+        user: { select: { email: true, phone: true } },
+      },
+    });
+    if (!patient) return res.status(404).json({ error: 'Patient not found.' });
+
+    // Active medicines
+    const activeMeds = await prisma.medicine.findMany({
+      where: { patientId, removedAt: null },
+      orderBy: { dateAdded: 'desc' },
+      include: {
+        addedByUser: { select: { role: true, email: true } },
+      },
+    });
+
+    // Discontinued medicines
+    const discontinuedMeds = await prisma.medicine.findMany({
+      where: { patientId, removedAt: { not: null } },
+      orderBy: { removedAt: 'desc' },
+      take: 10,
+    });
+
+    // Active flags
+    const flags = await prisma.interactionFlag.findMany({
+      where: {
+        patientId,
+        medicineA: { removedAt: null },
+        medicineB: { removedAt: null },
+      },
+      include: {
+        medicineA: { select: { id: true, name: true, harmLevel: true } },
+        medicineB: { select: { id: true, name: true, harmLevel: true } },
+      },
+    });
+
+    // Recent patient logged symptoms (to detect prescribing cascades)
+    const symptoms = await prisma.symptom.findMany({
+      where: { patientId },
+      orderBy: { dateLogged: 'desc' },
+      take: 10,
+    });
+
+    const { calculateRegimenRisk } = require('../services/regimenRisk');
+    const { calculateCumulativeBurden } = require('../services/burdenIndex');
+
+    const burden = await calculateCumulativeBurden(patientId);
+    const risk = await calculateRegimenRisk(patientId);
+
+    // Identify Beers Criteria / High-Risk Deprescribing Candidates
+    const deprescribingCandidates = [];
+    const HIGH_ACB_DRUGS = new Set(['hydroxyzine', 'amitriptyline', 'diphenhydramine', 'chlorpheniramine', 'oxybutynin', 'promethazine']);
+    const HIGH_FALL_RISK = new Set(['zolpidem', 'alprazolam', 'clonazepam', 'lorazepam', 'diazepam']);
+
+    for (const med of activeMeds) {
+      const lower = med.name.toLowerCase();
+      let isCandidate = false;
+      let reason = '';
+      let recommendation = '';
+
+      if (med.harmLevel >= 4) {
+        isCandidate = true;
+        reason = `Level ${med.harmLevel} high-risk medication with significant polypharmacy burden.`;
+        recommendation = 'Assess clinical indication and consider dose reduction or safer alternative.';
+      }
+
+      for (const acb of HIGH_ACB_DRUGS) {
+        if (lower.includes(acb)) {
+          isCandidate = true;
+          reason = `High Anticholinergic Cognitive Burden (+3 ACB score) — elevated risk of confusion, urinary retention, and falls in elderly.`;
+          recommendation = 'Consider non-anticholinergic substitute (e.g. Cetirizine/Fexofenadine for allergies).';
+        }
+      }
+
+      for (const sedative of HIGH_FALL_RISK) {
+        if (lower.includes(sedative)) {
+          isCandidate = true;
+          reason = 'Sedative-hypnotic / Benzodiazepine — Beers Criteria high fall and fracture risk.';
+          recommendation = 'Consider gradual taper and non-pharmacological sleep hygiene or CBT-I.';
+        }
+      }
+
+      if (isCandidate) {
+        deprescribingCandidates.push({
+          medicineId: med.id,
+          name: med.name,
+          dosage: med.dosage,
+          harmLevel: med.harmLevel,
+          reason,
+          recommendation,
+        });
+      }
+    }
+
+    return res.status(200).json({
+      patient: {
+        id: patient.id,
+        age: patient.age,
+        conditions: patient.conditions || [],
+        allergies: patient.allergies || [],
+        contact: patient.user?.email || patient.user?.phone || 'Anonymous Patient',
+      },
+      activeMedicines: activeMeds.map(m => ({
+        id: m.id,
+        name: m.name,
+        dosage: m.dosage,
+        type: m.type,
+        harmLevel: m.harmLevel,
+        dateAdded: m.dateAdded,
+        prescribedBy: m.addedByUser?.role === 'DOCTOR' ? 'Physician' : 'Self-logged',
+      })),
+      discontinuedMedicines: discontinuedMeds.map(m => ({
+        id: m.id,
+        name: m.name,
+        dosage: m.dosage,
+        removedAt: m.removedAt,
+      })),
+      flags: flags.map(f => ({
+        id: f.id,
+        drugA: f.medicineA?.name || 'Medication A',
+        drugB: f.medicineB?.name || 'Medication B',
+        severity: f.severity,
+        explanation: f.clinicalExplanation,
+      })),
+      symptoms: symptoms.map(s => ({
+        id: s.id,
+        description: s.description,
+        date: s.dateLogged,
+      })),
+      anticholinergicBurden: burden,
+      regimenRisk: risk,
+      deprescribingCandidates,
+      generatedAt: new Date().toISOString(),
+    });
+  } catch (err) {
+    console.error('[GET /connection/doctor-patient/:patientId/clinical-summary]', err);
+    return res.status(500).json({ error: 'Failed to generate clinical summary.' });
+  }
+});
+
 module.exports = router;
+
