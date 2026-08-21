@@ -7,6 +7,8 @@ const prisma = require('../lib/prisma');
 const { auth, requireRole } = require('../middleware/auth');
 const { lookupAllPairs } = require('../services/interactionLookup');
 const { isDemoMode, getMockRxCui } = require('../lib/demo');
+const { resolveDrugWithAI, getRxCuiWithAI } = require('../services/aiDrugResolver');
+const { getDrugHarmLevel } = require('../services/regimenRisk');
 
 const router = express.Router();
 
@@ -31,48 +33,59 @@ function validate(schema, body, res) {
   return result.data;
 }
 
-// ─── RxNorm standardisation ───────────────────────────────────────────────────
-// Standardizes drug names using local brand dictionaries, constituent parsing,
-// and RxNorm / RxNav REST APIs.
+// ─── 5-Layer RxNorm standardisation ──────────────────────────────────────────
+// Layer 1: Demo mock (if DEMO_MODE=true)
+// Layer 2: Curated brand alias dictionary (0ms, instant)
+// Layer 3: AI Drug Resolver (OpenFDA + RxNorm + Groq LLM + heuristics)
+// Layer 4: Direct NIH RxNav exact lookup
+// Layer 5: NIH RxNav approximate term lookup
 async function lookupRxCui(name) {
   if (!name) return null;
 
-  // ── DEMO MOCK ── RxNorm/RxNav not called. Remove DEMO_MODE=true for production.
+  // ── DEMO MOCK ──
   if (isDemoMode()) {
     const mockCui = getMockRxCui(name);
-    console.log(`[rxnorm] DEMO_MODE=true — mock RxCUI for "${name}": ${mockCui ?? 'no match (null, non-failing)'}`);
+    console.log(`[rxnorm] DEMO_MODE=true — mock RxCUI for "${name}": ${mockCui ?? 'null'}`);
     return mockCui;
   }
 
-  // 1. Check curated aliases & constituent extraction first (instant)
+  // Layer 2: Curated aliases (instant, no network)
   const aliasCui = getRxCuiForDrug(name);
   if (aliasCui) {
-    console.log(`[rxnorm] Resolved RxCUI for "${name}" via drugAliases → ${aliasCui}`);
+    console.log(`[rxnorm] "${name}" → alias CUI ${aliasCui}`);
     return aliasCui;
   }
 
-  // 2. Direct RxNav rxcui.json lookup
+  // Layer 3: AI resolver (OpenFDA + RxNorm + Groq LLM + heuristics in parallel)
+  try {
+    const aiCui = await getRxCuiWithAI(name);
+    if (aiCui) {
+      console.log(`[rxnorm] "${name}" → AI-resolved CUI ${aiCui}`);
+      return aiCui;
+    }
+  } catch (aiErr) {
+    console.warn(`[rxnorm] AI resolver failed for "${name}":`, aiErr.message);
+  }
+
+  // Layer 4: Direct RxNav exact match
   try {
     const url = `https://rxnav.nlm.nih.gov/REST/rxcui.json?name=${encodeURIComponent(name)}&allSourcesFlag=1`;
     const { data } = await axios.get(url, { timeout: 4000 });
     const rxcui = data?.idGroup?.rxnormId?.[0] ?? null;
     if (rxcui) return rxcui;
-  } catch (rxErr) {
-    // try approximateTerm below
-  }
+  } catch { /* try approximate below */ }
 
-  // 3. Approximate term lookup for brand/spelling variations
+  // Layer 5: Approximate term lookup for brand/spelling variations
   try {
     const approxUrl = `https://rxnav.nlm.nih.gov/REST/approximateTerm.json?term=${encodeURIComponent(name)}&maxEntries=3`;
     const { data } = await axios.get(approxUrl, { timeout: 4000 });
-    const candidatesList = data?.approximateGroup?.candidate ?? [];
-    if (candidatesList.length > 0 && candidatesList[0]?.rxcui) {
-      return candidatesList[0].rxcui;
-    }
+    const candidates = data?.approximateGroup?.candidate ?? [];
+    if (candidates.length > 0 && candidates[0]?.rxcui) return candidates[0].rxcui;
   } catch (approxErr) {
-    console.warn(`[rxnorm] Approximate lookup failed for "${name}":`, approxErr.message);
+    console.warn(`[rxnorm] Approx lookup failed for "${name}":`, approxErr.message);
   }
 
+  console.log(`[rxnorm] "${name}" → no RxCUI found (will use name-matching for interactions)`);
   return null;
 }
 
@@ -120,29 +133,74 @@ router.post('/', auth, requireRole(['PATIENT', 'CAREGIVER']), async (req, res) =
       });
     }
 
-    // ── 2. RxNorm standardisation ─────────────────────────────────────────────
-    const standardizedCode = await lookupRxCui(name);
+    // ── 2. Run through 5-Layer AI & Indian Brand Resolver ────────────────────
+    const resolved = await resolveDrugWithAI(name);
+    const standardizedCode = resolved.standardizedCode;
+    const resolvedName = resolved.resolvedName || name.trim();
+    const harmLevel = resolved.harmLevel || getDrugHarmLevel(resolvedName, resolved.class);
+
     console.log(
-      `[rxnorm] "${name}" → ${standardizedCode ? `RxCUI ${standardizedCode}` : 'no match'}`
+      `[aiDrugResolver] "${name}" → ${resolvedName} | ${resolved.genericName} (${resolved.layer}) | RxCUI: ${standardizedCode || 'none'} | Harm: L${harmLevel}`
     );
 
-    // ── 3. Duplicate detection ────────────────────────────────────────────────
-    if (standardizedCode) {
-      const existing = await prisma.medicine.findFirst({
-        where: { patientId: patient.id, standardizedCode },
-      });
-      if (existing) {
-        return res.status(409).json({
-          error: 'Already in your list — update dosage instead?',
-          existingMedicine: {
-            id: existing.id,
-            name: existing.name,
-            dosage: existing.dosage,
-            standardizedCode: existing.standardizedCode,
-            dateAdded: existing.dateAdded,
+    // ── 3. Duplicate detection (only check active medicines) ────────────────
+    const existing = await prisma.medicine.findFirst({
+      where: {
+        patientId: patient.id,
+        removedAt: null,
+        OR: [
+          ...(standardizedCode ? [{ standardizedCode }] : []),
+          { name: { equals: name.trim(), mode: 'insensitive' } },
+          { name: { equals: resolvedName, mode: 'insensitive' } },
+        ],
+      },
+    });
+
+    if (existing) {
+      if (req.body.forceUpdate) {
+        const updated = await prisma.medicine.update({
+          where: { id: existing.id },
+          data: {
+            dosage: dosage?.trim() ?? existing.dosage,
+            type: type ?? existing.type,
+            harmLevel,
           },
         });
+
+        return res.status(200).json({
+          message: 'Medicine dosage updated successfully.',
+          medicine: {
+            id:               updated.id,
+            name:             updated.name,
+            type:             updated.type,
+            dosage:           updated.dosage,
+            harmLevel:        updated.harmLevel,
+            standardizedCode: updated.standardizedCode,
+            standardized:     !!updated.standardizedCode,
+            dateAdded:        updated.dateAdded,
+            class:            resolved.class,
+            foodInstruction:  resolved.foodInstruction,
+            dosageOptions:    resolved.dosageOptions,
+            safetyTip:        resolved.safetyTip,
+            genericSalts:     resolved.genericSalts,
+          },
+          resolved,
+          checkingInteractions: true,
+        });
       }
+
+      return res.status(409).json({
+        error: `"${existing.name}" is already in your active medication list.`,
+        existingMedicine: {
+          id: existing.id,
+          name: existing.name,
+          dosage: existing.dosage,
+          type: existing.type,
+          harmLevel: existing.harmLevel,
+          standardizedCode: existing.standardizedCode,
+          dateAdded: existing.dateAdded,
+        },
+      });
     }
 
     // ── 4. Save to DB ─────────────────────────────────────────────────────────
@@ -152,13 +210,14 @@ router.post('/', auth, requireRole(['PATIENT', 'CAREGIVER']), async (req, res) =
         name:             name.trim(),
         standardizedCode: standardizedCode ?? null,
         type,
-        dosage:           dosage?.trim() ?? null,
+        dosage:           dosage?.trim() ?? (resolved.dosageOptions?.[0] || null),
+        harmLevel,
         addedBy:          userId,
         dateAdded:        new Date(),
       },
     });
 
-    // ── 5. Respond immediately — don't block on interaction check ─────────────
+    // ── 5. Respond immediately with rich resolver metadata ───────────────────
     res.status(201).json({
       message: 'Medicine added successfully.',
       medicine: {
@@ -166,9 +225,25 @@ router.post('/', auth, requireRole(['PATIENT', 'CAREGIVER']), async (req, res) =
         name:             medicine.name,
         type:             medicine.type,
         dosage:           medicine.dosage,
+        harmLevel:        medicine.harmLevel,
         standardizedCode: medicine.standardizedCode,
         standardized:     !!medicine.standardizedCode,
         dateAdded:        medicine.dateAdded,
+        class:            resolved.class,
+        foodInstruction:  resolved.foodInstruction,
+        dosageOptions:    resolved.dosageOptions,
+        safetyTip:        resolved.safetyTip,
+        genericSalts:     resolved.genericSalts,
+        constituents:     resolved.constituents,
+      },
+      resolved: {
+        layer:           resolved.layer,
+        harmLevel:       resolved.harmLevel,
+        class:           resolved.class,
+        foodInstruction: resolved.foodInstruction,
+        dosageOptions:   resolved.dosageOptions,
+        safetyTip:       resolved.safetyTip,
+        genericSalts:    resolved.genericSalts,
       },
       rxNorm: {
         searched: name,
@@ -423,15 +498,24 @@ router.get('/', auth, async (req, res) => {
     });
 
     return res.status(200).json({
-      medicines: medicines.map((m) => ({
-        id:               m.id,
-        name:             m.name,
-        type:             m.type,
-        dosage:           m.dosage,
-        standardizedCode: m.standardizedCode,
-        standardized:     !!m.standardizedCode,
-        dateAdded:        m.dateAdded,
-      })),
+      medicines: medicines.map((m) => {
+        const raw = (m.name || '').toLowerCase().trim();
+        const cleaned = raw.replace(/\s+\d+(\.\d+)?\s*(mg|mcg|g|ml|iu)?$/i, '').trim();
+        const alias = BRAND_ALIASES[raw] || BRAND_ALIASES[cleaned] || Object.entries(BRAND_ALIASES).find(([k]) => raw.includes(k) || k.includes(raw))?.[1];
+        return {
+          id:               m.id,
+          name:             m.name,
+          type:             m.type,
+          dosage:           m.dosage,
+          standardizedCode: m.standardizedCode,
+          standardized:     !!m.standardizedCode,
+          dateAdded:        m.dateAdded,
+          category:         alias?.category || (m.type === 'HERBAL' ? 'Herbal Supplement' : m.type === 'OTC' ? 'Over-The-Counter' : 'Prescription Medicine'),
+          generic:          alias?.generic || m.name,
+          safetyTip:        alias?.safetyTip || null,
+          foodInstruction:  alias?.foodInstruction || (m.type === 'HERBAL' ? 'with_food' : 'after_food'),
+        };
+      }),
     });
   } catch (err) {
     console.error('[GET /medicine]', err);
@@ -532,6 +616,106 @@ router.delete('/:id', auth, requireRole(['PATIENT']), async (req, res) => {
   } catch (err) {
     console.error('[DELETE /medicine/:id]', err);
     res.status(500).json({ error: 'Failed to remove medicine.' });
+  }
+});
+
+// ═════════════════════════════════════════════════════════════════════════════
+// GET /medicine/:id/sideeffects — Fetch known side effects from OFFSIDES
+// Returns top side effects for this drug from the 1.2M OFFSIDES dataset.
+// ═════════════════════════════════════════════════════════════════════════════
+router.get('/:id/sideeffects', auth, async (req, res) => {
+  const { userId, role } = req.user;
+  const { id } = req.params;
+  try {
+    let medicine = null;
+    if (role === 'DOCTOR') {
+      medicine = await prisma.medicine.findFirst({
+        where: { id, removedAt: null },
+      });
+    } else {
+      const patient = await prisma.patient.findUnique({ where: { userId } });
+      if (!patient) return res.status(404).json({ error: 'Patient not found.' });
+
+      medicine = await prisma.medicine.findFirst({
+        where: { id, patientId: patient.id, removedAt: null },
+      });
+    }
+    if (!medicine) return res.status(404).json({ error: 'Medicine not found.' });
+
+    // Resolve all generic/constituent names for this medicine
+    const { getConstituentGenerics } = require('../services/aiDrugResolver');
+    const candidates = await getConstituentGenerics(medicine.name);
+
+    // Search OFFSIDES for side effects of any constituent
+    const sideEffects = await prisma.drugSideEffect.findMany({
+      where: {
+        OR: candidates.map(c => ({
+          drugName: { contains: c, mode: 'insensitive' },
+        })),
+        prr: { gte: 2.0 }, // Only statistically significant signals (PRR >= 2.0)
+      },
+      orderBy: { prr: 'desc' },
+      take: 30,
+      select: {
+        sideEffect:    true,
+        severity:      true,
+        prr:           true,
+        reportingFreq: true,
+        drugName:      true,
+        source:        true,
+      },
+    });
+
+    // Deduplicate side effects across constituents
+    const seen = new Set();
+    const unique = sideEffects.filter(se => {
+      const key = se.sideEffect.toLowerCase();
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+
+    res.json({
+      drugName:     medicine.name,
+      medicineId:   id,
+      constituents: candidates,
+      sideEffects:  unique.map(se => ({
+        sideEffect: se.sideEffect,
+        prr:        parseFloat(se.prr.toFixed(2)),
+        severity:   se.severity || 'Moderate',
+        source:     se.source || 'OFFSIDES',
+      })),
+      total:        unique.length,
+      source:       'OFFSIDES (FDA pharmacovigilance — 1.2M records)',
+      note:         'From FDA pharmacovigilance records (PRR >= 2.0)',
+    });
+  } catch (err) {
+    console.error('[GET /medicine/:id/sideeffects]', err);
+    res.status(500).json({ error: 'Failed to fetch side effects.' });
+  }
+});
+
+// ═════════════════════════════════════════════════════════════════════════════
+// GET /medicine/:id/resolve — Full AI resolution info for a medicine
+// Returns brand name, generics, constituents, safety info from AI resolver
+// ═════════════════════════════════════════════════════════════════════════════
+router.get('/:id/resolve', auth, async (req, res) => {
+  const { userId } = req.user;
+  const { id } = req.params;
+  try {
+    const patient = await prisma.patient.findUnique({ where: { userId } });
+    if (!patient) return res.status(404).json({ error: 'Patient not found.' });
+
+    const medicine = await prisma.medicine.findFirst({
+      where: { id, patientId: patient.id, removedAt: null },
+    });
+    if (!medicine) return res.status(404).json({ error: 'Medicine not found.' });
+
+    const resolved = await resolveDrugWithAI(medicine.name);
+    res.json({ medicineId: id, medicineName: medicine.name, resolved });
+  } catch (err) {
+    console.error('[GET /medicine/:id/resolve]', err);
+    res.status(500).json({ error: 'Failed to resolve medicine.' });
   }
 });
 
@@ -672,6 +856,35 @@ router.get('/search', auth, async (req, res) => {
       } catch (approxErr) {
         // Non-critical — silent fail
       }
+    }
+  }
+
+  // ── 4. AI Drug Resolver Fallback: If we still have few results, call the
+  //    AI resolver directly on the typed query for any medicine in the world ──
+  if (suggestions.length < 4 && !isDemoMode()) {
+    try {
+      const aiResult = await resolveDrugWithAI(query);
+      if (aiResult && aiResult.brandName && aiResult.source !== 'rule_heuristic') {
+        const id = aiResult.brandName.toLowerCase();
+        if (!seen.has(id)) {
+          seen.add(id);
+          suggestions.unshift({ // Put AI result at TOP of list
+            name:            aiResult.brandName,
+            generic:         aiResult.standardGeneric || aiResult.brandName,
+            rxcui:           aiResult.primaryRxCui || null,
+            dosage:          aiResult.dosage || 'As prescribed',
+            category:        aiResult.category || 'Prescription Medicine',
+            safetyTip:       aiResult.safetyTip || 'Take as directed by your physician.',
+            dosageOptions:   aiResult.dosageOptions || [],
+            commonFrequency: aiResult.commonFrequency || 'once',
+            foodInstruction: aiResult.foodInstruction || 'after_food',
+            source:          aiResult.source || 'ai_resolved',
+            constituents:    aiResult.constituents || [],
+          });
+        }
+      }
+    } catch (aiErr) {
+      console.warn('[search] AI resolver fallback error:', aiErr.message);
     }
   }
 

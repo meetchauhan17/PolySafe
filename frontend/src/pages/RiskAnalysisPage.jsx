@@ -15,12 +15,12 @@ import {
   Loader2,
   AlertCircle,
   Info,
-  ChevronRight,
 } from 'lucide-react';
 import Card from '../components/Card';
 import { motion, useReducedMotion } from 'framer-motion';
 import { RiskAnalysisSkeleton } from '../components/Skeletons';
 import { useAuth } from '../context/AuthContext';
+import { DrugHarmBadge, DrugHarmPanel } from '../components/DrugHarmLevel';
 
 const DEMO_FLAG_DETAILS = {
   'demo-flag-1': {
@@ -181,34 +181,35 @@ function TypeBadge({ type }) {
   );
 }
 
-// ─── Skeleton loader ──────────────────────────────────────────────────────────
-function Skeleton({ className }) {
-  return <div className={`animate-pulse bg-[#E7E1D3] rounded-xl ${className}`} />;
-}
-
 // ─── Medicine card ────────────────────────────────────────────────────────────
 function DrugCard({ med, score }) {
   if (!med) return null;
   return (
-    <div className="flex items-start space-x-3.5 p-4 bg-[#EDE8DC] shadow-[4px_4px_8px_rgba(191,180,155,0.45),-4px_-4px_8px_rgba(255,255,255,0.60)] rounded-2xl">
-      <div className="icon-well w-10 h-10 flex-shrink-0">
-        <Pill className="w-4 h-4 text-[#2B6E5E]" />
-      </div>
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2 flex-wrap">
-          <p className="text-sm font-bold text-[#1C2B27]">{med.name}</p>
-          <TypeBadge type={med.type} />
+    <div className="flex flex-col space-y-2.5 p-4 bg-[#EDE8DC] shadow-[4px_4px_8px_rgba(191,180,155,0.45),-4px_-4px_8px_rgba(255,255,255,0.60)] rounded-2xl">
+      <div className="flex items-start space-x-3.5">
+        <div className="icon-well w-10 h-10 flex-shrink-0">
+          <Pill className="w-4 h-4 text-[#2B6E5E]" />
         </div>
-        {med.dosage && <p className="text-[11px] text-[#5C6B64] font-mono mt-0.5">{med.dosage}</p>}
-        {score != null && (
-          <p className="text-[10px] text-[#5C6B64] mt-1 font-mono">
-            ACB burden score:{' '}
-            <span className={`font-bold ${score >= 3 ? 'text-[#B23D25]' : score >= 1 ? 'text-[#B5791A]' : 'text-[#2B6E5E]'}`}>
-              {score}
-            </span>
-          </p>
-        )}
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center justify-between gap-2 flex-wrap">
+            <p className="text-sm font-bold text-[#1C2B27]">{med.name}</p>
+            <div className="flex items-center gap-1.5">
+              <DrugHarmBadge category={med.category} name={med.name} />
+              <TypeBadge type={med.type} />
+            </div>
+          </div>
+          {med.dosage && <p className="text-[11px] text-[#5C6B64] font-mono mt-0.5">{med.dosage}</p>}
+          {score != null && (
+            <p className="text-[10px] text-[#5C6B64] mt-1 font-mono">
+              ACB burden score:{' '}
+              <span className={`font-bold ${score >= 3 ? 'text-[#B23D25]' : score >= 1 ? 'text-[#B5791A]' : 'text-[#2B6E5E]'}`}>
+                {score}
+              </span>
+            </p>
+          )}
+        </div>
       </div>
+      <DrugHarmPanel medicine={med} />
     </div>
   );
 }

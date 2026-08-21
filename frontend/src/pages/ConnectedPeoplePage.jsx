@@ -16,7 +16,7 @@ import axios from 'axios';
 import {
   ArrowLeft, Stethoscope, Heart, Trash2, Loader2, AlertCircle,
   CheckCircle2, Clock, XCircle, Plus, QrCode, Phone,
-  ShieldCheck, Info, ChevronRight, Users,
+  ShieldCheck, Info, ChevronRight,
 } from 'lucide-react';
 import Card from '../components/Card';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';

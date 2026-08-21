@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import {
-  ArrowLeft, User, ShieldCheck, Edit3, Save, X,
-  Lock, Mail, Calendar, Activity, AlertCircle,
-  Loader2, CheckCircle2, Info,
+  ArrowLeft, User, Edit3, Lock, Mail, Activity, AlertCircle, Loader2, Info,
 } from 'lucide-react';
 import Card from '../components/Card';
 import { notify } from '../utils/toast';
@@ -47,12 +45,14 @@ export default function ProfilePage() {
     }
   }, [profile]);
 
-  const toggleCondition = (id) => {
+  const toggleCondition = (item) => {
     setConditions((prev) => {
-      if (id === 'none') return ['none'];
-      const without = prev.filter((c) => c !== 'none');
-      if (without.includes(id)) return without.filter((c) => c !== id);
-      return [...without, id];
+      const isNone = item === 'none' || item === 'None of the above';
+      if (isNone) return ['none'];
+      const without = prev.filter((c) => c !== 'none' && c !== 'None of the above');
+      const exists = without.some((c) => c.toLowerCase() === item.toLowerCase());
+      if (exists) return without.filter((c) => c.toLowerCase() !== item.toLowerCase());
+      return [...without, item];
     });
   };
 
@@ -210,12 +210,14 @@ export default function ProfilePage() {
                 {editing ? (
                   <div className="flex flex-wrap gap-2">
                     {CONDITION_OPTIONS.map((opt) => {
-                      const active = conditions.includes(opt.id);
+                      const active = conditions.some(
+                        (c) => c.toLowerCase() === opt.id.toLowerCase() || c.toLowerCase() === opt.label.toLowerCase()
+                      );
                       return (
                         <button
                           key={opt.id}
                           type="button"
-                          onClick={() => toggleCondition(opt.id)}
+                          onClick={() => toggleCondition(opt.label)}
                           className={`text-xs font-bold px-3.5 py-2 rounded-xl border transition-all ${
                             active
                               ? 'bg-[#2B6E5E] text-white border-[#2B6E5E] shadow-sm'

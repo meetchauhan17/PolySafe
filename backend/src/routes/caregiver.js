@@ -65,6 +65,7 @@ router.get('/patient-summary/:patientId', auth, async (req, res) => {
       where: { id: patientId },
       include: {
         medicines: {
+          where: { removedAt: null },
           orderBy: { dateAdded: 'asc' },
           select: {
             id:       true,

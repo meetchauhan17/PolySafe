@@ -17,6 +17,7 @@
 
 const prisma = require('../lib/prisma');
 const { resolveDrugCandidates } = require('./drugAliases');
+const { getConstituentGenerics } = require('./aiDrugResolver');
 
 // ─── Types (JSDoc for IDE autocomplete) ──────────────────────────────────────
 /**
@@ -74,8 +75,11 @@ async function lookupInteraction(drugA, drugB) {
     };
   }
 
-  const candsA = resolveDrugCandidates(a);
-  const candsB = resolveDrugCandidates(b);
+  // Use AI-powered constituent resolver for maximum brand/generic coverage
+  const [candsA, candsB] = await Promise.all([
+    getConstituentGenerics(a).catch(() => resolveDrugCandidates(a)),
+    getConstituentGenerics(b).catch(() => resolveDrugCandidates(b)),
+  ]);
 
   try {
     const orConditions = [];

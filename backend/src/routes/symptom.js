@@ -150,12 +150,17 @@ router.post('/', auth, requireRole(['PATIENT', 'CAREGIVER']), async (req, res) =
       descLower.includes(ref.symptomKeyword.toLowerCase())
     );
 
-    // 5. Fetch patient's medicines added on or before this symptom date
+    // 5. Fetch patient's medicines added on or before this symptom date,
+    //    and not discontinued before the symptom occurred
     const maxDate = new Date(Math.max(Date.now(), symptomDate.getTime()));
     const priorMeds = await prisma.medicine.findMany({
       where: {
         patientId: patient.id,
         dateAdded: { lte: maxDate },
+        OR: [
+          { removedAt: null },
+          { removedAt: { gte: symptomDate } },
+        ],
       },
       orderBy: { dateAdded: 'asc' },
     });

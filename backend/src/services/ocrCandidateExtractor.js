@@ -1,8 +1,6 @@
 const axios = require('axios');
-const { PrismaClient } = require('@prisma/client');
+const prisma = require('../lib/prisma');
 const { isDemoMode, getMockRxCui } = require('../lib/demo');
-
-const prisma = new PrismaClient();
 
 // ─── Boilerplate patterns to filter out ────────────────────────────────────────
 const BOILERPLATE_PATTERNS = [

@@ -6,13 +6,14 @@ import axios from 'axios';
 import {
   Camera, Pill, Plus, ArrowRight, ArrowLeft, Loader2, AlertCircle,
   CheckCircle2, X, Stethoscope, ShoppingBag, Leaf, Info, ScanLine,
-  FileImage, TriangleAlert, Edit3, ShieldCheck, Zap, ExternalLink,
+  FileImage, TriangleAlert, AlertTriangle, Edit3, ShieldCheck, ExternalLink,
   Activity, AlertOctagon, Search, HelpCircle, Clock, User, CalendarDays,
   Sun, Sunset, Moon, Coffee,
 } from 'lucide-react';
 import Card from '../components/Card';
 import { notify } from '../utils/toast';
 import { useAuth } from '../context/AuthContext';
+import { DrugHarmBadge } from '../components/DrugHarmLevel';
 
 // ─── Medicine type options ────────────────────────────────────────────────────
 const MEDICINE_TYPES = [
@@ -224,6 +225,143 @@ function InteractionResult({ result, medicineName }) {
   );
 }
 
+// ─── Scan Results Review Card Component ──────────────────────────────────────
+function ScanResultsReviewCard({ scanResult, onDismiss }) {
+  if (!scanResult) return null;
+
+  const confidence = (scanResult.confidence || 'medium').toLowerCase();
+  const rxNormVerified = !!(scanResult.rxNormVerified ?? scanResult.verified);
+  const source = scanResult.source || scanResult.engine || 'gemini';
+
+  const engineLabel =
+    source === 'gemini' ? 'Extracted via Gemini Vision' :
+    source === 'tesseract' ? 'Extracted via Tesseract' :
+    source === 'ocrspace' ? 'Extracted via OCR.space' :
+    'Extracted via Vision AI';
+
+  const drugName = scanResult.drug_name || scanResult.candidate || scanResult.generic_name;
+  const strength = scanResult.strength || scanResult.suggestedDosage;
+  const prescriber = scanResult.prescriber || scanResult.prescriberName;
+  const frequency = scanResult.frequency || scanResult.commonFrequency;
+  const duration = scanResult.duration;
+
+  return (
+    <div className="p-4 sm:p-5 rounded-2xl border-2 border-[#2B6E5E]/30 bg-[#F4FAF8] space-y-3.5 shadow-sm animate-fadeIn">
+      {/* Header */}
+      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#2B6E5E]/15 pb-2.5">
+        <div className="flex items-center space-x-2">
+          <div className="p-1.5 rounded-lg bg-[#2B6E5E]/15 text-[#2B6E5E]">
+            <ScanLine className="w-4 h-4" />
+          </div>
+          <div>
+            <h3 className="text-sm font-bold text-[#1C2B27]">Scan Results</h3>
+            <span className="text-[11px] text-[#5C6B64] font-medium">{engineLabel}</span>
+          </div>
+        </div>
+
+        {/* Confidence & RxNorm badges */}
+        <div className="flex flex-wrap items-center gap-1.5">
+          {/* Confidence badge */}
+          {confidence === 'high' ? (
+            <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200">
+              <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+              High confidence ✓
+            </span>
+          ) : confidence === 'low' ? (
+            <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-rose-100 text-rose-800 border border-rose-200">
+              <AlertCircle className="w-3 h-3 text-rose-600" />
+              Low confidence — please verify
+            </span>
+          ) : (
+            <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 border border-amber-200">
+              <Info className="w-3 h-3 text-amber-700" />
+              Medium confidence
+            </span>
+          )}
+
+          {/* RxNorm verified badge */}
+          {rxNormVerified ? (
+            <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-[#E4F2E9] text-[#1A5C3A] border border-[#2F8558]/30">
+              <ShieldCheck className="w-3 h-3 text-[#2F8558]" />
+              Verified drug name
+            </span>
+          ) : (
+            <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-[#FBEED9] text-[#7A4A0A] border border-[#B5791A]/30">
+              <TriangleAlert className="w-3 h-3 text-[#B5791A]" />
+              Unverified name — confirm before saving
+            </span>
+          )}
+        </div>
+      </div>
+
+      {/* Prominent warning if confidence is low */}
+      {confidence === 'low' && (
+        <div className="p-3 bg-rose-50/90 border border-rose-200 rounded-xl flex items-start gap-2.5 text-xs text-rose-800">
+          <AlertCircle className="w-4 h-4 text-rose-600 flex-shrink-0 mt-0.5" />
+          <p>
+            <strong>Double-check these details:</strong> Image clarity was low. Please verify all pre-filled fields below before saving.
+          </p>
+        </div>
+      )}
+
+      {/* Extracted Details Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+        <div className="p-2.5 bg-white rounded-xl border border-[#E7E1D3] space-y-0.5">
+          <span className="text-[10px] uppercase tracking-wider font-bold text-[#6B726C]">Identified Medicine</span>
+          <p className="font-bold text-[#1C2B27] text-sm truncate">{drugName || '—'}</p>
+          {scanResult.generic_name && scanResult.generic_name !== drugName && (
+            <p className="text-[11px] text-[#5C6B64]">Generic: {scanResult.generic_name}</p>
+          )}
+        </div>
+
+        <div className="p-2.5 bg-white rounded-xl border border-[#E7E1D3] space-y-0.5">
+          <span className="text-[10px] uppercase tracking-wider font-bold text-[#6B726C]">Strength & Form</span>
+          <p className="font-bold text-[#1C2B27] text-sm">
+            {strength || '—'} {scanResult.form ? `(${scanResult.form})` : ''}
+          </p>
+        </div>
+      </div>
+
+      {/* Prescriber line if extracted */}
+      {prescriber && (
+        <div className="flex items-center gap-2 p-2.5 bg-white rounded-xl border border-[#E7E1D3] text-xs">
+          <span className="font-bold text-[#2B6E5E]">Prescriber:</span>
+          <span className="text-[#1C2B27] font-semibold">{prescriber.startsWith('Dr.') ? prescriber : `Dr. ${prescriber}`}</span>
+        </div>
+      )}
+
+      {/* Non-editable frequency and duration prescription context */}
+      {(frequency || duration) && (
+        <div className="p-3 bg-[#EDE8DC]/70 rounded-xl border border-[#E7E1D3] space-y-1">
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-[#232724]">
+            {frequency && (
+              <span><strong>Frequency:</strong> {frequency}</span>
+            )}
+            {duration && (
+              <span><strong>Duration:</strong> {duration}</span>
+            )}
+          </div>
+          <p className="text-[10px] text-[#6B726C] italic">
+            From your prescription — not saved, for your reference only.
+          </p>
+        </div>
+      )}
+
+      {/* Dismissal footer */}
+      <div className="flex items-center justify-between pt-1 text-xs">
+        <span className="text-[11px] text-[#5C6B64]">Pre-filled in form below · fully editable</span>
+        <button
+          type="button"
+          onClick={onDismiss}
+          className="text-xs font-bold text-[#6B726C] hover:text-[#232724] hover:underline cursor-pointer"
+        >
+          Clear scan results
+        </button>
+      </div>
+    </div>
+  );
+}
+
 // ─── Main Component ───────────────────────────────────────────────────────────
 export default function AddMedicinePage() {
   const navigate = useNavigate();
@@ -252,6 +390,7 @@ export default function AddMedicinePage() {
   const [submitError, setSubmitError] = useState(null);
   const [submitSuccess, setSubmitSuccess] = useState(null);
   const [savedMedicineName, setSavedMedicineName] = useState('');
+  const [duplicateConflict, setDuplicateConflict] = useState(null);
 
   // ─── Drug Autocomplete state ────────────────────────────────────────────────
   const [suggestions, setSuggestions] = useState([]);
@@ -353,9 +492,7 @@ export default function AddMedicinePage() {
   const [pillImprintCode, setPillImprintCode] = useState('');
   const [pillState, setPillState] = useState('idle'); // 'idle' | 'searching' | 'results' | 'error'
   const [pillMatches, setPillMatches] = useState([]);
-  const [pillPreviewUrl, setPillPreviewUrl] = useState(null);
   const [pillError, setPillError] = useState(null);
-  const [pillCaveat, setPillCaveat] = useState('');
 
   const searchPillMutation = useMutation({
     mutationFn: async ({ file, imprintCode }) => {
@@ -371,30 +508,25 @@ export default function AddMedicinePage() {
         return data;
       }
     },
+    onMutate: () => {
+      setPillState('searching');
+      setPillError(null);
+    },
     onSuccess: (data) => {
-      setPillMatches(data.possibleMatches || []);
-      setPillCaveat(data.caveat || '');
       setPillState('results');
-      if (data.possibleMatches?.length > 0) {
-        notify.info('Matches Found', `Found ${data.possibleMatches.length} possible reference match${data.possibleMatches.length !== 1 ? 'es' : ''}.`);
+      setPillMatches(data?.possibleMatches || []);
+      if (data?.count === 0) {
+        notify.info('No Exact Imprint Match', 'Try re-verifying the code or selecting from formulary search.');
       } else {
-        notify.warning('No Match Found', 'No imprint matches found in limited dataset. Please ask a pharmacist.');
+        notify.success('Matches Found', `Found ${data.count} candidate medication(s) matching imprint.`);
       }
     },
     onError: (err) => {
-      setPillError(err?.response?.data?.error || 'Pill lookup failed.');
       setPillState('error');
+      setPillError(err?.response?.data?.error || 'Pill lookup failed.');
+      notify.error('Pill Lookup Failed', err?.response?.data?.error || 'Could not identify pill.');
     },
   });
-
-  const handlePillFileSelect = (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setPillPreviewUrl(URL.createObjectURL(file));
-    setPillState('searching');
-    setPillError(null);
-    searchPillMutation.mutate({ file });
-  };
 
   const handlePillManualSearch = (e) => {
     e.preventDefault();
@@ -417,7 +549,6 @@ export default function AddMedicinePage() {
     setPillState('idle');
     setPillMatches([]);
     setPillImprintCode('');
-    setPillPreviewUrl(null);
     setPillError(null);
   };
 
@@ -475,68 +606,68 @@ export default function AddMedicinePage() {
     onSuccess: (data) => {
       setScanResult(data);
       setScanState('confirm');
-      if (data.candidate) {
-        setName(data.candidate);
 
-        // Auto-fill medicine type
-        if (data.suggestedType) {
-          setType(data.suggestedType);
-        } else if (data.candidate.toLowerCase().includes('turmeric') || data.candidate.toLowerCase().includes('ashwagandha') || data.candidate.toLowerCase().includes('herbal')) {
-          setType('HERBAL');
-        } else {
+      const extractedName = data.drug_name || data.candidate || data.generic_name;
+      if (extractedName) {
+        // 1. Medicine Name <- drug_name (or generic_name if no brand name)
+        setName(extractedName);
+
+        // 2. Dosage <- strength (e.g. "500mg")
+        const dosageVal = data.strength || data.suggestedDosage;
+        if (dosageVal) {
+          setDosage(dosageVal);
+        }
+
+        // 3. Medicine Type <- form: map tablet/capsule -> PRESCRIPTION default, syrup/cream let user pick
+        const formStr = (data.form || '').toLowerCase();
+        if (formStr.includes('tablet') || formStr.includes('capsule') || formStr.includes('pill')) {
           setType('PRESCRIPTION');
+        } else if (data.suggestedType) {
+          setType(data.suggestedType);
         }
 
-        // Auto-fill dosage
-        if (data.suggestedDosage) {
-          setDosage(data.suggestedDosage);
+        // 4. Frequency schedule mapping
+        const freqStr = (data.frequency || data.commonFrequency || '').toLowerCase();
+        if (freqStr.includes('twice') || freqStr.includes('bid')) {
+          setFrequency('twice');
+          setTimings(['morning', 'evening']);
+        } else if (freqStr.includes('thrice') || freqStr.includes('tid')) {
+          setFrequency('thrice');
+          setTimings(['morning', 'afternoon', 'evening']);
+        } else if (freqStr.includes('once') || freqStr.includes('od') || freqStr.includes('daily')) {
+          setFrequency('once');
+          setTimings(['morning']);
         }
 
-        // Auto-fill frequency schedule
-        if (data.commonFrequency) {
-          setFrequency(data.commonFrequency);
+        // 5. Prescriber
+        const prescriberVal = data.prescriber || data.prescriberName;
+        if (prescriberVal) {
+          setPrescriber(prescriberVal);
         }
 
-        // Auto-fill meal instructions
+        // 6. Food instruction
         if (data.foodInstruction) {
           setNotes(data.foodInstruction);
         }
 
-        // Auto-fill time of day chips
-        if (data.extractedTimings && data.extractedTimings.length > 0) {
-          setTimings(data.extractedTimings);
-        } else if (data.commonFrequency === 'twice') {
-          setTimings(['morning', 'evening']);
-        } else if (data.commonFrequency === 'thrice') {
-          setTimings(['morning', 'afternoon', 'evening']);
-        } else if (data.commonFrequency === 'once') {
-          setTimings(['morning']);
-        }
-
-        // Auto-fill prescriber
-        if (data.prescriber) {
-          setPrescriber(data.prescriber);
-        }
-
-        // Auto-populate drug verification card
+        // Populate drug verification card
         setSelectedDrugInfo({
-          name: data.candidate,
-          generic: data.genericName || data.candidate,
-          rxcui: data.standardizedCode,
-          dosage: data.suggestedDosage,
-          category: data.category || (data.suggestedType === 'HERBAL' ? 'Ayurvedic / Herbal' : 'Prescription Drug'),
+          name: extractedName,
+          generic: data.generic_name || data.genericName || extractedName,
+          rxcui: data.rxcui || data.standardizedCode,
+          dosage: dosageVal,
+          category: data.category || (type === 'HERBAL' ? 'Ayurvedic / Herbal' : 'Prescription Drug'),
           safetyTip: data.safetyTip || 'Verify dosage and administration instructions with your physician.',
           dosageOptions: data.dosageOptions || [],
-          source: data.standardizedCode ? 'rxnorm' : (data.suggestedType === 'HERBAL' ? 'herbal' : 'local'),
+          source: data.source || (data.rxcui ? 'rxnorm' : 'gemini'),
         });
 
-        notify.success('Prescription Scanned & Auto-Filled', `Auto-filled details for "${data.candidate}". Please review below.`);
+        notify.success('Prescription Scanned & Auto-Filled', `Auto-filled "${extractedName}". Review details below before saving.`);
       } else if (data.fallbackCandidates?.length > 0) {
-        if (data.suggestedDosage) setDosage(data.suggestedDosage);
-        if (data.commonFrequency) setFrequency(data.commonFrequency);
+        if (data.strength || data.suggestedDosage) setDosage(data.strength || data.suggestedDosage);
+        if (data.frequency || data.commonFrequency) setFrequency(data.frequency || data.commonFrequency);
         if (data.foodInstruction) setNotes(data.foodInstruction);
-        if (data.extractedTimings?.length > 0) setTimings(data.extractedTimings);
-        if (data.prescriber) setPrescriber(data.prescriber);
+        if (data.prescriber || data.prescriberName) setPrescriber(data.prescriber || data.prescriberName);
         notify.info('Review Suggestions', 'Could not verify exact drug name with RxNorm. Choose from suggestions or type manually.');
       } else {
         notify.info('Text Extracted', 'Please verify or enter the medicine name below.');
@@ -585,11 +716,46 @@ export default function AddMedicinePage() {
       }
     },
     onError: (err) => {
+      if (err.response?.status === 409) {
+        const existing = err.response.data?.existingMedicine;
+        setDuplicateConflict({
+          name: existing?.name || name,
+          existingDosage: existing?.dosage || 'Current dose',
+          newDosage: dosage || 'New dose',
+          id: existing?.id,
+        });
+        setSubmitError(`"${existing?.name || name}" is already in your active medication list.`);
+        notify.warning('Already in List', `"${existing?.name || name}" is already in your medication list.`);
+        return;
+      }
       const msg = err.response?.data?.error || err.message || 'Failed to add medicine.';
       setSubmitError(msg);
       notify.error('Could Not Add Medicine', msg);
     },
   });
+
+  const handleConfirmUpdateDosage = async () => {
+    try {
+      setSubmitError(null);
+      const resp = await axios.post('/medicine', {
+        name,
+        type,
+        dosage,
+        forceUpdate: true,
+      });
+      setDuplicateConflict(null);
+      setSubmitSuccess(resp.data);
+      const medName = resp.data.medicine?.name ?? name;
+      setSavedMedicineName(medName);
+      notify.success('Dosage Updated', `Updated dosage for "${medName}".`);
+      if (resp.data.checkingInteractions) {
+        setCheckState('checking');
+        setCheckResult(null);
+      }
+    } catch (e) {
+      notify.error('Update Failed', e.response?.data?.error || e.message);
+    }
+  };
 
   // ─── Handlers ───────────────────────────────────────────────────────────────
   const handleFileSelect = (e) => {
@@ -782,7 +948,7 @@ export default function AddMedicinePage() {
         }
       `}</style>
 
-      <div className="max-w-xl mx-auto px-4 py-8 space-y-5">
+      <div className="max-w-2xl lg:max-w-3xl mx-auto px-4 sm:px-6 py-8 space-y-6">
 
         {/* Header */}
         <div className="flex items-center space-x-3">
@@ -863,7 +1029,7 @@ export default function AddMedicinePage() {
                       const blob = await res.blob();
                       const file = new File([blob], 'naxdom-sample.jpg', { type: 'image/jpeg' });
                       scanMutation.mutate(file);
-                    } catch (err) {
+                    } catch {
                       setScanError('Failed to load sample image.');
                       setScanState('error');
                     }
@@ -909,95 +1075,62 @@ export default function AddMedicinePage() {
 
           {scanState === 'confirm' && scanResult && (
             <div className="space-y-3">
-              {previewUrl && <img src={previewUrl} alt="Prescription" className="w-full max-h-40 object-contain rounded-xl border border-[#E7E1D3]" />}
-              <div className="p-3 bg-[#FDFBF7] border border-[#E7E1D3] rounded-xl space-y-1.5">
-                <div className="flex items-center justify-between">
-                  <p className="text-[10px] font-bold text-[#6B726C] uppercase tracking-wider">OCR Extracted Text</p>
-                  <span className={`text-[10px] font-bold ${scanResult.verified ? 'text-[#2B6E5E]' : 'text-[#8A6D3B]'}`}>
-                    {scanResult.verified ? '✓ RxNorm Verified' : 'Unverified (Review below)'}
+              {previewUrl && (
+                <div className="relative">
+                  <img src={previewUrl} alt="Prescription" className="w-full max-h-44 object-contain rounded-xl border border-[#E7E1D3] bg-white p-1" />
+                  <span className="absolute top-2 right-2 inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#E4F2E9] text-[#2B6E5E] border border-[#2F8558]/30 shadow-xs">
+                    <Camera className="w-3 h-3" /> From scan
                   </span>
                 </div>
-                <p className="text-xs text-[#232724] font-mono bg-white p-2 rounded-lg border border-[#E7E1D3] whitespace-pre-wrap max-h-28 overflow-y-auto">
-                  {scanResult.rawText || scanResult.candidate}
-                </p>
-              </div>
-
-              {/* Verified drug banner or Fallback candidate chips */}
-              {scanResult.candidate ? (
-                <div className="flex items-center justify-between p-3 bg-[#E4F2E9] border border-[#2B6E5E]/30 rounded-xl">
-                  <div className="flex items-center space-x-2">
-                    <ShieldCheck className="w-4 h-4 text-[#2B6E5E]" />
-                    <span className="text-xs font-bold text-[#1C2B27]">Auto-identified: <strong className="text-[#2B6E5E]">{scanResult.candidate}</strong></span>
-                  </div>
-                  <span className="text-[10px] font-bold text-[#2B6E5E] bg-white px-2 py-0.5 rounded-full border border-[#2B6E5E]/20">From scan ✓</span>
-                </div>
-              ) : (
-                scanResult.fallbackCandidates?.length > 0 && (
-                  <div className="p-3 bg-[#EDE8DC] shadow-[inset_2px_2px_4px_rgba(191,180,155,0.4),inset_-2px_-2px_4px_rgba(255,255,255,0.5)] rounded-xl space-y-2">
-                    <div className="flex items-center space-x-1.5 text-xs font-bold text-[#5C6B64]">
-                      <HelpCircle className="w-3.5 h-3.5 text-[#E0824B]" />
-                      <span>Couldn't confidently identify — did you mean:</span>
-                    </div>
-                    <div className="flex flex-wrap gap-1.5">
-                      {scanResult.fallbackCandidates.map((cand, idx) => (
-                        <button
-                          key={idx}
-                          type="button"
-                          onClick={() => {
-                            setName(cand);
-                            if (scanResult.suggestedDosage && !dosage) setDosage(scanResult.suggestedDosage);
-                            notify.success('Medicine Selected', `Selected "${cand}".`);
-                          }}
-                          className="px-2.5 py-1 text-xs font-bold text-[#1C2B27] bg-[#EDE8DC] shadow-[2px_2px_4px_rgba(191,180,155,0.5),-2px_-2px_4px_rgba(255,255,255,0.6)] hover:text-[#2B6E5E] active:shadow-[inset_1px_1px_2px_rgba(191,180,155,0.5)] rounded-lg transition-all cursor-pointer"
-                        >
-                          {cand}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )
               )}
 
-              <div className="flex gap-2">
-                <button type="button" onClick={handleDismissScan} className="btn-secondary flex-1 py-2 text-xs">
-                  Re-scan
+              {/* ── SCAN RESULTS REVIEW CARD ── */}
+              <ScanResultsReviewCard
+                scanResult={scanResult}
+                onDismiss={handleDismissScan}
+              />
+
+              {/* Fallback candidate chips if no single match */}
+              {scanResult.fallbackCandidates?.length > 0 && !scanResult.drug_name && !scanResult.candidate && (
+                <div className="p-3 bg-[#EDE8DC] shadow-[inset_2px_2px_4px_rgba(191,180,155,0.4),inset_-2px_-2px_4px_rgba(255,255,255,0.5)] rounded-xl space-y-2">
+                  <div className="flex items-center space-x-1.5 text-xs font-bold text-[#5C6B64]">
+                    <HelpCircle className="w-3.5 h-3.5 text-[#E0824B]" />
+                    <span>Couldn't confidently identify — did you mean:</span>
+                  </div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {scanResult.fallbackCandidates.map((cand, idx) => (
+                      <button
+                        key={idx}
+                        type="button"
+                        onClick={() => {
+                          setName(cand);
+                          if (scanResult.suggestedDosage && !dosage) setDosage(scanResult.suggestedDosage);
+                          notify.success('Medicine Selected', `Selected "${cand}".`);
+                        }}
+                        className="px-2.5 py-1 text-xs font-bold text-[#1C2B27] bg-[#EDE8DC] shadow-[2px_2px_4px_rgba(191,180,155,0.5),-2px_-2px_4px_rgba(255,255,255,0.6)] hover:text-[#2B6E5E] active:shadow-[inset_1px_1px_2px_rgba(191,180,155,0.5)] rounded-lg transition-all cursor-pointer"
+                      >
+                        {cand}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <div className="flex gap-2 pt-1">
+                <button type="button" onClick={handleDismissScan} className="btn-secondary flex-1 py-2 text-xs font-semibold">
+                  <Camera className="w-3.5 h-3.5" />
+                  <span>Scan Another Photo</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => {
-                    if (scanResult?.candidate) {
-                      setName(scanResult.candidate);
-                      if (scanResult.suggestedType) setType(scanResult.suggestedType);
-                      if (scanResult.suggestedDosage) setDosage(scanResult.suggestedDosage);
-                      if (scanResult.commonFrequency) setFrequency(scanResult.commonFrequency);
-                      if (scanResult.foodInstruction) setNotes(scanResult.foodInstruction);
-                      if (scanResult.extractedTimings && scanResult.extractedTimings.length > 0) {
-                        setTimings(scanResult.extractedTimings);
-                      } else if (scanResult.commonFrequency === 'twice') {
-                        setTimings(['morning', 'evening']);
-                      } else if (scanResult.commonFrequency === 'thrice') {
-                        setTimings(['morning', 'afternoon', 'evening']);
-                      } else if (scanResult.commonFrequency === 'once') {
-                        setTimings(['morning']);
-                      }
-                      if (scanResult.prescriber) setPrescriber(scanResult.prescriber);
-                      setSelectedDrugInfo({
-                        name: scanResult.candidate,
-                        generic: scanResult.genericName || scanResult.candidate,
-                        rxcui: scanResult.standardizedCode,
-                        dosage: scanResult.suggestedDosage,
-                        category: scanResult.category || (scanResult.suggestedType === 'HERBAL' ? 'Ayurvedic / Herbal' : 'Prescription Drug'),
-                        safetyTip: scanResult.safetyTip || 'Verify dosage and administration instructions with your physician.',
-                        dosageOptions: scanResult.dosageOptions || [],
-                        source: scanResult.standardizedCode ? 'rxnorm' : (scanResult.suggestedType === 'HERBAL' ? 'herbal' : 'local'),
-                      });
-                      notify.success('Pre-filled Confirmed', `Auto-populated form with ${scanResult.candidate}`);
-                    }
-                    setScanState('idle');
+                    notify.info('Editing Pre-filled Details', 'Review and edit any fields below before saving.');
+                    nameInputRef.current?.focus();
                   }}
-                  className="btn-primary flex-1 py-2 text-xs"
+                  className="btn-primary flex-1 py-2 text-xs font-semibold"
                 >
-                  {scanResult?.candidate ? 'Confirm & Use Pre-filled' : 'Done Reviewing'}
+                  <span>Edit Details Below</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
                 </button>
               </div>
             </div>
@@ -1235,9 +1368,17 @@ export default function AddMedicinePage() {
 
             {/* Name with Autocomplete */}
             <div className="space-y-1.5">
-              <label className="block text-xs font-bold text-[#232724] uppercase tracking-wider">
-                Medicine Name <span className="text-rose-500">*</span>
-              </label>
+              <div className="flex items-center justify-between">
+                <label className="block text-xs font-bold text-[#232724] uppercase tracking-wider">
+                  Medicine Name <span className="text-rose-500">*</span>
+                </label>
+                {name.trim().length > 1 && (
+                  <div className="flex items-center gap-1.5 animate-fadeIn">
+                    <span className="text-[10px] text-[#5C6B64] font-semibold">Pre-Add Harm Tier:</span>
+                    <DrugHarmBadge category={selectedDrugInfo?.category || ''} name={name.trim()} size="sm" />
+                  </div>
+                )}
+              </div>
               <div className="relative">
                 <Pill className="w-4 h-4 text-[#6B726C] absolute left-3.5 top-3.5 z-10" />
                 {searchLoading && (
@@ -1255,9 +1396,10 @@ export default function AddMedicinePage() {
                   placeholder="Start typing — e.g. Warfarin, Ashwagandha, Dolo 650"
                   className={`input-field pl-10 pr-10 ${submitError && !name.trim() ? 'border-rose-300 bg-rose-50' : ''} ${scanState === 'confirm' && (scanResult?.candidate || name) ? 'border-[#2B6E5E] bg-[#F4FAF8]' : ''}`}
                 />
-                {scanState === 'confirm' && (scanResult?.candidate || name) && (
-                  <div className="absolute right-3 top-2.5 text-[10px] font-bold text-[#2B6E5E] bg-[#2B6E5E]/10 px-2 py-1 rounded-md z-10">
-                    From scan ✓
+                {scanState === 'confirm' && (scanResult?.drug_name || scanResult?.candidate || name) && (
+                  <div className="absolute right-3 top-2.5 text-[10px] font-bold text-[#2B6E5E] bg-[#E4F2E9] border border-[#2F8558]/30 px-2 py-0.5 rounded-md z-10 flex items-center gap-1">
+                    <Camera className="w-3 h-3 text-[#2B6E5E]" />
+                    <span>From scan</span>
                   </div>
                 )}
 
@@ -1290,7 +1432,12 @@ export default function AddMedicinePage() {
                           } ${idx > 0 ? 'border-t border-[#E7E1D3]/50' : ''}`}
                         >
                           <div className="flex-1 min-w-0">
-                            <p className="text-sm font-bold text-[#232724] truncate">{sug.name}</p>
+                            <div className="flex items-center gap-2">
+                              <p className="text-sm font-bold text-[#232724] truncate">{sug.name}</p>
+                              {sug.category && (
+                                <DrugHarmBadge category={sug.category} name={sug.name} />
+                              )}
+                            </div>
                             {sug.generic !== sug.name && (
                               <p className="text-[11px] text-[#6B726C] truncate">Generic: {sug.generic}</p>
                             )}
@@ -1332,10 +1479,20 @@ export default function AddMedicinePage() {
                     <span className="text-xs font-bold text-[#1C2B27]">
                       {selectedDrugInfo.rxcui ? 'RxNorm Verified Medication' : 'Identified Medication'}
                     </span>
+                    <DrugHarmBadge category={selectedDrugInfo.category} name={selectedDrugInfo.name} />
                   </div>
                   <button type="button" onClick={() => setSelectedDrugInfo(null)} className="text-[#6B726C] hover:text-[#232724] cursor-pointer p-1">
                     <X className="w-4 h-4" />
                   </button>
+                </div>
+
+                {/* Pre-Add Warning Banner */}
+                <div className="p-2.5 rounded-xl bg-white/80 border border-[#2B6E5E]/20 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <AlertTriangle className="w-4 h-4 text-[#B5791A]" />
+                    <span className="text-xs font-bold text-[#1C2B27]">Pre-Add Harm Classification:</span>
+                  </div>
+                  <DrugHarmBadge category={selectedDrugInfo.category} name={selectedDrugInfo.name} size="lg" />
                 </div>
 
                 <div className="grid grid-cols-2 gap-2.5">
@@ -1557,6 +1714,44 @@ export default function AddMedicinePage() {
               </div>
             </div>
           </Card>
+
+          {/* Duplicate Conflict Resolver Banner */}
+          {duplicateConflict && (
+            <div className="p-4 rounded-2xl bg-[#FBEED9] border-2 border-[#B5791A]/50 space-y-3 shadow-sm">
+              <div className="flex items-start gap-3">
+                <TriangleAlert className="w-5 h-5 text-[#B5791A] flex-shrink-0 mt-0.5" />
+                <div className="space-y-1">
+                  <p className="text-sm font-bold text-[#7A4A0A]">
+                    "{duplicateConflict.name}" is already in your active medicines
+                  </p>
+                  <p className="text-xs text-[#8A5210] leading-relaxed">
+                    Current dose: <strong>{duplicateConflict.existingDosage}</strong>
+                    {dosage && dosage !== duplicateConflict.existingDosage && (
+                      <span> · Update to: <strong>{dosage}</strong></span>
+                    )}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex gap-2 pt-1">
+                <button
+                  type="button"
+                  onClick={handleConfirmUpdateDosage}
+                  className="btn-primary flex-1 py-2.5 text-xs font-bold"
+                >
+                  <Edit3 className="w-3.5 h-3.5" />
+                  <span>Update Dosage to "{dosage || duplicateConflict.newDosage}"</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setDuplicateConflict(null)}
+                  className="btn-secondary py-2.5 px-4 text-xs"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          )}
 
           {/* Submit Button */}
           <button

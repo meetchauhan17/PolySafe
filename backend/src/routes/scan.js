@@ -1,3 +1,15 @@
+'use strict';
+
+/**
+ * scan.js — 4-Stage Multi-Engine Prescription & Medication Scanner
+ * ─────────────────────────────────────────────────────────────────────────────
+ * STAGE 1 — GEMINI VISION (Primary, multimodal image-to-JSON extraction)
+ * STAGE 2 — RXNORM VERIFICATION (Standardizes Gemini drug/generic names)
+ * STAGE 3 — TESSERACT OCR FALLBACK (Offline local OCR fallback on network/rate-limit error)
+ * STAGE 4 — OCR.SPACE FALLBACK (Cloud OCR fallback as last resort)
+ * ─────────────────────────────────────────────────────────────────────────────
+ */
+
 const express = require('express');
 const multer = require('multer');
 const axios = require('axios');
@@ -5,21 +17,33 @@ const fs = require('fs');
 const path = require('path');
 const FormData = require('form-data');
 const tesseract = require('node-tesseract-ocr');
+const { GoogleGenerativeAI } = require('@google/generative-ai');
 const { auth } = require('../middleware/auth');
 const { isDemoMode, getMockOcrResult } = require('../lib/demo');
+const prisma = require('../lib/prisma');
 
 const router = express.Router();
 
-// ─── Tesseract OCR Local Configuration ─────────────────────────────────────────
+// ─── Ensure temp upload directory exists ───────────────────────────────────────
+const tmpDir = path.join(__dirname, '../../tmp');
+if (!fs.existsSync(tmpDir)) {
+  try {
+    fs.mkdirSync(tmpDir, { recursive: true });
+  } catch {
+    // Ignore error if already created concurrently
+  }
+}
+
+// ─── Tesseract Local Configuration ───────────────────────────────────────────
 const tesseractConfig = {
   lang: 'eng',
   oem: 1,
   psm: 3,
 };
 
-// ─── Multer — temp disk storage, auto-cleaned after processing ───────────────
+// ─── Multer Configuration (temp disk storage) ────────────────────────────────
 const upload = multer({
-  dest: path.join(__dirname, '../../tmp/'),
+  dest: tmpDir,
   limits: {
     fileSize: 10 * 1024 * 1024, // 10 MB max
   },
@@ -38,7 +62,7 @@ const {
   verifyCandidatesWithRxNorm,
 } = require('../services/ocrCandidateExtractor');
 
-// ─── Temp file cleanup helper ─────────────────────────────────────────────────
+// ─── Helper: File Cleanup ─────────────────────────────────────────────────────
 function cleanupFile(filePath) {
   try {
     if (filePath && fs.existsSync(filePath)) {
@@ -49,19 +73,122 @@ function cleanupFile(filePath) {
   }
 }
 
+// ─── Verbatim Structured Prompt for Gemini Vision ────────────────────────────
+const GEMINI_STRUCTURED_PROMPT = `You are analyzing a pharmaceutical product image — this may be a prescription slip, a medicine box, a blister pack, or a bottle label.
+
+Extract ONLY the following structured fields. If a field is not clearly visible, return null for that field — never guess or infer. Return ONLY valid JSON, no markdown, no explanation text, no preamble.
+
+{
+  "drug_name": "the primary medicine name (brand or generic)",
+  "generic_name": "generic/INN name if shown separately from brand name, else null",
+  "strength": "dosage strength with unit (e.g. '500mg', '10ml', '5mg/5ml')",
+  "form": "tablet/capsule/syrup/injection/cream/other",
+  "frequency": "how often to take (e.g. 'twice daily', 'every 8 hours'), or null",
+  "duration": "how long to take (e.g. '5 days', '1 month'), or null",
+  "prescriber": "doctor name if shown, else null",
+  "confidence": "high/medium/low — your assessment of extraction quality given image clarity"
+}
+
+If this image is not a medicine or prescription image, return: { 'error': 'not_a_medicine_image' }`;
+
+// ─── Helper: Call Gemini Vision with 10s timeout ──────────────────────────────
+async function callGeminiVision(filePath, mimeType) {
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey || apiKey === 'your_gemini_api_key_here' || apiKey.trim().length === 0) {
+    throw new Error('GEMINI_API_KEY not configured.');
+  }
+
+  const genAI = new GoogleGenerativeAI(apiKey);
+  // Attempt with gemini-2.5-flash, fallback to gemini-1.5-flash if needed
+  let modelName = 'gemini-2.5-flash';
+  let model;
+  try {
+    model = genAI.getGenerativeModel({ model: modelName });
+  } catch {
+    modelName = 'gemini-1.5-flash';
+    model = genAI.getGenerativeModel({ model: modelName });
+  }
+
+  const imageBuffer = fs.readFileSync(filePath);
+  const base64Data = imageBuffer.toString('base64');
+  const imagePart = {
+    inlineData: {
+      data: base64Data,
+      mimeType: mimeType || 'image/jpeg',
+    },
+  };
+
+  const geminiCall = model.generateContent([GEMINI_STRUCTURED_PROMPT, imagePart]);
+  const timeoutPromise = new Promise((_, reject) =>
+    setTimeout(() => reject(new Error('Gemini Vision call timed out (10s limit)')), 10_000)
+  );
+
+  const response = await Promise.race([geminiCall, timeoutPromise]);
+  const responseText = response.response.text();
+
+  // Strip possible markdown fences
+  const cleanJson = responseText
+    .replace(/^```json\s*/i, '')
+    .replace(/^```\s*/i, '')
+    .replace(/```$/i, '')
+    .trim();
+
+  const parsed = JSON.parse(cleanJson);
+  return { parsed, raw: responseText };
+}
+
+// ─── Helper: RxNorm Verification for Gemini Output ────────────────────────────
+async function verifyWithRxNorm(drugName, genericName) {
+  if (!drugName && !genericName) {
+    return { verified: false, rxcui: null, confirmedName: drugName || genericName };
+  }
+
+  const namesToTry = [drugName, genericName].filter(Boolean);
+
+  for (const name of namesToTry) {
+    try {
+      const url = `https://rxnav.nlm.nih.gov/REST/rxcui.json?name=${encodeURIComponent(name.trim())}&allsrc=0`;
+      const { data } = await axios.get(url, { timeout: 5000 });
+
+      const rxnormIds = data?.idGroup?.rxnormId;
+      if (Array.isArray(rxnormIds) && rxnormIds.length > 0) {
+        const rxcui = String(rxnormIds[0]);
+
+        // Attempt to fetch standard concept name
+        let confirmedName = name.trim();
+        try {
+          const propRes = await axios.get(`https://rxnav.nlm.nih.gov/REST/rxcui/${rxcui}/properties.json`, { timeout: 4000 });
+          confirmedName = propRes.data?.properties?.name || confirmedName;
+        } catch {
+          // Keep search name on properties timeout
+        }
+
+        return {
+          verified: true,
+          rxcui,
+          confirmedName,
+        };
+      }
+    } catch (err) {
+      console.warn(`[scan] RxNorm lookup warning for "${name}":`, err.message);
+    }
+  }
+
+  return {
+    verified: false,
+    rxcui: null,
+    confirmedName: drugName || genericName,
+  };
+}
+
 // ═════════════════════════════════════════════════════════════════════════════
 // POST /medicine/scan
-// Multi-layered OCR pipeline with RxNorm candidate verification:
-// 1. DEMO_MODE: Mock fixture returns instantly
-// 2. Local Tesseract OCR: Fast, offline, zero network dependency
-// 3. Cloud OCR.space API: Secondary fallback if Tesseract gives low confidence
-// 4. Boilerplate filter + candidate ranking + RxNorm verification
+// 4-Stage Extraction Pipeline: Gemini Vision -> RxNorm -> Tesseract -> OCR.space
 // ═════════════════════════════════════════════════════════════════════════════
 router.post(
   '/scan',
   auth,
   (req, res, next) => {
-    // Run multer, handling errors cleanly
     upload.single('image')(req, res, (err) => {
       if (err instanceof multer.MulterError) {
         return res.status(400).json({
@@ -86,43 +213,132 @@ router.post(
     }
 
     try {
-      // ── 0. DEMO MODE: skip live OCR, return pre-set sample text ───────────
+      // ── 0. DEMO MODE: return pre-built sample response with source: "gemini" ─
       if (isDemoMode()) {
         cleanupFile(filePath);
-        const mock = getMockOcrResult();
-        console.log('[scan] DEMO_MODE=true — returning mock OCR result (engines skipped)');
+        console.log('[scan] DEMO_MODE=true — returning sample Gemini response fixture');
         return res.status(200).json({
-          success:   true,
-          candidate: mock.candidate,
+          source: 'gemini',
+          drug_name: 'Warfarin',
+          generic_name: 'Warfarin Sodium',
+          strength: '5mg',
+          form: 'tablet',
+          frequency: 'once daily',
+          duration: 'ongoing',
+          prescriber: 'Dr. Sarah Wilson',
+          rxNormVerified: true,
+          rxcui: '11289',
+          confidence: 'high',
+          raw_extraction: JSON.stringify({
+            drug_name: 'Warfarin',
+            generic_name: 'Warfarin Sodium',
+            strength: '5mg',
+            form: 'tablet',
+            frequency: 'once daily',
+            duration: 'ongoing',
+            prescriber: 'Dr. Sarah Wilson',
+            confidence: 'high',
+          }),
+          // Backward compatibility mappings
+          candidate: 'Warfarin',
+          genericName: 'Warfarin Sodium',
           standardizedCode: '11289',
-          verified:  true,
-          fallbackCandidates: [mock.candidate],
-          suggestedDosage: '5 mg',
-          rawText:   mock.rawText,
-          lineCount: mock.lineCount,
-          note:      mock.note,
-          engine:    'demo',
+          verified: true,
+          suggestedDosage: '5mg',
+          commonFrequency: 'once',
+          suggestedType: 'PRESCRIPTION',
+          category: 'Anticoagulant (Blood Thinner)',
+          safetyTip: 'Take consistently at the same time each day. Avoid sudden changes in diet high in Vitamin K.',
+          dosageOptions: ['1mg', '2mg', '2.5mg', '5mg'],
+          foodInstruction: 'after_food',
           _demoMock: true,
         });
       }
 
-      // ── 1. LAYER 1: Try Local Tesseract OCR ──────────────────────────────
-      let tesseractRawText = '';
-      let tesseractError = null;
+      // ── STAGE 1: GEMINI VISION (Primary, runs first on every request) ────────
+      let geminiExtraction = null;
+      let geminiError = null;
 
       try {
-        console.log(`[scan] Attempting Layer 1 (Local Tesseract OCR) on ${filePath}...`);
-        const result = await tesseract.recognize(filePath, tesseractConfig);
-        tesseractRawText = (result || '').trim();
-      } catch (tErr) {
-        tesseractError = tErr;
-        console.warn(`[scan] Local Tesseract OCR encountered an issue: ${tErr.message}`);
+        console.log(`[scan] Stage 1: Attempting Gemini Vision on ${filePath}...`);
+        const result = await callGeminiVision(filePath, req.file?.mimetype);
+        geminiExtraction = result;
+      } catch (gErr) {
+        geminiError = gErr;
+        console.warn(`[scan] Stage 1 (Gemini Vision) failed: ${gErr.message}`);
       }
 
-      // Check if Tesseract returned substantial recognizable characters (>= 3 chars)
-      const hasAlphanumeric = /[A-Za-z0-9]{3,}/.test(tesseractRawText);
+      if (geminiExtraction && geminiExtraction.parsed) {
+        const parsed = geminiExtraction.parsed;
 
-      if (hasAlphanumeric && tesseractRawText.length >= 3) {
+        // Check if Gemini determined the image is not a medicine/prescription
+        if (parsed.error === 'not_a_medicine_image' || parsed.error?.includes('not_a_medicine')) {
+          cleanupFile(filePath);
+          return res.status(400).json({
+            error: "This doesn't look like a medicine or prescription image — try a clearer photo.",
+          });
+        }
+
+        const drugName = (parsed.drug_name || '').trim();
+        const genericName = (parsed.generic_name || '').trim() || null;
+        const confidence = (parsed.confidence || 'medium').toLowerCase();
+
+        if (drugName && drugName !== 'null') {
+          // ── STAGE 2: RXNORM VERIFICATION on Gemini Output ───────────────────
+          console.log(`[scan] Stage 2: Verifying Gemini output ("${drugName}") with RxNorm...`);
+          const rxNormRes = await verifyWithRxNorm(drugName, genericName);
+
+          cleanupFile(filePath);
+
+          return res.status(200).json({
+            source: 'gemini',
+            drug_name: rxNormRes.confirmedName || drugName,
+            generic_name: genericName,
+            strength: parsed.strength || null,
+            form: parsed.form || 'tablet',
+            frequency: parsed.frequency || null,
+            duration: parsed.duration || null,
+            prescriber: parsed.prescriber || null,
+            rxNormVerified: rxNormRes.verified,
+            rxcui: rxNormRes.rxcui,
+            confidence: confidence,
+            raw_extraction: geminiExtraction.raw,
+
+            // Backward compatibility aliases for existing frontend components
+            candidate: rxNormRes.confirmedName || drugName,
+            genericName: genericName || (rxNormRes.verified ? rxNormRes.confirmedName : null),
+            standardizedCode: rxNormRes.rxcui,
+            verified: rxNormRes.verified,
+            suggestedDosage: parsed.strength || '',
+            suggestedType: (parsed.form || '').toLowerCase().includes('herb') ? 'HERBAL' : 'PRESCRIPTION',
+            commonFrequency: (parsed.frequency || '').toLowerCase().includes('twice')
+              ? 'twice'
+              : (parsed.frequency || '').toLowerCase().includes('thrice')
+              ? 'thrice'
+              : 'once',
+            foodInstruction: '',
+            prescriberName: parsed.prescriber || null,
+            note: rxNormRes.verified
+              ? 'Extracted via Gemini Vision and verified with standard drug database.'
+              : 'Extracted via Gemini Vision. Unverified in RxNorm — please confirm details before saving.',
+          });
+        }
+      }
+
+      // ── STAGE 3: TESSERACT OCR FALLBACK (Runs if Gemini fails/times out) ─────
+      console.log('[scan] Stage 3: Falling back to Local Tesseract OCR...');
+      let tesseractRawText = '';
+
+      try {
+        const tResult = await tesseract.recognize(filePath, tesseractConfig);
+        tesseractRawText = (tResult || '').trim();
+      } catch (tErr) {
+        console.warn(`[scan] Local Tesseract OCR failed: ${tErr.message}`);
+      }
+
+      const hasTesseractContent = /[A-Za-z0-9]{3,}/.test(tesseractRawText);
+
+      if (hasTesseractContent && tesseractRawText.length >= 3) {
         cleanupFile(filePath);
 
         const extraction = extractAndRankCandidates(tesseractRawText);
@@ -132,10 +348,23 @@ router.post(
           extraction
         );
 
-        console.log(`[scan] Layer 1 (Tesseract) succeeded: extracted ${extraction.lines.length} lines, verified candidate="${verification.candidate || 'none'}"`);
+        console.log(`[scan] Stage 3 (Tesseract) succeeded: verified candidate="${verification.candidate || 'none'}"`);
 
         return res.status(200).json({
-          success: true,
+          source: 'tesseract',
+          drug_name: verification.candidate || extraction.rankedCandidates[0] || 'Unknown',
+          generic_name: verification.genericName || null,
+          strength: verification.suggestedDosage || extraction.suggestedDosage || null,
+          form: 'tablet',
+          frequency: verification.commonFrequency || 'once',
+          duration: null,
+          prescriber: verification.prescriber || null,
+          rxNormVerified: !!verification.verified,
+          rxcui: verification.standardizedCode || null,
+          confidence: verification.verified ? 'medium' : 'low',
+          raw_extraction: tesseractRawText,
+
+          // Backward compatibility
           candidate: verification.candidate,
           genericName: verification.genericName,
           standardizedCode: verification.standardizedCode,
@@ -149,27 +378,46 @@ router.post(
           foodInstruction: verification.foodInstruction || '',
           suggestedType: verification.suggestedType || 'PRESCRIPTION',
           extractedTimings: verification.extractedTimings || [],
-          prescriber: verification.prescriber || null,
-          rawText: tesseractRawText,
+          prescriberName: verification.prescriber || null,
           lineCount: extraction.lines.length,
-          engine: 'tesseract',
-          note: verification.verified
-            ? 'Drug name verified against standard drug database — please confirm details.'
-            : 'Text recognized. Select a suggested name below or enter manually.',
+          note: 'Extracted via local Tesseract OCR fallback.',
         });
       }
 
-      console.log(
-        `[scan] Layer 1 (Tesseract) yielded insufficient text (${tesseractRawText.length} chars). Falling back to Layer 2 (OCR.space API)...`
-      );
+      // ── STAGE 4: OCR.SPACE FALLBACK (Runs only if both Gemini & Tesseract fail)
+      console.log('[scan] Stage 4: Falling back to Cloud OCR.space...');
+      const ocrSpaceKey = process.env.OCR_SPACE_API_KEY;
 
-      // ── 2. LAYER 2: Cloud OCR.space API Fallback ─────────────────────────
-      const apiKey = process.env.OCR_SPACE_API_KEY;
+      if (ocrSpaceKey && ocrSpaceKey.trim().length > 0) {
+        const form = new FormData();
+        form.append('file', fs.createReadStream(filePath), {
+          filename: req.file.originalname || 'prescription.jpg',
+          contentType: req.file.mimetype,
+        });
+        form.append('apikey', ocrSpaceKey);
+        form.append('language', 'eng');
+        form.append('isOverlayRequired', 'false');
+        form.append('detectOrientation', 'true');
+        form.append('scale', 'true');
+        form.append('OCREngine', '2');
 
-      if (!apiKey) {
+        let ocrResponse;
+        try {
+          ocrResponse = await axios.post('https://api.ocr.space/parse/image', form, {
+            headers: form.getHeaders(),
+            timeout: 15_000,
+          });
+        } catch (ocrErr) {
+          console.warn(`[scan] OCR.space cloud call failed: ${ocrErr.message}`);
+        }
+
         cleanupFile(filePath);
-        if (tesseractRawText.length > 0) {
-          const extraction = extractAndRankCandidates(tesseractRawText);
+
+        const parsedResult = ocrResponse?.data?.ParsedResults?.[0];
+        const cloudRawText = (parsedResult?.ParsedText ?? '').trim();
+
+        if (cloudRawText && cloudRawText.length >= 3) {
+          const extraction = extractAndRankCandidates(cloudRawText);
           const verification = await verifyCandidatesWithRxNorm(
             extraction.rankedCandidates,
             extraction.suggestedDosage,
@@ -177,7 +425,20 @@ router.post(
           );
 
           return res.status(200).json({
-            success: true,
+            source: 'ocrspace',
+            drug_name: verification.candidate || extraction.rankedCandidates[0] || 'Unknown',
+            generic_name: verification.genericName || null,
+            strength: verification.suggestedDosage || extraction.suggestedDosage || null,
+            form: 'tablet',
+            frequency: verification.commonFrequency || 'once',
+            duration: null,
+            prescriber: verification.prescriber || null,
+            rxNormVerified: !!verification.verified,
+            rxcui: verification.standardizedCode || null,
+            confidence: verification.verified ? 'medium' : 'low',
+            raw_extraction: cloudRawText,
+
+            // Backward compatibility
             candidate: verification.candidate,
             genericName: verification.genericName,
             standardizedCode: verification.standardizedCode,
@@ -191,163 +452,19 @@ router.post(
             foodInstruction: verification.foodInstruction || '',
             suggestedType: verification.suggestedType || 'PRESCRIPTION',
             extractedTimings: verification.extractedTimings || [],
-            prescriber: verification.prescriber || null,
-            rawText: tesseractRawText,
+            prescriberName: verification.prescriber || null,
             lineCount: extraction.lines.length,
-            engine: 'tesseract',
-            note: 'Partial text recognized via local OCR.',
+            note: 'Extracted via Cloud OCR.space fallback.',
           });
         }
-
-        return res.status(422).json({
-          error: 'Could not read text from this image. Please enter the medicine name manually.',
-          fallback: true,
-        });
       }
 
-      const form = new FormData();
-      form.append('file', fs.createReadStream(filePath), {
-        filename: req.file.originalname || 'prescription.jpg',
-        contentType: req.file.mimetype,
-      });
-      form.append('apikey', apiKey);
-      form.append('language', 'eng');
-      form.append('isOverlayRequired', 'false');
-      form.append('detectOrientation', 'true');
-      form.append('scale', 'true');
-      form.append('OCREngine', '2'); // OCR.space Engine 2 for printed prescription labels
+      cleanupFile(filePath);
 
-      let ocrResponse;
-      try {
-        ocrResponse = await axios.post('https://api.ocr.space/parse/image', form, {
-          headers: form.getHeaders(),
-          timeout: 15_000, // 15 s timeout
-        });
-      } catch (ocrErr) {
-        cleanupFile(filePath);
-        console.warn(`[scan] OCR.space cloud call failed: ${ocrErr.message}`);
-
-        if (tesseractRawText.length > 0) {
-          const extraction = extractAndRankCandidates(tesseractRawText);
-          const verification = await verifyCandidatesWithRxNorm(
-            extraction.rankedCandidates,
-            extraction.suggestedDosage,
-            extraction
-          );
-
-          return res.status(200).json({
-            success: true,
-            candidate: verification.candidate,
-            genericName: verification.genericName,
-            standardizedCode: verification.standardizedCode,
-            verified: verification.verified,
-            fallbackCandidates: verification.fallbackCandidates,
-            suggestedDosage: verification.suggestedDosage,
-            category: verification.category,
-            safetyTip: verification.safetyTip,
-            dosageOptions: verification.dosageOptions || [],
-            commonFrequency: verification.commonFrequency || 'once',
-            foodInstruction: verification.foodInstruction || '',
-            suggestedType: verification.suggestedType || 'PRESCRIPTION',
-            extractedTimings: verification.extractedTimings || [],
-            prescriber: verification.prescriber || null,
-            rawText: tesseractRawText,
-            lineCount: extraction.lines.length,
-            engine: 'tesseract',
-            note: 'Local OCR result used (cloud OCR unavailable).',
-          });
-        }
-
-        return res.status(422).json({
-          error: 'Both local OCR and cloud OCR could not parse this image. Please enter the medicine name manually.',
-          fallback: true,
-        });
-      } finally {
-        cleanupFile(filePath); // always delete temp file
-      }
-
-      const parsed = ocrResponse.data?.ParsedResults?.[0];
-      const ocrExitCode = ocrResponse.data?.OCRExitCode;
-
-      if (!parsed || ocrExitCode === 99 || parsed.FileParseExitCode < 0) {
-        if (tesseractRawText.length > 0) {
-          const extraction = extractAndRankCandidates(tesseractRawText);
-          const verification = await verifyCandidatesWithRxNorm(
-            extraction.rankedCandidates,
-            extraction.suggestedDosage,
-            extraction
-          );
-
-          return res.status(200).json({
-            success: true,
-            candidate: verification.candidate,
-            genericName: verification.genericName,
-            standardizedCode: verification.standardizedCode,
-            verified: verification.verified,
-            fallbackCandidates: verification.fallbackCandidates,
-            suggestedDosage: verification.suggestedDosage,
-            category: verification.category,
-            safetyTip: verification.safetyTip,
-            dosageOptions: verification.dosageOptions || [],
-            commonFrequency: verification.commonFrequency || 'once',
-            foodInstruction: verification.foodInstruction || '',
-            suggestedType: verification.suggestedType || 'PRESCRIPTION',
-            extractedTimings: verification.extractedTimings || [],
-            prescriber: verification.prescriber || null,
-            rawText: tesseractRawText,
-            lineCount: extraction.lines.length,
-            engine: 'tesseract',
-            note: 'Local OCR result used.',
-          });
-        }
-
-        return res.status(422).json({
-          error: 'The OCR engines could not read text from this image. Try better lighting or enter the name manually.',
-          fallback: true,
-        });
-      }
-
-      const cloudRawText = (parsed.ParsedText ?? '').trim();
-
-      if (!cloudRawText) {
-        return res.status(422).json({
-          error: 'No text detected in the image. Try a clearer photo or enter the name manually.',
-          fallback: true,
-        });
-      }
-
-      // Parse candidate from OCR.space output
-      const extraction = extractAndRankCandidates(cloudRawText);
-      const verification = await verifyCandidatesWithRxNorm(
-        extraction.rankedCandidates,
-        extraction.suggestedDosage,
-        extraction
-      );
-
-      console.log(`[scan] Layer 2 (OCR.space) succeeded: extracted ${extraction.lines.length} lines, verified candidate="${verification.candidate || 'none'}"`);
-
-      return res.status(200).json({
-        success: true,
-        candidate: verification.candidate,
-        genericName: verification.genericName,
-        standardizedCode: verification.standardizedCode,
-        verified: verification.verified,
-        fallbackCandidates: verification.fallbackCandidates,
-        suggestedDosage: verification.suggestedDosage,
-        category: verification.category,
-        safetyTip: verification.safetyTip,
-        dosageOptions: verification.dosageOptions || [],
-        commonFrequency: verification.commonFrequency || 'once',
-        foodInstruction: verification.foodInstruction || '',
-        suggestedType: verification.suggestedType || 'PRESCRIPTION',
-        extractedTimings: verification.extractedTimings || [],
-        prescriber: verification.prescriber || null,
-        rawText: cloudRawText,
-        lineCount: extraction.lines.length,
-        engine: 'ocrspace',
-        note: verification.verified
-          ? 'Drug name verified against standard drug database — please confirm details.'
-          : 'Could not identify a drug name automatically. Select a suggested name or type manually.',
+      // If none of the engines returned anything usable
+      return res.status(422).json({
+        error: 'Could not extract drug information — please enter details manually.',
+        fallback: true,
       });
     } catch (err) {
       cleanupFile(filePath);
@@ -363,12 +480,7 @@ router.post(
 // ═════════════════════════════════════════════════════════════════════════════
 // POST /medicine/identify-pill
 // Loose pill imprint code lookup via OCR photo or manual imprint code.
-// ALWAYS returns `possibleMatches` (plural), never a single definitive confirmation.
-// Includes mandatory safety caveat.
 // ═════════════════════════════════════════════════════════════════════════════
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
-
 const PILL_SAFETY_CAVEAT =
   "This is a limited reference lookup, not a medical identification. If you're not certain, do not take this pill — check with a pharmacist.";
 
@@ -399,7 +511,6 @@ router.post(
         candidateTokens = [clean, clean.replace(/\s+/g, '')];
         extractedRawText = clean;
       } else if (filePath) {
-        // Run OCR on the pill photo
         let ocrText = '';
         try {
           ocrText = await tesseract.recognize(filePath, tesseractConfig);
@@ -408,7 +519,6 @@ router.post(
         }
 
         if (!ocrText || ocrText.trim().length === 0) {
-          // Cloud OCR fallback
           const apiKey = process.env.OCR_SPACE_API_KEY || 'helloworld';
           const form = new FormData();
           form.append('file', fs.createReadStream(filePath));
@@ -427,7 +537,6 @@ router.post(
         cleanupFile(filePath);
         extractedRawText = ocrText.trim();
 
-        // Tokenize OCR text into potential imprint code strings (2 to 12 chars)
         const rawTokens = extractedRawText
           .replace(/[^A-Za-z0-9\s\-]/g, ' ')
           .split(/\s+/)
@@ -452,7 +561,6 @@ router.post(
         });
       }
 
-      // Look up candidate imprint codes in PillImprint table
       const allImprints = await prisma.pillImprint.findMany();
       const matchedPills = [];
       const seenIds = new Set();
@@ -485,7 +593,6 @@ router.post(
         }
       }
 
-      // If manual code entered and no exact token match, return all fuzzy matches
       return res.status(200).json({
         success: true,
         extractedText: extractedRawText,

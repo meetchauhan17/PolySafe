@@ -211,6 +211,7 @@ router.get('/mine', auth, requireRole(['DOCTOR']), async (req, res) => {
             age: true,
             conditions: true,
             medicines: {
+              where: { removedAt: null },
               orderBy: { dateAdded: 'desc' },
               take: 5,
               select: { id: true, name: true, type: true, dateAdded: true },
@@ -340,6 +341,7 @@ router.get('/doctor-patient/:patientId/timeline', auth, requireRole(['DOCTOR']),
       return {
         id: med.id, name: med.name, type: med.type, dosage: med.dosage,
         standardizedCode: med.standardizedCode, dateAdded: med.dateAdded,
+        discontinued: !!med.removedAt, removedAt: med.removedAt,
         flagged: allFlags.length > 0, flags: allFlags,
       };
     });
@@ -366,18 +368,19 @@ router.get('/doctor-patient/:patientId/timeline', auth, requireRole(['DOCTOR']),
 });
 
 // ═════════════════════════════════════════════════════════════════════════════
-// POST /connection/doctor/prescribe-safety-check
-// Doctor-auth: test a proposed medication against the patient's existing regimen
+// POST /connection/doctor-safety-check & POST /connection/doctor/prescribe-safety-check
+// Doctor-auth: test a proposed drug against patient's active regimen before prescribing.
+// Uses Indian formulary resolver, interaction database, and projected 5-tier regimen risk.
 // ═════════════════════════════════════════════════════════════════════════════
-router.post('/doctor/prescribe-safety-check', auth, requireRole(['DOCTOR']), async (req, res) => {
+const handleDoctorSafetyCheck = async (req, res) => {
   const { userId } = req.user;
-  const { patientId, proposedMedicineName } = req.body;
+  const { patientId, proposedDrug, proposedMedicineName, dosage } = req.body;
 
-  if (!patientId || !proposedMedicineName?.trim()) {
-    return res.status(400).json({ error: 'patientId and proposedMedicineName are required.' });
+  const rawDrug = (proposedDrug || proposedMedicineName || '').trim();
+
+  if (!patientId || !rawDrug) {
+    return res.status(400).json({ error: 'patientId and proposedDrug are required.' });
   }
-
-  const proposed = proposedMedicineName.trim();
 
   try {
     const connection = await prisma.connection.findFirst({
@@ -387,43 +390,122 @@ router.post('/doctor/prescribe-safety-check', auth, requireRole(['DOCTOR']), asy
       return res.status(403).json({ error: 'No approved connection to this patient.' });
     }
 
+    const { resolveDrugWithAI } = require('../services/aiDrugResolver');
+    const { getDrugHarmLevel } = require('../services/regimenRisk');
+
+    // 1. Resolve proposed drug through Indian formulary resolver
+    const resolved = await resolveDrugWithAI(rawDrug);
+    const resolvedName = resolved.resolvedName || rawDrug;
+    const genericName = resolved.genericName || rawDrug;
+    const proposedHarmLevel = resolved.harmLevel || getDrugHarmLevel(resolvedName, resolved.class);
+
+    // 2. Fetch patient's active medicines and existing flags
     const activeMeds = await prisma.medicine.findMany({
       where: { patientId, removedAt: null },
-      select: { id: true, name: true, type: true, dosage: true },
+      select: { id: true, name: true, type: true, dosage: true, harmLevel: true },
     });
 
+    const existingFlags = await prisma.interactionFlag.findMany({
+      where: {
+        patientId,
+        medicineA: { removedAt: null },
+        medicineB: { removedAt: null },
+      },
+      select: { severity: true },
+    });
+
+    // 3. Test proposed drug (and all constituent generic salts) against active regimen
     const detectedFlags = [];
+    const constituents = resolved.genericSalts || [resolvedName];
+
     for (const med of activeMeds) {
-      const match = await lookupInteraction(proposed, med.name);
+      // Check brand/generic match
+      let match = await lookupInteraction(resolvedName, med.name);
+      if (!match.found) {
+        // Test individual constituents
+        for (const salt of constituents) {
+          const saltMatch = await lookupInteraction(salt, med.name);
+          if (saltMatch.found) {
+            match = saltMatch;
+            break;
+          }
+        }
+      }
+
       if (match.found) {
         detectedFlags.push({
-          proposedDrug: proposed,
+          counterpart: med.name,
           interactingDrug: med.name,
-          severity: match.severity,
+          severity: match.severity || 'Moderate',
+          plainExplanation: match.note || `Potential ${match.severity || 'Moderate'} pharmacological interaction between ${resolvedName} and ${med.name}.`,
           note: match.note,
         });
       }
     }
 
-    const hasContraindicated = detectedFlags.some((f) => f.severity === 'Contraindicated');
-    const hasMajor = detectedFlags.some((f) => f.severity === 'Major');
-    const decision = hasContraindicated ? 'CONTRAINDICATED' : hasMajor ? 'CAUTION' : detectedFlags.length > 0 ? 'MODERATE_RISK' : 'SAFE';
+    // 4. Calculate projected 5-tier regimen risk if this drug were added
+    const existingHarmLevels = activeMeds.map(m => m.harmLevel || getDrugHarmLevel(m.name));
+    const projectedHarmLevels = [...existingHarmLevels, proposedHarmLevel];
+    const projectedAverage = projectedHarmLevels.reduce((a, b) => a + b, 0) / projectedHarmLevels.length;
+
+    const totalActiveFlags = existingFlags.length + detectedFlags.length;
+    const existingMajorCount = existingFlags.filter(f => f.severity === 'Major' || f.severity === 'Contraindicated').length;
+    const detectedMajorCount = detectedFlags.filter(f => f.severity === 'Major' || f.severity === 'Contraindicated').length;
+    const totalMajorFlags = existingMajorCount + detectedMajorCount;
+
+    const maxHarm = Math.max(...projectedHarmLevels);
+
+    let projectedRegimenRisk = 'LOW';
+    if (maxHarm === 5 || totalActiveFlags >= 3) {
+      projectedRegimenRisk = 'CRITICAL';
+    } else if (projectedAverage >= 3.5 || totalMajorFlags >= 1) {
+      projectedRegimenRisk = 'HIGH';
+    } else if (projectedAverage >= 2.5) {
+      projectedRegimenRisk = 'MODERATE';
+    } else if (projectedAverage >= 1.5) {
+      projectedRegimenRisk = 'MILD';
+    } else {
+      projectedRegimenRisk = 'LOW';
+    }
+
+    // 5. Determine overall pre-prescribing decision for THIS proposed drug
+    const hasCriticalFlag = detectedFlags.some(f => f.severity === 'Contraindicated' || f.severity === 'Major');
+    const hasModerateFlag = detectedFlags.some(f => f.severity === 'Moderate' || f.severity === 'Minor');
+
+    let decision = 'SAFE';
+    if (hasCriticalFlag || proposedHarmLevel === 5) {
+      decision = 'CRITICAL';
+    } else if (hasModerateFlag || proposedHarmLevel === 4) {
+      decision = 'CAUTION';
+    } else {
+      decision = 'SAFE';
+    }
 
     return res.status(200).json({
       decision,
-      proposedDrug: proposed,
-      activeMedCount: activeMeds.length,
-      flagCount: detectedFlags.length,
+      proposedDrug: {
+        name: resolvedName,
+        genericName,
+        harmLevel: proposedHarmLevel,
+        class: resolved.class || 'Prescription Medicine',
+        foodInstruction: resolved.foodInstruction || 'after_food',
+        dosage: dosage || resolved.dosageOptions?.[0] || 'Standard dose',
+      },
       flags: detectedFlags,
-      message: decision === 'SAFE'
-        ? `No direct DDInter interaction detected between ${proposed} and patient's current ${activeMeds.length} medicines.`
-        : `Potential ${decision} interaction identified with current medications.`,
+      currentRegimenCount: activeMeds.length,
+      projectedRegimenRisk,
+      projectedAverageScore: parseFloat(projectedAverage.toFixed(1)),
+      framing: 'Pre-prescribing safety check — does not modify the patient\'s medicine list.',
+      disclaimer: 'This is an informational safety evaluation, not a prescription or clinical diagnosis.',
     });
   } catch (err) {
-    console.error('[doctor/prescribe-safety-check]', err);
-    return res.status(500).json({ error: 'Failed to run prescribing safety check.' });
+    console.error('[doctor-safety-check]', err);
+    return res.status(500).json({ error: 'Failed to run doctor safety check.' });
   }
-});
+};
+
+router.post('/doctor-safety-check', auth, requireRole(['DOCTOR']), handleDoctorSafetyCheck);
+router.post('/doctor/prescribe-safety-check', auth, requireRole(['DOCTOR']), handleDoctorSafetyCheck);
 
 
 // ═════════════════════════════════════════════════════════════════════════════

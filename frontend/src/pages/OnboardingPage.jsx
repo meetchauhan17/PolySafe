@@ -149,7 +149,7 @@ export default function OnboardingPage() {
       .filter((c) => c !== 'none')
       .map((id) => {
         const opt = CONDITION_OPTIONS.find((o) => o.id === id);
-        return opt ? opt.id : id;
+        return opt ? opt.label : id;
       });
 
     saveProfileMutation.mutate({

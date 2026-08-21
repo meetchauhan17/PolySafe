@@ -7,12 +7,12 @@
  * When a claim is detected, shows an "Approve / Deny" prompt.
  */
 import React, { useState, useEffect, useCallback } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import {
   ArrowLeft, QrCode, Copy, RefreshCw, Clock, CheckCircle2, XCircle,
-  Stethoscope, ShieldCheck, AlertCircle, Loader2, Info, ChevronRight, Users, Lock,
+  Stethoscope, ShieldCheck, AlertCircle, Loader2, Info, Users, Lock,
 } from 'lucide-react';
 import Card from '../components/Card';
 import { Skeleton } from '../components/Skeletons';
@@ -68,7 +68,7 @@ export default function DoctorSharePage() {
   const { isGuest, requireAuth } = useAuth();
   const [codeData, setCodeData] = useState(
     isGuest
-      ? { shareCode: '849-210', expiresAt: new Date(Date.now() + 15 * 60000).toISOString() }
+      ? { shareCode: '849210', expiresAt: new Date(Date.now() + 15 * 60000).toISOString() }
       : null
   );
   const [copied, setCopied]     = useState(false);

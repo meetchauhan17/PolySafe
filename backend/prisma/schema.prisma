@@ -115,6 +115,7 @@ model Medicine {
   addedByUser      User         @relation("AddedByUser", fields: [addedBy], references: [id])
   dateAdded        DateTime     @default(now())
   dosage           String?
+  harmLevel        Int          @default(3) // 1=Low, 2=Mild, 3=Moderate, 4=High, 5=Critical (WHO/NCI 5-Tier)
   removedAt        DateTime?    // Soft-delete timestamp: set when medicine is discontinued
 
   // Relations
@@ -259,3 +260,23 @@ model PillImprint {
   @@map("pill_imprint")
 }
 
+// ─── Drug Side Effects (OFFSIDES Dataset) ─────────────────────────────────────
+// Populated by prisma/seedDatabases.js from OFFSIDES.csv.gz (UCSF/NCATS).
+// 3.2M records: single-drug → adverse effect associations with PRR scores.
+// PRR (Proportional Reporting Ratio) ≥ 2 indicates a statistical signal.
+model DrugSideEffect {
+  id            Int      @id @default(autoincrement())
+  rxcui         String?  // RxNorm CUI for the drug
+  drugName      String   // Drug concept name from FDA reports
+  sideEffect    String   // MedDRA condition concept name
+  prr           Float    // Proportional Reporting Ratio (signal strength)
+  reportingFreq Float?   @default(0.01) // Fraction of reports mentioning this side effect
+  severity      String?  @default("Moderate") // Derived: "Minor" | "Moderate" | "Major"
+  source        String   @default("OFFSIDES")
+  createdAt     DateTime @default(now())
+
+  @@index([drugName])
+  @@index([rxcui])
+  @@index([drugName, prr])
+  @@map("drug_side_effect")
+}

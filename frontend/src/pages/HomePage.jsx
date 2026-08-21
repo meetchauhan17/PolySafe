@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import {
@@ -10,7 +10,6 @@ import {
   Plus,
   ArrowRight,
   Activity,
-  ShieldCheck,
   Loader2,
   AlertCircle,
   RefreshCw,
@@ -35,6 +34,7 @@ import { EmptyMedicinesIllustration } from '../components/EmptyIllustrations';
 import { HomeSkeleton } from '../components/Skeletons';
 import { useAuth } from '../context/AuthContext';
 import { notify } from '../utils/toast';
+import { DrugHarmBadge, DrugHarmPanel, PolypharmacyHarmDashboard } from '../components/DrugHarmLevel';
 
 // ─── Severity colour map ─────────────────────────────────────────────────────
 const SEVERITY_STYLES = {
@@ -88,10 +88,10 @@ function MedicineTypeBadge({ type }) {
 const DEMO_DATA = {
   status: 'CAUTION',
   medicines: [
-    { id: 'd1', name: 'Warfarin', type: 'PRESCRIPTION', dosage: '5mg', dateAdded: new Date().toISOString() },
-    { id: 'd2', name: 'Aspirin', type: 'OTC', dosage: '81mg', dateAdded: new Date().toISOString() },
-    { id: 'd3', name: 'Lisinopril', type: 'PRESCRIPTION', dosage: '10mg', dateAdded: new Date().toISOString() },
-    { id: 'd4', name: 'Turmeric (Curcumin)', type: 'HERBAL', dosage: '500mg', dateAdded: new Date().toISOString() },
+    { id: 'd1', name: 'Warfarin', type: 'PRESCRIPTION', dosage: '5mg', category: 'Anticoagulant (Blood Thinner)', dateAdded: new Date().toISOString() },
+    { id: 'd2', name: 'Aspirin', type: 'OTC', dosage: '81mg', category: 'Antiplatelet / NSAID', dateAdded: new Date().toISOString() },
+    { id: 'd3', name: 'Lisinopril', type: 'PRESCRIPTION', dosage: '10mg', category: 'ACE Inhibitor (Antihypertensive)', dateAdded: new Date().toISOString() },
+    { id: 'd4', name: 'Turmeric (Curcumin)', type: 'HERBAL', dosage: '500mg', category: 'Herbal Supplement', dateAdded: new Date().toISOString() },
   ],
   schedule: [
     { medicineId: 'd1', name: 'Warfarin', dosage: '5mg', type: 'PRESCRIPTION', time: '08:00 AM' },
@@ -123,7 +123,6 @@ const DEMO_DATA = {
 
 // ─── Main Component ──────────────────────────────────────────────────────────
 export default function HomePage() {
-  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const shouldReduceMotion = useReducedMotion();
   const { token, user, isGuest, openGuestLockModal } = useAuth();
@@ -186,10 +185,10 @@ export default function HomePage() {
   const editMutation = useMutation({
     mutationFn: ({ id, dosage, type }) =>
       axios.put(`/medicine/${id}`, { dosage, type }),
-    onSuccess: (res, vars) => {
-      queryClient.invalidateQueries(['home-summary']);
-      queryClient.invalidateQueries(['patient-timeline']);
-      queryClient.invalidateQueries(['patient-insights']);
+    onSuccess: (_res, vars) => {
+      queryClient.invalidateQueries({ queryKey: ['home-summary'] });
+      queryClient.invalidateQueries({ queryKey: ['patient-timeline'] });
+      queryClient.invalidateQueries({ queryKey: ['patient-insights'] });
       setEditingMed(null);
       notify.success('Medicine Updated', `Updated settings for "${vars.name || 'medicine'}".`);
     },
@@ -200,10 +199,10 @@ export default function HomePage() {
 
   const deleteMutation = useMutation({
     mutationFn: (id) => axios.delete(`/medicine/${id}`),
-    onSuccess: (res, id) => {
-      queryClient.invalidateQueries(['home-summary']);
-      queryClient.invalidateQueries(['patient-timeline']);
-      queryClient.invalidateQueries(['patient-insights']);
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['home-summary'] });
+      queryClient.invalidateQueries({ queryKey: ['patient-timeline'] });
+      queryClient.invalidateQueries({ queryKey: ['patient-insights'] });
       setDiscontinuingMed(null);
       notify.success('Medicine Discontinued', 'Marked as discontinued and preserved on your timeline.');
     },
@@ -249,8 +248,8 @@ export default function HomePage() {
   });
 
   return (
-    <div className="bg-[#EDE8DC] min-h-[88vh] pb-28">
-      <div className="max-w-2xl mx-auto px-4 py-8 space-y-5">
+    <div className="bg-[#EDE8DC] min-h-[88vh] pb-28 md:pb-12">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 space-y-6">
 
         {/* ── Demo mode banner ─────────────────────────────────────────────── */}
         {isDemo && (
@@ -300,6 +299,15 @@ export default function HomePage() {
           </Card>
         ) : (
           <>
+            {/* ═══════════════════════════════════════════════════════════════
+                POLYPHARMACY RISK OVERVIEW (Harm Level Dashboard)
+               ═══════════════════════════════════════════════════════════════ */}
+            <PolypharmacyHarmDashboard
+              medicines={medicines}
+              flags={flags}
+              regimenRisk={data?.regimenRisk}
+            />
+
             {/* ═══════════════════════════════════════════════════════════════
                 STATUS CARD — SAFE or CAUTION
                ═══════════════════════════════════════════════════════════════ */}
@@ -469,18 +477,39 @@ export default function HomePage() {
                       animate={{ opacity: 1, scale: 1 }}
                       exit={shouldReduceMotion ? undefined : { opacity: 0, scale: 0.95 }}
                       transition={{ duration: 0.2 }}
-                      className="p-4 rounded-2xl bg-[#EDE8DC] shadow-[4px_4px_8px_rgba(191,180,155,0.45),-4px_-4px_8px_rgba(255,255,255,0.60)] space-y-2 flex flex-col justify-between"
+                      className="p-4 rounded-2xl bg-[#EDE8DC] shadow-[4px_4px_8px_rgba(191,180,155,0.45),-4px_-4px_8px_rgba(255,255,255,0.60)] space-y-2.5 flex flex-col justify-between"
                     >
-                      <div className="space-y-1.5">
-                        <div className="flex items-start justify-between gap-1">
-                          <p className="text-sm font-bold text-[#1C2B27] leading-tight flex-1 min-w-0 truncate">
-                            {med.name}
-                          </p>
-                          <MedicineTypeBadge type={med.type} />
+                      <div className="space-y-2">
+                        <div className="flex items-start justify-between gap-1 flex-wrap">
+                          <div className="flex-1 min-w-0 pr-1">
+                            <p className="text-sm font-bold text-[#1C2B27] leading-tight truncate">
+                              {med.name}
+                            </p>
+                            {med.generic && med.generic.toLowerCase() !== med.name.toLowerCase() && (
+                              <p className="text-[10px] text-[#5C6B64] truncate">
+                                {med.generic}
+                              </p>
+                            )}
+                          </div>
+                          <div className="flex items-center gap-1 flex-shrink-0">
+                            <DrugHarmBadge category={med.category} name={med.name} flags={flags} />
+                            <MedicineTypeBadge type={med.type} />
+                          </div>
                         </div>
+
                         {med.dosage && (
                           <p className="text-[11px] text-[#5C6B64] font-mono">{med.dosage}</p>
                         )}
+
+                        {/* Interactive Drug Harm & Side Effects Panel */}
+                        <DrugHarmPanel medicine={med} flags={flags} className="mt-1" />
+
+                        {med.safetyTip && (
+                          <p className="text-[10px] text-[#5C6B64] bg-white/50 p-2 rounded-xl border border-[rgba(191,180,155,0.3)] leading-tight">
+                            💡 {med.safetyTip}
+                          </p>
+                        )}
+
                         <p className="text-[10px] text-[#5C6B64]/70">
                           Added {new Date(med.dateAdded).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}
                         </p>

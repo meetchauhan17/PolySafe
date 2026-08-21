@@ -1,0 +1,4437 @@
+{
+  "crocin": {
+    "brandName": "Crocin",
+    "standardGeneric": "Paracetamol",
+    "constituents": [
+      "Paracetamol"
+    ],
+    "primaryRxCui": null,
+    "dosage": "500mg",
+    "dosageOptions": [],
+    "category": "Analgesic/Antipyretic",
+    "safetyTip": "Do not exceed 3g/day. Avoid alcohol.",
+    "commonFrequency": "thrice",
+    "foodInstruction": "after_food",
+    "manufacturer": "GSK",
+    "source": "indian_formulary"
+  },
+  "dolo 650": {
+    "brandName": "Dolo 650",
+    "standardGeneric": "Paracetamol",
+    "constituents": [
+      "Paracetamol"
+    ],
+    "primaryRxCui": null,
+    "dosage": "650mg",
+    "dosageOptions": [],
+    "category": "Analgesic/Antipyretic",
+    "safetyTip": "Max 4g/day. Monitor in liver disease.",
+    "commonFrequency": "thrice",
+    "foodInstruction": "after_food",
+    "manufacturer": "Micro Labs",
+    "source": "indian_formulary"
+  },
+  "dolo650": {
+    "brandName": "Dolo 650",
+    "standardGeneric": "Paracetamol",
+    "constituents": [
+      "Paracetamol"
+    ],
+    "primaryRxCui": null,
+    "dosage": "650mg",
+    "dosageOptions": [],
+    "category": "Analgesic/Antipyretic",
+    "safetyTip": "Max 4g/day. Monitor in liver disease.",
+    "commonFrequency": "thrice",
+    "foodInstruction": "after_food",
+    "manufacturer": "Micro Labs",
+    "source": "indian_formulary_variant"
+  },
+  "dolo": {
+    "brandName": "Dolo 650",
+    "standardGeneric": "Paracetamol",
+    "constituents": [
+      "Paracetamol"
+    ],
+    "primaryRxCui": null,
+    "dosage": "650mg",
+    "dosageOptions": [],
+    "category": "Analgesic/Antipyretic",
+    "safetyTip": "Max 4g/day. Monitor in liver disease.",
+    "commonFrequency": "thrice",
+    "foodInstruction": "after_food",
+    "manufacturer": "Micro Labs",
+    "source": "indian_formulary_variant"
+  },
+  "calpol": {
+    "brandName": "Calpol",
+    "standardGeneric": "Paracetamol",
+    "constituents": [
+      "Paracetamol"
+    ],
+    "primaryRxCui": null,
+    "dosage": "500mg",
+    "dosageOptions": [],
+    "category": "Analgesic/Antipyretic",
+    "safetyTip": "Safe in pregnancy. Avoid excess doses.",
+    "commonFrequency": "thrice",
+    "foodInstruction": "after_food",
+    "manufacturer": "GSK",
+    "source": "indian_formulary"
+  },
+  "combiflam": {
+    "brandName": "Combiflam",
+    "standardGeneric": "Ibuprofen + Paracetamol",
+    "constituents": [
+      "Ibuprofen",
+      "Paracetamol"
+    ],
+    "primaryRxCui": null,
+    "dosage": "400mg+325mg",
+    "dosageOptions": [],
+    "category": "Combination Analgesic",
+    "safetyTip": "Avoid on empty stomach. Risk of GI bleed.",
+    "commonFrequency": "thrice",
+    "foodInstruction": "after_food",
+    "manufacturer": "Sanofi",
+    "source": "indian_formulary"
+  },
+  "brufen": {
+    "brandName": "Brufen",
+    "standardGeneric": "Ibuprofen",
+    "constituents": [
+      "Ibuprofen"
+    ],
+    "primaryRxCui": null,
+    "dosage": "400mg",
+    "dosageOptions": [],
+    "category": "NSAID",
+    "safetyTip": "Avoid in kidney disease and peptic ulcer.",
+    "commonFrequency": "thrice",
+    "foodInstruction": "after_food",
+    "manufacturer": "Abbott",
+    "source": "indian_formulary"
+  },
+  "zerodol": {
+    "brandName": "Zerodol",
+    "standardGeneric": "Aceclofenac",
+    "constituents": [
+      "Aceclofenac"
+    ],
+    "primaryRxCui": null,
+    "dosage": "100mg",
+    "dosageOptions": [],
+    "category": "NSAID",
+    "safetyTip": "Avoid in GI ulcers. Monitor BP.",
+    "commonFrequency": "twice",
+    "foodInstruction": "after_food",
+    "manufacturer": "Ipca",
+    "source": "indian_formulary"
+  },
+  "zerodol sp": {
+    "brandName": "Zerodol SP",
+    "standardGeneric": "Aceclofenac + Paracetamol + Serratiopeptidase",
+    "constituents": [
+      "Aceclofenac",
+      "Paracetamol",
+      "Serratiopeptidase"
+    ],
+    "primaryRxCui": null,
+    "dosage": "100mg+325mg+15mg",
+    "dosageOptions": [],
+    "category": "NSAID+Analgesic+Enzyme",
+    "safetyTip": "Anti-inflammatory combo. Avoid in ulcers.",
+    "commonFrequency": "twice",
+    "foodInstruction": "after_food",
+    "manufacturer": "Ipca",
+    "source": "indian_formulary"
+  },
+  "zerodolsp": {
+    "brandName": "Zerodol SP",
+    "standardGeneric": "Aceclofenac + Paracetamol + Serratiopeptidase",
+    "constituents": [
+      "Aceclofenac",
+      "Paracetamol",
+      "Serratiopeptidase"
+    ],
+    "primaryRxCui": null,
+    "dosage": "100mg+325mg+15mg",
+    "dosageOptions": [],
+    "category": "NSAID+Analgesic+Enzyme",
+    "safetyTip": "Anti-inflammatory combo. Avoid in ulcers.",
+    "commonFrequency": "twice",
+    "foodInstruction": "after_food",
+    "manufacturer": "Ipca",
+    "source": "indian_formulary_variant"
+  },
+  "zerodol th": {
+    "brandName": "Zerodol TH",
+    "standardGeneric": "Aceclofenac + Thiocolchicoside",
+    "constituents": [
+      "Aceclofenac",
+      "Thiocolchicoside"
+    ],
+    "primaryRxCui": null,
+    "dosage": "100mg+4mg",
+    "dosageOptions": [],
+    "category": "NSAID+Muscle Relaxant",
+    "safetyTip": "For musculoskeletal pain. Avoid in pregnancy.",
+    "commonFrequency": "twice",
+    "foodInstruction": "after_food",
+    "manufacturer": "Ipca",
+    "source": "indian_formulary"
+  },
+  "zerodolth": {
+    "brandName": "Zerodol TH",
+    "standardGeneric": "Aceclofenac + Thiocolchicoside",
+    "constituents": [
+      "Aceclofenac",
+      "Thiocolchicoside"
+    ],
+    "primaryRxCui": null,
+    "dosage": "100mg+4mg",
+    "dosageOptions": [],
+    "category": "NSAID+Muscle Relaxant",
+    "safetyTip": "For musculoskeletal pain. Avoid in pregnancy.",
+    "commonFrequency": "twice",
+    "foodInstruction": "after_food",
+    "manufacturer": "Ipca",
+    "source": "indian_formulary_variant"
+  },
+  "voveran": {
+    "brandName": "Voveran",
+    "standardGeneric": "Diclofenac",
+    "constituents": [
+      "Diclofenac"
+    ],
+    "primaryRxCui": null,
+    "dosage": "50mg",
+    "dosageOptions": [],
+    "category": "NSAID",
+    "safetyTip": "Risk of CV events with long-term use.",
+    "commonFrequency": "thrice",
+    "foodInstruction": "after_food",
+    "manufacturer": "Novartis",
+    "source": "indian_formulary"
+  },
+  "voltaren": {
+    "brandName": "Voltaren",
+    "standardGeneric": "Diclofenac",
+    "constituents": [
+      "Diclofenac"
+    ],
+    "primaryRxCui": null,
+    "dosage": "50mg",
+    "dosageOptions": [],
+    "category": "NSAID",
+    "safetyTip": "Short-term use recommended.",
+    "commonFrequency": "thrice",
+    "foodInstruction": "after_food",
+    "manufacturer": "Novartis",
+    "source": "indian_formulary"
+  },
+  "naxdom 500": {
+    "brandName": "Naxdom 500",
+    "standardGeneric": "Naproxen + Domperidone",
+    "constituents": [
+      "Naproxen",
+      "Domperidone"
+    ],
+    "primaryRxCui": null,
+    "dosage": "500mg+10mg",
+    "dosageOptions": [],
+    "category": "NSAID+Antiemetic",
+    "safetyTip": "For migraine. Avoid in peptic ulcer.",
+    "commonFrequency": "twice",
+    "foodInstruction": "after_food",
+    "manufacturer": "Cipla",
+    "source": "indian_formulary"
+  },
+  "naxdom500": {
+    "brandName": "Naxdom 500",
+    "standardGeneric": "Naproxen + Domperidone",
+    "constituents": [
+      "Naproxen",
+      "Domperidone"
+    ],
+    "primaryRxCui": null,
+    "dosage": "500mg+10mg",
+    "dosageOptions": [],
+    "category": "NSAID+Antiemetic",
+    "safetyTip": "For migraine. Avoid in peptic ulcer.",
+    "commonFrequency": "twice",
+    "foodInstruction": "after_food",
+    "manufacturer": "Cipla",
+    "source": "indian_formulary_variant"
+  },
+  "naxdom": {
+    "brandName": "Naxdom 500",
+    "standardGeneric": "Naproxen + Domperidone",
+    "constituents": [
+      "Naproxen",
+      "Domperidone"
+    ],
+    "primaryRxCui": null,
+    "dosage": "500mg+10mg",
+    "dosageOptions": [],
+    "category": "NSAID+Antiemetic",
+    "safetyTip": "For migraine. Avoid in peptic ulcer.",
+    "commonFrequency": "twice",
+    "foodInstruction": "after_food",
+    "manufacturer": "Cipla",
+    "source": "indian_formulary_variant"
+  },
+  "naprosyn": {
+    "brandName": "Naprosyn",
+    "standardGeneric": "Naproxen",
+    "constituents": [
+      "Naproxen"
+    ],
+    "primaryRxCui": null,
+    "dosage": "500mg",
+    "dosageOptions": [],
+    "category": "NSAID",
+    "safetyTip": "Avoid in kidney disease.",
+    "commonFrequency": "twice",
+    "foodInstruction": "after_food",
+    "manufacturer": "Roche",
+    "source": "indian_formulary"
+  },
+  "proxyvon": {
+    "brandName": "Proxyvon",
+    "standardGeneric": "Propoxyphene + Paracetamol + Caffeine",
+    "constituents": [
+      "Propoxyphene",
+      "Paracetamol",
+      "Caffeine"
+    ],
+    "primaryRxCui": null,
+    "dosage": "65mg+400mg+30mg",
+    "dosageOptions": [],
+    "category": "Analgesic Combination",
+    "safetyTip": "Habit-forming. Use only as prescribed.",
+    "commonFrequency": "thrice",
+    "foodInstruction": "after_food",
+    "manufacturer": "Wockhardt",
+    "source": "indian_formulary"
+  },
+  "ultracet": {
+    "brandName": "Ultracet",
+    "standardGeneric": "Tramadol + Paracetamol",
+    "constituents": [
+      "Tramadol",
+      "Paracetamol"
+    ],
+    "primaryRxCui": null,
+    "dosage": "37.5mg+325mg",
+    "dosageOptions": [],
+    "category": "Opioid Analgesic",
+    "safetyTip": "Avoid alcohol. Risk of dependence.",
+    "commonFrequency": "thrice",
+    "foodInstruction": "after_food",
+    "manufacturer": "Janssen",
+    "source": "indian_formulary"
+  },
+  "tramazac": {
+    "brandName": "Tramazac",
+    "standardGeneric": "Tramadol",
+    "constituents": [
+      "Tramadol"
+    ],
+    "primaryRxCui": null,
+    "dosage": "50mg",
+    "dosageOptions": [],
+    "category": "Opioid Analgesic",
+    "safetyTip": "Do not drive. Risk of dependence.",
+    "commonFrequency": "thrice",
+    "foodInstruction": "after_food",
+    "manufacturer": "Zydus",
+    "source": "indian_formulary"
+  },
+  "fortwin": {
+    "brandName": "Fortwin",
+    "standardGeneric": "Pentazocine",
+    "constituents": [
+      "Pentazocine"
+    ],
+    "primaryRxCui": null,
+    "dosage": "30mg",
+    "dosageOptions": [],
+    "category": "Opioid Analgesic",
+    "safetyTip": "Hospital use only. High dependence risk.",
+    "commonFrequency": "asneeded",
+    "foodInstruction": "any",
+    "manufacturer": "Ranbaxy",
+    "source": "indian_formulary"
+  },
+  "acemiz s": {
+    "brandName": "Acemiz S",
+    "standardGeneric": "Aceclofenac + Serratiopeptidase",
+    "constituents": [
+      "Aceclofenac",
+      "Serratiopeptidase"
+    ],
+    "primaryRxCui": null,
+    "dosage": "100mg+15mg",
+    "dosageOptions": [],
+    "category": "NSAID+Enzyme",
+    "safetyTip": "Reduces inflammation and swelling.",
+    "commonFrequency": "twice",
+    "foodInstruction": "after_food",
+    "manufacturer": "Macleods",
+    "source": "indian_formulary"
+  },
+  "acemizs": {
+    "brandName": "Acemiz S",
+    "standardGeneric": "Aceclofenac + Serratiopeptidase",
+    "constituents": [
+      "Aceclofenac",
+      "Serratiopeptidase"
+    ],
+    "primaryRxCui": null,
+    "dosage": "100mg+15mg",
+    "dosageOptions": [],
+    "category": "NSAID+Enzyme",
+    "safetyTip": "Reduces inflammation and swelling.",
+    "commonFrequency": "twice",
+    "foodInstruction": "after_food",
+    "manufacturer": "Macleods",
+    "source": "indian_formulary_variant"
+  },
+  "dolopar": {
+    "brandName": "Dolopar",
+    "standardGeneric": "Paracetamol",
+    "constituents": [
+      "Paracetamol"
+    ],
+    "primaryRxCui": null,
+    "dosage": "500mg",
+    "dosageOptions": [],
+    "category": "Analgesic/Antipyretic",
+    "safetyTip": "Safe for children. Avoid overdose.",
+    "commonFrequency": "thrice",
+    "foodInstruction": "after_food",
+    "manufacturer": "Ranbaxy",
+    "source": "indian_formulary"
+  },
+  "nimugen": {
+    "brandName": "Nimugen",
+    "standardGeneric": "Nimesulide",
+    "constituents": [
+      "Nimesulide"
+    ],
+    "primaryRxCui": null,
+    "dosage": "100mg",
+    "dosageOptions": [],
+    "category": "NSAID",
+    "safetyTip": "Risk of hepatotoxicity. Max 15 days.",
+    "commonFrequency": "twice",
+    "foodInstruction": "after_food",
+    "manufacturer": "Elder",
+    "source": "indian_formulary"
+  },
+  "nimulid": {
+    "brandName": "Nimulid",
+    "standardGeneric": "Nimesulide",
+    "constituents": [
+      "Nimesulide"
+    ],
+    "primaryRxCui": null,
+    "dosage": "100mg",
+    "dosageOptions": [],
+    "category": "NSAID",
+    "safetyTip": "Not for children under 12. Liver risk.",
+    "commonFrequency": "twice",
+    "foodInstruction": "after_food",
+    "manufacturer": "Panacea Biotec",
+    "source": "indian_formulary"
+  },
+  "nicip": {
+    "brandName": "Nicip",
+    "standardGeneric": "Nimesulide",
+    "constituents": [
+      "Nimesulide"
+    ],
+    "primaryRxCui": null,
+    "dosage": "100mg",
+    "dosageOptions": [],
+    "category": "NSAID",
+    "safetyTip": "Max 15 days. Monitor liver enzymes.",
+    "commonFrequency": "twice",
+    "foodInstruction": "after_food",
+    "manufacturer": "Cipla",
+    "source": "indian_formulary"
+  },
+  "augmentin": {
+    "brandName": "Augmentin",
+    "standardGeneric": "Amoxicillin + Clavulanic Acid",
+    "constituents": [
+      "Amoxicillin",
+      "Clavulanic Acid"
+    ],
+    "primaryRxCui": null,
+    "dosage": "625mg",
+    "dosageOptions": [],
+    "category": "Beta-lactam Antibiotic",
+    "safetyTip": "Take with food to reduce GI upset.",
+    "commonFrequency": "twice",
+    "foodInstruction": "with_food",
+    "manufacturer": "GSK",
+    "source": "indian_formulary"
+  },
+  "mox": {
+    "brandName": "Mox",
+    "standardGeneric": "Amoxicillin",
+    "constituents": [
+      "Amoxicillin"
+    ],
+    "primaryRxCui": null,
+    "dosage": "500mg",
+    "dosageOptions": [],
+    "category": "Penicillin Antibiotic",
+    "safetyTip": "Complete full course. Check for allergy.",
+    "commonFrequency": "thrice",
+    "foodInstruction": "any",
+    "manufacturer": "Ranbaxy",
+    "source": "indian_formulary"
+  },
+  "amoxil": {
+    "brandName": "Amoxil",
+    "standardGeneric": "Amoxicillin",
+    "constituents": [
+      "Amoxicillin"
+    ],
+    "primaryRxCui": null,
+    "dosage": "250mg",
+    "dosageOptions": [],
+    "category": "Penicillin Antibiotic",
+    "safetyTip": "Penicillin allergy contraindication.",
+    "commonFrequency": "thrice",
+    "foodInstruction": "any",
+    "manufacturer": "GSK",
+    "source": "indian_formulary"
+  },
+  "cifran": {
+    "brandName": "Cifran",
+    "standardGeneric": "Ciprofloxacin",
+    "constituents": [
+      "Ciprofloxacin"
+    ],
+    "primaryRxCui": null,
+    "dosage": "500mg",
+    "dosageOptions": [],
+    "category": "Fluoroquinolone Antibiotic",
+    "safetyTip": "Avoid antacids within 2 hours.",
+    "commonFrequency": "twice",
+    "foodInstruction": "with_food",
+    "manufacturer": "Ranbaxy",
+    "source": "indian_formulary"
+  },
+  "ciplox": {
+    "brandName": "Ciplox",
+    "standardGeneric": "Ciprofloxacin",
+    "constituents": [
+      "Ciprofloxacin"
+    ],
+    "primaryRxCui": null,
+    "dosage": "500mg",
+    "dosageOptions": [],
+    "category": "Fluoroquinolone",
+    "safetyTip": "Risk of tendon rupture with steroids.",
+    "commonFrequency": "twice",
+    "foodInstruction": "with_food",
+    "manufacturer": "Cipla",
+    "source": "indian_formulary"
+  },
+  "zithromax": {
+    "brandName": "Zithromax",
+    "standardGeneric": "Azithromycin",
+    "constituents": [
+      "Azithromycin"
+    ],
+    "primaryRxCui": null,
+    "dosage": "500mg",
+    "dosageOptions": [],
+    "category": "Macrolide Antibiotic",
+    "safetyTip": "3-5 day course only. Take 1hr before food.",
+    "commonFrequency": "once",
+    "foodInstruction": "empty_stomach",
+    "manufacturer": "Pfizer",
+    "source": "indian_formulary"
+  },
+  "azithral": {
+    "brandName": "Azithral",
+    "standardGeneric": "Azithromycin",
+    "constituents": [
+      "Azithromycin"
+    ],
+    "primaryRxCui": null,
+    "dosage": "500mg",
+    "dosageOptions": [],
+    "category": "Macrolide Antibiotic",
+    "safetyTip": "Short course antibiotic. Monitor QTc.",
+    "commonFrequency": "once",
+    "foodInstruction": "empty_stomach",
+    "manufacturer": "Alembic",
+    "source": "indian_formulary"
+  },
+  "zithrox": {
+    "brandName": "Zithrox",
+    "standardGeneric": "Azithromycin",
+    "constituents": [
+      "Azithromycin"
+    ],
+    "primaryRxCui": null,
+    "dosage": "500mg",
+    "dosageOptions": [],
+    "category": "Macrolide Antibiotic",
+    "safetyTip": "Complete full 3-day course.",
+    "commonFrequency": "once",
+    "foodInstruction": "empty_stomach",
+    "manufacturer": "Cipla",
+    "source": "indian_formulary"
+  },
+  "clavam": {
+    "brandName": "Clavam",
+    "standardGeneric": "Amoxicillin + Clavulanic Acid",
+    "constituents": [
+      "Amoxicillin",
+      "Clavulanic Acid"
+    ],
+    "primaryRxCui": null,
+    "dosage": "625mg",
+    "dosageOptions": [],
+    "category": "Beta-lactam Antibiotic",
+    "safetyTip": "Take with meals. Check penicillin allergy.",
+    "commonFrequency": "twice",
+    "foodInstruction": "with_food",
+    "manufacturer": "Alembic",
+    "source": "indian_formulary"
+  },
+  "taxim o": {
+    "brandName": "Taxim O",
+    "standardGeneric": "Cefixime",
+    "constituents": [
+      "Cefixime"
+    ],
+    "primaryRxCui": null,
+    "dosage": "200mg",
+    "dosageOptions": [],
+    "category": "Cephalosporin Antibiotic",
+    "safetyTip": "Complete full course. GI side effects common.",
+    "commonFrequency": "twice",
+    "foodInstruction": "any",
+    "manufacturer": "Alkem",
+    "source": "indian_formulary"
+  },
+  "taximo": {
+    "brandName": "Taxim O",
+    "standardGeneric": "Cefixime",
+    "constituents": [
+      "Cefixime"
+    ],
+    "primaryRxCui": null,
+    "dosage": "200mg",
+    "dosageOptions": [],
+    "category": "Cephalosporin Antibiotic",
+    "safetyTip": "Complete full course. GI side effects common.",
+    "commonFrequency": "twice",
+    "foodInstruction": "any",
+    "manufacturer": "Alkem",
+    "source": "indian_formulary_variant"
+  },
+  "zifi": {
+    "brandName": "Zifi",
+    "standardGeneric": "Cefixime",
+    "constituents": [
+      "Cefixime"
+    ],
+    "primaryRxCui": null,
+    "dosage": "200mg",
+    "dosageOptions": [],
+    "category": "Cephalosporin",
+    "safetyTip": "Broad spectrum antibiotic.",
+    "commonFrequency": "twice",
+    "foodInstruction": "any",
+    "manufacturer": "FDC",
+    "source": "indian_formulary"
+  },
+  "keflex": {
+    "brandName": "Keflex",
+    "standardGeneric": "Cefalexin",
+    "constituents": [
+      "Cefalexin"
+    ],
+    "primaryRxCui": null,
+    "dosage": "500mg",
+    "dosageOptions": [],
+    "category": "Cephalosporin",
+    "safetyTip": "Complete full course.",
+    "commonFrequency": "four",
+    "foodInstruction": "any",
+    "manufacturer": "Various",
+    "source": "indian_formulary"
+  },
+  "sporidex": {
+    "brandName": "Sporidex",
+    "standardGeneric": "Cefalexin",
+    "constituents": [
+      "Cefalexin"
+    ],
+    "primaryRxCui": null,
+    "dosage": "500mg",
+    "dosageOptions": [],
+    "category": "Cephalosporin",
+    "safetyTip": "Complete prescribed course.",
+    "commonFrequency": "four",
+    "foodInstruction": "any",
+    "manufacturer": "Ranbaxy",
+    "source": "indian_formulary"
+  },
+  "eryacne": {
+    "brandName": "Eryacne",
+    "standardGeneric": "Erythromycin",
+    "constituents": [
+      "Erythromycin"
+    ],
+    "primaryRxCui": null,
+    "dosage": "250mg",
+    "dosageOptions": [],
+    "category": "Macrolide Antibiotic",
+    "safetyTip": "Take on empty stomach for best absorption.",
+    "commonFrequency": "four",
+    "foodInstruction": "empty_stomach",
+    "manufacturer": "Various",
+    "source": "indian_formulary"
+  },
+  "erythrocin": {
+    "brandName": "Erythrocin",
+    "standardGeneric": "Erythromycin",
+    "constituents": [
+      "Erythromycin"
+    ],
+    "primaryRxCui": null,
+    "dosage": "500mg",
+    "dosageOptions": [],
+    "category": "Macrolide Antibiotic",
+    "safetyTip": "Interacts with many drugs. Check interactions.",
+    "commonFrequency": "four",
+    "foodInstruction": "empty_stomach",
+    "manufacturer": "Abbott",
+    "source": "indian_formulary"
+  },
+  "metrogyl": {
+    "brandName": "Metrogyl",
+    "standardGeneric": "Metronidazole",
+    "constituents": [
+      "Metronidazole"
+    ],
+    "primaryRxCui": null,
+    "dosage": "400mg",
+    "dosageOptions": [],
+    "category": "Nitroimidazole Antibiotic",
+    "safetyTip": "Avoid alcohol completely during course.",
+    "commonFrequency": "thrice",
+    "foodInstruction": "after_food",
+    "manufacturer": "J.B. Chemicals",
+    "source": "indian_formulary"
+  },
+  "flagyl": {
+    "brandName": "Flagyl",
+    "standardGeneric": "Metronidazole",
+    "constituents": [
+      "Metronidazole"
+    ],
+    "primaryRxCui": null,
+    "dosage": "400mg",
+    "dosageOptions": [],
+    "category": "Antiprotozoal",
+    "safetyTip": "No alcohol. Metallic taste is common.",
+    "commonFrequency": "thrice",
+    "foodInstruction": "after_food",
+    "manufacturer": "Pfizer",
+    "source": "indian_formulary"
+  },
+  "norflox": {
+    "brandName": "Norflox",
+    "standardGeneric": "Norfloxacin",
+    "constituents": [
+      "Norfloxacin"
+    ],
+    "primaryRxCui": null,
+    "dosage": "400mg",
+    "dosageOptions": [],
+    "category": "Fluoroquinolone",
+    "safetyTip": "Take on empty stomach. Avoid antacids.",
+    "commonFrequency": "twice",
+    "foodInstruction": "empty_stomach",
+    "manufacturer": "Ranbaxy",
+    "source": "indian_formulary"
+  },
+  "norflox tz": {
+    "brandName": "Norflox TZ",
+    "standardGeneric": "Norfloxacin + Tinidazole",
+    "constituents": [
+      "Norfloxacin",
+      "Tinidazole"
+    ],
+    "primaryRxCui": null,
+    "dosage": "400mg+600mg",
+    "dosageOptions": [],
+    "category": "Antibiotic+Antiprotozoal",
+    "safetyTip": "Avoid alcohol. Complete full course.",
+    "commonFrequency": "twice",
+    "foodInstruction": "after_food",
+    "manufacturer": "Ranbaxy",
+    "source": "indian_formulary"
+  },
+  "norfloxtz": {
+    "brandName": "Norflox TZ",
+    "standardGeneric": "Norfloxacin + Tinidazole",
+    "constituents": [
+      "Norfloxacin",
+      "Tinidazole"
+    ],
+    "primaryRxCui": null,
+    "dosage": "400mg+600mg",
+    "dosageOptions": [],
+    "category": "Antibiotic+Antiprotozoal",
+    "safetyTip": "Avoid alcohol. Complete full course.",
+    "commonFrequency": "twice",
+    "foodInstruction": "after_food",
+    "manufacturer": "Ranbaxy",
+    "source": "indian_formulary_variant"
+  },
+  "tiniba": {
+    "brandName": "Tiniba",
+    "standardGeneric": "Tinidazole",
+    "constituents": [
+      "Tinidazole"
+    ],
+    "primaryRxCui": null,
+    "dosage": "500mg",
+    "dosageOptions": [],
+    "category": "Antiprotozoal",
+    "safetyTip": "Avoid alcohol during and 72hrs after.",
+    "commonFrequency": "twice",
+    "foodInstruction": "after_food",
+    "manufacturer": "Zydus",
+    "source": "indian_formulary"
+  },
+  "fasigyn": {
+    "brandName": "Fasigyn",
+    "standardGeneric": "Tinidazole",
+    "constituents": [
+      "Tinidazole"
+    ],
+    "primaryRxCui": null,
+    "dosage": "500mg",
+    "dosageOptions": [],
+    "category": "Antiprotozoal",
+    "safetyTip": "Single-dose option for some infections.",
+    "commonFrequency": "twice",
+    "foodInstruction": "after_food",
+    "manufacturer": "Pfizer",
+    "source": "indian_formulary"
+  },
+  "oflox": {
+    "brandName": "Oflox",
+    "standardGeneric": "Ofloxacin",
+    "constituents": [
+      "Ofloxacin"
+    ],
+    "primaryRxCui": null,
+    "dosage": "200mg",
+    "dosageOptions": [],
+    "category": "Fluoroquinolone",
+    "safetyTip": "Avoid in children. QTc prolongation risk.",
+    "commonFrequency": "twice",
+    "foodInstruction": "any",
+    "manufacturer": "Ranbaxy",
+    "source": "indian_formulary"
+  },
+  "o2": {
+    "brandName": "O2",
+    "standardGeneric": "Ofloxacin + Ornidazole",
+    "constituents": [
+      "Ofloxacin",
+      "Ornidazole"
+    ],
+    "primaryRxCui": null,
+    "dosage": "200mg+500mg",
+    "dosageOptions": [],
+    "category": "Antibiotic+Antiprotozoal",
+    "safetyTip": "Avoid alcohol. For GI infections.",
+    "commonFrequency": "twice",
+    "foodInstruction": "after_food",
+    "manufacturer": "Ranbaxy",
+    "source": "indian_formulary"
+  },
+  "zenflox oz": {
+    "brandName": "Zenflox OZ",
+    "standardGeneric": "Ofloxacin + Ornidazole",
+    "constituents": [
+      "Ofloxacin",
+      "Ornidazole"
+    ],
+    "primaryRxCui": null,
+    "dosage": "200mg+500mg",
+    "dosageOptions": [],
+    "category": "Antibiotic Combination",
+    "safetyTip": "Do not use in pregnancy.",
+    "commonFrequency": "twice",
+    "foodInstruction": "after_food",
+    "manufacturer": "Mankind",
+    "source": "indian_formulary"
+  },
+  "zenfloxoz": {
+    "brandName": "Zenflox OZ",
+    "standardGeneric": "Ofloxacin + Ornidazole",
+    "constituents": [
+      "Ofloxacin",
+      "Ornidazole"
+    ],
+    "primaryRxCui": null,
+    "dosage": "200mg+500mg",
+    "dosageOptions": [],
+    "category": "Antibiotic Combination",
+    "safetyTip": "Do not use in pregnancy.",
+    "commonFrequency": "twice",
+    "foodInstruction": "after_food",
+    "manufacturer": "Mankind",
+    "source": "indian_formulary_variant"
+  },
+  "doxycycline": {
+    "brandName": "Doxycycline",
+    "standardGeneric": "Doxycycline",
+    "constituents": [
+      "Doxycycline"
+    ],
+    "primaryRxCui": null,
+    "dosage": "100mg",
+    "dosageOptions": [],
+    "category": "Tetracycline Antibiotic",
+    "safetyTip": "Take with full glass of water. Avoid dairy.",
+    "commonFrequency": "twice",
+    "foodInstruction": "with_water",
+    "manufacturer": "Various",
+    "source": "indian_formulary"
+  },
+  "vibramycin": {
+    "brandName": "Vibramycin",
+    "standardGeneric": "Doxycycline",
+    "constituents": [
+      "Doxycycline"
+    ],
+    "primaryRxCui": null,
+    "dosage": "100mg",
+    "dosageOptions": [],
+    "category": "Tetracycline",
+    "safetyTip": "Avoid sunlight exposure.",
+    "commonFrequency": "twice",
+    "foodInstruction": "with_water",
+    "manufacturer": "Pfizer",
+    "source": "indian_formulary"
+  },
+  "clindac a": {
+    "brandName": "Clindac A",
+    "standardGeneric": "Clindamycin",
+    "constituents": [
+      "Clindamycin"
+    ],
+    "primaryRxCui": null,
+    "dosage": "300mg",
+    "dosageOptions": [],
+    "category": "Lincosamide Antibiotic",
+    "safetyTip": "Risk of C. difficile colitis.",
+    "commonFrequency": "four",
+    "foodInstruction": "any",
+    "manufacturer": "Galderma",
+    "source": "indian_formulary"
+  },
+  "clindaca": {
+    "brandName": "Clindac A",
+    "standardGeneric": "Clindamycin",
+    "constituents": [
+      "Clindamycin"
+    ],
+    "primaryRxCui": null,
+    "dosage": "300mg",
+    "dosageOptions": [],
+    "category": "Lincosamide Antibiotic",
+    "safetyTip": "Risk of C. difficile colitis.",
+    "commonFrequency": "four",
+    "foodInstruction": "any",
+    "manufacturer": "Galderma",
+    "source": "indian_formulary_variant"
+  },
+  "linezolid": {
+    "brandName": "Linezolid",
+    "standardGeneric": "Linezolid",
+    "constituents": [
+      "Linezolid"
+    ],
+    "primaryRxCui": null,
+    "dosage": "600mg",
+    "dosageOptions": [],
+    "category": "Oxazolidinone Antibiotic",
+    "safetyTip": "Avoid tyramine-rich foods. Monitor CBC.",
+    "commonFrequency": "twice",
+    "foodInstruction": "any",
+    "manufacturer": "Pfizer",
+    "source": "indian_formulary"
+  },
+  "bactrim": {
+    "brandName": "Bactrim",
+    "standardGeneric": "Trimethoprim + Sulfamethoxazole",
+    "constituents": [
+      "Trimethoprim",
+      "Sulfamethoxazole"
+    ],
+    "primaryRxCui": null,
+    "dosage": "160mg+800mg",
+    "dosageOptions": [],
+    "category": "Sulfonamide Combination",
+    "safetyTip": "Drink plenty of water.",
+    "commonFrequency": "twice",
+    "foodInstruction": "with_food",
+    "manufacturer": "Roche",
+    "source": "indian_formulary"
+  },
+  "septra": {
+    "brandName": "Septra",
+    "standardGeneric": "Trimethoprim + Sulfamethoxazole",
+    "constituents": [
+      "Trimethoprim",
+      "Sulfamethoxazole"
+    ],
+    "primaryRxCui": null,
+    "dosage": "80mg+400mg",
+    "dosageOptions": [],
+    "category": "Sulfonamide",
+    "safetyTip": "Risk of sulfa allergy. Stay hydrated.",
+    "commonFrequency": "twice",
+    "foodInstruction": "with_food",
+    "manufacturer": "GSK",
+    "source": "indian_formulary"
+  },
+  "vancomycin": {
+    "brandName": "Vancomycin",
+    "standardGeneric": "Vancomycin",
+    "constituents": [
+      "Vancomycin"
+    ],
+    "primaryRxCui": null,
+    "dosage": "500mg",
+    "dosageOptions": [],
+    "category": "Glycopeptide Antibiotic",
+    "safetyTip": "Hospital use. Monitor renal function.",
+    "commonFrequency": "four",
+    "foodInstruction": "any",
+    "manufacturer": "Various",
+    "source": "indian_formulary"
+  },
+  "amikacin": {
+    "brandName": "Amikacin",
+    "standardGeneric": "Amikacin",
+    "constituents": [
+      "Amikacin"
+    ],
+    "primaryRxCui": null,
+    "dosage": "500mg",
+    "dosageOptions": [],
+    "category": "Aminoglycoside",
+    "safetyTip": "Monitor hearing and kidney function.",
+    "commonFrequency": "twice",
+    "foodInstruction": "injection",
+    "manufacturer": "Various",
+    "source": "indian_formulary"
+  },
+  "pan 40": {
+    "brandName": "Pan 40",
+    "standardGeneric": "Pantoprazole",
+    "constituents": [
+      "Pantoprazole"
+    ],
+    "primaryRxCui": null,
+    "dosage": "40mg",
+    "dosageOptions": [],
+    "category": "Proton Pump Inhibitor",
+    "safetyTip": "Take 30 min before meals for best effect.",
+    "commonFrequency": "once",
+    "foodInstruction": "before_food",
+    "manufacturer": "Alkem",
+    "source": "indian_formulary"
+  },
+  "pan40": {
+    "brandName": "Pan 40",
+    "standardGeneric": "Pantoprazole",
+    "constituents": [
+      "Pantoprazole"
+    ],
+    "primaryRxCui": null,
+    "dosage": "40mg",
+    "dosageOptions": [],
+    "category": "Proton Pump Inhibitor",
+    "safetyTip": "Take 30 min before meals for best effect.",
+    "commonFrequency": "once",
+    "foodInstruction": "before_food",
+    "manufacturer": "Alkem",
+    "source": "indian_formulary_variant"
+  },
+  "pan": {
+    "brandName": "Pan 40",
+    "standardGeneric": "Pantoprazole",
+    "constituents": [
+      "Pantoprazole"
+    ],
+    "primaryRxCui": null,
+    "dosage": "40mg",
+    "dosageOptions": [],
+    "category": "Proton Pump Inhibitor",
+    "safetyTip": "Take 30 min before meals for best effect.",
+    "commonFrequency": "once",
+    "foodInstruction": "before_food",
+    "manufacturer": "Alkem",
+    "source": "indian_formulary_variant"
+  },
+  "pantop": {
+    "brandName": "Pantop",
+    "standardGeneric": "Pantoprazole",
+    "constituents": [
+      "Pantoprazole"
+    ],
+    "primaryRxCui": null,
+    "dosage": "40mg",
+    "dosageOptions": [],
+    "category": "Proton Pump Inhibitor",
+    "safetyTip": "Long-term use may affect magnesium levels.",
+    "commonFrequency": "once",
+    "foodInstruction": "before_food",
+    "manufacturer": "Aristo",
+    "source": "indian_formulary"
+  },
+  "omez": {
+    "brandName": "Omez",
+    "standardGeneric": "Omeprazole",
+    "constituents": [
+      "Omeprazole"
+    ],
+    "primaryRxCui": null,
+    "dosage": "20mg",
+    "dosageOptions": [],
+    "category": "Proton Pump Inhibitor",
+    "safetyTip": "Take before breakfast.",
+    "commonFrequency": "once",
+    "foodInstruction": "before_food",
+    "manufacturer": "Dr. Reddy's",
+    "source": "indian_formulary"
+  },
+  "ocid": {
+    "brandName": "Ocid",
+    "standardGeneric": "Omeprazole",
+    "constituents": [
+      "Omeprazole"
+    ],
+    "primaryRxCui": null,
+    "dosage": "20mg",
+    "dosageOptions": [],
+    "category": "Proton Pump Inhibitor",
+    "safetyTip": "Avoid long-term use without monitoring.",
+    "commonFrequency": "once",
+    "foodInstruction": "before_food",
+    "manufacturer": "Cipla",
+    "source": "indian_formulary"
+  },
+  "rabicip": {
+    "brandName": "Rabicip",
+    "standardGeneric": "Rabeprazole",
+    "constituents": [
+      "Rabeprazole"
+    ],
+    "primaryRxCui": null,
+    "dosage": "20mg",
+    "dosageOptions": [],
+    "category": "Proton Pump Inhibitor",
+    "safetyTip": "Swallow whole. Do not crush.",
+    "commonFrequency": "once",
+    "foodInstruction": "before_food",
+    "manufacturer": "Cipla",
+    "source": "indian_formulary"
+  },
+  "rabifast": {
+    "brandName": "Rabifast",
+    "standardGeneric": "Rabeprazole",
+    "constituents": [
+      "Rabeprazole"
+    ],
+    "primaryRxCui": null,
+    "dosage": "20mg",
+    "dosageOptions": [],
+    "category": "Proton Pump Inhibitor",
+    "safetyTip": "Take before first meal of the day.",
+    "commonFrequency": "once",
+    "foodInstruction": "before_food",
+    "manufacturer": "Sun Pharma",
+    "source": "indian_formulary"
+  },
+  "nexpro": {
+    "brandName": "Nexpro",
+    "standardGeneric": "Esomeprazole",
+    "constituents": [
+      "Esomeprazole"
+    ],
+    "primaryRxCui": null,
+    "dosage": "40mg",
+    "dosageOptions": [],
+    "category": "Proton Pump Inhibitor",
+    "safetyTip": "Take 1hr before meal.",
+    "commonFrequency": "once",
+    "foodInstruction": "before_food",
+    "manufacturer": "Torrent",
+    "source": "indian_formulary"
+  },
+  "nexium": {
+    "brandName": "Nexium",
+    "standardGeneric": "Esomeprazole",
+    "constituents": [
+      "Esomeprazole"
+    ],
+    "primaryRxCui": null,
+    "dosage": "40mg",
+    "dosageOptions": [],
+    "category": "Proton Pump Inhibitor",
+    "safetyTip": "Most potent PPI. Monitor bone density.",
+    "commonFrequency": "once",
+    "foodInstruction": "before_food",
+    "manufacturer": "AstraZeneca",
+    "source": "indian_formulary"
+  },
+  "rantac": {
+    "brandName": "Rantac",
+    "standardGeneric": "Ranitidine",
+    "constituents": [
+      "Ranitidine"
+    ],
+    "primaryRxCui": null,
+    "dosage": "150mg",
+    "dosageOptions": [],
+    "category": "H2 Blocker",
+    "safetyTip": "Older H2 blocker. Check availability.",
+    "commonFrequency": "twice",
+    "foodInstruction": "any",
+    "manufacturer": "J.B. Chemicals",
+    "source": "indian_formulary"
+  },
+  "aciloc": {
+    "brandName": "Aciloc",
+    "standardGeneric": "Ranitidine",
+    "constituents": [
+      "Ranitidine"
+    ],
+    "primaryRxCui": null,
+    "dosage": "150mg",
+    "dosageOptions": [],
+    "category": "H2 Blocker",
+    "safetyTip": "For peptic ulcer and GERD.",
+    "commonFrequency": "twice",
+    "foodInstruction": "any",
+    "manufacturer": "Cadila",
+    "source": "indian_formulary"
+  },
+  "gelusil": {
+    "brandName": "Gelusil",
+    "standardGeneric": "Aluminium Hydroxide + Magnesium Hydroxide + Simethicone",
+    "constituents": [
+      "Aluminium Hydroxide",
+      "Magnesium Hydroxide",
+      "Simethicone"
+    ],
+    "primaryRxCui": null,
+    "dosage": "Standard",
+    "dosageOptions": [],
+    "category": "Antacid",
+    "safetyTip": "Take 1-3hr after meals. Reduces drug absorption.",
+    "commonFrequency": "asneeded",
+    "foodInstruction": "after_food",
+    "manufacturer": "Warner Chilcott",
+    "source": "indian_formulary"
+  },
+  "digene": {
+    "brandName": "Digene",
+    "standardGeneric": "Magaldrate + Simethicone",
+    "constituents": [
+      "Magaldrate",
+      "Simethicone"
+    ],
+    "primaryRxCui": null,
+    "dosage": "Standard",
+    "dosageOptions": [],
+    "category": "Antacid",
+    "safetyTip": "Shake well before use. Do not give to infants.",
+    "commonFrequency": "asneeded",
+    "foodInstruction": "after_food",
+    "manufacturer": "Abbott",
+    "source": "indian_formulary"
+  },
+  "mucaine": {
+    "brandName": "Mucaine",
+    "standardGeneric": "Aluminium Hydroxide + Magnesium Hydroxide + Oxetacaine",
+    "constituents": [
+      "Aluminium Hydroxide",
+      "Magnesium Hydroxide",
+      "Oxetacaine"
+    ],
+    "primaryRxCui": null,
+    "dosage": "Standard",
+    "dosageOptions": [],
+    "category": "Antacid+Anesthetic",
+    "safetyTip": "Contains local anesthetic. Spit or swallow as directed.",
+    "commonFrequency": "asneeded",
+    "foodInstruction": "after_food",
+    "manufacturer": "Pfizer",
+    "source": "indian_formulary"
+  },
+  "normaxin": {
+    "brandName": "Normaxin",
+    "standardGeneric": "Clidinium + Chlordiazepoxide + Dicyclomine",
+    "constituents": [
+      "Clidinium",
+      "Chlordiazepoxide",
+      "Dicyclomine"
+    ],
+    "primaryRxCui": null,
+    "dosage": "Standard",
+    "dosageOptions": [],
+    "category": "Antispasmodic+Anxiolytic",
+    "safetyTip": "May cause drowsiness. Habit-forming (contains BZD).",
+    "commonFrequency": "thrice",
+    "foodInstruction": "before_food",
+    "manufacturer": "Elder",
+    "source": "indian_formulary"
+  },
+  "meftal spas": {
+    "brandName": "Meftal Spas",
+    "standardGeneric": "Mefenamic Acid + Dicyclomine",
+    "constituents": [
+      "Mefenamic Acid",
+      "Dicyclomine"
+    ],
+    "primaryRxCui": null,
+    "dosage": "250mg+10mg",
+    "dosageOptions": [],
+    "category": "NSAID+Antispasmodic",
+    "safetyTip": "Common for dysmenorrhea. Avoid in peptic ulcer.",
+    "commonFrequency": "thrice",
+    "foodInstruction": "after_food",
+    "manufacturer": "Blue Cross",
+    "source": "indian_formulary"
+  },
+  "meftalspas": {
+    "brandName": "Meftal Spas",
+    "standardGeneric": "Mefenamic Acid + Dicyclomine",
+    "constituents": [
+      "Mefenamic Acid",
+      "Dicyclomine"
+    ],
+    "primaryRxCui": null,
+    "dosage": "250mg+10mg",
+    "dosageOptions": [],
+    "category": "NSAID+Antispasmodic",
+    "safetyTip": "Common for dysmenorrhea. Avoid in peptic ulcer.",
+    "commonFrequency": "thrice",
+    "foodInstruction": "after_food",
+    "manufacturer": "Blue Cross",
+    "source": "indian_formulary_variant"
+  },
+  "cyclopam": {
+    "brandName": "Cyclopam",
+    "standardGeneric": "Dicyclomine + Paracetamol",
+    "constituents": [
+      "Dicyclomine",
+      "Paracetamol"
+    ],
+    "primaryRxCui": null,
+    "dosage": "20mg+500mg",
+    "dosageOptions": [],
+    "category": "Antispasmodic+Analgesic",
+    "safetyTip": "For GI spasms. May cause dry mouth.",
+    "commonFrequency": "thrice",
+    "foodInstruction": "after_food",
+    "manufacturer": "Indoco",
+    "source": "indian_formulary"
+  },
+  "buscopan": {
+    "brandName": "Buscopan",
+    "standardGeneric": "Hyoscine Butylbromide",
+    "constituents": [
+      "Hyoscine Butylbromide"
+    ],
+    "primaryRxCui": null,
+    "dosage": "10mg",
+    "dosageOptions": [],
+    "category": "Antispasmodic",
+    "safetyTip": "For GI and urinary spasms.",
+    "commonFrequency": "thrice",
+    "foodInstruction": "any",
+    "manufacturer": "Boehringer Ingelheim",
+    "source": "indian_formulary"
+  },
+  "domcet": {
+    "brandName": "Domcet",
+    "standardGeneric": "Domperidone",
+    "constituents": [
+      "Domperidone"
+    ],
+    "primaryRxCui": null,
+    "dosage": "10mg",
+    "dosageOptions": [],
+    "category": "Prokinetic/Antiemetic",
+    "safetyTip": "Take 15-30 min before meals.",
+    "commonFrequency": "thrice",
+    "foodInstruction": "before_food",
+    "manufacturer": "Cipla",
+    "source": "indian_formulary"
+  },
+  "motilium": {
+    "brandName": "Motilium",
+    "standardGeneric": "Domperidone",
+    "constituents": [
+      "Domperidone"
+    ],
+    "primaryRxCui": null,
+    "dosage": "10mg",
+    "dosageOptions": [],
+    "category": "Prokinetic",
+    "safetyTip": "For nausea and gastroparesis.",
+    "commonFrequency": "thrice",
+    "foodInstruction": "before_food",
+    "manufacturer": "Janssen",
+    "source": "indian_formulary"
+  },
+  "perinorm": {
+    "brandName": "Perinorm",
+    "standardGeneric": "Metoclopramide",
+    "constituents": [
+      "Metoclopramide"
+    ],
+    "primaryRxCui": null,
+    "dosage": "10mg",
+    "dosageOptions": [],
+    "category": "Prokinetic/Antiemetic",
+    "safetyTip": "Risk of tardive dyskinesia with long use.",
+    "commonFrequency": "thrice",
+    "foodInstruction": "before_food",
+    "manufacturer": "Ranbaxy",
+    "source": "indian_formulary"
+  },
+  "emeset": {
+    "brandName": "Emeset",
+    "standardGeneric": "Ondansetron",
+    "constituents": [
+      "Ondansetron"
+    ],
+    "primaryRxCui": null,
+    "dosage": "8mg",
+    "dosageOptions": [],
+    "category": "5HT3 Antagonist Antiemetic",
+    "safetyTip": "For chemotherapy-induced nausea.",
+    "commonFrequency": "thrice",
+    "foodInstruction": "any",
+    "manufacturer": "Cipla",
+    "source": "indian_formulary"
+  },
+  "ondem": {
+    "brandName": "Ondem",
+    "standardGeneric": "Ondansetron",
+    "constituents": [
+      "Ondansetron"
+    ],
+    "primaryRxCui": null,
+    "dosage": "8mg",
+    "dosageOptions": [],
+    "category": "Antiemetic",
+    "safetyTip": "May cause headache and constipation.",
+    "commonFrequency": "thrice",
+    "foodInstruction": "any",
+    "manufacturer": "Alkem",
+    "source": "indian_formulary"
+  },
+  "enterogermina": {
+    "brandName": "Enterogermina",
+    "standardGeneric": "Bacillus clausii",
+    "constituents": [
+      "Bacillus clausii"
+    ],
+    "primaryRxCui": null,
+    "dosage": "2 billion spores",
+    "dosageOptions": [],
+    "category": "Probiotic",
+    "safetyTip": "Safe for all ages. No refrigeration needed.",
+    "commonFrequency": "thrice",
+    "foodInstruction": "any",
+    "manufacturer": "Sanofi",
+    "source": "indian_formulary"
+  },
+  "econorm": {
+    "brandName": "Econorm",
+    "standardGeneric": "Saccharomyces boulardii",
+    "constituents": [
+      "Saccharomyces boulardii"
+    ],
+    "primaryRxCui": null,
+    "dosage": "250mg",
+    "dosageOptions": [],
+    "category": "Probiotic",
+    "safetyTip": "Store below 25°C. For diarrhea management.",
+    "commonFrequency": "twice",
+    "foodInstruction": "any",
+    "manufacturer": "Sun Pharma",
+    "source": "indian_formulary"
+  },
+  "eldoper": {
+    "brandName": "Eldoper",
+    "standardGeneric": "Loperamide",
+    "constituents": [
+      "Loperamide"
+    ],
+    "primaryRxCui": null,
+    "dosage": "2mg",
+    "dosageOptions": [],
+    "category": "Antidiarrheal",
+    "safetyTip": "For acute diarrhea only. Max 3 days.",
+    "commonFrequency": "asneeded",
+    "foodInstruction": "any",
+    "manufacturer": "Elder",
+    "source": "indian_formulary"
+  },
+  "imodium": {
+    "brandName": "Imodium",
+    "standardGeneric": "Loperamide",
+    "constituents": [
+      "Loperamide"
+    ],
+    "primaryRxCui": null,
+    "dosage": "2mg",
+    "dosageOptions": [],
+    "category": "Antidiarrheal",
+    "safetyTip": "Not for dysentery with blood/fever.",
+    "commonFrequency": "asneeded",
+    "foodInstruction": "any",
+    "manufacturer": "J&J",
+    "source": "indian_formulary"
+  },
+  "sysfol": {
+    "brandName": "Sysfol",
+    "standardGeneric": "Lactulose",
+    "constituents": [
+      "Lactulose"
+    ],
+    "primaryRxCui": null,
+    "dosage": "10g/15ml",
+    "dosageOptions": [],
+    "category": "Osmotic Laxative",
+    "safetyTip": "For constipation/hepatic encephalopathy.",
+    "commonFrequency": "twice",
+    "foodInstruction": "any",
+    "manufacturer": "Various",
+    "source": "indian_formulary"
+  },
+  "duphalac": {
+    "brandName": "Duphalac",
+    "standardGeneric": "Lactulose",
+    "constituents": [
+      "Lactulose"
+    ],
+    "primaryRxCui": null,
+    "dosage": "10g/15ml",
+    "dosageOptions": [],
+    "category": "Laxative",
+    "safetyTip": "Response may take 1-2 days.",
+    "commonFrequency": "twice",
+    "foodInstruction": "any",
+    "manufacturer": "Abbott",
+    "source": "indian_formulary"
+  },
+  "stamlo": {
+    "brandName": "Stamlo",
+    "standardGeneric": "Amlodipine",
+    "constituents": [
+      "Amlodipine"
+    ],
+    "primaryRxCui": null,
+    "dosage": "5mg",
+    "dosageOptions": [],
+    "category": "Calcium Channel Blocker",
+    "safetyTip": "Take at same time daily. Monitor for edema.",
+    "commonFrequency": "once",
+    "foodInstruction": "any",
+    "manufacturer": "Dr. Reddy's",
+    "source": "indian_formulary"
+  },
+  "amlip": {
+    "brandName": "Amlip",
+    "standardGeneric": "Amlodipine",
+    "constituents": [
+      "Amlodipine"
+    ],
+    "primaryRxCui": null,
+    "dosage": "5mg",
+    "dosageOptions": [],
+    "category": "Calcium Channel Blocker",
+    "safetyTip": "Grapefruit juice may increase effect.",
+    "commonFrequency": "once",
+    "foodInstruction": "any",
+    "manufacturer": "Cipla",
+    "source": "indian_formulary"
+  },
+  "norvasc": {
+    "brandName": "Norvasc",
+    "standardGeneric": "Amlodipine",
+    "constituents": [
+      "Amlodipine"
+    ],
+    "primaryRxCui": null,
+    "dosage": "5mg",
+    "dosageOptions": [],
+    "category": "Calcium Channel Blocker",
+    "safetyTip": "Common: ankle swelling, flushing.",
+    "commonFrequency": "once",
+    "foodInstruction": "any",
+    "manufacturer": "Pfizer",
+    "source": "indian_formulary"
+  },
+  "aten": {
+    "brandName": "Aten",
+    "standardGeneric": "Atenolol",
+    "constituents": [
+      "Atenolol"
+    ],
+    "primaryRxCui": null,
+    "dosage": "50mg",
+    "dosageOptions": [],
+    "category": "Beta Blocker",
+    "safetyTip": "Do not stop suddenly. Monitor heart rate.",
+    "commonFrequency": "once",
+    "foodInstruction": "any",
+    "manufacturer": "Zydus Cadila",
+    "source": "indian_formulary"
+  },
+  "tenormin": {
+    "brandName": "Tenormin",
+    "standardGeneric": "Atenolol",
+    "constituents": [
+      "Atenolol"
+    ],
+    "primaryRxCui": null,
+    "dosage": "50mg",
+    "dosageOptions": [],
+    "category": "Beta Blocker",
+    "safetyTip": "Avoid in asthma. Do not stop abruptly.",
+    "commonFrequency": "once",
+    "foodInstruction": "any",
+    "manufacturer": "AstraZeneca",
+    "source": "indian_formulary"
+  },
+  "betaloc": {
+    "brandName": "Betaloc",
+    "standardGeneric": "Metoprolol",
+    "constituents": [
+      "Metoprolol"
+    ],
+    "primaryRxCui": null,
+    "dosage": "25mg",
+    "dosageOptions": [],
+    "category": "Beta Blocker",
+    "safetyTip": "Take with meals. Cardioselective beta blocker.",
+    "commonFrequency": "twice",
+    "foodInstruction": "with_food",
+    "manufacturer": "AstraZeneca",
+    "source": "indian_formulary"
+  },
+  "met xl": {
+    "brandName": "Met XL",
+    "standardGeneric": "Metoprolol",
+    "constituents": [
+      "Metoprolol"
+    ],
+    "primaryRxCui": null,
+    "dosage": "25mg",
+    "dosageOptions": [],
+    "category": "Beta Blocker (XL)",
+    "safetyTip": "Extended release. Swallow whole.",
+    "commonFrequency": "once",
+    "foodInstruction": "any",
+    "manufacturer": "Sun Pharma",
+    "source": "indian_formulary"
+  },
+  "metxl": {
+    "brandName": "Met XL",
+    "standardGeneric": "Metoprolol",
+    "constituents": [
+      "Metoprolol"
+    ],
+    "primaryRxCui": null,
+    "dosage": "25mg",
+    "dosageOptions": [],
+    "category": "Beta Blocker (XL)",
+    "safetyTip": "Extended release. Swallow whole.",
+    "commonFrequency": "once",
+    "foodInstruction": "any",
+    "manufacturer": "Sun Pharma",
+    "source": "indian_formulary_variant"
+  },
+  "minipress": {
+    "brandName": "Minipress",
+    "standardGeneric": "Prazosin",
+    "constituents": [
+      "Prazosin"
+    ],
+    "primaryRxCui": null,
+    "dosage": "1mg",
+    "dosageOptions": [],
+    "category": "Alpha Blocker",
+    "safetyTip": "Risk of first-dose orthostatic hypotension.",
+    "commonFrequency": "twice",
+    "foodInstruction": "any",
+    "manufacturer": "Pfizer",
+    "source": "indian_formulary"
+  },
+  "cardura": {
+    "brandName": "Cardura",
+    "standardGeneric": "Doxazosin",
+    "constituents": [
+      "Doxazosin"
+    ],
+    "primaryRxCui": null,
+    "dosage": "2mg",
+    "dosageOptions": [],
+    "category": "Alpha Blocker",
+    "safetyTip": "Also used for BPH.",
+    "commonFrequency": "once",
+    "foodInstruction": "any",
+    "manufacturer": "Pfizer",
+    "source": "indian_formulary"
+  },
+  "arkamin": {
+    "brandName": "Arkamin",
+    "standardGeneric": "Clonidine",
+    "constituents": [
+      "Clonidine"
+    ],
+    "primaryRxCui": null,
+    "dosage": "100mcg",
+    "dosageOptions": [],
+    "category": "Central Antihypertensive",
+    "safetyTip": "Do not stop suddenly — rebound hypertension.",
+    "commonFrequency": "twice",
+    "foodInstruction": "any",
+    "manufacturer": "Torrent",
+    "source": "indian_formulary"
+  },
+  "olsar": {
+    "brandName": "Olsar",
+    "standardGeneric": "Olmesartan",
+    "constituents": [
+      "Olmesartan"
+    ],
+    "primaryRxCui": null,
+    "dosage": "20mg",
+    "dosageOptions": [],
+    "category": "ARB Antihypertensive",
+    "safetyTip": "Monitor potassium. Avoid in pregnancy.",
+    "commonFrequency": "once",
+    "foodInstruction": "any",
+    "manufacturer": "Lupin",
+    "source": "indian_formulary"
+  },
+  "olmezest": {
+    "brandName": "Olmezest",
+    "standardGeneric": "Olmesartan",
+    "constituents": [
+      "Olmesartan"
+    ],
+    "primaryRxCui": null,
+    "dosage": "20mg",
+    "dosageOptions": [],
+    "category": "ARB",
+    "safetyTip": "Potassium-sparing. Avoid NSAID combination.",
+    "commonFrequency": "once",
+    "foodInstruction": "any",
+    "manufacturer": "Sun Pharma",
+    "source": "indian_formulary"
+  },
+  "cosart": {
+    "brandName": "Cosart",
+    "standardGeneric": "Losartan",
+    "constituents": [
+      "Losartan"
+    ],
+    "primaryRxCui": null,
+    "dosage": "50mg",
+    "dosageOptions": [],
+    "category": "ARB Antihypertensive",
+    "safetyTip": "Protects kidneys in diabetic nephropathy.",
+    "commonFrequency": "once",
+    "foodInstruction": "any",
+    "manufacturer": "Cipla",
+    "source": "indian_formulary"
+  },
+  "tozaar": {
+    "brandName": "Tozaar",
+    "standardGeneric": "Losartan",
+    "constituents": [
+      "Losartan"
+    ],
+    "primaryRxCui": null,
+    "dosage": "50mg",
+    "dosageOptions": [],
+    "category": "ARB",
+    "safetyTip": "Avoid in pregnancy. Monitor renal function.",
+    "commonFrequency": "once",
+    "foodInstruction": "any",
+    "manufacturer": "Cipla",
+    "source": "indian_formulary"
+  },
+  "repace": {
+    "brandName": "Repace",
+    "standardGeneric": "Losartan",
+    "constituents": [
+      "Losartan"
+    ],
+    "primaryRxCui": null,
+    "dosage": "50mg",
+    "dosageOptions": [],
+    "category": "ARB",
+    "safetyTip": "Good for hypertension + uric acid reduction.",
+    "commonFrequency": "once",
+    "foodInstruction": "any",
+    "manufacturer": "Sun Pharma",
+    "source": "indian_formulary"
+  },
+  "cardace": {
+    "brandName": "Cardace",
+    "standardGeneric": "Ramipril",
+    "constituents": [
+      "Ramipril"
+    ],
+    "primaryRxCui": null,
+    "dosage": "5mg",
+    "dosageOptions": [],
+    "category": "ACE Inhibitor",
+    "safetyTip": "Monitor potassium. Common: dry cough.",
+    "commonFrequency": "once",
+    "foodInstruction": "any",
+    "manufacturer": "Sanofi",
+    "source": "indian_formulary"
+  },
+  "hopace": {
+    "brandName": "Hopace",
+    "standardGeneric": "Ramipril",
+    "constituents": [
+      "Ramipril"
+    ],
+    "primaryRxCui": null,
+    "dosage": "5mg",
+    "dosageOptions": [],
+    "category": "ACE Inhibitor",
+    "safetyTip": "Avoid in pregnancy. Dry cough common SE.",
+    "commonFrequency": "once",
+    "foodInstruction": "any",
+    "manufacturer": "Micro Labs",
+    "source": "indian_formulary"
+  },
+  "aceten": {
+    "brandName": "Aceten",
+    "standardGeneric": "Captopril",
+    "constituents": [
+      "Captopril"
+    ],
+    "primaryRxCui": null,
+    "dosage": "25mg",
+    "dosageOptions": [],
+    "category": "ACE Inhibitor",
+    "safetyTip": "Take on empty stomach for best absorption.",
+    "commonFrequency": "twice",
+    "foodInstruction": "empty_stomach",
+    "manufacturer": "Bristol-Myers Squibb",
+    "source": "indian_formulary"
+  },
+  "envas": {
+    "brandName": "Envas",
+    "standardGeneric": "Enalapril",
+    "constituents": [
+      "Enalapril"
+    ],
+    "primaryRxCui": null,
+    "dosage": "5mg",
+    "dosageOptions": [],
+    "category": "ACE Inhibitor",
+    "safetyTip": "Monitor BP. Dry cough is common side effect.",
+    "commonFrequency": "twice",
+    "foodInstruction": "any",
+    "manufacturer": "Cadila",
+    "source": "indian_formulary"
+  },
+  "amcard": {
+    "brandName": "Amcard",
+    "standardGeneric": "Amlodipine + Atenolol",
+    "constituents": [
+      "Amlodipine",
+      "Atenolol"
+    ],
+    "primaryRxCui": null,
+    "dosage": "5mg+50mg",
+    "dosageOptions": [],
+    "category": "CCB+Beta Blocker Combo",
+    "safetyTip": "Combination for better BP control.",
+    "commonFrequency": "once",
+    "foodInstruction": "any",
+    "manufacturer": "Various",
+    "source": "indian_formulary"
+  },
+  "storvas": {
+    "brandName": "Storvas",
+    "standardGeneric": "Atorvastatin",
+    "constituents": [
+      "Atorvastatin"
+    ],
+    "primaryRxCui": null,
+    "dosage": "20mg",
+    "dosageOptions": [],
+    "category": "Statin",
+    "safetyTip": "Take in evening. Monitor liver enzymes.",
+    "commonFrequency": "once",
+    "foodInstruction": "any",
+    "manufacturer": "Ranbaxy",
+    "source": "indian_formulary"
+  },
+  "lipitor": {
+    "brandName": "Lipitor",
+    "standardGeneric": "Atorvastatin",
+    "constituents": [
+      "Atorvastatin"
+    ],
+    "primaryRxCui": null,
+    "dosage": "20mg",
+    "dosageOptions": [],
+    "category": "Statin",
+    "safetyTip": "Grapefruit juice interaction. Monitor CK.",
+    "commonFrequency": "once",
+    "foodInstruction": "any",
+    "manufacturer": "Pfizer",
+    "source": "indian_formulary"
+  },
+  "rosuvas": {
+    "brandName": "Rosuvas",
+    "standardGeneric": "Rosuvastatin",
+    "constituents": [
+      "Rosuvastatin"
+    ],
+    "primaryRxCui": null,
+    "dosage": "10mg",
+    "dosageOptions": [],
+    "category": "Statin",
+    "safetyTip": "Most potent statin. Monitor for myopathy.",
+    "commonFrequency": "once",
+    "foodInstruction": "any",
+    "manufacturer": "Sun Pharma",
+    "source": "indian_formulary"
+  },
+  "crestor": {
+    "brandName": "Crestor",
+    "standardGeneric": "Rosuvastatin",
+    "constituents": [
+      "Rosuvastatin"
+    ],
+    "primaryRxCui": null,
+    "dosage": "10mg",
+    "dosageOptions": [],
+    "category": "Statin",
+    "safetyTip": "Check CK if muscle pain develops.",
+    "commonFrequency": "once",
+    "foodInstruction": "any",
+    "manufacturer": "AstraZeneca",
+    "source": "indian_formulary"
+  },
+  "zocor": {
+    "brandName": "Zocor",
+    "standardGeneric": "Simvastatin",
+    "constituents": [
+      "Simvastatin"
+    ],
+    "primaryRxCui": null,
+    "dosage": "20mg",
+    "dosageOptions": [],
+    "category": "Statin",
+    "safetyTip": "Avoid grapefruit. Risk of myopathy.",
+    "commonFrequency": "once",
+    "foodInstruction": "any",
+    "manufacturer": "MSD",
+    "source": "indian_formulary"
+  },
+  "lescol": {
+    "brandName": "Lescol",
+    "standardGeneric": "Fluvastatin",
+    "constituents": [
+      "Fluvastatin"
+    ],
+    "primaryRxCui": null,
+    "dosage": "40mg",
+    "dosageOptions": [],
+    "category": "Statin",
+    "safetyTip": "Fewer drug interactions than other statins.",
+    "commonFrequency": "once",
+    "foodInstruction": "any",
+    "manufacturer": "Novartis",
+    "source": "indian_formulary"
+  },
+  "lopid": {
+    "brandName": "Lopid",
+    "standardGeneric": "Gemfibrozil",
+    "constituents": [
+      "Gemfibrozil"
+    ],
+    "primaryRxCui": null,
+    "dosage": "600mg",
+    "dosageOptions": [],
+    "category": "Fibrate",
+    "safetyTip": "Take 30 min before meals. Statin interaction.",
+    "commonFrequency": "twice",
+    "foodInstruction": "before_food",
+    "manufacturer": "Pfizer",
+    "source": "indian_formulary"
+  },
+  "tricor": {
+    "brandName": "Tricor",
+    "standardGeneric": "Fenofibrate",
+    "constituents": [
+      "Fenofibrate"
+    ],
+    "primaryRxCui": null,
+    "dosage": "145mg",
+    "dosageOptions": [],
+    "category": "Fibrate",
+    "safetyTip": "For high triglycerides. Monitor liver.",
+    "commonFrequency": "once",
+    "foodInstruction": "with_food",
+    "manufacturer": "Abbott",
+    "source": "indian_formulary"
+  },
+  "glycomet": {
+    "brandName": "Glycomet",
+    "standardGeneric": "Metformin",
+    "constituents": [
+      "Metformin"
+    ],
+    "primaryRxCui": null,
+    "dosage": "500mg",
+    "dosageOptions": [],
+    "category": "Biguanide Antidiabetic",
+    "safetyTip": "Take with food to reduce GI upset.",
+    "commonFrequency": "twice",
+    "foodInstruction": "with_food",
+    "manufacturer": "USV",
+    "source": "indian_formulary"
+  },
+  "glucophage": {
+    "brandName": "Glucophage",
+    "standardGeneric": "Metformin",
+    "constituents": [
+      "Metformin"
+    ],
+    "primaryRxCui": null,
+    "dosage": "500mg",
+    "dosageOptions": [],
+    "category": "Biguanide",
+    "safetyTip": "Stop before contrast procedures.",
+    "commonFrequency": "twice",
+    "foodInstruction": "with_food",
+    "manufacturer": "Merck",
+    "source": "indian_formulary"
+  },
+  "glyree": {
+    "brandName": "Glyree",
+    "standardGeneric": "Glimepiride",
+    "constituents": [
+      "Glimepiride"
+    ],
+    "primaryRxCui": null,
+    "dosage": "2mg",
+    "dosageOptions": [],
+    "category": "Sulfonylurea",
+    "safetyTip": "Take before breakfast. Risk of hypoglycemia.",
+    "commonFrequency": "once",
+    "foodInstruction": "before_food",
+    "manufacturer": "Micro Labs",
+    "source": "indian_formulary"
+  },
+  "amaryl": {
+    "brandName": "Amaryl",
+    "standardGeneric": "Glimepiride",
+    "constituents": [
+      "Glimepiride"
+    ],
+    "primaryRxCui": null,
+    "dosage": "2mg",
+    "dosageOptions": [],
+    "category": "Sulfonylurea",
+    "safetyTip": "Monitor blood glucose. Carry glucose tablets.",
+    "commonFrequency": "once",
+    "foodInstruction": "before_food",
+    "manufacturer": "Sanofi",
+    "source": "indian_formulary"
+  },
+  "glizid": {
+    "brandName": "Glizid",
+    "standardGeneric": "Gliclazide",
+    "constituents": [
+      "Gliclazide"
+    ],
+    "primaryRxCui": null,
+    "dosage": "80mg",
+    "dosageOptions": [],
+    "category": "Sulfonylurea",
+    "safetyTip": "Lower hypoglycemia risk than glibenclamide.",
+    "commonFrequency": "twice",
+    "foodInstruction": "with_food",
+    "manufacturer": "Piramal",
+    "source": "indian_formulary"
+  },
+  "diamicron": {
+    "brandName": "Diamicron",
+    "standardGeneric": "Gliclazide",
+    "constituents": [
+      "Gliclazide"
+    ],
+    "primaryRxCui": null,
+    "dosage": "80mg",
+    "dosageOptions": [],
+    "category": "Sulfonylurea",
+    "safetyTip": "Good option for elderly diabetics.",
+    "commonFrequency": "twice",
+    "foodInstruction": "with_food",
+    "manufacturer": "Servier",
+    "source": "indian_formulary"
+  },
+  "pioz": {
+    "brandName": "Pioz",
+    "standardGeneric": "Pioglitazone",
+    "constituents": [
+      "Pioglitazone"
+    ],
+    "primaryRxCui": null,
+    "dosage": "15mg",
+    "dosageOptions": [],
+    "category": "Thiazolidinedione",
+    "safetyTip": "Risk of fluid retention. Avoid in heart failure.",
+    "commonFrequency": "once",
+    "foodInstruction": "any",
+    "manufacturer": "Torrent",
+    "source": "indian_formulary"
+  },
+  "actos": {
+    "brandName": "Actos",
+    "standardGeneric": "Pioglitazone",
+    "constituents": [
+      "Pioglitazone"
+    ],
+    "primaryRxCui": null,
+    "dosage": "15mg",
+    "dosageOptions": [],
+    "category": "Thiazolidinedione",
+    "safetyTip": "Bladder cancer risk with long-term use.",
+    "commonFrequency": "once",
+    "foodInstruction": "any",
+    "manufacturer": "Takeda",
+    "source": "indian_formulary"
+  },
+  "galvus": {
+    "brandName": "Galvus",
+    "standardGeneric": "Vildagliptin",
+    "constituents": [
+      "Vildagliptin"
+    ],
+    "primaryRxCui": null,
+    "dosage": "50mg",
+    "dosageOptions": [],
+    "category": "DPP-4 Inhibitor",
+    "safetyTip": "Low hypoglycemia risk. Monitor liver enzymes.",
+    "commonFrequency": "twice",
+    "foodInstruction": "any",
+    "manufacturer": "Novartis",
+    "source": "indian_formulary"
+  },
+  "jalra": {
+    "brandName": "Jalra",
+    "standardGeneric": "Vildagliptin",
+    "constituents": [
+      "Vildagliptin"
+    ],
+    "primaryRxCui": null,
+    "dosage": "50mg",
+    "dosageOptions": [],
+    "category": "DPP-4 Inhibitor",
+    "safetyTip": "Nasopharyngitis is common side effect.",
+    "commonFrequency": "twice",
+    "foodInstruction": "any",
+    "manufacturer": "Novartis",
+    "source": "indian_formulary"
+  },
+  "januvia": {
+    "brandName": "Januvia",
+    "standardGeneric": "Sitagliptin",
+    "constituents": [
+      "Sitagliptin"
+    ],
+    "primaryRxCui": null,
+    "dosage": "100mg",
+    "dosageOptions": [],
+    "category": "DPP-4 Inhibitor",
+    "safetyTip": "Adjust dose in kidney disease.",
+    "commonFrequency": "once",
+    "foodInstruction": "any",
+    "manufacturer": "MSD",
+    "source": "indian_formulary"
+  },
+  "zita": {
+    "brandName": "Zita",
+    "standardGeneric": "Sitagliptin",
+    "constituents": [
+      "Sitagliptin"
+    ],
+    "primaryRxCui": null,
+    "dosage": "100mg",
+    "dosageOptions": [],
+    "category": "DPP-4 Inhibitor",
+    "safetyTip": "Good safety profile. Monitor renal function.",
+    "commonFrequency": "once",
+    "foodInstruction": "any",
+    "manufacturer": "Sun Pharma",
+    "source": "indian_formulary"
+  },
+  "forxiga": {
+    "brandName": "Forxiga",
+    "standardGeneric": "Dapagliflozin",
+    "constituents": [
+      "Dapagliflozin"
+    ],
+    "primaryRxCui": null,
+    "dosage": "10mg",
+    "dosageOptions": [],
+    "category": "SGLT2 Inhibitor",
+    "safetyTip": "Risk of UTI. Stay hydrated. Also for heart failure.",
+    "commonFrequency": "once",
+    "foodInstruction": "any",
+    "manufacturer": "AstraZeneca",
+    "source": "indian_formulary"
+  },
+  "jardiance": {
+    "brandName": "Jardiance",
+    "standardGeneric": "Empagliflozin",
+    "constituents": [
+      "Empagliflozin"
+    ],
+    "primaryRxCui": null,
+    "dosage": "10mg",
+    "dosageOptions": [],
+    "category": "SGLT2 Inhibitor",
+    "safetyTip": "Cardiovascular protective. Risk of DKA.",
+    "commonFrequency": "once",
+    "foodInstruction": "any",
+    "manufacturer": "Boehringer Ingelheim",
+    "source": "indian_formulary"
+  },
+  "victoza": {
+    "brandName": "Victoza",
+    "standardGeneric": "Liraglutide",
+    "constituents": [
+      "Liraglutide"
+    ],
+    "primaryRxCui": null,
+    "dosage": "1.2mg",
+    "dosageOptions": [],
+    "category": "GLP-1 Agonist",
+    "safetyTip": "Subcutaneous injection. Weight loss benefit.",
+    "commonFrequency": "once",
+    "foodInstruction": "injection",
+    "manufacturer": "Novo Nordisk",
+    "source": "indian_formulary"
+  },
+  "ozempic": {
+    "brandName": "Ozempic",
+    "standardGeneric": "Semaglutide",
+    "constituents": [
+      "Semaglutide"
+    ],
+    "primaryRxCui": null,
+    "dosage": "0.5mg",
+    "dosageOptions": [],
+    "category": "GLP-1 Agonist",
+    "safetyTip": "Weekly injection. Nausea common initially.",
+    "commonFrequency": "once",
+    "foodInstruction": "injection",
+    "manufacturer": "Novo Nordisk",
+    "source": "indian_formulary"
+  },
+  "lantus": {
+    "brandName": "Lantus",
+    "standardGeneric": "Insulin Glargine",
+    "constituents": [
+      "Insulin Glargine"
+    ],
+    "primaryRxCui": null,
+    "dosage": "100IU/ml",
+    "dosageOptions": [],
+    "category": "Basal Insulin Analog",
+    "safetyTip": "Subcutaneous injection only. Monitor glucose.",
+    "commonFrequency": "once",
+    "foodInstruction": "injection",
+    "manufacturer": "Sanofi",
+    "source": "indian_formulary"
+  },
+  "mixtard": {
+    "brandName": "Mixtard",
+    "standardGeneric": "Insulin (Human, Biphasic)",
+    "constituents": [
+      "Insulin (Human, Biphasic)"
+    ],
+    "primaryRxCui": null,
+    "dosage": "30/70 IU/ml",
+    "dosageOptions": [],
+    "category": "Premixed Insulin",
+    "safetyTip": "Inject 30 min before meals. Monitor glucose.",
+    "commonFrequency": "twice",
+    "foodInstruction": "injection",
+    "manufacturer": "Novo Nordisk",
+    "source": "indian_formulary"
+  },
+  "eltroxin": {
+    "brandName": "Eltroxin",
+    "standardGeneric": "Levothyroxine",
+    "constituents": [
+      "Levothyroxine"
+    ],
+    "primaryRxCui": null,
+    "dosage": "50mcg",
+    "dosageOptions": [],
+    "category": "Thyroid Hormone",
+    "safetyTip": "Take on empty stomach, 30 min before breakfast.",
+    "commonFrequency": "once",
+    "foodInstruction": "empty_stomach",
+    "manufacturer": "GSK",
+    "source": "indian_formulary"
+  },
+  "thyronorm": {
+    "brandName": "Thyronorm",
+    "standardGeneric": "Levothyroxine",
+    "constituents": [
+      "Levothyroxine"
+    ],
+    "primaryRxCui": null,
+    "dosage": "50mcg",
+    "dosageOptions": [],
+    "category": "Thyroid Hormone",
+    "safetyTip": "Avoid calcium/iron within 4 hours.",
+    "commonFrequency": "once",
+    "foodInstruction": "empty_stomach",
+    "manufacturer": "Abbott",
+    "source": "indian_formulary"
+  },
+  "thyrox": {
+    "brandName": "Thyrox",
+    "standardGeneric": "Levothyroxine",
+    "constituents": [
+      "Levothyroxine"
+    ],
+    "primaryRxCui": null,
+    "dosage": "25mcg",
+    "dosageOptions": [],
+    "category": "Thyroid Hormone",
+    "safetyTip": "Never miss doses. Regular TSH monitoring needed.",
+    "commonFrequency": "once",
+    "foodInstruction": "empty_stomach",
+    "manufacturer": "Macleods",
+    "source": "indian_formulary"
+  },
+  "neomercazole": {
+    "brandName": "Neomercazole",
+    "standardGeneric": "Carbimazole",
+    "constituents": [
+      "Carbimazole"
+    ],
+    "primaryRxCui": null,
+    "dosage": "5mg",
+    "dosageOptions": [],
+    "category": "Antithyroid",
+    "safetyTip": "Monitor CBC — risk of agranulocytosis.",
+    "commonFrequency": "thrice",
+    "foodInstruction": "with_food",
+    "manufacturer": "Roche",
+    "source": "indian_formulary"
+  },
+  "propylthiouracil": {
+    "brandName": "Propylthiouracil",
+    "standardGeneric": "Propylthiouracil",
+    "constituents": [
+      "Propylthiouracil"
+    ],
+    "primaryRxCui": null,
+    "dosage": "50mg",
+    "dosageOptions": [],
+    "category": "Antithyroid",
+    "safetyTip": "Preferred in pregnancy. Monitor liver.",
+    "commonFrequency": "thrice",
+    "foodInstruction": "any",
+    "manufacturer": "Various",
+    "source": "indian_formulary"
+  },
+  "eptoin": {
+    "brandName": "Eptoin",
+    "standardGeneric": "Phenytoin",
+    "constituents": [
+      "Phenytoin"
+    ],
+    "primaryRxCui": null,
+    "dosage": "100mg",
+    "dosageOptions": [],
+    "category": "Anticonvulsant",
+    "safetyTip": "Monitor drug levels. Many drug interactions.",
+    "commonFrequency": "twice",
+    "foodInstruction": "after_food",
+    "manufacturer": "Abbott",
+    "source": "indian_formulary"
+  },
+  "dilantin": {
+    "brandName": "Dilantin",
+    "standardGeneric": "Phenytoin",
+    "constituents": [
+      "Phenytoin"
+    ],
+    "primaryRxCui": null,
+    "dosage": "100mg",
+    "dosageOptions": [],
+    "category": "Anticonvulsant",
+    "safetyTip": "Narrow therapeutic index. Level monitoring essential.",
+    "commonFrequency": "twice",
+    "foodInstruction": "after_food",
+    "manufacturer": "Pfizer",
+    "source": "indian_formulary"
+  },
+  "valparin": {
+    "brandName": "Valparin",
+    "standardGeneric": "Valproic Acid",
+    "constituents": [
+      "Valproic Acid"
+    ],
+    "primaryRxCui": null,
+    "dosage": "200mg",
+    "dosageOptions": [],
+    "category": "Anticonvulsant",
+    "safetyTip": "Teratogenic. Contraindicated in pregnancy.",
+    "commonFrequency": "twice",
+    "foodInstruction": "with_food",
+    "manufacturer": "Torrent",
+    "source": "indian_formulary"
+  },
+  "encorate": {
+    "brandName": "Encorate",
+    "standardGeneric": "Sodium Valproate",
+    "constituents": [
+      "Sodium Valproate"
+    ],
+    "primaryRxCui": null,
+    "dosage": "200mg",
+    "dosageOptions": [],
+    "category": "Anticonvulsant",
+    "safetyTip": "Monitor liver enzymes and platelets.",
+    "commonFrequency": "twice",
+    "foodInstruction": "with_food",
+    "manufacturer": "Sun Pharma",
+    "source": "indian_formulary"
+  },
+  "tegrital": {
+    "brandName": "Tegrital",
+    "standardGeneric": "Carbamazepine",
+    "constituents": [
+      "Carbamazepine"
+    ],
+    "primaryRxCui": null,
+    "dosage": "200mg",
+    "dosageOptions": [],
+    "category": "Anticonvulsant",
+    "safetyTip": "Many drug interactions. Monitor CBC.",
+    "commonFrequency": "twice",
+    "foodInstruction": "with_food",
+    "manufacturer": "Novartis",
+    "source": "indian_formulary"
+  },
+  "mazetol": {
+    "brandName": "Mazetol",
+    "standardGeneric": "Carbamazepine",
+    "constituents": [
+      "Carbamazepine"
+    ],
+    "primaryRxCui": null,
+    "dosage": "200mg",
+    "dosageOptions": [],
+    "category": "Anticonvulsant",
+    "safetyTip": "Risk of Stevens-Johnson syndrome.",
+    "commonFrequency": "twice",
+    "foodInstruction": "with_food",
+    "manufacturer": "Sun Pharma",
+    "source": "indian_formulary"
+  },
+  "oxetol": {
+    "brandName": "Oxetol",
+    "standardGeneric": "Oxcarbazepine",
+    "constituents": [
+      "Oxcarbazepine"
+    ],
+    "primaryRxCui": null,
+    "dosage": "300mg",
+    "dosageOptions": [],
+    "category": "Anticonvulsant",
+    "safetyTip": "Fewer interactions than carbamazepine.",
+    "commonFrequency": "twice",
+    "foodInstruction": "any",
+    "manufacturer": "Sun Pharma",
+    "source": "indian_formulary"
+  },
+  "gabantin": {
+    "brandName": "Gabantin",
+    "standardGeneric": "Gabapentin",
+    "constituents": [
+      "Gabapentin"
+    ],
+    "primaryRxCui": null,
+    "dosage": "300mg",
+    "dosageOptions": [],
+    "category": "Anticonvulsant/Neuropathic",
+    "safetyTip": "Causes drowsiness. Do not drive initially.",
+    "commonFrequency": "thrice",
+    "foodInstruction": "any",
+    "manufacturer": "Sun Pharma",
+    "source": "indian_formulary"
+  },
+  "neurontin": {
+    "brandName": "Neurontin",
+    "standardGeneric": "Gabapentin",
+    "constituents": [
+      "Gabapentin"
+    ],
+    "primaryRxCui": null,
+    "dosage": "300mg",
+    "dosageOptions": [],
+    "category": "Anticonvulsant",
+    "safetyTip": "Adjust dose in kidney disease.",
+    "commonFrequency": "thrice",
+    "foodInstruction": "any",
+    "manufacturer": "Pfizer",
+    "source": "indian_formulary"
+  },
+  "pregeb": {
+    "brandName": "Pregeb",
+    "standardGeneric": "Pregabalin",
+    "constituents": [
+      "Pregabalin"
+    ],
+    "primaryRxCui": null,
+    "dosage": "75mg",
+    "dosageOptions": [],
+    "category": "Neuropathic Pain/Anticonvulsant",
+    "safetyTip": "Scheduled drug. Dizziness and weight gain common.",
+    "commonFrequency": "twice",
+    "foodInstruction": "any",
+    "manufacturer": "Sun Pharma",
+    "source": "indian_formulary"
+  },
+  "lyrica": {
+    "brandName": "Lyrica",
+    "standardGeneric": "Pregabalin",
+    "constituents": [
+      "Pregabalin"
+    ],
+    "primaryRxCui": null,
+    "dosage": "75mg",
+    "dosageOptions": [],
+    "category": "Neuropathic/Anticonvulsant",
+    "safetyTip": "Risk of misuse. Monitor for edema.",
+    "commonFrequency": "twice",
+    "foodInstruction": "any",
+    "manufacturer": "Pfizer",
+    "source": "indian_formulary"
+  },
+  "levipil": {
+    "brandName": "Levipil",
+    "standardGeneric": "Levetiracetam",
+    "constituents": [
+      "Levetiracetam"
+    ],
+    "primaryRxCui": null,
+    "dosage": "500mg",
+    "dosageOptions": [],
+    "category": "Anticonvulsant",
+    "safetyTip": "Well tolerated. Monitor for mood changes.",
+    "commonFrequency": "twice",
+    "foodInstruction": "any",
+    "manufacturer": "UCB India",
+    "source": "indian_formulary"
+  },
+  "keppra": {
+    "brandName": "Keppra",
+    "standardGeneric": "Levetiracetam",
+    "constituents": [
+      "Levetiracetam"
+    ],
+    "primaryRxCui": null,
+    "dosage": "500mg",
+    "dosageOptions": [],
+    "category": "Anticonvulsant",
+    "safetyTip": "Behavioral side effects possible.",
+    "commonFrequency": "twice",
+    "foodInstruction": "any",
+    "manufacturer": "UCB",
+    "source": "indian_formulary"
+  },
+  "topirol": {
+    "brandName": "Topirol",
+    "standardGeneric": "Topiramate",
+    "constituents": [
+      "Topiramate"
+    ],
+    "primaryRxCui": null,
+    "dosage": "25mg",
+    "dosageOptions": [],
+    "category": "Anticonvulsant",
+    "safetyTip": "Risk of kidney stones. Stay hydrated.",
+    "commonFrequency": "twice",
+    "foodInstruction": "any",
+    "manufacturer": "Sun Pharma",
+    "source": "indian_formulary"
+  },
+  "epitomax": {
+    "brandName": "Epitomax",
+    "standardGeneric": "Topiramate",
+    "constituents": [
+      "Topiramate"
+    ],
+    "primaryRxCui": null,
+    "dosage": "50mg",
+    "dosageOptions": [],
+    "category": "Anticonvulsant",
+    "safetyTip": "Cognitive side effects. Causes weight loss.",
+    "commonFrequency": "twice",
+    "foodInstruction": "any",
+    "manufacturer": "Janssen",
+    "source": "indian_formulary"
+  },
+  "nexito": {
+    "brandName": "Nexito",
+    "standardGeneric": "Escitalopram",
+    "constituents": [
+      "Escitalopram"
+    ],
+    "primaryRxCui": null,
+    "dosage": "10mg",
+    "dosageOptions": [],
+    "category": "SSRI Antidepressant",
+    "safetyTip": "Takes 2-4 weeks to work. Do not stop suddenly.",
+    "commonFrequency": "once",
+    "foodInstruction": "any",
+    "manufacturer": "Sun Pharma",
+    "source": "indian_formulary"
+  },
+  "s-citadep": {
+    "brandName": "S-Citadep",
+    "standardGeneric": "Escitalopram",
+    "constituents": [
+      "Escitalopram"
+    ],
+    "primaryRxCui": null,
+    "dosage": "10mg",
+    "dosageOptions": [],
+    "category": "SSRI",
+    "safetyTip": "Sexual dysfunction possible. Monitor.",
+    "commonFrequency": "once",
+    "foodInstruction": "any",
+    "manufacturer": "Torrent",
+    "source": "indian_formulary"
+  },
+  "cipralex": {
+    "brandName": "Cipralex",
+    "standardGeneric": "Escitalopram",
+    "constituents": [
+      "Escitalopram"
+    ],
+    "primaryRxCui": null,
+    "dosage": "10mg",
+    "dosageOptions": [],
+    "category": "SSRI",
+    "safetyTip": "QTc prolongation at higher doses.",
+    "commonFrequency": "once",
+    "foodInstruction": "any",
+    "manufacturer": "Lundbeck",
+    "source": "indian_formulary"
+  },
+  "daxid": {
+    "brandName": "Daxid",
+    "standardGeneric": "Sertraline",
+    "constituents": [
+      "Sertraline"
+    ],
+    "primaryRxCui": null,
+    "dosage": "50mg",
+    "dosageOptions": [],
+    "category": "SSRI Antidepressant",
+    "safetyTip": "Good for OCD, PTSD, depression.",
+    "commonFrequency": "once",
+    "foodInstruction": "any",
+    "manufacturer": "Pfizer",
+    "source": "indian_formulary"
+  },
+  "sertraline": {
+    "brandName": "Sertraline",
+    "standardGeneric": "Sertraline",
+    "constituents": [
+      "Sertraline"
+    ],
+    "primaryRxCui": null,
+    "dosage": "50mg",
+    "dosageOptions": [],
+    "category": "SSRI",
+    "safetyTip": "Gradual dose increase. GI side effects common.",
+    "commonFrequency": "once",
+    "foodInstruction": "any",
+    "manufacturer": "Various",
+    "source": "indian_formulary"
+  },
+  "pexep": {
+    "brandName": "Pexep",
+    "standardGeneric": "Paroxetine",
+    "constituents": [
+      "Paroxetine"
+    ],
+    "primaryRxCui": null,
+    "dosage": "20mg",
+    "dosageOptions": [],
+    "category": "SSRI",
+    "safetyTip": "Do not stop abruptly — discontinuation syndrome.",
+    "commonFrequency": "once",
+    "foodInstruction": "with_food",
+    "manufacturer": "Sun Pharma",
+    "source": "indian_formulary"
+  },
+  "veniz": {
+    "brandName": "Veniz",
+    "standardGeneric": "Venlafaxine",
+    "constituents": [
+      "Venlafaxine"
+    ],
+    "primaryRxCui": null,
+    "dosage": "75mg",
+    "dosageOptions": [],
+    "category": "SNRI Antidepressant",
+    "safetyTip": "Monitor BP. Do not stop abruptly.",
+    "commonFrequency": "once",
+    "foodInstruction": "with_food",
+    "manufacturer": "Sun Pharma",
+    "source": "indian_formulary"
+  },
+  "effexor": {
+    "brandName": "Effexor",
+    "standardGeneric": "Venlafaxine",
+    "constituents": [
+      "Venlafaxine"
+    ],
+    "primaryRxCui": null,
+    "dosage": "75mg",
+    "dosageOptions": [],
+    "category": "SNRI",
+    "safetyTip": "Extended release preferred. Gradual taper.",
+    "commonFrequency": "twice",
+    "foodInstruction": "with_food",
+    "manufacturer": "Pfizer",
+    "source": "indian_formulary"
+  },
+  "mirtaz": {
+    "brandName": "Mirtaz",
+    "standardGeneric": "Mirtazapine",
+    "constituents": [
+      "Mirtazapine"
+    ],
+    "primaryRxCui": null,
+    "dosage": "15mg",
+    "dosageOptions": [],
+    "category": "NaSSA Antidepressant",
+    "safetyTip": "Take at bedtime. Improves sleep and appetite.",
+    "commonFrequency": "once",
+    "foodInstruction": "any",
+    "manufacturer": "Sun Pharma",
+    "source": "indian_formulary"
+  },
+  "stresnil": {
+    "brandName": "Stresnil",
+    "standardGeneric": "Diazepam",
+    "constituents": [
+      "Diazepam"
+    ],
+    "primaryRxCui": null,
+    "dosage": "5mg",
+    "dosageOptions": [],
+    "category": "Benzodiazepine",
+    "safetyTip": "Short-term only. High dependence potential.",
+    "commonFrequency": "asneeded",
+    "foodInstruction": "any",
+    "manufacturer": "Various",
+    "source": "indian_formulary"
+  },
+  "calmpose": {
+    "brandName": "Calmpose",
+    "standardGeneric": "Diazepam",
+    "constituents": [
+      "Diazepam"
+    ],
+    "primaryRxCui": null,
+    "dosage": "5mg",
+    "dosageOptions": [],
+    "category": "Benzodiazepine",
+    "safetyTip": "Do not drive. Avoid alcohol.",
+    "commonFrequency": "thrice",
+    "foodInstruction": "any",
+    "manufacturer": "Ranbaxy",
+    "source": "indian_formulary"
+  },
+  "alprax": {
+    "brandName": "Alprax",
+    "standardGeneric": "Alprazolam",
+    "constituents": [
+      "Alprazolam"
+    ],
+    "primaryRxCui": null,
+    "dosage": "0.5mg",
+    "dosageOptions": [],
+    "category": "Benzodiazepine",
+    "safetyTip": "High dependence risk. Short-term use only.",
+    "commonFrequency": "twice",
+    "foodInstruction": "any",
+    "manufacturer": "Torrent",
+    "source": "indian_formulary"
+  },
+  "xanax": {
+    "brandName": "Xanax",
+    "standardGeneric": "Alprazolam",
+    "constituents": [
+      "Alprazolam"
+    ],
+    "primaryRxCui": null,
+    "dosage": "0.5mg",
+    "dosageOptions": [],
+    "category": "Benzodiazepine",
+    "safetyTip": "Taper slowly to avoid withdrawal.",
+    "commonFrequency": "twice",
+    "foodInstruction": "any",
+    "manufacturer": "Pfizer",
+    "source": "indian_formulary"
+  },
+  "zapiz": {
+    "brandName": "Zapiz",
+    "standardGeneric": "Clonazepam",
+    "constituents": [
+      "Clonazepam"
+    ],
+    "primaryRxCui": null,
+    "dosage": "0.5mg",
+    "dosageOptions": [],
+    "category": "Benzodiazepine",
+    "safetyTip": "Also used for epilepsy. Tolerance develops.",
+    "commonFrequency": "twice",
+    "foodInstruction": "any",
+    "manufacturer": "Zydus",
+    "source": "indian_formulary"
+  },
+  "rivotril": {
+    "brandName": "Rivotril",
+    "standardGeneric": "Clonazepam",
+    "constituents": [
+      "Clonazepam"
+    ],
+    "primaryRxCui": null,
+    "dosage": "0.5mg",
+    "dosageOptions": [],
+    "category": "Benzodiazepine",
+    "safetyTip": "Long-acting BZD. Do not stop abruptly.",
+    "commonFrequency": "twice",
+    "foodInstruction": "any",
+    "manufacturer": "Roche",
+    "source": "indian_formulary"
+  },
+  "serenace": {
+    "brandName": "Serenace",
+    "standardGeneric": "Haloperidol",
+    "constituents": [
+      "Haloperidol"
+    ],
+    "primaryRxCui": null,
+    "dosage": "5mg",
+    "dosageOptions": [],
+    "category": "Typical Antipsychotic",
+    "safetyTip": "Risk of EPS. Monitor for tardive dyskinesia.",
+    "commonFrequency": "twice",
+    "foodInstruction": "any",
+    "manufacturer": "RPG Life Sciences",
+    "source": "indian_formulary"
+  },
+  "halomont": {
+    "brandName": "Halomont",
+    "standardGeneric": "Haloperidol",
+    "constituents": [
+      "Haloperidol"
+    ],
+    "primaryRxCui": null,
+    "dosage": "5mg",
+    "dosageOptions": [],
+    "category": "Antipsychotic",
+    "safetyTip": "Monitor prolactin levels.",
+    "commonFrequency": "twice",
+    "foodInstruction": "any",
+    "manufacturer": "Sun Pharma",
+    "source": "indian_formulary"
+  },
+  "olanzine": {
+    "brandName": "Olanzine",
+    "standardGeneric": "Olanzapine",
+    "constituents": [
+      "Olanzapine"
+    ],
+    "primaryRxCui": null,
+    "dosage": "5mg",
+    "dosageOptions": [],
+    "category": "Atypical Antipsychotic",
+    "safetyTip": "Causes weight gain. Monitor glucose.",
+    "commonFrequency": "once",
+    "foodInstruction": "any",
+    "manufacturer": "Sun Pharma",
+    "source": "indian_formulary"
+  },
+  "olimelt": {
+    "brandName": "Olimelt",
+    "standardGeneric": "Olanzapine",
+    "constituents": [
+      "Olanzapine"
+    ],
+    "primaryRxCui": null,
+    "dosage": "5mg",
+    "dosageOptions": [],
+    "category": "Atypical Antipsychotic",
+    "safetyTip": "Risk of metabolic syndrome.",
+    "commonFrequency": "once",
+    "foodInstruction": "any",
+    "manufacturer": "Cipla",
+    "source": "indian_formulary"
+  },
+  "zyprexa": {
+    "brandName": "Zyprexa",
+    "standardGeneric": "Olanzapine",
+    "constituents": [
+      "Olanzapine"
+    ],
+    "primaryRxCui": null,
+    "dosage": "10mg",
+    "dosageOptions": [],
+    "category": "Atypical Antipsychotic",
+    "safetyTip": "Weight gain and sedation are common SEs.",
+    "commonFrequency": "once",
+    "foodInstruction": "any",
+    "manufacturer": "Eli Lilly",
+    "source": "indian_formulary"
+  },
+  "risperdal": {
+    "brandName": "Risperdal",
+    "standardGeneric": "Risperidone",
+    "constituents": [
+      "Risperidone"
+    ],
+    "primaryRxCui": null,
+    "dosage": "2mg",
+    "dosageOptions": [],
+    "category": "Atypical Antipsychotic",
+    "safetyTip": "Monitor prolactin and EPS.",
+    "commonFrequency": "twice",
+    "foodInstruction": "any",
+    "manufacturer": "Janssen",
+    "source": "indian_formulary"
+  },
+  "sizopin": {
+    "brandName": "Sizopin",
+    "standardGeneric": "Clozapine",
+    "constituents": [
+      "Clozapine"
+    ],
+    "primaryRxCui": null,
+    "dosage": "25mg",
+    "dosageOptions": [],
+    "category": "Atypical Antipsychotic",
+    "safetyTip": "Monitor WBC — risk of agranulocytosis.",
+    "commonFrequency": "twice",
+    "foodInstruction": "any",
+    "manufacturer": "Sun Pharma",
+    "source": "indian_formulary"
+  },
+  "lithosun": {
+    "brandName": "Lithosun",
+    "standardGeneric": "Lithium Carbonate",
+    "constituents": [
+      "Lithium Carbonate"
+    ],
+    "primaryRxCui": null,
+    "dosage": "300mg",
+    "dosageOptions": [],
+    "category": "Mood Stabilizer",
+    "safetyTip": "Monitor blood levels. Narrow therapeutic window.",
+    "commonFrequency": "thrice",
+    "foodInstruction": "with_food",
+    "manufacturer": "Sun Pharma",
+    "source": "indian_formulary"
+  },
+  "prothiaden": {
+    "brandName": "Prothiaden",
+    "standardGeneric": "Dosulepin",
+    "constituents": [
+      "Dosulepin"
+    ],
+    "primaryRxCui": null,
+    "dosage": "25mg",
+    "dosageOptions": [],
+    "category": "Tricyclic Antidepressant",
+    "safetyTip": "Take at bedtime. Anticholinergic effects.",
+    "commonFrequency": "once",
+    "foodInstruction": "any",
+    "manufacturer": "Abbott",
+    "source": "indian_formulary"
+  },
+  "tryptomer": {
+    "brandName": "Tryptomer",
+    "standardGeneric": "Amitriptyline",
+    "constituents": [
+      "Amitriptyline"
+    ],
+    "primaryRxCui": null,
+    "dosage": "10mg",
+    "dosageOptions": [],
+    "category": "Tricyclic Antidepressant",
+    "safetyTip": "Take at night. Also used for neuropathic pain.",
+    "commonFrequency": "once",
+    "foodInstruction": "any",
+    "manufacturer": "Merck",
+    "source": "indian_formulary"
+  },
+  "asthalin": {
+    "brandName": "Asthalin",
+    "standardGeneric": "Salbutamol",
+    "constituents": [
+      "Salbutamol"
+    ],
+    "primaryRxCui": null,
+    "dosage": "2mg",
+    "dosageOptions": [],
+    "category": "Short-acting Beta2 Agonist",
+    "safetyTip": "Rescue inhaler. Do not use >4 times/day.",
+    "commonFrequency": "asneeded",
+    "foodInstruction": "any",
+    "manufacturer": "Cipla",
+    "source": "indian_formulary"
+  },
+  "ventolin": {
+    "brandName": "Ventolin",
+    "standardGeneric": "Salbutamol",
+    "constituents": [
+      "Salbutamol"
+    ],
+    "primaryRxCui": null,
+    "dosage": "100mcg",
+    "dosageOptions": [],
+    "category": "Bronchodilator",
+    "safetyTip": "Shake well before use. Rinse mouth after.",
+    "commonFrequency": "asneeded",
+    "foodInstruction": "inhaler",
+    "manufacturer": "GSK",
+    "source": "indian_formulary"
+  },
+  "foracort": {
+    "brandName": "Foracort",
+    "standardGeneric": "Formoterol + Budesonide",
+    "constituents": [
+      "Formoterol",
+      "Budesonide"
+    ],
+    "primaryRxCui": null,
+    "dosage": "6mcg+200mcg",
+    "dosageOptions": [],
+    "category": "LABA+ICS Combination",
+    "safetyTip": "Rinse mouth after use to prevent thrush.",
+    "commonFrequency": "twice",
+    "foodInstruction": "inhaler",
+    "manufacturer": "Cipla",
+    "source": "indian_formulary"
+  },
+  "seroflo": {
+    "brandName": "Seroflo",
+    "standardGeneric": "Salmeterol + Fluticasone",
+    "constituents": [
+      "Salmeterol",
+      "Fluticasone"
+    ],
+    "primaryRxCui": null,
+    "dosage": "50mcg+250mcg",
+    "dosageOptions": [],
+    "category": "LABA+ICS Combination",
+    "safetyTip": "Not for acute attacks. Maintenance therapy only.",
+    "commonFrequency": "twice",
+    "foodInstruction": "inhaler",
+    "manufacturer": "Cipla",
+    "source": "indian_formulary"
+  },
+  "symbicort": {
+    "brandName": "Symbicort",
+    "standardGeneric": "Formoterol + Budesonide",
+    "constituents": [
+      "Formoterol",
+      "Budesonide"
+    ],
+    "primaryRxCui": null,
+    "dosage": "6mcg+200mcg",
+    "dosageOptions": [],
+    "category": "LABA+ICS",
+    "safetyTip": "MART therapy available. Rinse mouth.",
+    "commonFrequency": "twice",
+    "foodInstruction": "inhaler",
+    "manufacturer": "AstraZeneca",
+    "source": "indian_formulary"
+  },
+  "flomist": {
+    "brandName": "Flomist",
+    "standardGeneric": "Fluticasone",
+    "constituents": [
+      "Fluticasone"
+    ],
+    "primaryRxCui": null,
+    "dosage": "50mcg",
+    "dosageOptions": [],
+    "category": "Intranasal Corticosteroid",
+    "safetyTip": "For allergic rhinitis. Shake well before use.",
+    "commonFrequency": "once",
+    "foodInstruction": "nasal",
+    "manufacturer": "Cipla",
+    "source": "indian_formulary"
+  },
+  "budecort": {
+    "brandName": "Budecort",
+    "standardGeneric": "Budesonide",
+    "constituents": [
+      "Budesonide"
+    ],
+    "primaryRxCui": null,
+    "dosage": "200mcg",
+    "dosageOptions": [],
+    "category": "Inhaled Corticosteroid",
+    "safetyTip": "For asthma control. Rinse mouth after.",
+    "commonFrequency": "twice",
+    "foodInstruction": "inhaler",
+    "manufacturer": "Cipla",
+    "source": "indian_formulary"
+  },
+  "tiova": {
+    "brandName": "Tiova",
+    "standardGeneric": "Tiotropium",
+    "constituents": [
+      "Tiotropium"
+    ],
+    "primaryRxCui": null,
+    "dosage": "18mcg",
+    "dosageOptions": [],
+    "category": "LAMA Anticholinergic",
+    "safetyTip": "Once daily. For COPD management.",
+    "commonFrequency": "once",
+    "foodInstruction": "inhaler",
+    "manufacturer": "Cipla",
+    "source": "indian_formulary"
+  },
+  "spiriva": {
+    "brandName": "Spiriva",
+    "standardGeneric": "Tiotropium",
+    "constituents": [
+      "Tiotropium"
+    ],
+    "primaryRxCui": null,
+    "dosage": "18mcg",
+    "dosageOptions": [],
+    "category": "LAMA",
+    "safetyTip": "Do not swallow capsule. Inhale only.",
+    "commonFrequency": "once",
+    "foodInstruction": "inhaler",
+    "manufacturer": "Boehringer Ingelheim",
+    "source": "indian_formulary"
+  },
+  "deriphyllin": {
+    "brandName": "Deriphyllin",
+    "standardGeneric": "Theophylline + Etofylline",
+    "constituents": [
+      "Theophylline",
+      "Etofylline"
+    ],
+    "primaryRxCui": null,
+    "dosage": "100mg+77mg",
+    "dosageOptions": [],
+    "category": "Xanthine Bronchodilator",
+    "safetyTip": "Monitor drug levels. Many interactions.",
+    "commonFrequency": "twice",
+    "foodInstruction": "after_food",
+    "manufacturer": "Franco Indian",
+    "source": "indian_formulary"
+  },
+  "phenergan": {
+    "brandName": "Phenergan",
+    "standardGeneric": "Promethazine",
+    "constituents": [
+      "Promethazine"
+    ],
+    "primaryRxCui": null,
+    "dosage": "25mg",
+    "dosageOptions": [],
+    "category": "Antihistamine/Antiemetic",
+    "safetyTip": "Causes sedation. Do not drive.",
+    "commonFrequency": "once",
+    "foodInstruction": "after_food",
+    "manufacturer": "Sanofi",
+    "source": "indian_formulary"
+  },
+  "benadryl": {
+    "brandName": "Benadryl",
+    "standardGeneric": "Diphenhydramine",
+    "constituents": [
+      "Diphenhydramine"
+    ],
+    "primaryRxCui": null,
+    "dosage": "25mg",
+    "dosageOptions": [],
+    "category": "First-gen Antihistamine",
+    "safetyTip": "Sedating antihistamine. Avoid in elderly.",
+    "commonFrequency": "twice",
+    "foodInstruction": "any",
+    "manufacturer": "J&J",
+    "source": "indian_formulary"
+  },
+  "cetirizine": {
+    "brandName": "Cetirizine",
+    "standardGeneric": "Cetirizine",
+    "constituents": [
+      "Cetirizine"
+    ],
+    "primaryRxCui": null,
+    "dosage": "10mg",
+    "dosageOptions": [],
+    "category": "Second-gen Antihistamine",
+    "safetyTip": "Non-sedating. Safe for daytime use.",
+    "commonFrequency": "once",
+    "foodInstruction": "any",
+    "manufacturer": "Various",
+    "source": "indian_formulary"
+  },
+  "cetzine": {
+    "brandName": "Cetzine",
+    "standardGeneric": "Cetirizine",
+    "constituents": [
+      "Cetirizine"
+    ],
+    "primaryRxCui": null,
+    "dosage": "10mg",
+    "dosageOptions": [],
+    "category": "Antihistamine",
+    "safetyTip": "For allergic rhinitis and urticaria.",
+    "commonFrequency": "once",
+    "foodInstruction": "any",
+    "manufacturer": "Dr. Reddy's",
+    "source": "indian_formulary"
+  },
+  "loratadine": {
+    "brandName": "Loratadine",
+    "standardGeneric": "Loratadine",
+    "constituents": [
+      "Loratadine"
+    ],
+    "primaryRxCui": null,
+    "dosage": "10mg",
+    "dosageOptions": [],
+    "category": "Non-sedating Antihistamine",
+    "safetyTip": "Non-drowsy. Safe for long-term allergy.",
+    "commonFrequency": "once",
+    "foodInstruction": "any",
+    "manufacturer": "Various",
+    "source": "indian_formulary"
+  },
+  "lorfast": {
+    "brandName": "Lorfast",
+    "standardGeneric": "Loratadine",
+    "constituents": [
+      "Loratadine"
+    ],
+    "primaryRxCui": null,
+    "dosage": "10mg",
+    "dosageOptions": [],
+    "category": "Antihistamine",
+    "safetyTip": "Safe in pregnancy (Category B).",
+    "commonFrequency": "once",
+    "foodInstruction": "any",
+    "manufacturer": "Sun Pharma",
+    "source": "indian_formulary"
+  },
+  "montair": {
+    "brandName": "Montair",
+    "standardGeneric": "Montelukast",
+    "constituents": [
+      "Montelukast"
+    ],
+    "primaryRxCui": null,
+    "dosage": "10mg",
+    "dosageOptions": [],
+    "category": "Leukotriene Antagonist",
+    "safetyTip": "Take at bedtime. For asthma + allergic rhinitis.",
+    "commonFrequency": "once",
+    "foodInstruction": "any",
+    "manufacturer": "Cipla",
+    "source": "indian_formulary"
+  },
+  "singulair": {
+    "brandName": "Singulair",
+    "standardGeneric": "Montelukast",
+    "constituents": [
+      "Montelukast"
+    ],
+    "primaryRxCui": null,
+    "dosage": "10mg",
+    "dosageOptions": [],
+    "category": "Leukotriene Antagonist",
+    "safetyTip": "Monitor for neuropsychiatric effects.",
+    "commonFrequency": "once",
+    "foodInstruction": "any",
+    "manufacturer": "MSD",
+    "source": "indian_formulary"
+  },
+  "levocet": {
+    "brandName": "Levocet",
+    "standardGeneric": "Levocetirizine",
+    "constituents": [
+      "Levocetirizine"
+    ],
+    "primaryRxCui": null,
+    "dosage": "5mg",
+    "dosageOptions": [],
+    "category": "Antihistamine",
+    "safetyTip": "More potent than cetirizine.",
+    "commonFrequency": "once",
+    "foodInstruction": "any",
+    "manufacturer": "UCB India",
+    "source": "indian_formulary"
+  },
+  "xyzal": {
+    "brandName": "Xyzal",
+    "standardGeneric": "Levocetirizine",
+    "constituents": [
+      "Levocetirizine"
+    ],
+    "primaryRxCui": null,
+    "dosage": "5mg",
+    "dosageOptions": [],
+    "category": "Antihistamine",
+    "safetyTip": "Low sedation risk.",
+    "commonFrequency": "once",
+    "foodInstruction": "any",
+    "manufacturer": "UCB",
+    "source": "indian_formulary"
+  },
+  "fexofenadine": {
+    "brandName": "Fexofenadine",
+    "standardGeneric": "Fexofenadine",
+    "constituents": [
+      "Fexofenadine"
+    ],
+    "primaryRxCui": null,
+    "dosage": "120mg",
+    "dosageOptions": [],
+    "category": "Non-sedating Antihistamine",
+    "safetyTip": "Completely non-sedating. Safe for drivers.",
+    "commonFrequency": "twice",
+    "foodInstruction": "any",
+    "manufacturer": "Various",
+    "source": "indian_formulary"
+  },
+  "allegra": {
+    "brandName": "Allegra",
+    "standardGeneric": "Fexofenadine",
+    "constituents": [
+      "Fexofenadine"
+    ],
+    "primaryRxCui": null,
+    "dosage": "120mg",
+    "dosageOptions": [],
+    "category": "Antihistamine",
+    "safetyTip": "Avoid fruit juice — reduces absorption.",
+    "commonFrequency": "twice",
+    "foodInstruction": "any",
+    "manufacturer": "Sanofi",
+    "source": "indian_formulary"
+  },
+  "becosules": {
+    "brandName": "Becosules",
+    "standardGeneric": "Vitamin B Complex + Vitamin C",
+    "constituents": [
+      "Vitamin B Complex",
+      "Vitamin C"
+    ],
+    "primaryRxCui": null,
+    "dosage": "Standard",
+    "dosageOptions": [],
+    "category": "Multivitamin",
+    "safetyTip": "Urine may turn yellow — normal.",
+    "commonFrequency": "once",
+    "foodInstruction": "after_food",
+    "manufacturer": "Pfizer",
+    "source": "indian_formulary"
+  },
+  "neurobion": {
+    "brandName": "Neurobion",
+    "standardGeneric": "Vitamin B1 + Vitamin B6 + Vitamin B12",
+    "constituents": [
+      "Vitamin B1",
+      "Vitamin B6",
+      "Vitamin B12"
+    ],
+    "primaryRxCui": null,
+    "dosage": "Standard",
+    "dosageOptions": [],
+    "category": "B-Vitamin Complex",
+    "safetyTip": "For neuropathy. Safe for long-term use.",
+    "commonFrequency": "once",
+    "foodInstruction": "after_food",
+    "manufacturer": "Merck",
+    "source": "indian_formulary"
+  },
+  "polybion": {
+    "brandName": "Polybion",
+    "standardGeneric": "Vitamin B Complex",
+    "constituents": [
+      "Vitamin B Complex"
+    ],
+    "primaryRxCui": null,
+    "dosage": "Standard",
+    "dosageOptions": [],
+    "category": "B-Vitamin",
+    "safetyTip": "Supplement for deficiency states.",
+    "commonFrequency": "once",
+    "foodInstruction": "after_food",
+    "manufacturer": "Merck",
+    "source": "indian_formulary"
+  },
+  "calvit": {
+    "brandName": "Calvit",
+    "standardGeneric": "Calcium Carbonate + Vitamin D3",
+    "constituents": [
+      "Calcium Carbonate",
+      "Vitamin D3"
+    ],
+    "primaryRxCui": null,
+    "dosage": "500mg+250IU",
+    "dosageOptions": [],
+    "category": "Calcium + Vitamin D",
+    "safetyTip": "Take with meals for best absorption.",
+    "commonFrequency": "twice",
+    "foodInstruction": "with_food",
+    "manufacturer": "Cadila",
+    "source": "indian_formulary"
+  },
+  "shelcal": {
+    "brandName": "Shelcal",
+    "standardGeneric": "Calcium Carbonate + Vitamin D3",
+    "constituents": [
+      "Calcium Carbonate",
+      "Vitamin D3"
+    ],
+    "primaryRxCui": null,
+    "dosage": "500mg+250IU",
+    "dosageOptions": [],
+    "category": "Calcium Supplement",
+    "safetyTip": "Do not take with iron supplements simultaneously.",
+    "commonFrequency": "twice",
+    "foodInstruction": "with_food",
+    "manufacturer": "Elder",
+    "source": "indian_formulary"
+  },
+  "calcirol": {
+    "brandName": "Calcirol",
+    "standardGeneric": "Cholecalciferol",
+    "constituents": [
+      "Cholecalciferol"
+    ],
+    "primaryRxCui": null,
+    "dosage": "60000IU",
+    "dosageOptions": [],
+    "category": "Vitamin D3",
+    "safetyTip": "Monthly or weekly high-dose supplementation.",
+    "commonFrequency": "weekly",
+    "foodInstruction": "with_food",
+    "manufacturer": "Cadila",
+    "source": "indian_formulary"
+  },
+  "d-cal": {
+    "brandName": "D-Cal",
+    "standardGeneric": "Cholecalciferol + Calcium",
+    "constituents": [
+      "Cholecalciferol",
+      "Calcium"
+    ],
+    "primaryRxCui": null,
+    "dosage": "1000IU+500mg",
+    "dosageOptions": [],
+    "category": "Vitamin D3+Calcium",
+    "safetyTip": "For bone health. Monitor calcium levels.",
+    "commonFrequency": "once",
+    "foodInstruction": "with_food",
+    "manufacturer": "Various",
+    "source": "indian_formulary"
+  },
+  "cobadex forte": {
+    "brandName": "Cobadex Forte",
+    "standardGeneric": "Vitamin B Complex + Vitamin C + Zinc",
+    "constituents": [
+      "Vitamin B Complex",
+      "Vitamin C",
+      "Zinc"
+    ],
+    "primaryRxCui": null,
+    "dosage": "Standard",
+    "dosageOptions": [],
+    "category": "Multivitamin+Mineral",
+    "safetyTip": "Complete nutrition supplement.",
+    "commonFrequency": "once",
+    "foodInstruction": "after_food",
+    "manufacturer": "GSK",
+    "source": "indian_formulary"
+  },
+  "cobadexforte": {
+    "brandName": "Cobadex Forte",
+    "standardGeneric": "Vitamin B Complex + Vitamin C + Zinc",
+    "constituents": [
+      "Vitamin B Complex",
+      "Vitamin C",
+      "Zinc"
+    ],
+    "primaryRxCui": null,
+    "dosage": "Standard",
+    "dosageOptions": [],
+    "category": "Multivitamin+Mineral",
+    "safetyTip": "Complete nutrition supplement.",
+    "commonFrequency": "once",
+    "foodInstruction": "after_food",
+    "manufacturer": "GSK",
+    "source": "indian_formulary_variant"
+  },
+  "revital h": {
+    "brandName": "Revital H",
+    "standardGeneric": "Multivitamins + Minerals + Ginseng",
+    "constituents": [
+      "Multivitamins",
+      "Minerals",
+      "Ginseng"
+    ],
+    "primaryRxCui": null,
+    "dosage": "Standard",
+    "dosageOptions": [],
+    "category": "Tonic/Multivitamin",
+    "safetyTip": "Tonic for general wellbeing.",
+    "commonFrequency": "once",
+    "foodInstruction": "after_food",
+    "manufacturer": "Ranbaxy",
+    "source": "indian_formulary"
+  },
+  "revitalh": {
+    "brandName": "Revital H",
+    "standardGeneric": "Multivitamins + Minerals + Ginseng",
+    "constituents": [
+      "Multivitamins",
+      "Minerals",
+      "Ginseng"
+    ],
+    "primaryRxCui": null,
+    "dosage": "Standard",
+    "dosageOptions": [],
+    "category": "Tonic/Multivitamin",
+    "safetyTip": "Tonic for general wellbeing.",
+    "commonFrequency": "once",
+    "foodInstruction": "after_food",
+    "manufacturer": "Ranbaxy",
+    "source": "indian_formulary_variant"
+  },
+  "livogen": {
+    "brandName": "Livogen",
+    "standardGeneric": "Ferrous Fumarate + Folic Acid",
+    "constituents": [
+      "Ferrous Fumarate",
+      "Folic Acid"
+    ],
+    "primaryRxCui": null,
+    "dosage": "150mg+0.5mg",
+    "dosageOptions": [],
+    "category": "Iron + Folate",
+    "safetyTip": "Stool may turn black. Take with Vitamin C.",
+    "commonFrequency": "twice",
+    "foodInstruction": "empty_stomach",
+    "manufacturer": "Merck",
+    "source": "indian_formulary"
+  },
+  "fefol": {
+    "brandName": "Fefol",
+    "standardGeneric": "Ferrous Sulfate + Folic Acid",
+    "constituents": [
+      "Ferrous Sulfate",
+      "Folic Acid"
+    ],
+    "primaryRxCui": null,
+    "dosage": "150mg+0.5mg",
+    "dosageOptions": [],
+    "category": "Iron + Folate",
+    "safetyTip": "For anemia in pregnancy.",
+    "commonFrequency": "once",
+    "foodInstruction": "after_food",
+    "manufacturer": "Alembic",
+    "source": "indian_formulary"
+  },
+  "orofer s": {
+    "brandName": "Orofer S",
+    "standardGeneric": "Ferric Hydroxide Sucrose",
+    "constituents": [
+      "Ferric Hydroxide Sucrose"
+    ],
+    "primaryRxCui": null,
+    "dosage": "100mg/5ml",
+    "dosageOptions": [],
+    "category": "IV Iron",
+    "safetyTip": "IV use only. Monitor for anaphylaxis.",
+    "commonFrequency": "asneeded",
+    "foodInstruction": "injection",
+    "manufacturer": "Emcure",
+    "source": "indian_formulary"
+  },
+  "orofers": {
+    "brandName": "Orofer S",
+    "standardGeneric": "Ferric Hydroxide Sucrose",
+    "constituents": [
+      "Ferric Hydroxide Sucrose"
+    ],
+    "primaryRxCui": null,
+    "dosage": "100mg/5ml",
+    "dosageOptions": [],
+    "category": "IV Iron",
+    "safetyTip": "IV use only. Monitor for anaphylaxis.",
+    "commonFrequency": "asneeded",
+    "foodInstruction": "injection",
+    "manufacturer": "Emcure",
+    "source": "indian_formulary_variant"
+  },
+  "eleva": {
+    "brandName": "Eleva",
+    "standardGeneric": "Hydroxocobalamin",
+    "constituents": [
+      "Hydroxocobalamin"
+    ],
+    "primaryRxCui": null,
+    "dosage": "1000mcg",
+    "dosageOptions": [],
+    "category": "Vitamin B12",
+    "safetyTip": "For B12 deficiency. Long acting form.",
+    "commonFrequency": "asneeded",
+    "foodInstruction": "injection",
+    "manufacturer": "Ranbaxy",
+    "source": "indian_formulary"
+  },
+  "methylcobalamin": {
+    "brandName": "Methylcobalamin",
+    "standardGeneric": "Methylcobalamin",
+    "constituents": [
+      "Methylcobalamin"
+    ],
+    "primaryRxCui": null,
+    "dosage": "500mcg",
+    "dosageOptions": [],
+    "category": "Vitamin B12 (Active)",
+    "safetyTip": "Active form of B12. Safe long-term.",
+    "commonFrequency": "once",
+    "foodInstruction": "any",
+    "manufacturer": "Various",
+    "source": "indian_formulary"
+  },
+  "zincovit": {
+    "brandName": "Zincovit",
+    "standardGeneric": "Zinc + Multivitamins",
+    "constituents": [
+      "Zinc",
+      "Multivitamins"
+    ],
+    "primaryRxCui": null,
+    "dosage": "Standard",
+    "dosageOptions": [],
+    "category": "Zinc+Multivitamin",
+    "safetyTip": "For immunity and growth support.",
+    "commonFrequency": "once",
+    "foodInstruction": "after_food",
+    "manufacturer": "Apex",
+    "source": "indian_formulary"
+  },
+  "ecosprin": {
+    "brandName": "Ecosprin",
+    "standardGeneric": "Aspirin",
+    "constituents": [
+      "Aspirin"
+    ],
+    "primaryRxCui": null,
+    "dosage": "75mg",
+    "dosageOptions": [],
+    "category": "Antiplatelet",
+    "safetyTip": "Take after food. Risk of GI bleed.",
+    "commonFrequency": "once",
+    "foodInstruction": "after_food",
+    "manufacturer": "USV",
+    "source": "indian_formulary"
+  },
+  "aspirin": {
+    "brandName": "Aspirin",
+    "standardGeneric": "Aspirin",
+    "constituents": [
+      "Aspirin"
+    ],
+    "primaryRxCui": null,
+    "dosage": "150mg",
+    "dosageOptions": [],
+    "category": "Antiplatelet/NSAID",
+    "safetyTip": "Low dose for cardiac protection.",
+    "commonFrequency": "once",
+    "foodInstruction": "after_food",
+    "manufacturer": "Bayer",
+    "source": "indian_formulary"
+  },
+  "deplatt": {
+    "brandName": "Deplatt",
+    "standardGeneric": "Clopidogrel",
+    "constituents": [
+      "Clopidogrel"
+    ],
+    "primaryRxCui": null,
+    "dosage": "75mg",
+    "dosageOptions": [],
+    "category": "Antiplatelet",
+    "safetyTip": "Do not stop without doctor advice post-stent.",
+    "commonFrequency": "once",
+    "foodInstruction": "any",
+    "manufacturer": "Torrent",
+    "source": "indian_formulary"
+  },
+  "plavix": {
+    "brandName": "Plavix",
+    "standardGeneric": "Clopidogrel",
+    "constituents": [
+      "Clopidogrel"
+    ],
+    "primaryRxCui": null,
+    "dosage": "75mg",
+    "dosageOptions": [],
+    "category": "Antiplatelet",
+    "safetyTip": "Check PPI interaction (avoid omeprazole).",
+    "commonFrequency": "once",
+    "foodInstruction": "any",
+    "manufacturer": "Sanofi",
+    "source": "indian_formulary"
+  },
+  "brillinta": {
+    "brandName": "Brillinta",
+    "standardGeneric": "Ticagrelor",
+    "constituents": [
+      "Ticagrelor"
+    ],
+    "primaryRxCui": null,
+    "dosage": "90mg",
+    "dosageOptions": [],
+    "category": "Antiplatelet",
+    "safetyTip": "More potent than clopidogrel. Risk of dyspnea.",
+    "commonFrequency": "twice",
+    "foodInstruction": "any",
+    "manufacturer": "AstraZeneca",
+    "source": "indian_formulary"
+  },
+  "acitrom": {
+    "brandName": "Acitrom",
+    "standardGeneric": "Acenocoumarol",
+    "constituents": [
+      "Acenocoumarol"
+    ],
+    "primaryRxCui": null,
+    "dosage": "2mg",
+    "dosageOptions": [],
+    "category": "Oral Anticoagulant",
+    "safetyTip": "Monitor PT/INR weekly. Many interactions.",
+    "commonFrequency": "once",
+    "foodInstruction": "any",
+    "manufacturer": "Sun Pharma",
+    "source": "indian_formulary"
+  },
+  "warfarin": {
+    "brandName": "Warfarin",
+    "standardGeneric": "Warfarin",
+    "constituents": [
+      "Warfarin"
+    ],
+    "primaryRxCui": null,
+    "dosage": "2mg",
+    "dosageOptions": [],
+    "category": "Oral Anticoagulant",
+    "safetyTip": "Narrow therapeutic index. Vitamin K interactions.",
+    "commonFrequency": "once",
+    "foodInstruction": "any",
+    "manufacturer": "Various",
+    "source": "indian_formulary"
+  },
+  "eliquis": {
+    "brandName": "Eliquis",
+    "standardGeneric": "Apixaban",
+    "constituents": [
+      "Apixaban"
+    ],
+    "primaryRxCui": null,
+    "dosage": "5mg",
+    "dosageOptions": [],
+    "category": "Factor Xa Inhibitor (NOAC)",
+    "safetyTip": "No monitoring needed. Avoid in severe renal disease.",
+    "commonFrequency": "twice",
+    "foodInstruction": "any",
+    "manufacturer": "BMS/Pfizer",
+    "source": "indian_formulary"
+  },
+  "xarelto": {
+    "brandName": "Xarelto",
+    "standardGeneric": "Rivaroxaban",
+    "constituents": [
+      "Rivaroxaban"
+    ],
+    "primaryRxCui": null,
+    "dosage": "20mg",
+    "dosageOptions": [],
+    "category": "Factor Xa Inhibitor",
+    "safetyTip": "Take with evening meal. Renal dose adjustment needed.",
+    "commonFrequency": "once",
+    "foodInstruction": "with_food",
+    "manufacturer": "Bayer",
+    "source": "indian_formulary"
+  },
+  "dabigatran": {
+    "brandName": "Dabigatran",
+    "standardGeneric": "Dabigatran",
+    "constituents": [
+      "Dabigatran"
+    ],
+    "primaryRxCui": null,
+    "dosage": "150mg",
+    "dosageOptions": [],
+    "category": "Direct Thrombin Inhibitor",
+    "safetyTip": "Do not crush capsule. Monitor renal function.",
+    "commonFrequency": "twice",
+    "foodInstruction": "any",
+    "manufacturer": "Boehringer Ingelheim",
+    "source": "indian_formulary"
+  },
+  "clexane": {
+    "brandName": "Clexane",
+    "standardGeneric": "Enoxaparin",
+    "constituents": [
+      "Enoxaparin"
+    ],
+    "primaryRxCui": null,
+    "dosage": "40mg/0.4ml",
+    "dosageOptions": [],
+    "category": "LMWH Anticoagulant",
+    "safetyTip": "Subcutaneous injection. Monitor anti-Xa in pregnancy.",
+    "commonFrequency": "once",
+    "foodInstruction": "injection",
+    "manufacturer": "Sanofi",
+    "source": "indian_formulary"
+  },
+  "urimax": {
+    "brandName": "Urimax",
+    "standardGeneric": "Tamsulosin",
+    "constituents": [
+      "Tamsulosin"
+    ],
+    "primaryRxCui": null,
+    "dosage": "0.4mg",
+    "dosageOptions": [],
+    "category": "Alpha1 Blocker (BPH)",
+    "safetyTip": "For BPH. Risk of orthostatic hypotension.",
+    "commonFrequency": "once",
+    "foodInstruction": "after_food",
+    "manufacturer": "Cipla",
+    "source": "indian_formulary"
+  },
+  "flomax": {
+    "brandName": "Flomax",
+    "standardGeneric": "Tamsulosin",
+    "constituents": [
+      "Tamsulosin"
+    ],
+    "primaryRxCui": null,
+    "dosage": "0.4mg",
+    "dosageOptions": [],
+    "category": "Alpha Blocker",
+    "safetyTip": "Take after same meal daily.",
+    "commonFrequency": "once",
+    "foodInstruction": "after_food",
+    "manufacturer": "Boehringer Ingelheim",
+    "source": "indian_formulary"
+  },
+  "finpecia": {
+    "brandName": "Finpecia",
+    "standardGeneric": "Finasteride",
+    "constituents": [
+      "Finasteride"
+    ],
+    "primaryRxCui": null,
+    "dosage": "1mg",
+    "dosageOptions": [],
+    "category": "5-alpha Reductase Inhibitor",
+    "safetyTip": "For hair loss. Teratogenic — women must not handle.",
+    "commonFrequency": "once",
+    "foodInstruction": "any",
+    "manufacturer": "Cipla",
+    "source": "indian_formulary"
+  },
+  "proscar": {
+    "brandName": "Proscar",
+    "standardGeneric": "Finasteride",
+    "constituents": [
+      "Finasteride"
+    ],
+    "primaryRxCui": null,
+    "dosage": "5mg",
+    "dosageOptions": [],
+    "category": "5-ARI (BPH)",
+    "safetyTip": "For BPH. Reduces PSA levels — inform urologist.",
+    "commonFrequency": "once",
+    "foodInstruction": "any",
+    "manufacturer": "MSD",
+    "source": "indian_formulary"
+  },
+  "cifran oz": {
+    "brandName": "Cifran OZ",
+    "standardGeneric": "Ciprofloxacin + Ornidazole",
+    "constituents": [
+      "Ciprofloxacin",
+      "Ornidazole"
+    ],
+    "primaryRxCui": null,
+    "dosage": "500mg+500mg",
+    "dosageOptions": [],
+    "category": "Antibiotic+Antiprotozoal",
+    "safetyTip": "Avoid alcohol completely.",
+    "commonFrequency": "twice",
+    "foodInstruction": "after_food",
+    "manufacturer": "Ranbaxy",
+    "source": "indian_formulary"
+  },
+  "cifranoz": {
+    "brandName": "Cifran OZ",
+    "standardGeneric": "Ciprofloxacin + Ornidazole",
+    "constituents": [
+      "Ciprofloxacin",
+      "Ornidazole"
+    ],
+    "primaryRxCui": null,
+    "dosage": "500mg+500mg",
+    "dosageOptions": [],
+    "category": "Antibiotic+Antiprotozoal",
+    "safetyTip": "Avoid alcohol completely.",
+    "commonFrequency": "twice",
+    "foodInstruction": "after_food",
+    "manufacturer": "Ranbaxy",
+    "source": "indian_formulary_variant"
+  },
+  "moxicip": {
+    "brandName": "Moxicip",
+    "standardGeneric": "Moxifloxacin",
+    "constituents": [
+      "Moxifloxacin"
+    ],
+    "primaryRxCui": null,
+    "dosage": "0.5%",
+    "dosageOptions": [],
+    "category": "Fluoroquinolone Eye Drop",
+    "safetyTip": "For bacterial conjunctivitis. 5-7 day course.",
+    "commonFrequency": "four",
+    "foodInstruction": "eye_drop",
+    "manufacturer": "Cipla",
+    "source": "indian_formulary"
+  },
+  "tobramycin": {
+    "brandName": "Tobramycin",
+    "standardGeneric": "Tobramycin",
+    "constituents": [
+      "Tobramycin"
+    ],
+    "primaryRxCui": null,
+    "dosage": "0.3%",
+    "dosageOptions": [],
+    "category": "Aminoglycoside Eye Drop",
+    "safetyTip": "For eye infections. Remove contacts.",
+    "commonFrequency": "four",
+    "foodInstruction": "eye_drop",
+    "manufacturer": "Various",
+    "source": "indian_formulary"
+  },
+  "pred forte": {
+    "brandName": "Pred Forte",
+    "standardGeneric": "Prednisolone Acetate",
+    "constituents": [
+      "Prednisolone Acetate"
+    ],
+    "primaryRxCui": null,
+    "dosage": "1%",
+    "dosageOptions": [],
+    "category": "Ophthalmic Corticosteroid",
+    "safetyTip": "Monitor IOP with prolonged use.",
+    "commonFrequency": "four",
+    "foodInstruction": "eye_drop",
+    "manufacturer": "Allergan",
+    "source": "indian_formulary"
+  },
+  "predforte": {
+    "brandName": "Pred Forte",
+    "standardGeneric": "Prednisolone Acetate",
+    "constituents": [
+      "Prednisolone Acetate"
+    ],
+    "primaryRxCui": null,
+    "dosage": "1%",
+    "dosageOptions": [],
+    "category": "Ophthalmic Corticosteroid",
+    "safetyTip": "Monitor IOP with prolonged use.",
+    "commonFrequency": "four",
+    "foodInstruction": "eye_drop",
+    "manufacturer": "Allergan",
+    "source": "indian_formulary_variant"
+  },
+  "xalatan": {
+    "brandName": "Xalatan",
+    "standardGeneric": "Latanoprost",
+    "constituents": [
+      "Latanoprost"
+    ],
+    "primaryRxCui": null,
+    "dosage": "0.005%",
+    "dosageOptions": [],
+    "category": "Prostaglandin Analog",
+    "safetyTip": "Apply at bedtime. For glaucoma.",
+    "commonFrequency": "once",
+    "foodInstruction": "eye_drop",
+    "manufacturer": "Pfizer",
+    "source": "indian_formulary"
+  },
+  "timolol": {
+    "brandName": "Timolol",
+    "standardGeneric": "Timolol",
+    "constituents": [
+      "Timolol"
+    ],
+    "primaryRxCui": null,
+    "dosage": "0.5%",
+    "dosageOptions": [],
+    "category": "Beta Blocker Eye Drop",
+    "safetyTip": "Systemic absorption possible. Caution in asthma.",
+    "commonFrequency": "twice",
+    "foodInstruction": "eye_drop",
+    "manufacturer": "Various",
+    "source": "indian_formulary"
+  },
+  "wysolone": {
+    "brandName": "Wysolone",
+    "standardGeneric": "Prednisolone",
+    "constituents": [
+      "Prednisolone"
+    ],
+    "primaryRxCui": null,
+    "dosage": "10mg",
+    "dosageOptions": [],
+    "category": "Corticosteroid",
+    "safetyTip": "Take in morning. Do not stop abruptly.",
+    "commonFrequency": "once",
+    "foodInstruction": "with_food",
+    "manufacturer": "Pfizer",
+    "source": "indian_formulary"
+  },
+  "omnacortil": {
+    "brandName": "Omnacortil",
+    "standardGeneric": "Prednisolone",
+    "constituents": [
+      "Prednisolone"
+    ],
+    "primaryRxCui": null,
+    "dosage": "10mg",
+    "dosageOptions": [],
+    "category": "Corticosteroid",
+    "safetyTip": "Causes immunosuppression. Taper slowly.",
+    "commonFrequency": "once",
+    "foodInstruction": "with_food",
+    "manufacturer": "Macleods",
+    "source": "indian_formulary"
+  },
+  "dexamethasone": {
+    "brandName": "Dexamethasone",
+    "standardGeneric": "Dexamethasone",
+    "constituents": [
+      "Dexamethasone"
+    ],
+    "primaryRxCui": null,
+    "dosage": "0.5mg",
+    "dosageOptions": [],
+    "category": "Corticosteroid",
+    "safetyTip": "Potent steroid. Monitor glucose and BP.",
+    "commonFrequency": "twice",
+    "foodInstruction": "with_food",
+    "manufacturer": "Various",
+    "source": "indian_formulary"
+  },
+  "medrol": {
+    "brandName": "Medrol",
+    "standardGeneric": "Methylprednisolone",
+    "constituents": [
+      "Methylprednisolone"
+    ],
+    "primaryRxCui": null,
+    "dosage": "4mg",
+    "dosageOptions": [],
+    "category": "Corticosteroid",
+    "safetyTip": "Take after breakfast. Avoid NSAIDs with this.",
+    "commonFrequency": "twice",
+    "foodInstruction": "with_food",
+    "manufacturer": "Pfizer",
+    "source": "indian_formulary"
+  },
+  "hydrocortisone": {
+    "brandName": "Hydrocortisone",
+    "standardGeneric": "Hydrocortisone",
+    "constituents": [
+      "Hydrocortisone"
+    ],
+    "primaryRxCui": null,
+    "dosage": "100mg",
+    "dosageOptions": [],
+    "category": "Corticosteroid",
+    "safetyTip": "Stress dosing for adrenal insufficiency.",
+    "commonFrequency": "asneeded",
+    "foodInstruction": "injection",
+    "manufacturer": "Various",
+    "source": "indian_formulary"
+  },
+  "betnesol": {
+    "brandName": "Betnesol",
+    "standardGeneric": "Betamethasone",
+    "constituents": [
+      "Betamethasone"
+    ],
+    "primaryRxCui": null,
+    "dosage": "0.5mg",
+    "dosageOptions": [],
+    "category": "Corticosteroid",
+    "safetyTip": "Potent. For inflammatory conditions.",
+    "commonFrequency": "twice",
+    "foodInstruction": "with_food",
+    "manufacturer": "GSK",
+    "source": "indian_formulary"
+  },
+  "lariago": {
+    "brandName": "Lariago",
+    "standardGeneric": "Chloroquine",
+    "constituents": [
+      "Chloroquine"
+    ],
+    "primaryRxCui": null,
+    "dosage": "250mg",
+    "dosageOptions": [],
+    "category": "Antimalarial",
+    "safetyTip": "Also used for rheumatoid arthritis. Eye check annually.",
+    "commonFrequency": "once",
+    "foodInstruction": "after_food",
+    "manufacturer": "Ipca",
+    "source": "indian_formulary"
+  },
+  "p-alaxin": {
+    "brandName": "P-Alaxin",
+    "standardGeneric": "Artemether + Lumefantrine",
+    "constituents": [
+      "Artemether",
+      "Lumefantrine"
+    ],
+    "primaryRxCui": null,
+    "dosage": "20mg+120mg",
+    "dosageOptions": [],
+    "category": "Artemisinin Combination Therapy",
+    "safetyTip": "Take with fatty food for absorption.",
+    "commonFrequency": "twice",
+    "foodInstruction": "with_food",
+    "manufacturer": "Ipca",
+    "source": "indian_formulary"
+  },
+  "coartem": {
+    "brandName": "Coartem",
+    "standardGeneric": "Artemether + Lumefantrine",
+    "constituents": [
+      "Artemether",
+      "Lumefantrine"
+    ],
+    "primaryRxCui": null,
+    "dosage": "20mg+120mg",
+    "dosageOptions": [],
+    "category": "ACT Antimalarial",
+    "safetyTip": "Complete full 3-day course.",
+    "commonFrequency": "twice",
+    "foodInstruction": "with_food",
+    "manufacturer": "Novartis",
+    "source": "indian_formulary"
+  },
+  "malarone": {
+    "brandName": "Malarone",
+    "standardGeneric": "Atovaquone + Proguanil",
+    "constituents": [
+      "Atovaquone",
+      "Proguanil"
+    ],
+    "primaryRxCui": null,
+    "dosage": "250mg+100mg",
+    "dosageOptions": [],
+    "category": "Antimalarial Prophylaxis",
+    "safetyTip": "For malaria prevention. Start 1-2 days before travel.",
+    "commonFrequency": "once",
+    "foodInstruction": "with_food",
+    "manufacturer": "GSK",
+    "source": "indian_formulary"
+  },
+  "vermox": {
+    "brandName": "Vermox",
+    "standardGeneric": "Mebendazole",
+    "constituents": [
+      "Mebendazole"
+    ],
+    "primaryRxCui": null,
+    "dosage": "100mg",
+    "dosageOptions": [],
+    "category": "Anthelmintic",
+    "safetyTip": "Chew or crush tablet. 3-day course.",
+    "commonFrequency": "twice",
+    "foodInstruction": "any",
+    "manufacturer": "Johnson & Johnson",
+    "source": "indian_formulary"
+  },
+  "zentel": {
+    "brandName": "Zentel",
+    "standardGeneric": "Albendazole",
+    "constituents": [
+      "Albendazole"
+    ],
+    "primaryRxCui": null,
+    "dosage": "400mg",
+    "dosageOptions": [],
+    "category": "Anthelmintic",
+    "safetyTip": "Single dose for most infections. Take with fatty meal.",
+    "commonFrequency": "once",
+    "foodInstruction": "with_food",
+    "manufacturer": "GSK",
+    "source": "indian_formulary"
+  },
+  "diethylcarbamazine": {
+    "brandName": "Diethylcarbamazine",
+    "standardGeneric": "Diethylcarbamazine",
+    "constituents": [
+      "Diethylcarbamazine"
+    ],
+    "primaryRxCui": null,
+    "dosage": "100mg",
+    "dosageOptions": [],
+    "category": "Antifilarial",
+    "safetyTip": "For filariasis. Initial reactions possible.",
+    "commonFrequency": "thrice",
+    "foodInstruction": "after_food",
+    "manufacturer": "Various",
+    "source": "indian_formulary"
+  },
+  "canditral": {
+    "brandName": "Canditral",
+    "standardGeneric": "Itraconazole",
+    "constituents": [
+      "Itraconazole"
+    ],
+    "primaryRxCui": null,
+    "dosage": "100mg",
+    "dosageOptions": [],
+    "category": "Triazole Antifungal",
+    "safetyTip": "Take with main meal. Many drug interactions.",
+    "commonFrequency": "twice",
+    "foodInstruction": "after_food",
+    "manufacturer": "Glenmark",
+    "source": "indian_formulary"
+  },
+  "sporanox": {
+    "brandName": "Sporanox",
+    "standardGeneric": "Itraconazole",
+    "constituents": [
+      "Itraconazole"
+    ],
+    "primaryRxCui": null,
+    "dosage": "100mg",
+    "dosageOptions": [],
+    "category": "Antifungal",
+    "safetyTip": "Negative inotrope — avoid in heart failure.",
+    "commonFrequency": "twice",
+    "foodInstruction": "after_food",
+    "manufacturer": "Janssen",
+    "source": "indian_formulary"
+  },
+  "fluconac": {
+    "brandName": "Fluconac",
+    "standardGeneric": "Fluconazole",
+    "constituents": [
+      "Fluconazole"
+    ],
+    "primaryRxCui": null,
+    "dosage": "150mg",
+    "dosageOptions": [],
+    "category": "Triazole Antifungal",
+    "safetyTip": "Single dose for vaginal candidiasis.",
+    "commonFrequency": "once",
+    "foodInstruction": "any",
+    "manufacturer": "Cipla",
+    "source": "indian_formulary"
+  },
+  "forcan": {
+    "brandName": "Forcan",
+    "standardGeneric": "Fluconazole",
+    "constituents": [
+      "Fluconazole"
+    ],
+    "primaryRxCui": null,
+    "dosage": "150mg",
+    "dosageOptions": [],
+    "category": "Antifungal",
+    "safetyTip": "QTc prolongation at higher doses.",
+    "commonFrequency": "once",
+    "foodInstruction": "any",
+    "manufacturer": "Cipla",
+    "source": "indian_formulary"
+  },
+  "zovirax": {
+    "brandName": "Zovirax",
+    "standardGeneric": "Acyclovir",
+    "constituents": [
+      "Acyclovir"
+    ],
+    "primaryRxCui": null,
+    "dosage": "400mg",
+    "dosageOptions": [],
+    "category": "Antiviral (Herpes)",
+    "safetyTip": "Stay well hydrated. For herpes simplex/zoster.",
+    "commonFrequency": "five",
+    "foodInstruction": "any",
+    "manufacturer": "GSK",
+    "source": "indian_formulary"
+  },
+  "acivir": {
+    "brandName": "Acivir",
+    "standardGeneric": "Acyclovir",
+    "constituents": [
+      "Acyclovir"
+    ],
+    "primaryRxCui": null,
+    "dosage": "800mg",
+    "dosageOptions": [],
+    "category": "Antiviral",
+    "safetyTip": "Drink 2-3L water/day during treatment.",
+    "commonFrequency": "five",
+    "foodInstruction": "any",
+    "manufacturer": "Cipla",
+    "source": "indian_formulary"
+  },
+  "valcivir": {
+    "brandName": "Valcivir",
+    "standardGeneric": "Valacyclovir",
+    "constituents": [
+      "Valacyclovir"
+    ],
+    "primaryRxCui": null,
+    "dosage": "500mg",
+    "dosageOptions": [],
+    "category": "Prodrug Antiviral",
+    "safetyTip": "Better bioavailability than acyclovir.",
+    "commonFrequency": "twice",
+    "foodInstruction": "any",
+    "manufacturer": "Cipla",
+    "source": "indian_formulary"
+  },
+  "tamiflu": {
+    "brandName": "Tamiflu",
+    "standardGeneric": "Oseltamivir",
+    "constituents": [
+      "Oseltamivir"
+    ],
+    "primaryRxCui": null,
+    "dosage": "75mg",
+    "dosageOptions": [],
+    "category": "Neuraminidase Inhibitor",
+    "safetyTip": "Start within 48 hours of flu symptoms.",
+    "commonFrequency": "twice",
+    "foodInstruction": "with_food",
+    "manufacturer": "Roche",
+    "source": "indian_formulary"
+  },
+  "ginkgo biloba": {
+    "resolvedName": "Ginkgo Biloba",
+    "genericName": "Ginkgo Biloba",
+    "genericSalts": [
+      "Ginkgo Biloba"
+    ],
+    "constituents": [
+      "Ginkgo Biloba"
+    ],
+    "harmLevel": 1,
+    "class": "RxNorm Standard Drug",
+    "foodInstruction": "after_food",
+    "dosageOptions": [
+      "Standard dose"
+    ],
+    "safetyTip": "RxNorm validated medication. Take as directed.",
+    "standardizedCode": "236809",
+    "layer": "Layer 4 (RxNorm REST API)"
+  },
+  "ibuprofen": {
+    "resolvedName": "Ibuprofen",
+    "genericName": "Ibuprofen",
+    "genericSalts": [
+      "Ibuprofen"
+    ],
+    "constituents": [
+      "Ibuprofen"
+    ],
+    "harmLevel": 3,
+    "class": "RxNorm Standard Drug",
+    "foodInstruction": "after_food",
+    "dosageOptions": [
+      "Standard dose"
+    ],
+    "safetyTip": "RxNorm validated medication. Take as directed.",
+    "standardizedCode": "5640",
+    "layer": "Layer 4 (RxNorm REST API)"
+  }
+}

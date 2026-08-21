@@ -209,13 +209,6 @@ export default function LoginPage() {
     return null;
   }, [loginPassword, loginTouched]);
 
-  // Remaining lockout time helper
-  const lockoutMinsLeft = useMemo(() => {
-    if (!lockoutUntil) return 0;
-    const ms = new Date(lockoutUntil).getTime() - Date.now();
-    return ms > 0 ? Math.ceil(ms / 60000) : 0;
-  }, [lockoutUntil]);
-
   // ─── Doctor Inline Validation Checks ─────────────────────────────────────────
   const doctorErrors = useMemo(() => {
     const errors = {};
@@ -275,7 +268,7 @@ export default function LoginPage() {
   // email already exists (or vice versa), we silently move them to the right step.
   const checkEmailMutation = useMutation({
     mutationFn: ({ email, role }) => authApi.checkEmail({ email, role }),
-    onSuccess: (data, variables) => {
+    onSuccess: (data) => {
       setErrorMsg(null);
       const targetStep = data.exists ? 'login' : 'signup';
       // Smooth redirect: if we're already on a step and get a contradictory result,

@@ -2,6 +2,10 @@ const express = require('express');
 const { z } = require('zod');
 const prisma = require('../lib/prisma');
 const { auth } = require('../middleware/auth');
+const { lookupInteraction } = require('../services/interactionLookup');
+const { generateExplanation } = require('../services/explanationGenerator');
+const { BRAND_ALIASES } = require('../services/drugAliases');
+const { calculateRegimenRisk, getDrugHarmLevel } = require('../services/regimenRisk');
 
 const router = express.Router();
 
@@ -233,21 +237,36 @@ router.get('/home-summary', auth, async (req, res) => {
       date: today,
     }));
 
-    // 3. Determine overall status
+    // 3. Compute WHO/NCI 5-Tier Regimen Risk
+    const regimenRisk = await calculateRegimenRisk(patient.id);
+
+    // 4. Determine overall status
     const status = interactionFlags.length > 0 ? 'CAUTION' : 'SAFE';
 
     return res.status(200).json({
       status,
+      regimenRisk,
       patientId: patient.id,
       patientAge: patient.age,
-      medicines: medicines.map((m) => ({
-        id: m.id,
-        name: m.name,
-        type: m.type,
-        dosage: m.dosage,
-        standardizedCode: m.standardizedCode,
-        dateAdded: m.dateAdded,
-      })),
+      medicines: medicines.map((m) => {
+        const raw = (m.name || '').toLowerCase().trim();
+        const cleaned = raw.replace(/\s+\d+(\.\d+)?\s*(mg|mcg|g|ml|iu)?$/i, '').trim();
+        const alias = BRAND_ALIASES[raw] || BRAND_ALIASES[cleaned] || Object.entries(BRAND_ALIASES).find(([k]) => raw.includes(k) || k.includes(raw))?.[1];
+        const harmLevel = m.harmLevel || getDrugHarmLevel(m.name, alias?.category);
+        return {
+          id: m.id,
+          name: m.name,
+          type: m.type,
+          dosage: m.dosage,
+          harmLevel,
+          standardizedCode: m.standardizedCode,
+          dateAdded: m.dateAdded,
+          category: alias?.category || (m.type === 'HERBAL' ? 'Herbal Supplement' : m.type === 'OTC' ? 'Over-The-Counter' : 'Prescription Medicine'),
+          generic: alias?.generic || m.name,
+          safetyTip: alias?.safetyTip || null,
+          foodInstruction: alias?.foodInstruction || (m.type === 'HERBAL' ? 'with_food' : 'after_food'),
+        };
+      }),
       schedule,
       flags: interactionFlags.map((f) => ({
         id: f.id,
@@ -493,18 +512,34 @@ router.get('/insights', auth, async (req, res) => {
       });
     });
 
-    const currentScore = runningScore;
-    const currentLevel = currentScore >= 3 ? 'Critical' : currentScore >= 1 ? 'Moderate' : 'Normal';
+    const activeMeds = medicines.filter(m => !m.removedAt);
+    const activeFlags = interactionFlags.filter(f => !f.medicineA?.removedAt && !f.medicineB?.removedAt);
+
+    // Calculate active burden score only across ACTIVE medicines
+    let activeBurdenScore = 0;
+    activeMeds.forEach((med) => {
+      const normalized = (med.name || '').toLowerCase();
+      for (const bs of allBurdenScores) {
+        const drug = (bs.drugName || '').toLowerCase();
+        if (drug && (normalized.includes(drug) || (drug.length >= 4 && drug.includes(normalized)))) {
+          activeBurdenScore += bs.score;
+          break;
+        }
+      }
+    });
+
+    const currentLevel = activeBurdenScore >= 3 ? 'Critical' : activeBurdenScore >= 1 ? 'Moderate' : 'Normal';
 
     return res.status(200).json({
       flagHistory,
       burdenHistory,
       summary: {
-        totalMedicines: medicines.length,
-        totalFlags: interactionFlags.length,
-        currentBurdenScore: currentScore,
+        totalMedicines: activeMeds.length,
+        activeMedicines: activeMeds.length,
+        totalFlags: activeFlags.length,
+        currentBurdenScore: activeBurdenScore,
         currentBurdenLevel: currentLevel,
-        highRiskFlags: interactionFlags.filter(f => ['CONTRAINDICATED', 'MAJOR'].includes((f.severity || '').toUpperCase())).length,
+        highRiskFlags: activeFlags.filter(f => ['CONTRAINDICATED', 'MAJOR'].includes((f.severity || '').toUpperCase())).length,
       },
     });
   } catch (err) {

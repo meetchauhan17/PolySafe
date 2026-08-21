@@ -108,12 +108,12 @@ export default function PatientLayout() {
         </aside>
       )}
 
-      {/* ─── Top Bar: Minimalist Branding & Sign Out ─── */}
+      {/* ─── Top Bar: Minimalist Branding, Desktop Nav & Sign Out ─── */}
       <header
-        className={`sticky ${isGuest ? 'top-[33px]' : 'top-0'} z-40 bg-[#EDE8DC]/90 backdrop-blur-md px-4 py-3 shadow-[0_4px_14px_rgba(191,180,155,0.40)]`}
+        className={`sticky ${isGuest ? 'top-[33px]' : 'top-0'} z-40 bg-[#EDE8DC]/90 backdrop-blur-md px-4 sm:px-6 py-3 shadow-[0_4px_14px_rgba(191,180,155,0.40)]`}
       >
-        <div className="max-w-2xl mx-auto flex items-center justify-between">
-          <Link to="/home" className="flex items-center gap-2.5 group">
+        <div className="max-w-5xl mx-auto flex items-center justify-between gap-4">
+          <Link to="/home" className="flex items-center gap-2.5 group flex-shrink-0">
             <div className="p-2.5 bg-[#2B6E5E] text-white rounded-2xl shadow-[4px_4px_10px_rgba(191,180,155,0.55),-4px_-4px_10px_rgba(255,255,255,0.65)] group-hover:scale-105 transition-transform">
               <ShieldCheck className="w-5 h-5" />
             </div>
@@ -130,10 +130,32 @@ export default function PatientLayout() {
             </div>
           </Link>
 
-          <div className="flex items-center gap-2.5">
+          {/* ── Desktop Navigation Links ── */}
+          <nav className="hidden md:flex items-center space-x-1.5" aria-label="Desktop Patient Navigation">
+            {navTabs.map((tab) => {
+              const Icon = tab.icon;
+              const isActive = tab.match(location.pathname);
+              return (
+                <Link
+                  key={tab.id}
+                  to={tab.path}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                    isActive
+                      ? 'bg-[#2B6E5E] text-white shadow-[inset_2px_2px_4px_rgba(0,0,0,0.2)]'
+                      : 'text-[#5C6B64] hover:text-[#1C2B27] bg-[#EDE8DC] hover:shadow-[3px_3px_6px_rgba(191,180,155,0.4),-3px_-3px_6px_rgba(255,255,255,0.5)]'
+                  }`}
+                >
+                  <Icon className="w-3.5 h-3.5" />
+                  <span>{tab.label}</span>
+                </Link>
+              );
+            })}
+          </nav>
+
+          <div className="flex items-center gap-2 flex-shrink-0">
             <Link
               to="/insights"
-              className={`flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-bold rounded-2xl transition-all ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-2xl transition-all ${
                 location.pathname === '/insights' || location.pathname === '/trends'
                   ? 'bg-[#2B6E5E] text-white shadow-[inset_2px_2px_4px_rgba(0,0,0,0.2)]'
                   : 'btn-secondary py-1.5 px-3 text-xs'
@@ -141,7 +163,7 @@ export default function PatientLayout() {
               title="View Safety Insights & Trends"
             >
               <TrendingUp className="w-3.5 h-3.5 text-[#2B6E5E]" />
-              <span>Insights</span>
+              <span className="hidden sm:inline">Insights</span>
             </Link>
 
             <Link
@@ -162,16 +184,16 @@ export default function PatientLayout() {
       </header>
 
       {/* ─── Page Content with PageTransition ─── */}
-      <main className="flex-1 pb-24">
+      <main className="flex-1 pb-32 md:pb-12">
         <PageTransition key={location.pathname}>
           <Outlet />
         </PageTransition>
       </main>
 
-      {/* ─── Fixed Bottom Tab Bar ─── */}
+      {/* ─── Fixed Bottom Tab Bar (Mobile Only) ─── */}
       <nav
-        className="fixed bottom-0 left-0 right-0 z-50 bg-[#EDE8DC]/95 backdrop-blur-md py-2 px-3 shadow-[0_-6px_16px_rgba(191,180,155,0.45),0_6px_16px_rgba(255,255,255,0.65)]"
-        aria-label="Patient Navigation"
+        className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#EDE8DC]/95 backdrop-blur-md py-2 px-3 shadow-[0_-6px_16px_rgba(191,180,155,0.45),0_6px_16px_rgba(255,255,255,0.65)]"
+        aria-label="Mobile Patient Navigation"
       >
         <div className="max-w-md mx-auto grid grid-cols-5 gap-1.5">
           {navTabs.map((tab) => {

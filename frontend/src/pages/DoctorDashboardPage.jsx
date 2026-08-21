@@ -6,14 +6,13 @@
  * Step 2: Wait for patient approval (polls /connection/pending equivalent via /connection/mine).
  * Step 3: Once approved, show the patient's read-only Timeline + Risk Flags.
  */
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import {
-  Stethoscope, ArrowLeft, Loader2, AlertCircle, CheckCircle2, Clock,
-  Pill, Leaf, ShoppingBag, AlertOctagon, CalendarDays, ChevronRight,
-  Users, Shield, ShieldCheck, Info, TriangleAlert, Activity, Plus, Search,
+  Stethoscope, Loader2, AlertCircle, CheckCircle2, Clock,
+  Pill, Leaf, ShoppingBag, AlertOctagon, ChevronRight,
+  Users, Shield, Info, TriangleAlert, Plus, Search, X,
 } from 'lucide-react';
 import Card from '../components/Card';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
@@ -27,6 +26,7 @@ import {
   DoctorPatientDetailSkeleton,
 } from '../components/Skeletons';
 import { notify } from '../utils/toast';
+import { DrugHarmBadge } from '../components/DrugHarmLevel';
 
 // ─── API helpers ──────────────────────────────────────────────────────────────
 async function claimCode(code) {
@@ -52,31 +52,44 @@ const SEV_CFG = {
   Minor:           { badge: 'bg-yellow-100 text-yellow-800 border-yellow-200', dot: '#A16207', variant: 'default' },
 };
 
-// ─── Prescribing Safety Check Panel ──────────────────────────────────────────
-function PrescribingSafetyCheck({ patientId }) {
+// ─── Pre-Prescribing Safety Check Modal ───────────────────────────────────────
+function DoctorSafetyCheckModal({ isOpen, onClose, patientId, patientAge }) {
   const [drug, setDrug] = useState('');
+  const [dosage, setDosage] = useState('');
+  const [suggestions, setSuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
   const [result, setResult] = useState(null);
   const [checking, setChecking] = useState(false);
   const [err, setErr] = useState('');
 
-  const SEV_BADGE = {
-    Major:           'bg-rose-100 text-rose-800 border-rose-200',
-    Contraindicated: 'bg-red-100 text-red-800 border-red-200',
-    Moderate:        'bg-amber-100 text-amber-800 border-amber-200',
-    Minor:           'bg-yellow-100 text-yellow-800 border-yellow-200',
-  };
+  // Drug search autocomplete
+  useEffect(() => {
+    const q = drug.trim();
+    if (q.length < 2) {
+      setSuggestions([]);
+      return;
+    }
+    const timer = setTimeout(() => {
+      axios.get(`/medicine/search?q=${encodeURIComponent(q)}`)
+        .then(r => setSuggestions(r.data?.suggestions || []))
+        .catch(() => setSuggestions([]));
+    }, 200);
+    return () => clearTimeout(timer);
+  }, [drug]);
 
   const handleCheck = async (e) => {
-    e.preventDefault();
+    e?.preventDefault?.();
     const trimmed = drug.trim();
     if (!trimmed) return;
     setChecking(true);
     setErr('');
     setResult(null);
+    setShowSuggestions(false);
     try {
-      const { data } = await axios.post('/connection/doctor/prescribe-safety-check', {
+      const { data } = await axios.post('/connection/doctor-safety-check', {
         patientId,
-        proposedMedicineName: trimmed,
+        proposedDrug: trimmed,
+        dosage: dosage.trim() || undefined,
       });
       setResult(data);
     } catch (error) {
@@ -86,77 +99,280 @@ function PrescribingSafetyCheck({ patientId }) {
     }
   };
 
+  if (!isOpen) return null;
+
   return (
-    <Card className="space-y-4">
-      <div className="flex items-center gap-2">
-        <div className="p-2 bg-[#1B4B66]/10 rounded-xl flex-shrink-0">
-          <Search className="w-4 h-4 text-[#1B4B66]" />
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs animate-fade-in">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95, y: 10 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.95, y: 10 }}
+        className="w-full max-w-2xl bg-[#EDE8DC] border border-[rgba(191,180,155,0.6)] shadow-[10px_10px_30px_rgba(0,0,0,0.25)] rounded-3xl p-6 sm:p-8 space-y-6 max-h-[90vh] overflow-y-auto"
+      >
+        {/* Header */}
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="p-3 bg-[#1B4B66]/10 border border-[#1B4B66]/20 rounded-2xl">
+              <Stethoscope className="w-6 h-6 text-[#1B4B66]" />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-[#1C2B27]" style={{ fontFamily: "'Fraunces', serif" }}>
+                Pre-Prescribing Safety Check
+              </h2>
+              <p className="text-xs text-[#5C6B64]">
+                Patient (Age {patientAge || '—'}) · Real-time pharmacology cross-check
+              </p>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            className="p-2 rounded-xl text-[#5C6B64] hover:bg-[#DED7C6] transition-colors cursor-pointer"
+          >
+            <X className="w-5 h-5" />
+          </button>
         </div>
-        <div>
-          <p className="text-sm font-bold text-[#232724]">Prescribing Safety Check</p>
-          <p className="text-[11px] text-[#6B726C]">Test a new drug against this patient's current medications</p>
+
+        {/* Clear Framing Notice */}
+        <div className="flex items-start gap-2.5 p-3.5 bg-blue-50/80 border border-blue-200 rounded-2xl text-xs text-blue-900 leading-relaxed">
+          <Info className="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" />
+          <p>
+            <strong>Clinical Pre-Prescribing Check:</strong> This test evaluates potential drug-drug interactions and regimen burden before prescribing. <em>It does not modify the patient's active medicine list.</em>
+          </p>
         </div>
-      </div>
 
-      <form onSubmit={handleCheck} className="flex gap-2">
-        <input
-          type="text"
-          value={drug}
-          onChange={(e) => { setDrug(e.target.value); setErr(''); setResult(null); }}
-          placeholder="e.g. Metformin, Atorvastatin…"
-          className="input-field flex-1 text-sm py-2.5"
-        />
-        <button
-          type="submit"
-          disabled={!drug.trim() || checking}
-          className="btn-primary px-4 py-2.5 text-sm flex items-center gap-1.5"
-        >
-          {checking ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
-          Check
-        </button>
-      </form>
+        {/* Search & Input Form */}
+        <form onSubmit={handleCheck} className="space-y-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            {/* Drug Name with Autocomplete */}
+            <div className="sm:col-span-2 space-y-1.5 relative">
+              <label className="block text-xs font-extrabold uppercase tracking-wider text-[#5C6B64]">
+                Proposed Drug / Indian Brand
+              </label>
+              <div className="relative">
+                <input
+                  type="text"
+                  value={drug}
+                  onChange={(e) => {
+                    setDrug(e.target.value);
+                    setShowSuggestions(true);
+                    setErr('');
+                    setResult(null);
+                  }}
+                  onFocus={() => setShowSuggestions(true)}
+                  placeholder="e.g. Naxdom 500, Pan-D, Warfarin, Metformin…"
+                  className="input-field w-full text-sm py-3"
+                  autoFocus
+                />
+                {checking && (
+                  <Loader2 className="w-4 h-4 text-[#2B6E5E] animate-spin absolute right-3 top-3.5" />
+                )}
+              </div>
 
-      {err && (
-        <div className="flex items-center gap-2 p-3 bg-rose-50 border border-rose-200 rounded-xl text-xs text-rose-700">
-          <AlertCircle className="w-4 h-4 text-rose-400 flex-shrink-0" />
-          {err}
-        </div>
-      )}
+              {/* Autocomplete Dropdown */}
+              {showSuggestions && suggestions.length > 0 && (
+                <div className="absolute top-full left-0 right-0 mt-1.5 bg-[#FDFBF7] border border-[#E7E1D3] shadow-lg rounded-2xl overflow-hidden z-20 max-h-48 overflow-y-auto">
+                  {suggestions.map((s, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => {
+                        setDrug(s.name);
+                        setShowSuggestions(false);
+                      }}
+                      className="w-full px-3.5 py-2 text-left text-xs font-semibold text-[#1C2B27] hover:bg-[#EDE8DC] flex items-center justify-between border-b border-black/5 last:border-0 cursor-pointer"
+                    >
+                      <span>{s.name}</span>
+                      {s.harmLevel && <DrugHarmBadge harmLevel={s.harmLevel} size="sm" />}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
 
-      {result && (
-        <div className="space-y-2">
-          {result.decision === 'SAFE' && (
-            <div className="flex items-start gap-2.5 p-3.5 bg-[#E4F2E9] border border-[#2F8558]/30 rounded-xl">
-              <CheckCircle2 className="w-4 h-4 text-[#2B6E5E] flex-shrink-0 mt-0.5" />
-              <div>
-                <p className="text-xs font-bold text-[#1A5C3A]">
-                  {result.proposedDrug} — No interactions found
+            {/* Dosage input */}
+            <div className="space-y-1.5">
+              <label className="block text-xs font-extrabold uppercase tracking-wider text-[#5C6B64]">
+                Dosage (Optional)
+              </label>
+              <input
+                type="text"
+                value={dosage}
+                onChange={(e) => setDosage(e.target.value)}
+                placeholder="e.g. 500mg, 1 tab"
+                className="input-field w-full text-sm py-3"
+              />
+            </div>
+          </div>
+
+          <div className="flex justify-end gap-2 pt-2">
+            <button
+              type="button"
+              onClick={onClose}
+              className="btn-secondary px-5 py-2.5 text-xs"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={!drug.trim() || checking}
+              className="btn-primary px-6 py-2.5 text-xs flex items-center gap-2"
+            >
+              {checking ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
+              <span>Run Safety Check</span>
+            </button>
+          </div>
+        </form>
+
+        {/* Error message */}
+        {err && (
+          <div className="flex items-center gap-2.5 p-3.5 bg-rose-50 border border-rose-200 rounded-2xl text-xs text-rose-700">
+            <AlertCircle className="w-4 h-4 text-rose-500 flex-shrink-0" />
+            <span>{err}</span>
+          </div>
+        )}
+
+        {/* Result Evaluation Card */}
+        {result && (
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="space-y-4 pt-2 border-t border-[rgba(191,180,155,0.4)]"
+          >
+            {/* Top Decision Banner */}
+            <div
+              className={`p-4 rounded-2xl border flex items-center justify-between gap-4 ${
+                result.decision === 'CRITICAL'
+                  ? 'bg-rose-50 border-rose-300 text-rose-950'
+                  : result.decision === 'CAUTION'
+                  ? 'bg-amber-50 border-amber-300 text-amber-950'
+                  : 'bg-emerald-50 border-emerald-300 text-emerald-950'
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                {result.decision === 'CRITICAL' ? (
+                  <AlertOctagon className="w-6 h-6 text-rose-600 flex-shrink-0" />
+                ) : result.decision === 'CAUTION' ? (
+                  <TriangleAlert className="w-6 h-6 text-amber-600 flex-shrink-0" />
+                ) : (
+                  <CheckCircle2 className="w-6 h-6 text-emerald-600 flex-shrink-0" />
+                )}
+                <div>
+                  <p className="text-sm font-extrabold uppercase tracking-wider">
+                    Prescribing Decision: {result.decision}
+                  </p>
+                  <p className="text-xs opacity-90 mt-0.5">
+                    {result.decision === 'SAFE'
+                      ? `No direct interaction detected with patient's ${result.currentRegimenCount} active medicines.`
+                      : result.decision === 'CRITICAL'
+                      ? 'Severe pharmacological interaction or high-risk combination identified.'
+                      : 'Moderate interaction or regimen burden detected — clinical monitoring advised.'}
+                  </p>
+                </div>
+              </div>
+
+              <span
+                className={`text-xs font-black px-3 py-1 rounded-xl border ${
+                  result.decision === 'CRITICAL'
+                    ? 'bg-rose-100 text-rose-800 border-rose-300'
+                    : result.decision === 'CAUTION'
+                    ? 'bg-amber-100 text-amber-900 border-amber-300'
+                    : 'bg-emerald-100 text-emerald-800 border-emerald-300'
+                }`}
+              >
+                {result.decision}
+              </span>
+            </div>
+
+            {/* Drug Resolution & Regimen Impact Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {/* Proposed Drug Details */}
+              <div className="p-3.5 rounded-2xl bg-[#EDE8DC] shadow-[inset_2px_2px_5px_rgba(191,180,155,0.4),inset_-2px_-2px_5px_rgba(255,255,255,0.5)] space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#5C6B64]">Proposed Drug</span>
+                  <DrugHarmBadge harmLevel={result.proposedDrug?.harmLevel} size="sm" />
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-[#1C2B27]">{result.proposedDrug?.name}</p>
+                  <p className="text-xs text-[#5C6B64] font-medium mt-0.5">
+                    Constituents: <strong className="text-[#1C2B27]">{result.proposedDrug?.genericName}</strong>
+                  </p>
+                  {result.proposedDrug?.class && (
+                    <p className="text-[11px] text-[#5C6B64] mt-0.5">
+                      Class: {result.proposedDrug.class}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              {/* Projected Regimen Impact */}
+              <div className="p-3.5 rounded-2xl bg-[#EDE8DC] shadow-[inset_2px_2px_5px_rgba(191,180,155,0.4),inset_-2px_-2px_5px_rgba(255,255,255,0.5)] space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#5C6B64]">Projected Regimen Risk</span>
+                  <span className="text-[10px] font-extrabold text-[#2B6E5E]">
+                    {result.currentRegimenCount + 1} total medicines
+                  </span>
+                </div>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-xl font-black text-[#1C2B27]" style={{ fontFamily: "'Fraunces', serif" }}>
+                    {result.projectedRegimenRisk}
+                  </span>
+                  {result.projectedAverageScore && (
+                    <span className="text-xs font-semibold text-[#5C6B64]">
+                      ({result.projectedAverageScore} / 5.0 score)
+                    </span>
+                  )}
+                </div>
+                <p className="text-[11px] text-[#5C6B64] leading-tight">
+                  Calculated using WHO/NCI tiered polypharmacy scoring.
                 </p>
-                <p className="text-[11px] text-[#2B6E5E]/80 mt-0.5">{result.message}</p>
               </div>
             </div>
-          )}
-          {result.flags && result.flags.length > 0 && (
-            <div className="space-y-2">
-              <p className="text-xs font-extrabold uppercase tracking-wider text-[#B23D25]">
-                {result.flags.length} Interaction{result.flags.length !== 1 ? 's' : ''} Found for {result.proposedDrug}
-              </p>
-              {result.flags.map((ix, i) => (
-                <div key={i} className="p-3 bg-[#FBE4DE]/60 border border-[#B23D25]/30 rounded-xl space-y-1">
-                  <div className="flex items-center justify-between">
-                    <p className="text-xs font-bold text-[#232724]">{result.proposedDrug} ↔ {ix.interactingDrug}</p>
-                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${SEV_BADGE[ix.severity] || SEV_BADGE.Minor}`}>
-                      {ix.severity}
-                    </span>
-                  </div>
-                  {ix.note && <p className="text-[11px] text-[#6B726C] leading-relaxed">{ix.note}</p>}
+
+            {/* Interaction Flags List */}
+            {result.flags && result.flags.length > 0 && (
+              <div className="space-y-2">
+                <p className="text-xs font-extrabold uppercase tracking-wider text-[#B23D25] flex items-center gap-1.5">
+                  <AlertOctagon className="w-3.5 h-3.5" />
+                  <span>{result.flags.length} Interaction Flag{result.flags.length !== 1 ? 's' : ''} Detected</span>
+                </p>
+                <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
+                  {result.flags.map((flag, idx) => (
+                    <div
+                      key={idx}
+                      className="p-3 rounded-xl bg-white border border-[#E7E1D3] shadow-xs space-y-1"
+                    >
+                      <div className="flex items-center justify-between gap-2">
+                        <p className="text-xs font-bold text-[#1C2B27]">
+                          {result.proposedDrug?.name} ↔ {flag.counterpart || flag.interactingDrug}
+                        </p>
+                        <span
+                          className={`text-[10px] font-extrabold px-2 py-0.5 rounded-full border ${
+                            flag.severity === 'Major' || flag.severity === 'Contraindicated'
+                              ? 'bg-rose-100 text-rose-800 border-rose-300'
+                              : 'bg-amber-100 text-amber-900 border-amber-300'
+                          }`}
+                        >
+                          {flag.severity}
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-[#5C6B64] leading-relaxed">
+                        {flag.plainExplanation || flag.note}
+                      </p>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
-    </Card>
+              </div>
+            )}
+
+            {/* Clinical Disclaimer */}
+            <p className="text-[10px] text-[#5C6B64]/80 italic text-center pt-2">
+              {result.disclaimer || 'This is an informational safety evaluation, not a prescription or clinical diagnosis.'}
+            </p>
+          </motion.div>
+        )}
+      </motion.div>
+    </div>
   );
 }
 
@@ -268,10 +484,13 @@ function ClaimPanel({ onSuccess }) {
 // ─── Patient Timeline (read-only) ─────────────────────────────────────────────
 function PatientView({ patientId }) {
   const shouldReduceMotion = useReducedMotion();
+  const [showSafetyCheckModal, setShowSafetyCheckModal] = useState(false);
+
   const { data, isLoading, isError, error } = useQuery({
-    queryKey: ['doctor-patient-timeline', patientId],
+    queryKey: ['patient-timeline', patientId],
     queryFn:  () => fetchPatientTimeline(patientId),
-    retry: 1,
+    enabled:  !!patientId,
+    refetchInterval: 20000,
   });
 
   if (isLoading) {
@@ -293,28 +512,47 @@ function PatientView({ patientId }) {
 
   return (
     <div className="space-y-6">
-      {/* Patient profile strip */}
-      <Card className="p-4 flex flex-row items-center gap-4">
-        <div className="p-3 rounded-xl bg-[#1B4B66]/10 border border-[#1B4B66]/20 flex-shrink-0">
-          <Users className="w-6 h-6 text-[#1B4B66]" />
-        </div>
-        <div className="flex-1 min-w-0">
-          <p className="text-sm font-bold text-[#232724]">Anonymous Patient Record</p>
-          <div className="flex items-center gap-3 mt-0.5 flex-wrap">
-            {patient.age    && <span className="text-xs text-[#6B726C]">Age: <strong>{patient.age}</strong></span>}
-            {patient.conditions?.length > 0 && (
-              <span className="text-xs text-[#6B726C]">Conditions: <strong>{patient.conditions.join(', ')}</strong></span>
-            )}
+      {/* Patient profile strip + Action button */}
+      <Card className="p-4 flex flex-row items-center justify-between gap-4 flex-wrap">
+        <div className="flex items-center gap-3.5 min-w-0">
+          <div className="p-3 rounded-xl bg-[#1B4B66]/10 border border-[#1B4B66]/20 flex-shrink-0">
+            <Users className="w-6 h-6 text-[#1B4B66]" />
+          </div>
+          <div className="min-w-0">
+            <div className="flex items-center gap-2">
+              <p className="text-sm font-bold text-[#232724]">Anonymous Patient Record</p>
+              <span className="inline-flex items-center gap-1 text-[10px] font-bold text-[#2B6E5E] bg-[#E4F2E9] border border-[#2F8558]/30 px-2 py-0.5 rounded-full">
+                <Shield className="w-2.5 h-2.5" />
+                READ-ONLY
+              </span>
+            </div>
+            <div className="flex items-center gap-3 mt-0.5 flex-wrap">
+              {patient.age && <span className="text-xs text-[#6B726C]">Age: <strong>{patient.age}</strong></span>}
+              {patient.conditions?.length > 0 && (
+                <span className="text-xs text-[#6B726C]">Conditions: <strong>{patient.conditions.join(', ')}</strong></span>
+              )}
+            </div>
           </div>
         </div>
-        <div className="flex items-center gap-1.5 text-[10px] font-bold text-[#2B6E5E] bg-[#E4F2E9] border border-[#2F8558]/30 px-2.5 py-1 rounded-full flex-shrink-0">
-          <Shield className="w-3 h-3" />
-          READ-ONLY
-        </div>
+
+        {/* Dedicated Pre-Prescribing Safety Check Action */}
+        <button
+          type="button"
+          onClick={() => setShowSafetyCheckModal(true)}
+          className="btn-primary py-2.5 px-4 text-xs flex items-center gap-2 shadow-md cursor-pointer"
+        >
+          <Stethoscope className="w-4 h-4" />
+          <span>Safety Check</span>
+        </button>
       </Card>
 
-      {/* Prescribing Safety Check */}
-      <PrescribingSafetyCheck patientId={patientId} />
+      {/* Safety Check Modal */}
+      <DoctorSafetyCheckModal
+        isOpen={showSafetyCheckModal}
+        onClose={() => setShowSafetyCheckModal(false)}
+        patientId={patientId}
+        patientAge={patient.age}
+      />
 
       {/* Active Risk Flags */}
       {flags.length > 0 && (

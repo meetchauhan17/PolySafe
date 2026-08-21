@@ -156,6 +156,40 @@ function getRxCuiForDrug(drugName) {
   return null;
 }
 
+// ─── Load and merge Indian drug aliases from generated formulary ──────────────
+// Auto-merges entries from data/indian-aliases-generated.json (created by
+// prisma/seedIndianDrugs.js). These are additive — existing curated entries
+// take precedence if a key already exists.
+(function mergeIndianAliases() {
+  try {
+    const fs   = require('fs');
+    const path = require('path');
+    const file = path.join(__dirname, '../../data/indian-aliases-generated.json');
+    if (!fs.existsSync(file)) return;
+    const generated = JSON.parse(fs.readFileSync(file, 'utf8'));
+    let added = 0;
+    for (const [key, val] of Object.entries(generated)) {
+      if (!BRAND_ALIASES[key]) {
+        BRAND_ALIASES[key] = {
+          display:         val.brandName || val.display || key,
+          generic:         val.standardGeneric || val.generic || key,
+          rxcui:           val.primaryRxCui || val.rxcui || null,
+          dosage:          val.dosage || 'Standard dose',
+          dosageOptions:   val.dosageOptions || [],
+          category:        val.category || 'Prescription Medicine',
+          safetyTip:       val.safetyTip || 'Take as prescribed by your doctor.',
+          commonFrequency: val.commonFrequency || 'once',
+          foodInstruction: val.foodInstruction || 'after_food',
+        };
+        added++;
+      }
+    }
+    if (added > 0) console.log(`[drugAliases] Merged ${added} Indian formulary entries`);
+  } catch (err) {
+    // Non-critical — continue without Indian aliases
+  }
+})();
+
 module.exports = {
   BRAND_ALIASES,
   resolveDrugCandidates,
