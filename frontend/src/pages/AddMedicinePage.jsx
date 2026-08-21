@@ -9,7 +9,8 @@ import {
   FileImage, TriangleAlert, AlertTriangle, Edit3, ShieldCheck, ExternalLink,
   Activity, AlertOctagon, Search, HelpCircle, Clock, User, CalendarDays,
   Sun, Sunset, Moon, Coffee, QrCode, FlaskConical, Layers, SwitchCamera,
-  CheckSquare, Square, RefreshCw, Maximize2, Sparkles,
+  CheckSquare, Square, RefreshCw, Maximize2, Sparkles, Building2, Calendar,
+  Tag, ShieldAlert, Package, Check,
 } from 'lucide-react';
 import Card from '../components/Card';
 import { notify } from '../utils/toast';
@@ -17,6 +18,17 @@ import { useAuth } from '../context/AuthContext';
 import { DrugHarmBadge } from '../components/DrugHarmLevel';
 import PolySafeInput from '../components/PolySafeInput';
 import PolySafeSelect from '../components/PolySafeSelect';
+
+// ─── Dosage Form Options ──────────────────────────────────────────────────────
+const DOSAGE_FORMS = [
+  { value: 'tablet', label: 'Tablet', icon: '💊' },
+  { value: 'capsule', label: 'Capsule', icon: '💊' },
+  { value: 'syrup', label: 'Syrup / Liquid', icon: '🧪' },
+  { value: 'injection', label: 'Injection', icon: '💉' },
+  { value: 'cream', label: 'Cream / Gel / Ointment', icon: '🧴' },
+  { value: 'drops', label: 'Eye / Ear Drops', icon: '💧' },
+  { value: 'inhaler', label: 'Inhaler / Respules', icon: '🌬️' },
+];
 
 // ─── Medicine type options ────────────────────────────────────────────────────
 const MEDICINE_TYPES = [
@@ -769,14 +781,22 @@ export default function AddMedicinePage() {
   const { user, isGuest, requireAuth } = useAuth();
   const fileInputRef = useRef(null);
 
-  // Form inputs
+  // Form inputs (Organized by Medicine Packaging Label & Prescription Details)
   const [name, setName] = useState('');
+  const [genericName, setGenericName] = useState('');
+  const [compositionSalts, setCompositionSalts] = useState([]);
+  const [form, setForm] = useState('tablet');
   const [type, setType] = useState('PRESCRIPTION');
   const [dosage, setDosage] = useState('');
+  const [manufacturer, setManufacturer] = useState('');
+  const [batchNo, setBatchNo] = useState('');
+  const [expiryDate, setExpiryDate] = useState('');
+  const [safetyWarning, setSafetyWarning] = useState('');
   const [frequency, setFrequency] = useState('once');
   const [timings, setTimings] = useState([]);
   const [prescriber, setPrescriber] = useState('');
   const [notes, setNotes] = useState('');
+  const [isScanFilled, setIsScanFilled] = useState(false);
   const [selectedDrugInfo, setSelectedDrugInfo] = useState(null); // { name, generic, rxcui, dosage, source }
 
   // Scan state: 'idle' | 'scanning' | 'confirm' | 'error'
@@ -852,6 +872,10 @@ export default function AddMedicinePage() {
 
   const handleSelectSuggestion = useCallback((sug) => {
     setName(sug.name);
+    if (sug.generic) setGenericName(sug.generic);
+    if (sug.generic && sug.generic.includes('+')) {
+      setCompositionSalts(sug.generic.split('+').map(s => s.trim()).filter(Boolean));
+    }
     if (sug.dosage) setDosage(sug.dosage);
     if (sug.commonFrequency) setFrequency(sug.commonFrequency);
     if (sug.foodInstruction) setNotes(sug.foodInstruction);
@@ -950,7 +974,13 @@ export default function AddMedicinePage() {
   const handleSelectPillMatch = (match) => {
     setName(match.drugName);
     if (match.strength) setDosage(match.strength);
+    if (match.shape) {
+      const s = match.shape.toLowerCase();
+      if (s.includes('capsule')) setForm('capsule');
+      else setForm('tablet');
+    }
     setType('PRESCRIPTION');
+    setIsScanFilled(true);
     setPillModeOpen(false);
     setPillState('idle');
     notify.success('Pill Details Loaded', `Pre-filled "${match.drugName}". Review all fields before saving.`);
@@ -1020,24 +1050,43 @@ export default function AddMedicinePage() {
 
       const extractedName = data.drug_name || data.candidate || data.generic_name;
       if (extractedName) {
-        // 1. Medicine Name <- drug_name (or generic_name if no brand name)
         setName(extractedName);
+        const genName = data.generic_name || data.genericName || '';
+        setGenericName(genName);
 
-        // 2. Dosage <- strength (e.g. "500mg")
-        const dosageVal = data.strength || data.suggestedDosage;
-        if (dosageVal) {
-          setDosage(dosageVal);
+        if (Array.isArray(data.composition) && data.composition.length > 0) {
+          setCompositionSalts(data.composition);
+        } else if (Array.isArray(data.genericSalts) && data.genericSalts.length > 0) {
+          setCompositionSalts(data.genericSalts);
+        } else if (genName && genName.includes('+')) {
+          setCompositionSalts(genName.split('+').map(s => s.trim()).filter(Boolean));
+        } else {
+          setCompositionSalts([]);
         }
 
-        // 3. Medicine Type <- form: map tablet/capsule -> PRESCRIPTION default, syrup/cream let user pick
+        const dosageVal = data.strength || data.suggestedDosage || '';
+        setDosage(dosageVal);
+
         const formStr = (data.form || '').toLowerCase();
-        if (formStr.includes('tablet') || formStr.includes('capsule') || formStr.includes('pill')) {
-          setType('PRESCRIPTION');
-        } else if (data.suggestedType) {
+        if (formStr.includes('capsule')) setForm('capsule');
+        else if (formStr.includes('syrup') || formStr.includes('liquid') || formStr.includes('suspension')) setForm('syrup');
+        else if (formStr.includes('injection')) setForm('injection');
+        else if (formStr.includes('ointment') || formStr.includes('cream') || formStr.includes('gel')) setForm('cream');
+        else if (formStr.includes('drop')) setForm('drops');
+        else if (formStr.includes('inhaler') || formStr.includes('respule')) setForm('inhaler');
+        else setForm('tablet');
+
+        if (data.suggestedType) {
           setType(data.suggestedType);
+        } else if (formStr.includes('tablet') || formStr.includes('capsule')) {
+          setType('PRESCRIPTION');
         }
 
-        // 4. Frequency schedule mapping
+        if (data.manufacturer) setManufacturer(data.manufacturer);
+        if (data.batchNo) setBatchNo(data.batchNo);
+        if (data.expiryDate) setExpiryDate(data.expiryDate);
+        if (data.safetyTip) setSafetyWarning(data.safetyTip);
+
         const freqStr = (data.frequency || data.commonFrequency || '').toLowerCase();
         if (freqStr.includes('twice') || freqStr.includes('bid')) {
           setFrequency('twice');
@@ -1050,21 +1099,16 @@ export default function AddMedicinePage() {
           setTimings(['morning']);
         }
 
-        // 5. Prescriber
         const prescriberVal = data.prescriber || data.prescriberName;
-        if (prescriberVal) {
-          setPrescriber(prescriberVal);
-        }
+        if (prescriberVal) setPrescriber(prescriberVal);
 
-        // 6. Food instruction
-        if (data.foodInstruction) {
-          setNotes(data.foodInstruction);
-        }
+        if (data.foodInstruction) setNotes(data.foodInstruction);
 
-        // Populate drug verification card
+        setIsScanFilled(true);
+
         setSelectedDrugInfo({
           name: extractedName,
-          generic: data.generic_name || data.genericName || extractedName,
+          generic: genName || extractedName,
           rxcui: data.rxcui || data.standardizedCode,
           dosage: dosageVal,
           category: data.category || (type === 'HERBAL' ? 'Ayurvedic / Herbal' : 'Prescription Drug'),
@@ -1073,7 +1117,7 @@ export default function AddMedicinePage() {
           source: data.source || (data.rxcui ? 'rxnorm' : 'gemini'),
         });
 
-        notify.success('Prescription Scanned & Auto-Filled', `Auto-filled "${extractedName}". Review details below before saving.`);
+        notify.success('Prescription Scanned & Auto-Filled', `Auto-filled "${extractedName}" from label. Review details below.`);
       } else if (data.fallbackCandidates?.length > 0) {
         if (data.strength || data.suggestedDosage) setDosage(data.strength || data.suggestedDosage);
         if (data.frequency || data.commonFrequency) setFrequency(data.frequency || data.commonFrequency);
@@ -1250,8 +1294,18 @@ export default function AddMedicinePage() {
   const handleBarcodeSelect = (drugData) => {
     const medName = drugData.drug_name;
     setName(medName);
+    if (drugData.generic_name) setGenericName(drugData.generic_name);
     if (drugData.strength) setDosage(drugData.strength);
+    if (drugData.form) {
+      const f = drugData.form.toLowerCase();
+      if (f.includes('capsule')) setForm('capsule');
+      else if (f.includes('syrup')) setForm('syrup');
+      else if (f.includes('injection')) setForm('injection');
+      else setForm('tablet');
+    }
     if (drugData.foodInstruction) setNotes(drugData.foodInstruction);
+    if (drugData.safetyTip) setSafetyWarning(drugData.safetyTip);
+    setIsScanFilled(true);
     setSelectedDrugInfo({
       name: medName,
       generic: drugData.generic_name || medName,
@@ -1266,6 +1320,7 @@ export default function AddMedicinePage() {
 
   const handleDismissScan = () => {
     setScanState('idle'); setScanResult(null); setScanError(null);
+    setIsScanFilled(false);
     if (previewUrl) { URL.revokeObjectURL(previewUrl); setPreviewUrl(null); }
     if (frontPreview) { URL.revokeObjectURL(frontPreview); setFrontPreview(null); setFrontFile(null); }
     if (backPreview) { URL.revokeObjectURL(backPreview); setBackPreview(null); setBackFile(null); }
@@ -1281,8 +1336,24 @@ export default function AddMedicinePage() {
     if (!name.trim()) { setSubmitError('Please enter or confirm the medicine name.'); return; }
 
     // Build rich, formatted dosage summary for clinical record
-    let formattedDosage = dosage.trim();
     const scheduleParts = [];
+
+    if (dosage.trim()) scheduleParts.push(dosage.trim());
+    if (form) {
+      const formLabels = {
+        tablet: 'Tablet',
+        capsule: 'Capsule',
+        syrup: 'Syrup / Liquid',
+        injection: 'Injection',
+        cream: 'Cream / Gel',
+        drops: 'Drops',
+        inhaler: 'Inhaler',
+      };
+      scheduleParts.push(formLabels[form] || form);
+    }
+    if (genericName.trim() && genericName.trim().toLowerCase() !== name.trim().toLowerCase()) {
+      scheduleParts.push(`Salts: ${genericName.trim()}`);
+    }
 
     if (frequency) {
       const freqMap = {
@@ -1318,20 +1389,23 @@ export default function AddMedicinePage() {
     if (prescriber.trim()) {
       scheduleParts.push(`Rx: ${prescriber.trim()}`);
     }
-
-    if (scheduleParts.length > 0) {
-      formattedDosage = formattedDosage
-        ? `${formattedDosage} • ${scheduleParts.join(' • ')}`
-        : scheduleParts.join(' • ');
+    if (manufacturer.trim()) {
+      scheduleParts.push(`Mfr: ${manufacturer.trim()}`);
     }
+    if (expiryDate.trim()) {
+      scheduleParts.push(`Exp: ${expiryDate.trim()}`);
+    }
+
+    const formattedDosage = scheduleParts.join(' • ');
 
     addMutation.mutate({ name: name.trim(), type, dosage: formattedDosage || undefined });
   };
 
   const handleAddAnother = () => {
-    setSubmitSuccess(null); setName(''); setDosage('');
+    setSubmitSuccess(null); setName(''); setGenericName(''); setCompositionSalts([]);
+    setDosage(''); setManufacturer(''); setBatchNo(''); setExpiryDate(''); setSafetyWarning('');
     setScanState('idle'); setCheckState('idle'); setCheckResult(null);
-    setSavedMedicineName('');
+    setSavedMedicineName(''); setIsScanFilled(false);
   };
 
   // ─── Post-submit: show interaction check panel then success ─────────────────
@@ -1958,17 +2032,25 @@ export default function AddMedicinePage() {
           )}
         </Card>
 
-        {/* ── FORM SECTION ──────────────────────────────────────────────────── */}
-        <form onSubmit={handleSubmit} className="space-y-5">
+        {/* ── FORM SECTION (Redesigned Around Medicine Label & Prescription) ── */}
+        <form onSubmit={handleSubmit} className="space-y-6">
           <Card
-            title="Medicine Details"
+            title="Medicine & Packaging Details"
             subtitle={
-              scanState === 'confirm' && scanResult?.candidate
-                ? 'Pre-filled from scan — verify before saving'
-                : 'Enter all details before saving'
+              isScanFilled
+                ? "Auto-filled from your medicine packaging scan — verify chemical composition & directions"
+                : "Enter or verify the details from the medicine label or prescription"
             }
             icon={<Pill className="w-4 h-4 text-[#2B6E5E]" />}
-            className="space-y-5"
+            badge={
+              isScanFilled ? (
+                <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-1 rounded-full bg-[#E4F2E9] text-[#2B6E5E] border border-[#2F8558]/30 shadow-xs">
+                  <Sparkles className="w-3.5 h-3.5 text-[#2B6E5E]" />
+                  <span>From Label Scan</span>
+                </span>
+              ) : null
+            }
+            className="space-y-6"
           >
             {/* Fallback candidate suggestions chip banner */}
             {scanState === 'confirm' && scanResult?.fallbackCandidates?.length > 0 && !scanResult?.candidate && (
@@ -2002,341 +2084,526 @@ export default function AddMedicinePage() {
               </div>
             )}
 
-            {/* Name with Autocomplete */}
-            <div className="space-y-1.5">
-              <div className="flex items-center justify-between">
-                <label className="block text-xs font-bold text-[#232724] uppercase tracking-wider">
-                  Medicine Name <span className="text-rose-500">*</span>
-                </label>
-                {name.trim().length > 1 && (
-                  <div className="flex items-center gap-1.5 animate-fadeIn">
-                    <span className="text-[10px] text-[#5C6B64] font-semibold">Pre-Add Harm Tier:</span>
-                    <DrugHarmBadge category={selectedDrugInfo?.category || ''} name={name.trim()} size="sm" />
-                  </div>
+            {/* ════════════════════════════════════════════════════════════════════
+                SECTION 1: 📦 MEDICINE IDENTITY & ACTIVE CHEMICAL COMPOSITION
+               ════════════════════════════════════════════════════════════════════ */}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between pb-2 border-b border-[rgba(191,180,155,0.4)]">
+                <div className="flex items-center gap-2">
+                  <span className="flex items-center justify-center w-5 h-5 rounded-full bg-[#2B6E5E]/10 text-[#2B6E5E] text-xs font-black">
+                    1
+                  </span>
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-[#1C2B27]">
+                    Medicine & Active Chemical Composition
+                  </h4>
+                </div>
+                {isScanFilled && (
+                  <span className="text-[10px] font-bold text-[#2B6E5E] bg-[#E4F2E9] px-2 py-0.5 rounded-md border border-[#2F8558]/20">
+                    Label Verified ✓
+                  </span>
                 )}
               </div>
-              <div className="relative">
-                <Pill className="w-4 h-4 text-[#6B726C] absolute left-3.5 top-3.5 z-10" />
-                {searchLoading && (
-                  <Loader2 className="w-4 h-4 text-[#2B6E5E] absolute right-3.5 top-3.5 animate-spin z-10" />
-                )}
-                <input
-                  ref={nameInputRef}
-                  type="text"
-                  required
-                  autoComplete="off"
-                  value={name}
-                  onChange={(e) => handleNameChange(e.target.value)}
-                  onFocus={() => { if (suggestions.length > 0) setShowSuggestions(true); }}
-                  onKeyDown={handleNameKeyDown}
-                  placeholder="Start typing — e.g. Warfarin, Ashwagandha, Dolo 650"
-                  className={`input-field pl-10 pr-10 ${submitError && !name.trim() ? 'border-rose-300 bg-rose-50' : ''} ${scanState === 'confirm' && (scanResult?.candidate || name) ? 'border-[#2B6E5E] bg-[#F4FAF8]' : ''}`}
-                />
-                {scanState === 'confirm' && (scanResult?.drug_name || scanResult?.candidate || name) && (
-                  <div className="absolute right-3 top-2.5 text-[10px] font-bold text-[#2B6E5E] bg-[#E4F2E9] border border-[#2F8558]/30 px-2 py-0.5 rounded-md z-10 flex items-center gap-1">
-                    <Camera className="w-3 h-3 text-[#2B6E5E]" />
-                    <span>From scan</span>
-                  </div>
-                )}
 
-                {/* Autocomplete dropdown */}
-                {showSuggestions && suggestions.length > 0 && (
-                  <div
-                    ref={suggestionsRef}
-                    className="absolute z-50 left-0 right-0 top-full mt-1 bg-[#F0EBE0] border border-[#DCD5C6] rounded-2xl shadow-xl overflow-hidden max-h-72 overflow-y-auto"
-                  >
-                    {suggestions.map((sug, idx) => {
-                      const isSelected = idx === selectedIdx;
-                      const sourceColor = sug.source === 'rxnorm' ? 'bg-[#E4F2E9] text-[#2B6E5E]'
-                        : sug.source === 'herbal' ? 'bg-[#2B6E5E]/10 text-[#2B6E5E]'
-                        : sug.source === 'ddinter' ? 'bg-[#FBEED9] text-[#7A4A0A]'
-                        : 'bg-gray-100 text-gray-600';
-                      const sourceLabel = sug.source === 'rxnorm' ? '✓ RxNorm'
-                        : sug.source === 'herbal' ? '🌿 Herbal'
-                        : sug.source === 'ddinter' ? '📊 DDInter'
-                        : sug.source === 'rxnorm-suggest' ? '💊 RxNorm'
-                        : '—';
-                      return (
-                        <button
-                          key={`${sug.name}-${idx}`}
-                          type="button"
-                          onMouseDown={(e) => e.preventDefault()}
-                          onClick={() => handleSelectSuggestion(sug)}
-                          onMouseEnter={() => setSelectedIdx(idx)}
-                          className={`w-full flex items-center justify-between px-4 py-3 text-left transition-colors cursor-pointer ${
-                            isSelected ? 'bg-[#F4FAF8]' : 'hover:bg-[#FDFBF7]'
-                          } ${idx > 0 ? 'border-t border-[#E7E1D3]/50' : ''}`}
-                        >
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2">
-                              <p className="text-sm font-bold text-[#232724] truncate">{sug.name}</p>
-                              {sug.category && (
-                                <DrugHarmBadge category={sug.category} name={sug.name} />
+              {/* Medicine / Brand Name with Autocomplete */}
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <label className="block text-xs font-bold text-[#232724] uppercase tracking-wider">
+                    Medicine / Brand Name <span className="text-rose-500">*</span>
+                  </label>
+                  {name.trim().length > 1 && (
+                    <div className="flex items-center gap-1.5 animate-fadeIn">
+                      <span className="text-[10px] text-[#5C6B64] font-semibold">Pre-Add Harm Tier:</span>
+                      <DrugHarmBadge category={selectedDrugInfo?.category || ''} name={name.trim()} size="sm" />
+                    </div>
+                  )}
+                </div>
+                <div className="relative">
+                  <Pill className="w-4 h-4 text-[#6B726C] absolute left-3.5 top-3.5 z-10" />
+                  {searchLoading && (
+                    <Loader2 className="w-4 h-4 text-[#2B6E5E] absolute right-3.5 top-3.5 animate-spin z-10" />
+                  )}
+                  <input
+                    ref={nameInputRef}
+                    type="text"
+                    required
+                    autoComplete="off"
+                    value={name}
+                    onChange={(e) => handleNameChange(e.target.value)}
+                    onFocus={() => { if (suggestions.length > 0) setShowSuggestions(true); }}
+                    onKeyDown={handleNameKeyDown}
+                    placeholder="Start typing — e.g. D3B12 PLUS, Augmentin 625 Duo, Warfarin"
+                    className={`input-field pl-10 pr-24 ${submitError && !name.trim() ? 'border-rose-300 bg-rose-50' : ''} ${isScanFilled ? 'border-[#2B6E5E] bg-[#F4FAF8]' : ''}`}
+                  />
+                  {isScanFilled && (
+                    <div className="absolute right-2.5 top-2 text-[10px] font-bold text-[#2B6E5E] bg-[#E4F2E9] border border-[#2F8558]/30 px-2 py-0.5 rounded-md z-10 flex items-center gap-1 shadow-xs">
+                      <Camera className="w-3 h-3 text-[#2B6E5E]" />
+                      <span>From scan</span>
+                    </div>
+                  )}
+
+                  {/* Autocomplete dropdown */}
+                  {showSuggestions && suggestions.length > 0 && (
+                    <div
+                      ref={suggestionsRef}
+                      className="absolute z-50 left-0 right-0 top-full mt-1 bg-[#F0EBE0] border border-[#DCD5C6] rounded-2xl shadow-xl overflow-hidden max-h-72 overflow-y-auto"
+                    >
+                      {suggestions.map((sug, idx) => {
+                        const isSelected = idx === selectedIdx;
+                        const sourceColor = sug.source === 'rxnorm' ? 'bg-[#E4F2E9] text-[#2B6E5E]'
+                          : sug.source === 'herbal' ? 'bg-[#2B6E5E]/10 text-[#2B6E5E]'
+                          : sug.source === 'ddinter' ? 'bg-[#FBEED9] text-[#7A4A0A]'
+                          : 'bg-gray-100 text-gray-600';
+                        const sourceLabel = sug.source === 'rxnorm' ? '✓ RxNorm'
+                          : sug.source === 'herbal' ? '🌿 Herbal'
+                          : sug.source === 'ddinter' ? '📊 DDInter'
+                          : sug.source === 'rxnorm-suggest' ? '💊 RxNorm'
+                          : '—';
+                        return (
+                          <button
+                            key={`${sug.name}-${idx}`}
+                            type="button"
+                            onMouseDown={(e) => e.preventDefault()}
+                            onClick={() => handleSelectSuggestion(sug)}
+                            onMouseEnter={() => setSelectedIdx(idx)}
+                            className={`w-full flex items-center justify-between px-4 py-3 text-left transition-colors cursor-pointer ${
+                              isSelected ? 'bg-[#F4FAF8]' : 'hover:bg-[#FDFBF7]'
+                            } ${idx > 0 ? 'border-t border-[#E7E1D3]/50' : ''}`}
+                          >
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2">
+                                <p className="text-sm font-bold text-[#232724] truncate">{sug.name}</p>
+                                {sug.category && (
+                                  <DrugHarmBadge category={sug.category} name={sug.name} />
+                                )}
+                              </div>
+                              {sug.generic !== sug.name && (
+                                <p className="text-[11px] text-[#6B726C] truncate">Generic: {sug.generic}</p>
                               )}
                             </div>
-                            {sug.generic !== sug.name && (
-                              <p className="text-[11px] text-[#6B726C] truncate">Generic: {sug.generic}</p>
-                            )}
-                          </div>
-                          <div className="flex items-center gap-2 ml-3 flex-shrink-0">
-                            {sug.dosage && (
-                              <span className="text-[10px] font-bold text-[#5C6B64] bg-[#EDE8DC] px-1.5 py-0.5 rounded-md">
-                                {sug.dosage}
+                            <div className="flex items-center gap-2 ml-3 flex-shrink-0">
+                              {sug.dosage && (
+                                <span className="text-[10px] font-bold text-[#5C6B64] bg-[#EDE8DC] px-1.5 py-0.5 rounded-md">
+                                  {sug.dosage}
+                                </span>
+                              )}
+                              <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-md ${sourceColor}`}>
+                                {sourceLabel}
                               </span>
-                            )}
-                            <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-md ${sourceColor}`}>
-                              {sourceLabel}
-                            </span>
-                          </div>
-                        </button>
-                      );
-                    })}
-                    <div className="px-4 py-2 bg-[#FDFBF7] border-t border-[#E7E1D3]">
-                      <p className="text-[10px] text-[#6B726C] text-center">
-                        {searchLoading ? 'Searching drug databases…' : `${suggestions.length} result${suggestions.length !== 1 ? 's' : ''} · type to refine`}
-                      </p>
+                            </div>
+                          </button>
+                        );
+                      })}
+                      <div className="px-4 py-2 bg-[#FDFBF7] border-t border-[#E7E1D3]">
+                        <p className="text-[10px] text-[#6B726C] text-center">
+                          {searchLoading ? 'Searching drug databases…' : `${suggestions.length} result${suggestions.length !== 1 ? 's' : ''} · type to refine`}
+                        </p>
+                      </div>
                     </div>
-                  </div>
+                  )}
+                </div>
+                {!showSuggestions && name.length === 0 && (
+                  <p className="text-[10px] text-[#6B726C] px-1">
+                    ⚡ Smart search — matches 60+ common drugs, Indian brands, herbs & supplements instantly
+                  </p>
                 )}
               </div>
-              {!showSuggestions && name.length === 0 && (
-                <p className="text-[10px] text-[#6B726C] px-1">
-                  ⚡ Smart search — matches 60+ common drugs, Indian brands, herbs & supplements instantly
-                </p>
-              )}
-            </div>
 
-            {/* Drug Verification Info Card — appears after selecting from autocomplete or OCR */}
-            {selectedDrugInfo && name && (
-              <div className="p-4 rounded-2xl border-2 border-[#2B6E5E]/25 bg-[#F4FAF8] space-y-3 shadow-sm">
+              {/* Generic / Active Chemical Composition */}
+              <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <ShieldCheck className="w-5 h-5 text-[#2B6E5E]" />
-                    <span className="text-xs font-bold text-[#1C2B27]">
-                      {selectedDrugInfo.rxcui ? 'RxNorm Verified Medication' : 'Identified Medication'}
-                    </span>
-                    <DrugHarmBadge category={selectedDrugInfo.category} name={selectedDrugInfo.name} />
-                  </div>
-                  <button type="button" onClick={() => setSelectedDrugInfo(null)} className="text-[#6B726C] hover:text-[#232724] cursor-pointer p-1">
-                    <X className="w-4 h-4" />
-                  </button>
+                  <label className="block text-xs font-bold text-[#232724] uppercase tracking-wider">
+                    Generic / Active Chemical Composition
+                  </label>
+                  <span className="text-[10px] text-[#5C6B64]">Active salts from blister table</span>
                 </div>
+                <PolySafeInput
+                  type="text"
+                  value={genericName}
+                  onChange={(e) => {
+                    setGenericName(e.target.value);
+                    if (e.target.value.includes('+')) {
+                      setCompositionSalts(e.target.value.split('+').map(s => s.trim()).filter(Boolean));
+                    }
+                  }}
+                  placeholder="e.g. Methylcobalamin + Pyridoxine HCl + Folic Acid + Vitamin D3"
+                  leftIcon={<FlaskConical className="w-4 h-4 text-[#2B6E5E]" />}
+                  className="text-xs font-medium"
+                />
 
-                {/* Pre-Add Warning Banner */}
-                <div className="p-2.5 rounded-xl bg-[#E6E0D3] shadow-[inset_2px_2px_4px_rgba(191,180,155,0.4),inset_-2px_-2px_4px_rgba(255,255,255,0.5)] border border-[rgba(191,180,155,0.3)] flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <AlertTriangle className="w-4 h-4 text-[#B5791A]" />
-                    <span className="text-xs font-bold text-[#1C2B27]">Pre-Add Harm Classification:</span>
-                  </div>
-                  <DrugHarmBadge category={selectedDrugInfo.category} name={selectedDrugInfo.name} size="lg" />
-                </div>
-
-                <div className="grid grid-cols-2 gap-2.5">
-                  <div className="text-xs bg-[#E6E0D3] shadow-[inset_2px_2px_4px_rgba(191,180,155,0.4),inset_-2px_-2px_4px_rgba(255,255,255,0.5)] p-2.5 rounded-xl border border-[rgba(191,180,155,0.3)]">
-                    <span className="text-[10px] uppercase font-bold text-[#6B726C] block">Drug Name</span>
-                    <p className="font-bold text-[#232724] mt-0.5 truncate">{selectedDrugInfo.name}</p>
-                  </div>
-                  {selectedDrugInfo.generic && selectedDrugInfo.generic !== selectedDrugInfo.name && (
-                    <div className="text-xs bg-[#E6E0D3] shadow-[inset_2px_2px_4px_rgba(191,180,155,0.4),inset_-2px_-2px_4px_rgba(255,255,255,0.5)] p-2.5 rounded-xl border border-[rgba(191,180,155,0.3)]">
-                      <span className="text-[10px] uppercase font-bold text-[#6B726C] block">Active Generic</span>
-                      <p className="font-bold text-[#2B6E5E] mt-0.5 truncate">{selectedDrugInfo.generic}</p>
-                    </div>
-                  )}
-                  {selectedDrugInfo.category && (
-                    <div className="text-xs bg-[#E6E0D3] shadow-[inset_2px_2px_4px_rgba(191,180,155,0.4),inset_-2px_-2px_4px_rgba(255,255,255,0.5)] p-2.5 rounded-xl border border-[rgba(191,180,155,0.3)]">
-                      <span className="text-[10px] uppercase font-bold text-[#6B726C] block">Clinical Class</span>
-                      <p className="font-bold text-[#1C2B27] mt-0.5 truncate">{selectedDrugInfo.category}</p>
-                    </div>
-                  )}
-                  {selectedDrugInfo.rxcui && (
-                    <div className="text-xs bg-[#E6E0D3] shadow-[inset_2px_2px_4px_rgba(191,180,155,0.4),inset_-2px_-2px_4px_rgba(255,255,255,0.5)] p-2.5 rounded-xl border border-[rgba(191,180,155,0.3)]">
-                      <span className="text-[10px] uppercase font-bold text-[#6B726C] block">RxNorm CUI</span>
-                      <p className="font-bold text-[#2B6E5E] mt-0.5">#{selectedDrugInfo.rxcui}</p>
-                    </div>
-                  )}
-                </div>
-
-                {/* Clinical Safety Tip */}
-                {selectedDrugInfo.safetyTip && (
-                  <div className="flex items-start gap-2 p-2.5 bg-[#EDE8DC]/80 border border-[#E7E1D3] rounded-xl text-xs text-[#5C6B64]">
-                    <Info className="w-4 h-4 text-[#2B6E5E] flex-shrink-0 mt-0.5" />
-                    <p className="leading-relaxed"><strong className="text-[#1C2B27]">Safety Note:</strong> {selectedDrugInfo.safetyTip}</p>
-                  </div>
-                )}
-
-                {/* Quick Dosage Presets */}
-                {selectedDrugInfo.dosageOptions?.length > 0 && (
-                  <div className="space-y-1.5 pt-1">
+                {/* Decomposed Active Chemical Salts Badges */}
+                {compositionSalts.length > 0 && (
+                  <div className="p-3 bg-[#EDE8DC] rounded-xl border border-[rgba(191,180,155,0.4)] shadow-[inset_1px_1px_3px_rgba(191,180,155,0.3)] space-y-1.5">
                     <span className="text-[10px] font-bold text-[#5C6B64] uppercase tracking-wider block">
-                      Quick Strength Presets:
+                      Decomposed Chemical Salts ({compositionSalts.length}):
                     </span>
                     <div className="flex flex-wrap gap-1.5">
-                      {selectedDrugInfo.dosageOptions.map((opt) => (
-                        <button
-                          key={opt}
-                          type="button"
-                          onClick={() => {
-                            setDosage(opt);
-                            notify.info('Dosage Set', `Set dosage to ${opt}`);
-                          }}
-                          className={`px-3 py-1 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                            dosage === opt
-                              ? 'bg-[#2B6E5E] text-white shadow-sm'
-                              : 'bg-[#EDE8DC] shadow-[2px_2px_4px_rgba(191,180,155,0.4),-2px_-2px_4px_rgba(255,255,255,0.6)] text-[#2B6E5E] border border-[#2B6E5E]/30 hover:bg-[#F4FAF8]'
-                          }`}
+                      {compositionSalts.map((salt, idx) => (
+                        <span
+                          key={idx}
+                          className="inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-lg bg-[#FDFBF7] text-[#2B6E5E] border border-[#2B6E5E]/20 shadow-xs"
                         >
-                          {opt}
-                        </button>
+                          <FlaskConical className="w-3 h-3 text-[#2B6E5E]" />
+                          <span>{salt}</span>
+                        </span>
                       ))}
                     </div>
                   </div>
                 )}
               </div>
-            )}
 
-            {/* Type — 3-way pill toggle ─────────────────────────────────── */}
-            <div className="space-y-2">
-              <label className="block text-xs font-bold text-[#1C2B27] uppercase tracking-wider">
-                Medicine Type <span className="text-[#B23D25]">*</span>
-              </label>
-
-              {/* Segmented pill bar */}
-              <div className="flex items-center p-1.5 gap-1.5 bg-[#EDE8DC] shadow-[inset_3px_3px_6px_rgba(191,180,155,0.5),inset_-3px_-3px_6px_rgba(255,255,255,0.6)] rounded-2xl">
-                {MEDICINE_TYPES.map((t) => {
-                  const isActive = type === t.value;
-                  return (
-                    <button
-                      key={t.value}
-                      type="button"
-                      id={`type-toggle-${t.value.toLowerCase()}`}
-                      onClick={() => setType(t.value)}
-                      className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-2 rounded-xl text-sm font-bold transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2B6E5E] focus-visible:ring-offset-2 active:shadow-[inset_3px_3px_6px_rgba(191,180,155,0.55),inset_-3px_-3px_6px_rgba(255,255,255,0.65)] active:translate-y-px ${
-                        isActive
-                          ? 'bg-[#EDE8DC] shadow-[3px_3px_6px_rgba(191,180,155,0.55),-3px_-3px_6px_rgba(255,255,255,0.65)] text-[#2B6E5E]'
-                          : 'text-[#5C6B64] hover:text-[#1C2B27]'
-                      }`}
-                    >
-                      <span className="flex-shrink-0">{t.toggleIcon}</span>
-                      <span>{t.shortLabel}</span>
+              {/* Drug Verification Info Card — appears after selecting from autocomplete or OCR */}
+              {selectedDrugInfo && name && (
+                <div className="p-4 rounded-2xl border-2 border-[#2B6E5E]/25 bg-[#F4FAF8] space-y-3 shadow-sm">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <ShieldCheck className="w-5 h-5 text-[#2B6E5E]" />
+                      <span className="text-xs font-bold text-[#1C2B27]">
+                        {selectedDrugInfo.rxcui ? 'RxNorm Verified Medication' : 'Identified Medication'}
+                      </span>
+                      <DrugHarmBadge category={selectedDrugInfo.category} name={selectedDrugInfo.name} />
+                    </div>
+                    <button type="button" onClick={() => setSelectedDrugInfo(null)} className="text-[#6B726C] hover:text-[#232724] cursor-pointer p-1">
+                      <X className="w-4 h-4" />
                     </button>
-                  );
-                })}
+                  </div>
+
+                  {/* Pre-Add Warning Banner */}
+                  <div className="p-2.5 rounded-xl bg-[#E6E0D3] shadow-[inset_2px_2px_4px_rgba(191,180,155,0.4),inset_-2px_-2px_4px_rgba(255,255,255,0.5)] border border-[rgba(191,180,155,0.3)] flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <AlertTriangle className="w-4 h-4 text-[#B5791A]" />
+                      <span className="text-xs font-bold text-[#1C2B27]">Pre-Add Harm Classification:</span>
+                    </div>
+                    <DrugHarmBadge category={selectedDrugInfo.category} name={selectedDrugInfo.name} size="lg" />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2.5">
+                    <div className="text-xs bg-[#E6E0D3] shadow-[inset_2px_2px_4px_rgba(191,180,155,0.4),inset_-2px_-2px_4px_rgba(255,255,255,0.5)] p-2.5 rounded-xl border border-[rgba(191,180,155,0.3)]">
+                      <span className="text-[10px] uppercase font-bold text-[#6B726C] block">Drug Name</span>
+                      <p className="font-bold text-[#232724] mt-0.5 truncate">{selectedDrugInfo.name}</p>
+                    </div>
+                    {selectedDrugInfo.generic && selectedDrugInfo.generic !== selectedDrugInfo.name && (
+                      <div className="text-xs bg-[#E6E0D3] shadow-[inset_2px_2px_4px_rgba(191,180,155,0.4),inset_-2px_-2px_4px_rgba(255,255,255,0.5)] p-2.5 rounded-xl border border-[rgba(191,180,155,0.3)]">
+                        <span className="text-[10px] uppercase font-bold text-[#6B726C] block">Active Generic</span>
+                        <p className="font-bold text-[#2B6E5E] mt-0.5 truncate">{selectedDrugInfo.generic}</p>
+                      </div>
+                    )}
+                    {selectedDrugInfo.category && (
+                      <div className="text-xs bg-[#E6E0D3] shadow-[inset_2px_2px_4px_rgba(191,180,155,0.4),inset_-2px_-2px_4px_rgba(255,255,255,0.5)] p-2.5 rounded-xl border border-[rgba(191,180,155,0.3)]">
+                        <span className="text-[10px] uppercase font-bold text-[#6B726C] block">Clinical Class</span>
+                        <p className="font-bold text-[#1C2B27] mt-0.5 truncate">{selectedDrugInfo.category}</p>
+                      </div>
+                    )}
+                    {selectedDrugInfo.rxcui && (
+                      <div className="text-xs bg-[#E6E0D3] shadow-[inset_2px_2px_4px_rgba(191,180,155,0.4),inset_-2px_-2px_4px_rgba(255,255,255,0.5)] p-2.5 rounded-xl border border-[rgba(191,180,155,0.3)]">
+                        <span className="text-[10px] uppercase font-bold text-[#6B726C] block">RxNorm CUI</span>
+                        <p className="font-bold text-[#2B6E5E] mt-0.5">#{selectedDrugInfo.rxcui}</p>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Clinical Safety Tip */}
+                  {selectedDrugInfo.safetyTip && (
+                    <div className="flex items-start gap-2 p-2.5 bg-[#EDE8DC]/80 border border-[#E7E1D3] rounded-xl text-xs text-[#5C6B64]">
+                      <Info className="w-4 h-4 text-[#2B6E5E] flex-shrink-0 mt-0.5" />
+                      <p className="leading-relaxed"><strong className="text-[#1C2B27]">Safety Note:</strong> {selectedDrugInfo.safetyTip}</p>
+                    </div>
+                  )}
+
+                  {/* Quick Dosage Presets */}
+                  {selectedDrugInfo.dosageOptions?.length > 0 && (
+                    <div className="space-y-1.5 pt-1">
+                      <span className="text-[10px] font-bold text-[#5C6B64] uppercase tracking-wider block">
+                        Quick Strength Presets:
+                      </span>
+                      <div className="flex flex-wrap gap-1.5">
+                        {selectedDrugInfo.dosageOptions.map((opt) => (
+                          <button
+                            key={opt}
+                            type="button"
+                            onClick={() => {
+                              setDosage(opt);
+                              notify.info('Dosage Set', `Set dosage to ${opt}`);
+                            }}
+                            className={`px-3 py-1 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                              dosage === opt
+                                ? 'bg-[#2B6E5E] text-white shadow-sm'
+                                : 'bg-[#EDE8DC] shadow-[2px_2px_4px_rgba(191,180,155,0.4),-2px_-2px_4px_rgba(255,255,255,0.6)] text-[#2B6E5E] border border-[#2B6E5E]/30 hover:bg-[#F4FAF8]'
+                            }`}
+                          >
+                            {opt}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Medicine Type — 3-way toggle */}
+              <div className="space-y-1.5">
+                <label className="block text-xs font-bold text-[#1C2B27] uppercase tracking-wider">
+                  Medicine Regulatory Class <span className="text-[#B23D25]">*</span>
+                </label>
+                <div className="flex items-center p-1.5 gap-1.5 bg-[#EDE8DC] shadow-[inset_3px_3px_6px_rgba(191,180,155,0.5),inset_-3px_-3px_6px_rgba(255,255,255,0.6)] rounded-2xl">
+                  {MEDICINE_TYPES.map((t) => {
+                    const isActive = type === t.value;
+                    return (
+                      <button
+                        key={t.value}
+                        type="button"
+                        id={`type-toggle-${t.value.toLowerCase()}`}
+                        onClick={() => setType(t.value)}
+                        className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-2 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2B6E5E] focus-visible:ring-offset-2 active:shadow-[inset_3px_3px_6px_rgba(191,180,155,0.55),inset_-3px_-3px_6px_rgba(255,255,255,0.65)] active:translate-y-px ${
+                          isActive
+                            ? 'bg-[#EDE8DC] shadow-[3px_3px_6px_rgba(191,180,155,0.55),-3px_-3px_6px_rgba(255,255,255,0.65)] text-[#2B6E5E]'
+                            : 'text-[#5C6B64] hover:text-[#1C2B27]'
+                        }`}
+                      >
+                        <span className="flex-shrink-0">{t.toggleIcon}</span>
+                        <span>{t.shortLabel}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+                <p className="text-[11px] text-[#5C6B64] px-1">
+                  {MEDICINE_TYPES.find((t) => t.value === type)?.description}
+                </p>
               </div>
 
-              {/* Selected type description */}
-              <p className="text-[11px] text-[#5C6B64] px-1">
-                {MEDICINE_TYPES.find((t) => t.value === type)?.description}
-              </p>
+              {/* Dosage Form & Strength (Side by Side) */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="space-y-1.5">
+                  <label className="block text-xs font-bold text-[#232724] uppercase tracking-wider">
+                    Dosage Form <span className="normal-case font-normal text-[#6B726C]">— from label</span>
+                  </label>
+                  <PolySafeSelect
+                    value={form}
+                    onChange={(e) => setForm(e.target.value)}
+                    leftIcon={<Package className="w-4 h-4 text-[#2B6E5E]" />}
+                    className="text-xs"
+                  >
+                    {DOSAGE_FORMS.map((f) => (
+                      <option key={f.value} value={f.value}>
+                        {f.icon} {f.label}
+                      </option>
+                    ))}
+                  </PolySafeSelect>
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="block text-xs font-bold text-[#232724] uppercase tracking-wider">
+                    Strength / Dosage <span className="normal-case font-normal text-[#6B726C]">— from label</span>
+                  </label>
+                  <PolySafeInput
+                    type="text"
+                    value={dosage}
+                    onChange={(e) => setDosage(e.target.value)}
+                    placeholder="e.g. 500mg, 1500 mcg + 10mg"
+                    leftIcon={<Pill className="w-4 h-4 text-[#2B6E5E]" />}
+                    className="text-xs font-medium"
+                  />
+                </div>
+              </div>
             </div>
 
-            {/* Dosage + Frequency side by side */}
-            <div className="grid grid-cols-2 gap-3">
+            {/* ════════════════════════════════════════════════════════════════════
+                SECTION 2: 🏭 PACKAGING & MANUFACTURER DETAILS (STRIP / BOX)
+               ════════════════════════════════════════════════════════════════════ */}
+            <div className="space-y-4 pt-2">
+              <div className="flex items-center justify-between pb-2 border-b border-[rgba(191,180,155,0.4)]">
+                <div className="flex items-center gap-2">
+                  <span className="flex items-center justify-center w-5 h-5 rounded-full bg-[#2B6E5E]/10 text-[#2B6E5E] text-xs font-black">
+                    2
+                  </span>
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-[#1C2B27]">
+                    Packaging & Manufacturer Details
+                  </h4>
+                </div>
+                <span className="text-[10px] text-[#5C6B64]">From Box / Strip</span>
+              </div>
+
+              {/* Manufacturer / Marketed By */}
               <div className="space-y-1.5">
                 <label className="block text-xs font-bold text-[#232724] uppercase tracking-wider">
-                  Dosage / Strength <span className="normal-case font-normal text-[#6B726C]">— optional</span>
+                  Manufacturer / Marketed By <span className="normal-case font-normal text-[#6B726C]">— optional</span>
                 </label>
                 <PolySafeInput
                   type="text"
-                  value={dosage}
-                  onChange={(e) => setDosage(e.target.value)}
-                  placeholder="e.g. 500mg, 10ml"
-                  leftIcon={<Pill className="w-4 h-4" />}
-                  className="text-sm"
+                  value={manufacturer}
+                  onChange={(e) => setManufacturer(e.target.value)}
+                  placeholder="e.g. Healing Pharma India Pvt. Ltd., Cipla, Sun Pharma"
+                  leftIcon={<Building2 className="w-4 h-4 text-[#2B6E5E]" />}
+                  className="text-xs"
                 />
               </div>
 
+              {/* Expiry Date + Batch / Lot No */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="space-y-1.5">
+                  <label className="block text-xs font-bold text-[#232724] uppercase tracking-wider">
+                    Expiry Date <span className="normal-case font-normal text-[#6B726C]">— MM/YYYY</span>
+                  </label>
+                  <PolySafeInput
+                    type="text"
+                    value={expiryDate}
+                    onChange={(e) => setExpiryDate(e.target.value)}
+                    placeholder="e.g. 08/2027"
+                    leftIcon={<Calendar className="w-4 h-4 text-[#2B6E5E]" />}
+                    className="text-xs"
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="block text-xs font-bold text-[#232724] uppercase tracking-wider">
+                    Batch / Lot No. <span className="normal-case font-normal text-[#6B726C]">— optional</span>
+                  </label>
+                  <PolySafeInput
+                    type="text"
+                    value={batchNo}
+                    onChange={(e) => setBatchNo(e.target.value)}
+                    placeholder="e.g. B.No. T-1049"
+                    leftIcon={<Tag className="w-4 h-4 text-[#2B6E5E]" />}
+                    className="text-xs"
+                  />
+                </div>
+              </div>
+
+              {/* Storage & Caution Warning */}
+              <div className="space-y-1.5">
+                <label className="block text-xs font-bold text-[#232724] uppercase tracking-wider">
+                  Storage & Safety Warning <span className="normal-case font-normal text-[#6B726C]">— from label</span>
+                </label>
+                <PolySafeInput
+                  type="text"
+                  value={safetyWarning}
+                  onChange={(e) => setSafetyWarning(e.target.value)}
+                  placeholder="e.g. Store below 25°C in a dry place. Schedule H Prescription Drug."
+                  leftIcon={<ShieldAlert className="w-4 h-4 text-[#B5791A]" />}
+                  className="text-xs"
+                />
+              </div>
+            </div>
+
+            {/* ════════════════════════════════════════════════════════════════════
+                SECTION 3: ⏰ DOSAGE SCHEDULE & ADMINISTRATION (PRESCRIPTION)
+               ════════════════════════════════════════════════════════════════════ */}
+            <div className="space-y-4 pt-2">
+              <div className="flex items-center justify-between pb-2 border-b border-[rgba(191,180,155,0.4)]">
+                <div className="flex items-center gap-2">
+                  <span className="flex items-center justify-center w-5 h-5 rounded-full bg-[#2B6E5E]/10 text-[#2B6E5E] text-xs font-black">
+                    3
+                  </span>
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-[#1C2B27]">
+                    Dosage Schedule & Directions
+                  </h4>
+                </div>
+                <span className="text-[10px] text-[#5C6B64]">Prescription / Directions</span>
+              </div>
+
+              {/* Frequency Schedule */}
               <div className="space-y-1.5">
                 <label className="block text-xs font-bold text-[#232724] uppercase tracking-wider">
                   Frequency Schedule
                 </label>
                 <PolySafeSelect
                   value={frequency}
-                  onChange={(e) => setFrequency(e.target.value)}
-                  leftIcon={<Clock className="w-4 h-4" />}
-                  className="text-sm"
+                  onChange={(e) => {
+                    const newFreq = e.target.value;
+                    setFrequency(newFreq);
+                    if (newFreq === 'once') setTimings(['morning']);
+                    else if (newFreq === 'twice') setTimings(['morning', 'evening']);
+                    else if (newFreq === 'thrice') setTimings(['morning', 'afternoon', 'evening']);
+                    else if (newFreq === 'four') setTimings(['morning', 'afternoon', 'evening', 'bedtime']);
+                  }}
+                  leftIcon={<Clock className="w-4 h-4 text-[#2B6E5E]" />}
+                  className="text-xs font-medium"
                 >
-                  <option value="once">Once daily</option>
-                  <option value="twice">Twice daily</option>
-                  <option value="thrice">3 times daily</option>
-                  <option value="four">4 times daily</option>
+                  <option value="once">Once daily (OD)</option>
+                  <option value="twice">Twice daily (BD / BID)</option>
+                  <option value="thrice">3 times daily (TID)</option>
+                  <option value="four">4 times daily (QID)</option>
                   <option value="weekly">Weekly</option>
                   <option value="asneeded">As needed (PRN)</option>
                   <option value="alternate">Alternate days</option>
                 </PolySafeSelect>
               </div>
-            </div>
 
-            {/* Time of Day chips */}
-            <div className="space-y-2">
-              <label className="block text-xs font-bold text-[#232724] uppercase tracking-wider">
-                Time of Day <span className="normal-case font-normal text-[#6B726C]">— select dosage times</span>
-              </label>
-              <div className="flex flex-wrap gap-2">
-                {[
-                  { id: 'morning', label: 'Morning', icon: <Sun className="w-3.5 h-3.5" />, time: '8:00 AM' },
-                  { id: 'afternoon', label: 'Afternoon', icon: <Coffee className="w-3.5 h-3.5" />, time: '1:00 PM' },
-                  { id: 'evening', label: 'Evening', icon: <Sunset className="w-3.5 h-3.5" />, time: '6:00 PM' },
-                  { id: 'bedtime', label: 'Bedtime', icon: <Moon className="w-3.5 h-3.5" />, time: '10:00 PM' },
-                ].map((slot) => {
-                  const isActive = timings.includes(slot.id);
-                  return (
-                    <button
-                      key={slot.id}
-                      type="button"
-                      onClick={() => {
-                        setTimings(prev =>
-                          prev.includes(slot.id)
-                            ? prev.filter(t => t !== slot.id)
-                            : [...prev, slot.id]
-                        );
-                      }}
-                      className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer border-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2B6E5E] focus-visible:ring-offset-2 active:shadow-[inset_3px_3px_6px_rgba(191,180,155,0.55),inset_-3px_-3px_6px_rgba(255,255,255,0.65)] active:translate-y-px ${
-                        isActive
-                          ? 'bg-[#EDE8DC] shadow-[3px_3px_6px_rgba(191,180,155,0.55),-3px_-3px_6px_rgba(255,255,255,0.65)] text-[#2B6E5E] border-[#2B6E5E]/40'
-                          : 'bg-[#EDE8DC] shadow-[inset_2px_2px_4px_rgba(191,180,155,0.4),inset_-2px_-2px_4px_rgba(255,255,255,0.5)] text-[#6B726C] border-transparent'
-                      }`}
-                    >
-                      {slot.icon}
-                      <span>{slot.label}</span>
-                      <span className="text-[10px] font-normal opacity-60">({slot.time})</span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Prescriber + Instructions side by side */}
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-1.5">
+              {/* Time of Day Chips */}
+              <div className="space-y-2">
                 <label className="block text-xs font-bold text-[#232724] uppercase tracking-wider">
-                  Prescribed By <span className="normal-case font-normal text-[#6B726C]">— optional</span>
+                  Time of Day <span className="normal-case font-normal text-[#6B726C]">— select dosage times</span>
                 </label>
-                <PolySafeInput
-                  type="text"
-                  value={prescriber}
-                  onChange={(e) => setPrescriber(e.target.value)}
-                  placeholder="Doctor name or Self"
-                  leftIcon={<User className="w-4 h-4" />}
-                />
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                  {[
+                    { id: 'morning', label: 'Morning', icon: <Sun className="w-3.5 h-3.5" />, time: '8:00 AM' },
+                    { id: 'afternoon', label: 'Afternoon', icon: <Coffee className="w-3.5 h-3.5" />, time: '1:00 PM' },
+                    { id: 'evening', label: 'Evening', icon: <Sunset className="w-3.5 h-3.5" />, time: '6:00 PM' },
+                    { id: 'bedtime', label: 'Bedtime', icon: <Moon className="w-3.5 h-3.5" />, time: '10:00 PM' },
+                  ].map((slot) => {
+                    const isActive = timings.includes(slot.id);
+                    return (
+                      <button
+                        key={slot.id}
+                        type="button"
+                        onClick={() => {
+                          setTimings(prev =>
+                            prev.includes(slot.id)
+                              ? prev.filter(t => t !== slot.id)
+                              : [...prev, slot.id]
+                          );
+                        }}
+                        className={`flex items-center justify-between p-2.5 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer border-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2B6E5E] focus-visible:ring-offset-2 active:shadow-[inset_3px_3px_6px_rgba(191,180,155,0.55),inset_-3px_-3px_6px_rgba(255,255,255,0.65)] active:translate-y-px ${
+                          isActive
+                            ? 'bg-[#EDE8DC] shadow-[3px_3px_6px_rgba(191,180,155,0.55),-3px_-3px_6px_rgba(255,255,255,0.65)] text-[#2B6E5E] border-[#2B6E5E]/40'
+                            : 'bg-[#EDE8DC] shadow-[inset_2px_2px_4px_rgba(191,180,155,0.4),inset_-2px_-2px_4px_rgba(255,255,255,0.5)] text-[#6B726C] border-transparent'
+                        }`}
+                      >
+                        <div className="flex items-center gap-1.5">
+                          {slot.icon}
+                          <span>{slot.label}</span>
+                        </div>
+                        <span className="text-[10px] font-normal opacity-60">{slot.time}</span>
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
 
-              <div className="space-y-1.5">
-                <label className="block text-xs font-bold text-[#232724] uppercase tracking-wider">
-                  Meal Instructions <span className="normal-case font-normal text-[#6B726C]">— optional</span>
-                </label>
-                <PolySafeSelect
-                  value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
-                  leftIcon={<CalendarDays className="w-4 h-4" />}
-                >
-                  <option value="">No special instructions</option>
-                  <option value="before_food">Take before food</option>
-                  <option value="after_food">Take after food</option>
-                  <option value="with_food">Take with food</option>
-                  <option value="empty_stomach">Take on empty stomach</option>
-                  <option value="with_water">Take with plenty of water</option>
-                  <option value="avoid_dairy">Avoid dairy products</option>
-                </PolySafeSelect>
+              {/* Meal Instructions + Prescribed By */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="space-y-1.5">
+                  <label className="block text-xs font-bold text-[#232724] uppercase tracking-wider">
+                    Meal Instructions <span className="normal-case font-normal text-[#6B726C]">— optional</span>
+                  </label>
+                  <PolySafeSelect
+                    value={notes}
+                    onChange={(e) => setNotes(e.target.value)}
+                    leftIcon={<CalendarDays className="w-4 h-4 text-[#2B6E5E]" />}
+                    className="text-xs"
+                  >
+                    <option value="">No special instructions</option>
+                    <option value="after_food">Take after food (Post-meal)</option>
+                    <option value="before_food">Take before food (Pre-meal)</option>
+                    <option value="with_food">Take with food</option>
+                    <option value="empty_stomach">Take on empty stomach</option>
+                    <option value="with_water">Take with plenty of water</option>
+                    <option value="avoid_dairy">Avoid dairy products</option>
+                  </PolySafeSelect>
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="block text-xs font-bold text-[#232724] uppercase tracking-wider">
+                    Prescribed By <span className="normal-case font-normal text-[#6B726C]">— optional</span>
+                  </label>
+                  <PolySafeInput
+                    type="text"
+                    value={prescriber}
+                    onChange={(e) => setPrescriber(e.target.value)}
+                    placeholder="Doctor name or Self"
+                    leftIcon={<User className="w-4 h-4 text-[#2B6E5E]" />}
+                    className="text-xs"
+                  />
+                </div>
               </div>
             </div>
           </Card>
