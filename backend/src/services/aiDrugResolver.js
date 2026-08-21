@@ -98,11 +98,29 @@ async function queryRxNorm(cleanDrug) {
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 
 // ─── Layer 5a: Gemini Flash LLM Clinical Decomposer ──────────────────────────
+const ACTIVE_GEMINI_MODELS = [
+  'gemini-flash-lite-latest',
+  'gemini-3.5-flash-lite',
+  'gemini-3.1-flash-lite',
+  'gemini-3.1-flash-lite-preview',
+  'gemini-3-flash-preview',
+  'gemini-3.6-flash',
+  'gemini-3.7-flash',
+  'gemini-3.5-flash',
+];
+
+function getGeminiApiKeys() {
+  const raw = process.env.GEMINI_API_KEYS || process.env.GEMINI_API_KEY || '';
+  const keys = raw
+    .split(/[,;\s]+/)
+    .map(k => k.trim())
+    .filter(k => k.length > 10 && k !== 'your_gemini_api_key_here');
+  return keys.length > 0 ? keys : [];
+}
+
 async function queryGeminiDecomposer(rawName) {
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey || apiKey === 'your_gemini_api_key_here' || apiKey.trim().length === 0) {
-    return null;
-  }
+  const apiKeys = getGeminiApiKeys();
+  if (apiKeys.length === 0) return null;
 
   const prompt = `You are a clinical pharmacologist and pharmaceutical chemist. Decompose the pharmaceutical brand or drug name "${rawName}" into its exact active generic chemical salt composition.
 Return ONLY valid JSON in this exact structure (no markdown formatting, no code block fences):
@@ -117,46 +135,49 @@ Return ONLY valid JSON in this exact structure (no markdown formatting, no code 
   "safetyTip": "Brief clinical instruction"
 }`;
 
-  const genAI = new GoogleGenerativeAI(apiKey);
-  const candidateModels = ['gemini-3.6-flash', 'gemini-3.7-flash', 'gemini-flash-latest', 'gemini-3.5-flash'];
+  for (const apiKey of apiKeys) {
+    const genAI = new GoogleGenerativeAI(apiKey);
 
-  const promises = candidateModels.map(async (modelName) => {
-    try {
-      const model = genAI.getGenerativeModel({ model: modelName });
-      const timeoutPromise = new Promise((_, reject) =>
-        setTimeout(() => reject(new Error(`Gemini decomposer timeout (${modelName})`)), 4000)
-      );
-      const callPromise = model.generateContent(prompt);
-      const res = await Promise.race([callPromise, timeoutPromise]);
-      const text = res.response.text();
-      const cleanJson = text.replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/```$/i, '').trim();
-      const parsed = JSON.parse(cleanJson);
+    const promises = ACTIVE_GEMINI_MODELS.map(async (modelName) => {
+      try {
+        const model = genAI.getGenerativeModel({ model: modelName });
+        const timeoutPromise = new Promise((_, reject) =>
+          setTimeout(() => reject(new Error(`Gemini decomposer timeout (${modelName})`)), 5000)
+        );
+        const callPromise = model.generateContent(prompt);
+        const res = await Promise.race([callPromise, timeoutPromise]);
+        const text = res.response.text();
+        const cleanJson = text.replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/```$/i, '').trim();
+        const parsed = JSON.parse(cleanJson);
 
-      if (parsed && Array.isArray(parsed.genericSalts) && parsed.genericSalts.length > 0) {
-        return {
-          brandName: parsed.brandName || rawName,
-          genericSalts: parsed.genericSalts,
-          genericName: parsed.genericName || parsed.genericSalts.join(' + '),
-          harmLevel: parsed.harmLevel || getDrugHarmLevel(parsed.genericSalts[0]),
-          class: parsed.class || 'Prescription Medicine',
-          foodInstruction: parsed.foodInstruction || 'after_food',
-          dosageOptions: Array.isArray(parsed.dosageOptions) ? parsed.dosageOptions : ['Standard dose'],
-          safetyTip: parsed.safetyTip || 'Take as prescribed.',
-          source: `gemini_${modelName}`,
-        };
+        if (parsed && Array.isArray(parsed.genericSalts) && parsed.genericSalts.length > 0) {
+          return {
+            brandName: parsed.brandName || rawName,
+            genericSalts: parsed.genericSalts,
+            genericName: parsed.genericName || parsed.genericSalts.join(' + '),
+            harmLevel: parsed.harmLevel || getDrugHarmLevel(parsed.genericSalts[0]),
+            class: parsed.class || 'Prescription Medicine',
+            foodInstruction: parsed.foodInstruction || 'after_food',
+            dosageOptions: Array.isArray(parsed.dosageOptions) ? parsed.dosageOptions : ['Standard dose'],
+            safetyTip: parsed.safetyTip || 'Take as prescribed.',
+            source: `gemini_${modelName}`,
+          };
+        }
+        throw new Error(`Invalid JSON from ${modelName}`);
+      } catch (err) {
+        throw err;
       }
-      throw new Error(`Invalid JSON from ${modelName}`);
-    } catch (err) {
-      throw err;
-    }
-  });
+    });
 
-  try {
-    const result = await Promise.any(promises);
-    return result;
-  } catch {
-    return null;
+    try {
+      const result = await Promise.any(promises);
+      if (result) return result;
+    } catch {
+      // Try next key
+    }
   }
+
+  return null;
 }
 
 // ─── Layer 5b: Groq LLM Clinical Decomposer ──────────────────────────────────

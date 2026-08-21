@@ -142,7 +142,9 @@ const STOP_WORDS = new Set([
   'equivalent', 'pure', 'cure', 'akums', 'sidcul', 'ranipur', 'haridwar',
   'uttarakhand', 'india', 'pvt', 'ltd', 'limited', 'private', 'plot', 'sector',
   'hours', 'daily', 'times', 'meals', 'water', 'food', 'day', 'night', 'morning',
-  'evening', 'noon', 'bedtime', 'as', 'needed', 'prn', 'stat', 'label', 'instructions'
+  'evening', 'noon', 'bedtime', 'as', 'needed', 'prn', 'stat', 'label', 'instructions',
+  'pharma', 'pharmaceutical', 'pharmaceuticals', 'laboratories', 'healthcare',
+  'healing', 'kureasia', 'marketed', 'manufactured', 'market', 'distributor', 'company'
 ]);
 
 function escapeRegExp(string) {
@@ -440,7 +442,23 @@ async function verifyCandidatesWithRxNorm(candidates, suggestedDosage = null, ex
   const topCandidates = candidates.slice(0, 5);
   const fallbackCandidates = topCandidates.slice(0, 3);
 
+  const FORBIDDEN_DRUG_NAMES = new Set([
+    'pharma', 'pharmaceutical', 'pharmaceuticals', 'laboratories', 'healthcare',
+    'healing', 'kureasia', 'marketed', 'manufactured', 'market', 'distributor', 'company',
+    'tablet', 'tablets', 'capsule', 'capsules', 'syrup', 'injection', 'cream', 'gel',
+    'remedies', 'lifesciences', 'ayurveda', 'ayurvedic', 'india', 'limited', 'pvt', 'ltd',
+    'doctor', 'physician', 'patient', 'name', 'date', 'batch', 'expiry', 'composition'
+  ]);
+
   const COMMON_BRAND_ALIASES = {
+    'd3b12': { name: 'D3B12 PLUS', genericName: 'Methylcobalamin + Pyridoxine HCl + Folic Acid + Vitamin D3', dosage: '1500 mcg + 10 mg + 5 mg + 1000 IU', standardizedCode: '11253', category: 'Vitamin & Mineral Supplement', safetyTip: 'Take after meals with water. Essential for nerve health and vitamin supplementation.', dosageOptions: ['Standard dose'], commonFrequency: 'once', foodInstruction: 'after_food' },
+    'd3b12 plus': { name: 'D3B12 PLUS', genericName: 'Methylcobalamin + Pyridoxine HCl + Folic Acid + Vitamin D3', dosage: '1500 mcg + 10 mg + 5 mg + 1000 IU', standardizedCode: '11253', category: 'Vitamin & Mineral Supplement', safetyTip: 'Take after meals with water. Essential for nerve health and vitamin supplementation.', dosageOptions: ['Standard dose'], commonFrequency: 'once', foodInstruction: 'after_food' },
+    'd3 b12': { name: 'D3B12 PLUS', genericName: 'Methylcobalamin + Pyridoxine HCl + Folic Acid + Vitamin D3', dosage: '1500 mcg + 10 mg + 5 mg + 1000 IU', standardizedCode: '11253', category: 'Vitamin & Mineral Supplement', safetyTip: 'Take after meals with water.', dosageOptions: ['Standard dose'], commonFrequency: 'once', foodInstruction: 'after_food' },
+    'd3b12plus': { name: 'D3B12 PLUS', genericName: 'Methylcobalamin + Pyridoxine HCl + Folic Acid + Vitamin D3', dosage: '1500 mcg + 10 mg + 5 mg + 1000 IU', standardizedCode: '11253', category: 'Vitamin & Mineral Supplement', safetyTip: 'Take after meals with water.', dosageOptions: ['Standard dose'], commonFrequency: 'once', foodInstruction: 'after_food' },
+    'methylcobalamin': { name: 'Methylcobalamin', genericName: 'Methylcobalamin (Vitamin B12)', dosage: '1500 mcg', standardizedCode: '6877', category: 'Vitamin B12 Supplement', safetyTip: 'Supports peripheral nerve health and red blood cell formation.', dosageOptions: ['500 mcg', '1500 mcg'], commonFrequency: 'once', foodInstruction: 'after_food' },
+    'pyridoxine': { name: 'Pyridoxine Hydrochloride', genericName: 'Vitamin B6', dosage: '10 mg', standardizedCode: '8999', category: 'Vitamin B6 Supplement', safetyTip: 'Take with or after food.', dosageOptions: ['10 mg', '50 mg', '100 mg'], commonFrequency: 'once', foodInstruction: 'after_food' },
+    'folic acid': { name: 'Folic Acid', genericName: 'Vitamin B9', dosage: '5 mg', standardizedCode: '4511', category: 'Vitamin Supplement', safetyTip: 'Essential for cellular synthesis and anemia prevention.', dosageOptions: ['5 mg'], commonFrequency: 'once', foodInstruction: 'after_food' },
+    'vitamin d3': { name: 'Vitamin D3 (Cholecalciferol)', genericName: 'Cholecalciferol', dosage: '1000 IU', standardizedCode: '11253', category: 'Vitamin D Supplement', safetyTip: 'Take with meals containing dietary fat for optimal absorption.', dosageOptions: ['1000 IU', '2000 IU', '60000 IU'], commonFrequency: 'once', foodInstruction: 'after_food' },
     'naxdom': { name: 'Naxdom 500 (Naproxen + Domperidone)', genericName: 'Naproxen', dosage: '500 mg', standardizedCode: '7258', category: 'NSAID / Migraine', safetyTip: 'Take after meals with water. Avoid combining with other NSAIDs (aspirin/ibuprofen).', dosageOptions: ['250 mg', '500 mg'], commonFrequency: 'twice', foodInstruction: 'after_food' },
     'nexdom': { name: 'Naxdom 500 (Naproxen + Domperidone)', genericName: 'Naproxen', dosage: '500 mg', standardizedCode: '7258', category: 'NSAID / Migraine', safetyTip: 'Take after meals with water. Avoid combining with other NSAIDs (aspirin/ibuprofen).', dosageOptions: ['250 mg', '500 mg'], commonFrequency: 'twice', foodInstruction: 'after_food' },
     'naxdom 500': { name: 'Naxdom 500 (Naproxen + Domperidone)', genericName: 'Naproxen', dosage: '500 mg', standardizedCode: '7258', category: 'NSAID / Migraine', safetyTip: 'Take after meals with water. Avoid combining with other NSAIDs (aspirin/ibuprofen).', dosageOptions: ['250 mg', '500 mg'], commonFrequency: 'twice', foodInstruction: 'after_food' },
@@ -462,6 +480,9 @@ async function verifyCandidatesWithRxNorm(candidates, suggestedDosage = null, ex
 
   for (const cand of topCandidates) {
     const candLower = cand.toLowerCase().trim();
+    if (FORBIDDEN_DRUG_NAMES.has(candLower) || candLower.length < 3) {
+      continue;
+    }
 
     // 1. Brand name alias resolution
     if (COMMON_BRAND_ALIASES[candLower]) {

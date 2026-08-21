@@ -139,69 +139,81 @@ Return ONLY valid JSON (no markdown formatting, no code block fences):
 
 If this text is clearly not from a pharmaceutical product or prescription, return: { "error": "not_a_medicine_text" }`;
 
+// ─── Helper: Get all configured Gemini API keys ──────────────────────────────
+function getGeminiApiKeys() {
+  const raw = process.env.GEMINI_API_KEYS || process.env.GEMINI_API_KEY || '';
+  const keys = raw
+    .split(/[,;\s]+/)
+    .map(k => k.trim())
+    .filter(k => k.length > 10 && k !== 'your_gemini_api_key_here');
+  return keys.length > 0 ? keys : [];
+}
+
+const ACTIVE_GEMINI_MODELS = [
+  'gemini-flash-lite-latest',
+  'gemini-3.5-flash-lite',
+  'gemini-3.1-flash-lite',
+  'gemini-3.1-flash-lite-preview',
+  'gemini-3-flash-preview',
+  'gemini-3.6-flash',
+  'gemini-3.7-flash',
+  'gemini-3.5-flash',
+];
+
 // ─── Helper: Call Gemini Text Parser (Ultra low-token mode: ~100-150 tokens) ──
 async function callGeminiTextParser(rawOcrText) {
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey || apiKey === 'your_gemini_api_key_here' || apiKey.trim().length === 0) {
-    return null;
-  }
+  const apiKeys = getGeminiApiKeys();
+  if (apiKeys.length === 0) return null;
 
-  const genAI = new GoogleGenerativeAI(apiKey);
-  const candidateModels = [
-    'gemini-3.6-flash',
-    'gemini-3.7-flash',
-    'gemini-flash-latest',
-    'gemini-3.5-flash',
-  ];
   const prompt = GEMINI_OCR_TEXT_PROMPT(rawOcrText);
 
-  const promises = candidateModels.map(async (modelName) => {
-    try {
-      const model = genAI.getGenerativeModel({ model: modelName });
-      const timeoutPromise = new Promise((_, reject) =>
-        setTimeout(() => reject(new Error(`Gemini Text timeout (${modelName})`)), 5000)
-      );
-      const callPromise = model.generateContent(prompt);
-      const res = await Promise.race([callPromise, timeoutPromise]);
-      const text = res.response.text();
-      const cleanJson = text
-        .replace(/^```json\s*/i, '')
-        .replace(/^```\s*/i, '')
-        .replace(/```$/i, '')
-        .trim();
-      const parsed = JSON.parse(cleanJson);
-      if (parsed && (parsed.medications?.length > 0 || parsed.drug_name || parsed.error)) {
-        return { parsed, raw: text, modelUsed: modelName, isTextOnly: true };
-      }
-      throw new Error(`Invalid JSON from text parser (${modelName})`);
-    } catch (err) {
-      throw err;
-    }
-  });
+  // Try each API key and model in parallel / sequence
+  for (const apiKey of apiKeys) {
+    const genAI = new GoogleGenerativeAI(apiKey);
 
-  try {
-    const result = await Promise.any(promises);
-    return result;
-  } catch {
-    return null;
+    const promises = ACTIVE_GEMINI_MODELS.map(async (modelName) => {
+      try {
+        const model = genAI.getGenerativeModel({ model: modelName });
+        const timeoutPromise = new Promise((_, reject) =>
+          setTimeout(() => reject(new Error(`Gemini Text timeout (${modelName})`)), 5000)
+        );
+        const callPromise = model.generateContent(prompt);
+        const res = await Promise.race([callPromise, timeoutPromise]);
+        const text = res.response.text();
+        const cleanJson = text
+          .replace(/^```json\s*/i, '')
+          .replace(/^```\s*/i, '')
+          .replace(/```$/i, '')
+          .trim();
+        const parsed = JSON.parse(cleanJson);
+        if (parsed && (parsed.medications?.length > 0 || parsed.drug_name || parsed.error)) {
+          return { parsed, raw: text, modelUsed: modelName, isTextOnly: true };
+        }
+        throw new Error(`Invalid JSON from text parser (${modelName})`);
+      } catch (err) {
+        throw err;
+      }
+    });
+
+    try {
+      const result = await Promise.any(promises);
+      if (result) return result;
+    } catch {
+      // Try next API key
+    }
   }
+
+  return null;
 }
 
 // ─── Helper: Call Gemini Vision with Multi-Image / Parallel Racing ───────────
 async function callGeminiVision(filePaths, mimeTypes = []) {
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey || apiKey === 'your_gemini_api_key_here' || apiKey.trim().length === 0) {
+  const apiKeys = getGeminiApiKeys();
+  if (apiKeys.length === 0) {
     throw new Error('GEMINI_API_KEY not configured.');
   }
 
   const paths = Array.isArray(filePaths) ? filePaths : [filePaths];
-  const genAI = new GoogleGenerativeAI(apiKey);
-  const candidateModels = [
-    'gemini-3.6-flash',
-    'gemini-3.7-flash',
-    'gemini-flash-latest',
-    'gemini-3.5-flash',
-  ];
 
   // Build image parts for single or two-sided (front+back) scans
   const imageParts = paths.filter(p => fs.existsSync(p)).map((p, idx) => {
@@ -219,51 +231,57 @@ async function callGeminiVision(filePaths, mimeTypes = []) {
     throw new Error('No valid image files to analyze.');
   }
 
-  // Race models in parallel, return the fastest valid extraction
-  const promises = candidateModels.map(async (modelName) => {
-    try {
-      const model = genAI.getGenerativeModel({ model: modelName });
-      const timeoutPromise = new Promise((_, reject) =>
-        setTimeout(() => reject(new Error(`Gemini Vision timeout (${modelName})`)), 9000)
-      );
-      const callPromise = model.generateContent([GEMINI_STRUCTURED_PROMPT, ...imageParts]);
-      const res = await Promise.race([callPromise, timeoutPromise]);
-      const text = res.response.text();
-      const cleanJson = text
-        .replace(/^```json\s*/i, '')
-        .replace(/^```\s*/i, '')
-        .replace(/```$/i, '')
-        .trim();
-      const parsed = JSON.parse(cleanJson);
-      if (parsed && (parsed.medications?.length > 0 || parsed.drug_name || parsed.error)) {
-        return { parsed, raw: text, modelUsed: modelName, isTextOnly: false };
-      }
-      throw new Error(`Invalid JSON parsed from ${modelName}`);
-    } catch (err) {
-      throw err;
-    }
-  });
+  for (const apiKey of apiKeys) {
+    const genAI = new GoogleGenerativeAI(apiKey);
 
-  try {
-    const result = await Promise.any(promises);
-    return result;
-  } catch (aggErr) {
-    for (const m of candidateModels) {
+    // Race models in parallel, return the fastest valid extraction
+    const promises = ACTIVE_GEMINI_MODELS.map(async (modelName) => {
       try {
-        const model = genAI.getGenerativeModel({ model: m });
-        const res = await model.generateContent([GEMINI_STRUCTURED_PROMPT, ...imageParts]);
+        const model = genAI.getGenerativeModel({ model: modelName });
+        const timeoutPromise = new Promise((_, reject) =>
+          setTimeout(() => reject(new Error(`Gemini Vision timeout (${modelName})`)), 9000)
+        );
+        const callPromise = model.generateContent([GEMINI_STRUCTURED_PROMPT, ...imageParts]);
+        const res = await Promise.race([callPromise, timeoutPromise]);
         const text = res.response.text();
-        const cleanJson = text.replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/```$/i, '').trim();
+        const cleanJson = text
+          .replace(/^```json\s*/i, '')
+          .replace(/^```\s*/i, '')
+          .replace(/```$/i, '')
+          .trim();
         const parsed = JSON.parse(cleanJson);
         if (parsed && (parsed.medications?.length > 0 || parsed.drug_name || parsed.error)) {
-          return { parsed, raw: text, modelUsed: m, isTextOnly: false };
+          return { parsed, raw: text, modelUsed: modelName, isTextOnly: false };
         }
-      } catch {
-        // continue
+        throw new Error(`Invalid JSON parsed from ${modelName}`);
+      } catch (err) {
+        throw err;
+      }
+    });
+
+    try {
+      const result = await Promise.any(promises);
+      if (result) return result;
+    } catch {
+      // Fall back to sequential check on this key or next key
+      for (const m of ACTIVE_GEMINI_MODELS) {
+        try {
+          const model = genAI.getGenerativeModel({ model: m });
+          const res = await model.generateContent([GEMINI_STRUCTURED_PROMPT, ...imageParts]);
+          const text = res.response.text();
+          const cleanJson = text.replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/```$/i, '').trim();
+          const parsed = JSON.parse(cleanJson);
+          if (parsed && (parsed.medications?.length > 0 || parsed.drug_name || parsed.error)) {
+            return { parsed, raw: text, modelUsed: m, isTextOnly: false };
+          }
+        } catch {
+          // continue
+        }
       }
     }
-    throw new Error('All Gemini Vision models failed or timed out.');
   }
+
+  throw new Error('All Gemini Vision models failed or timed out across all configured keys.');
 }
 
 // ─── Helper: RxNorm Verification for Gemini Output (Parallel Queries) ────────

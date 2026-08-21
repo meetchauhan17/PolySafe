@@ -4433,5 +4433,109 @@
     "safetyTip": "RxNorm validated medication. Take as directed.",
     "standardizedCode": "5640",
     "layer": "Layer 4 (RxNorm REST API)"
+  },
+  "acetaminophen paracetamol": {
+    "resolvedName": "Acetaminophen (Paracetamol)",
+    "genericName": "Paracetamol",
+    "genericSalts": [
+      "Paracetamol"
+    ],
+    "constituents": [
+      "Paracetamol"
+    ],
+    "harmLevel": 3,
+    "class": "Analgesic and Antipyretic",
+    "foodInstruction": "after_food",
+    "dosageOptions": [
+      "500 mg",
+      "650 mg",
+      "1000 mg"
+    ],
+    "safetyTip": "Do not exceed the maximum daily dose of 4 grams to prevent severe liver toxicity.",
+    "standardizedCode": "161",
+    "layer": "Layer 5 (gemini_gemini-flash-lite-latest)"
+  },
+  "d3b12 plus": {
+    "resolvedName": "D3B12 PLUS",
+    "genericName": "Cholecalciferol + Methylcobalamin",
+    "genericSalts": [
+      "Cholecalciferol",
+      "Methylcobalamin"
+    ],
+    "constituents": [
+      "Cholecalciferol",
+      "Methylcobalamin"
+    ],
+    "harmLevel": 2,
+    "class": "Vitamin Supplement",
+    "foodInstruction": "after_food",
+    "dosageOptions": [
+      "1 capsule daily or as directed by the physician"
+    ],
+    "safetyTip": "Monitor serum calcium and vitamin D levels periodically during long-term supplementation to avoid hypervitaminosis D.",
+    "standardizedCode": "2418",
+    "layer": "Layer 5 (gemini_gemini-flash-lite-latest)"
+  },
+  "naxdom 500 naproxen  domperidone": {
+    "resolvedName": "Naxdom 500 (Naproxen + Domperidone)",
+    "genericName": "Naproxen + Domperidone",
+    "genericSalts": [
+      "Naproxen Sodium",
+      "Domperidone"
+    ],
+    "constituents": [
+      "Naproxen Sodium",
+      "Domperidone"
+    ],
+    "harmLevel": 3,
+    "class": "NSAID + Prokinetic Antiemetic",
+    "foodInstruction": "after_food",
+    "dosageOptions": [
+      "1 tablet as needed for acute migraine"
+    ],
+    "safetyTip": "Take with food or milk to minimize gastrointestinal irritation caused by naproxen.",
+    "standardizedCode": "142442",
+    "layer": "Layer 5 (gemini_gemini-flash-lite-latest)"
+  },
+  "vitamin d3 test batch": {
+    "resolvedName": "Vitamin D3 Test Batch",
+    "genericName": "Cholecalciferol",
+    "genericSalts": [
+      "Cholecalciferol"
+    ],
+    "constituents": [
+      "Cholecalciferol"
+    ],
+    "harmLevel": 1,
+    "class": "Fat-soluble Vitamin",
+    "foodInstruction": "after_food",
+    "dosageOptions": [
+      "1000 IU",
+      "2000 IU",
+      "5000 IU"
+    ],
+    "safetyTip": "Monitor serum 25-hydroxyvitamin D levels periodically to avoid hypervitaminosis D.",
+    "standardizedCode": "2418",
+    "layer": "Layer 5 (gemini_gemini-3.5-flash-lite)"
+  },
+  "folic acid test batch": {
+    "resolvedName": "Folic Acid Test Batch",
+    "genericName": "Folic Acid",
+    "genericSalts": [
+      "Folic Acid"
+    ],
+    "constituents": [
+      "Folic Acid"
+    ],
+    "harmLevel": 1,
+    "class": "Water-soluble Vitamin (Vitamin B9)",
+    "foodInstruction": "with_or_without_food",
+    "dosageOptions": [
+      "1 mg",
+      "5 mg"
+    ],
+    "safetyTip": "Ensure adequate daily intake during pregnancy to prevent neural tube defects.",
+    "standardizedCode": "4511",
+    "layer": "Layer 5 (gemini_gemini-3.5-flash-lite)"
   }
 }
