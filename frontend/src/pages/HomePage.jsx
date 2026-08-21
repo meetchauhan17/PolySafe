@@ -371,7 +371,7 @@ export default function HomePage() {
                   <button
                     type="button"
                     onClick={handleToggleAllReminders}
-                    className={`text-[11px] font-bold px-2.5 py-1 rounded-lg border flex items-center space-x-1.5 transition-all duration-180 cursor-pointer ${
+                    className={`text-[11px] font-bold px-2.5 py-1 rounded-lg border flex items-center space-x-1.5 transition-all duration-180 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2B6E5E] active:scale-95 active:opacity-80 ${
                       remindersEnabled
                         ? 'bg-[#2B6E5E] text-white border-[#2B6E5E]'
                         : 'bg-[#E4F2E9] text-[#2B6E5E] border-[#2B6E5E]/20 hover:bg-[#2B6E5E] hover:text-white'
@@ -435,7 +435,7 @@ export default function HomePage() {
                           type="button"
                           onClick={() => handleToggleDoseReminder(doseKey, item.name, item.time)}
                           title={isDoseReminded ? 'Reminder active - click to mute' : 'Click to set dose reminder'}
-                          className={`p-2 rounded-xl text-xs transition-colors cursor-pointer ${
+                          className={`p-2 rounded-xl text-xs transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2B6E5E] active:scale-95 active:opacity-80 ${
                             isDoseReminded
                               ? 'bg-[#2B6E5E] text-white shadow-sm'
                               : 'bg-[var(--brand-clay)] text-[#5C6B64] shadow-[inset_2px_2px_4px_rgba(191,180,155,0.4),inset_-2px_-2px_4px_rgba(255,255,255,0.5)] hover:text-[#2B6E5E]'

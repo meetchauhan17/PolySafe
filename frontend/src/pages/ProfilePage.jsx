@@ -218,7 +218,7 @@ export default function ProfilePage() {
                           key={opt.id}
                           type="button"
                           onClick={() => toggleCondition(opt.label)}
-                          className={`text-xs font-bold px-3.5 py-2 rounded-xl border transition-all ${
+                          className={`text-xs font-bold px-3.5 py-2 rounded-xl border transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2B6E5E] focus-visible:ring-offset-2 active:shadow-[inset_3px_3px_6px_rgba(191,180,155,0.55),inset_-3px_-3px_6px_rgba(255,255,255,0.65)] active:translate-y-px ${
                             active
                               ? 'bg-[#2B6E5E] text-white border-[#2B6E5E] shadow-sm'
                               : 'bg-[var(--brand-clay)] text-[#5C6B64] border-[#D8D2C4] hover:border-[#2B6E5E]/40'

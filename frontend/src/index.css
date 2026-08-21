@@ -69,6 +69,22 @@
   box-shadow: var(--neu-inset-deep), 0 0 0 2px var(--brand-primary);
 }
 
+/* ─── Shared Interactive Utility (Focus rings + Tactile Neumorphic Active Press) ─── */
+.polysafe-interactive {
+  transition: all 150ms ease-out;
+  cursor: pointer;
+}
+
+.polysafe-interactive:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--brand-clay), 0 0 0 4px #2B6E5E !important;
+}
+
+.polysafe-interactive:active {
+  box-shadow: inset 3px 3px 6px rgba(191, 180, 155, 0.55), inset -3px -3px 6px rgba(255, 255, 255, 0.65) !important;
+  transform: translateY(1px);
+}
+
 /* ─── Icon Wells ("Drilled Into Surface" Inset Deep Look) ────────────────────── */
 .icon-well {
   display: inline-flex;

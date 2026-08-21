@@ -257,7 +257,7 @@ export default function OnboardingPage() {
                     key={opt.id}
                     type="button"
                     onClick={() => toggleCondition(opt.id)}
-                    className={`flex items-center space-x-3 p-4 rounded-2xl border-2 text-left cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 hover:shadow-sm transition-all duration-180 ease-out ${
+                    className={`flex items-center space-x-3 p-4 rounded-2xl border-2 text-left cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 hover:shadow-sm transition-all duration-180 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2B6E5E] focus-visible:ring-offset-2 ${
                       isSelected ? styles.active : styles.base + ' hover:opacity-90'
                     }`}
                   >
