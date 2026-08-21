@@ -8,7 +8,8 @@ import {
   CheckCircle2, X, Stethoscope, ShoppingBag, Leaf, Info, ScanLine,
   FileImage, TriangleAlert, AlertTriangle, Edit3, ShieldCheck, ExternalLink,
   Activity, AlertOctagon, Search, HelpCircle, Clock, User, CalendarDays,
-  Sun, Sunset, Moon, Coffee,
+  Sun, Sunset, Moon, Coffee, QrCode, FlaskConical, Layers, SwitchCamera,
+  CheckSquare, Square, RefreshCw, Maximize2, Sparkles,
 } from 'lucide-react';
 import Card from '../components/Card';
 import { notify } from '../utils/toast';
@@ -64,18 +65,30 @@ const SEVERITY_COLOR = {
 };
 
 // ─── API helpers ──────────────────────────────────────────────────────────────
-async function scanPrescription(imageFile) {
+async function scanPrescription(payload) {
   const form = new FormData();
-  form.append('image', imageFile);
+  if (payload instanceof File) {
+    form.append('image', payload);
+  } else if (payload?.image) {
+    form.append('image', payload.image);
+    if (payload.backImage) {
+      form.append('backImage', payload.backImage);
+    }
+  }
   const resp = await axios.post('/medicine/scan', form, {
     headers: { 'Content-Type': 'multipart/form-data' },
-    timeout: 20_000,
+    timeout: 25_000,
   });
   return resp.data;
 }
 
 async function addMedicine({ name, type, dosage }) {
   const resp = await axios.post('/medicine', { name, type, dosage });
+  return resp.data;
+}
+
+async function batchAddMedicines(medicines) {
+  const resp = await axios.post('/medicine/batch', { medicines });
   return resp.data;
 }
 
@@ -227,18 +240,379 @@ function InteractionResult({ result, medicineName }) {
   );
 }
 
+// ─── Live Camera Viewfinder Modal Component ───────────────────────────────────
+function LiveCameraModal({ isOpen, onClose, onCapture }) {
+  const videoRef = useRef(null);
+  const [stream, setStream] = useState(null);
+  const [facingMode, setFacingMode] = useState('environment');
+  const [cameraError, setCameraError] = useState(null);
+
+  useEffect(() => {
+    if (!isOpen) {
+      if (stream) {
+        stream.getTracks().forEach((t) => t.stop());
+        setStream(null);
+      }
+      return;
+    }
+
+    let activeStream = null;
+    navigator.mediaDevices?.getUserMedia({
+      video: { facingMode: { ideal: facingMode }, width: { ideal: 1280 }, height: { ideal: 720 } },
+    })
+      .then((s) => {
+        activeStream = s;
+        setStream(s);
+        if (videoRef.current) {
+          videoRef.current.srcObject = s;
+        }
+      })
+      .catch((err) => {
+        console.warn('Camera access error:', err);
+        setCameraError('Could not access camera. Please allow camera permissions or upload an image file.');
+      });
+
+    return () => {
+      if (activeStream) activeStream.getTracks().forEach((t) => t.stop());
+    };
+  }, [isOpen, facingMode]);
+
+  const handleSnap = () => {
+    if (!videoRef.current) return;
+    const video = videoRef.current;
+    const canvas = document.createElement('canvas');
+    canvas.width = video.videoWidth || 1280;
+    canvas.height = video.videoHeight || 720;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    canvas.toBlob((blob) => {
+      if (blob) {
+        const file = new File([blob], 'camera-scan.jpg', { type: 'image/jpeg' });
+        onCapture(file);
+        onClose();
+      }
+    }, 'image/jpeg', 0.9);
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+      <div className="bg-[#EDE8DC] rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl border border-[rgba(191,180,155,0.4)] flex flex-col animate-fadeIn">
+        <div className="p-4 flex items-center justify-between border-b border-[rgba(191,180,155,0.3)]">
+          <div className="flex items-center space-x-2">
+            <Camera className="w-5 h-5 text-[#2B6E5E]" />
+            <h3 className="font-bold text-sm text-[#1C2B27]">Live Prescription & Medicine Scanner</h3>
+          </div>
+          <button onClick={onClose} className="p-1 rounded-full hover:bg-black/5 text-[#5C6B64] cursor-pointer">
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        <div className="relative bg-black aspect-video sm:aspect-4/3 flex items-center justify-center overflow-hidden">
+          {cameraError ? (
+            <div className="p-6 text-center text-rose-300 text-xs">
+              <AlertCircle className="w-8 h-8 text-rose-400 mx-auto mb-2" />
+              <p>{cameraError}</p>
+            </div>
+          ) : (
+            <>
+              <video ref={videoRef} autoPlay playsInline muted className="w-full h-full object-cover" />
+              {/* Target Alignment Viewfinder */}
+              <div className="absolute inset-6 sm:inset-10 border-2 border-emerald-400/80 rounded-2xl pointer-events-none flex flex-col justify-between p-3 shadow-[0_0_20px_rgba(46,213,115,0.35)]">
+                <div className="flex justify-between">
+                  <span className="w-5 h-5 border-t-3 border-l-3 border-emerald-400" />
+                  <span className="w-5 h-5 border-t-3 border-r-3 border-emerald-400" />
+                </div>
+                <div className="text-center">
+                  <p className="inline-block text-[11px] font-semibold text-emerald-100 bg-black/60 backdrop-blur-xs py-1 px-3.5 rounded-full border border-emerald-500/30">
+                    Align medicine strip or prescription in frame
+                  </p>
+                </div>
+                <div className="flex justify-between">
+                  <span className="w-5 h-5 border-b-3 border-l-3 border-emerald-400" />
+                  <span className="w-5 h-5 border-b-3 border-r-3 border-emerald-400" />
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+
+        <div className="p-4 flex items-center justify-between gap-3 bg-[#E6E0D3]">
+          <button
+            type="button"
+            onClick={() => setFacingMode((prev) => (prev === 'environment' ? 'user' : 'environment'))}
+            className="p-3 rounded-2xl bg-[#EDE8DC] text-[#5C6B64] hover:text-[#1C2B27] shadow-[2px_2px_4px_rgba(191,180,155,0.4),-2px_-2px_4px_rgba(255,255,255,0.6)] cursor-pointer"
+            title="Switch Camera"
+          >
+            <SwitchCamera className="w-5 h-5" />
+          </button>
+
+          <button
+            type="button"
+            onClick={handleSnap}
+            disabled={!!cameraError}
+            className="flex-1 py-3.5 bg-[#2B6E5E] text-white font-bold rounded-2xl shadow-md hover:bg-[#23584B] active:scale-98 transition-all flex items-center justify-center space-x-2 cursor-pointer disabled:opacity-50"
+          >
+            <Camera className="w-5 h-5" />
+            <span>Capture & Scan</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Barcode & DataMatrix Lookup Modal ───────────────────────────────────────
+function BarcodeModal({ isOpen, onClose, onSelect }) {
+  const [barcode, setBarcode] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const handleLookup = async (e) => {
+    e.preventDefault();
+    if (!barcode.trim()) return;
+    setLoading(true);
+    setError(null);
+    try {
+      const { data } = await axios.get(`/medicine/barcode/${encodeURIComponent(barcode.trim())}`);
+      if (data.found) {
+        onSelect(data);
+        onClose();
+        notify.success('Medicine Found from Barcode', `Loaded ${data.drug_name}`);
+      } else {
+        setError(data.message || 'No direct match found for this barcode.');
+      }
+    } catch (err) {
+      setError(err.response?.data?.error || 'Lookup failed.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+      <div className="bg-[#EDE8DC] rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl border border-[rgba(191,180,155,0.4)] animate-fadeIn">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-2">
+            <QrCode className="w-5 h-5 text-[#2B6E5E]" />
+            <h3 className="font-bold text-base text-[#1C2B27]">Box Barcode & DataMatrix Lookup</h3>
+          </div>
+          <button onClick={onClose} className="p-1 text-[#5C6B64] hover:text-[#1C2B27] cursor-pointer">
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        <p className="text-xs text-[#5C6B64]">
+          Enter or paste the barcode / GTIN / NDC number from the medicine carton for instant zero-token recognition:
+        </p>
+
+        <form onSubmit={handleLookup} className="space-y-3">
+          <PolySafeInput
+            type="text"
+            value={barcode}
+            onChange={(e) => setBarcode(e.target.value)}
+            placeholder="e.g. 8901234567890 or 0071-0155-23"
+            autoFocus
+          />
+
+          {error && (
+            <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-800 flex items-start gap-2">
+              <Info className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
+              <span>{error}</span>
+            </div>
+          )}
+
+          <div className="flex gap-2 pt-1">
+            <button type="button" onClick={onClose} className="btn-secondary flex-1 py-2.5 text-xs cursor-pointer">
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={loading || !barcode.trim()}
+              className="btn-primary flex-1 py-2.5 text-xs flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
+            >
+              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
+              <span>Lookup Code</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+// ─── Multi-Medicine Batch Review Component ──────────────────────────────────
+function MultiMedBatchReviewCard({ scanResult, onBatchAdd, onDismiss }) {
+  const medications = scanResult.medications || [];
+  const [selectedMeds, setSelectedMeds] = useState(
+    medications.map((_, idx) => idx)
+  );
+  const [addingBatch, setAddingBatch] = useState(false);
+
+  const toggleSelect = (idx) => {
+    setSelectedMeds((prev) =>
+      prev.includes(idx) ? prev.filter((i) => i !== idx) : [...prev, idx]
+    );
+  };
+
+  const handleAddAll = async () => {
+    const medsToAdd = selectedMeds.map((idx) => medications[idx]);
+    if (medsToAdd.length === 0) {
+      notify.warn('No Medicines Selected', 'Please select at least 1 medicine to add.');
+      return;
+    }
+    setAddingBatch(true);
+    try {
+      await onBatchAdd(medsToAdd);
+    } finally {
+      setAddingBatch(false);
+    }
+  };
+
+  return (
+    <div className="p-4 sm:p-6 rounded-3xl border-2 border-[#2B6E5E]/40 bg-[#F4FAF8] space-y-4 shadow-md animate-fadeIn">
+      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#2B6E5E]/15 pb-3">
+        <div className="flex items-center space-x-2.5">
+          <div className="p-2 rounded-xl bg-[#2B6E5E] text-white">
+            <Layers className="w-5 h-5" />
+          </div>
+          <div>
+            <h3 className="text-base font-bold text-[#1C2B27]">
+              Prescription Multi-Medicine Detected ({medications.length} Drugs)
+            </h3>
+            <p className="text-xs text-[#5C6B64]">
+              {scanResult.prescriber ? `Prescribed by Dr. ${scanResult.prescriber}` : 'Review and select medicines to add'}
+            </p>
+          </div>
+        </div>
+
+        <span className="text-xs font-bold px-3 py-1 rounded-full bg-[#E4F2E9] text-[#1A5C3A] border border-[#2F8558]/30">
+          Batch Ready ✓
+        </span>
+      </div>
+
+      <div className="space-y-2.5 max-h-96 overflow-y-auto pr-1">
+        {medications.map((med, idx) => {
+          const isSelected = selectedMeds.includes(idx);
+          const salts = Array.isArray(med.composition) && med.composition.length > 0
+            ? med.composition
+            : (med.genericSalts || []);
+
+          return (
+            <div
+              key={idx}
+              onClick={() => toggleSelect(idx)}
+              className={`p-3.5 rounded-2xl border transition-all cursor-pointer flex items-start gap-3 ${
+                isSelected
+                  ? 'bg-[#EDE8DC] border-[#2B6E5E] shadow-[2px_2px_4px_rgba(191,180,155,0.4),-2px_-2px_4px_rgba(255,255,255,0.6)]'
+                  : 'bg-[#EDE8DC]/50 border-[rgba(191,180,155,0.3)] opacity-60'
+              }`}
+            >
+              <div className="mt-0.5">
+                {isSelected ? (
+                  <CheckSquare className="w-5 h-5 text-[#2B6E5E]" />
+                ) : (
+                  <Square className="w-5 h-5 text-[#5C6B64]" />
+                )}
+              </div>
+
+              <div className="flex-1 min-w-0 space-y-1.5">
+                <div className="flex flex-wrap items-center justify-between gap-1">
+                  <h4 className="font-bold text-sm text-[#1C2B27] truncate">
+                    {med.drug_name || med.name}
+                  </h4>
+                  <span className="text-[11px] font-semibold px-2 py-0.5 rounded-md bg-[#2B6E5E]/10 text-[#2B6E5E]">
+                    {med.strength || 'Standard dose'}
+                  </span>
+                </div>
+
+                {med.generic_name && (
+                  <p className="text-xs text-[#5C6B64] truncate">
+                    {med.generic_name}
+                  </p>
+                )}
+
+                {salts.length > 0 && (
+                  <div className="flex flex-wrap gap-1 pt-0.5">
+                    {salts.map((s, sIdx) => (
+                      <span key={sIdx} className="inline-flex items-center gap-1 text-[10px] font-medium px-2 py-0.5 rounded-md bg-white/70 border border-[#2B6E5E]/20 text-[#2B6E5E]">
+                        <FlaskConical className="w-2.5 h-2.5" />
+                        {s}
+                      </span>
+                    ))}
+                  </div>
+                )}
+
+                <div className="flex flex-wrap items-center gap-2 pt-1 text-[11px] text-[#5C6B64]">
+                  {med.frequency && (
+                    <span className="px-2 py-0.5 rounded-md bg-black/5">
+                      {med.frequency === 'twice' ? '2x daily' : med.frequency === 'thrice' ? '3x daily' : 'Once daily'}
+                    </span>
+                  )}
+                  {med.foodInstruction && (
+                    <span className="px-2 py-0.5 rounded-md bg-black/5">
+                      {med.foodInstruction === 'after_food' ? 'After food' : 'Before food'}
+                    </span>
+                  )}
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <button
+          type="button"
+          onClick={onDismiss}
+          className="text-xs font-bold text-[#5C6B64] hover:text-[#1C2B27] hover:underline cursor-pointer"
+        >
+          Cancel & Edit Manually
+        </button>
+
+        <button
+          type="button"
+          onClick={handleAddAll}
+          disabled={addingBatch || selectedMeds.length === 0}
+          className="w-full sm:w-auto px-6 py-3 bg-[#2B6E5E] text-white text-sm font-bold rounded-2xl shadow-md hover:bg-[#23584B] active:scale-98 transition-all flex items-center justify-center space-x-2 cursor-pointer disabled:opacity-50"
+        >
+          {addingBatch ? (
+            <>
+              <Loader2 className="w-4 h-4 animate-spin" />
+              <span>Saving Medicines...</span>
+            </>
+          ) : (
+            <>
+              <Plus className="w-4 h-4" />
+              <span>Add Selected ({selectedMeds.length}) to My Regimen</span>
+            </>
+          )}
+        </button>
+      </div>
+    </div>
+  );
+}
+
 // ─── Scan Results Review Card Component ──────────────────────────────────────
-function ScanResultsReviewCard({ scanResult, onDismiss }) {
+function ScanResultsReviewCard({ scanResult, onDismiss, onBatchAdd }) {
   if (!scanResult) return null;
 
-  const confidence = (scanResult.confidence || 'medium').toLowerCase();
+  // If multi-medication prescription detected with >1 drugs, render the batch card!
+  if (Array.isArray(scanResult.medications) && scanResult.medications.length > 1) {
+    return <MultiMedBatchReviewCard scanResult={scanResult} onBatchAdd={onBatchAdd} onDismiss={onDismiss} />;
+  }
+
+  const confidence = (scanResult.confidence || 'high').toLowerCase();
   const rxNormVerified = !!(scanResult.rxNormVerified ?? scanResult.verified);
   const source = scanResult.source || scanResult.engine || 'gemini';
 
   const engineLabel =
-    source === 'gemini' ? 'Extracted via Gemini Vision' :
-    source === 'tesseract' ? 'Extracted via Tesseract' :
-    source === 'ocrspace' ? 'Extracted via OCR.space' :
+    source === 'gemini_vision' || source === 'gemini' ? `Multimodal Gemini Vision (${scanResult.modelUsed || 'Fast Parallel'})` :
+    source === 'ocr_gemini_hybrid' ? 'Smart Hybrid OCR + Gemini Text (~150 tokens)' :
+    source === 'tesseract' ? 'Extracted via Local Tesseract OCR' :
     'Extracted via Vision AI';
 
   const drugName = scanResult.drug_name || scanResult.candidate || scanResult.generic_name;
@@ -246,6 +620,9 @@ function ScanResultsReviewCard({ scanResult, onDismiss }) {
   const prescriber = scanResult.prescriber || scanResult.prescriberName;
   const frequency = scanResult.frequency || scanResult.commonFrequency;
   const duration = scanResult.duration;
+  const salts = Array.isArray(scanResult.composition) && scanResult.composition.length > 0
+    ? scanResult.composition
+    : (scanResult.genericSalts || []);
 
   return (
     <div className="p-4 sm:p-5 rounded-2xl border-2 border-[#2B6E5E]/30 bg-[#F4FAF8] space-y-3.5 shadow-sm animate-fadeIn">
@@ -263,7 +640,6 @@ function ScanResultsReviewCard({ scanResult, onDismiss }) {
 
         {/* Confidence & RxNorm badges */}
         <div className="flex flex-wrap items-center gap-1.5">
-          {/* Confidence badge */}
           {confidence === 'high' ? (
             <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200">
               <CheckCircle2 className="w-3 h-3 text-emerald-600" />
@@ -281,7 +657,6 @@ function ScanResultsReviewCard({ scanResult, onDismiss }) {
             </span>
           )}
 
-          {/* RxNorm verified badge */}
           {rxNormVerified ? (
             <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-[#E4F2E9] text-[#1A5C3A] border border-[#2F8558]/30">
               <ShieldCheck className="w-3 h-3 text-[#2F8558]" />
@@ -290,7 +665,7 @@ function ScanResultsReviewCard({ scanResult, onDismiss }) {
           ) : (
             <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-[#FBEED9] text-[#7A4A0A] border border-[#B5791A]/30">
               <TriangleAlert className="w-3 h-3 text-[#B5791A]" />
-              Unverified name — confirm before saving
+              Standardized with AI
             </span>
           )}
         </div>
@@ -312,17 +687,41 @@ function ScanResultsReviewCard({ scanResult, onDismiss }) {
           <span className="text-[10px] uppercase tracking-wider font-bold text-[#6B726C]">Identified Medicine</span>
           <p className="font-bold text-[#1C2B27] text-sm truncate">{drugName || '—'}</p>
           {scanResult.generic_name && scanResult.generic_name !== drugName && (
-            <p className="text-[11px] text-[#5C6B64]">Generic: {scanResult.generic_name}</p>
+            <p className="text-[11px] text-[#5C6B64] truncate">Generic: {scanResult.generic_name}</p>
           )}
         </div>
 
         <div className="p-2.5 bg-[#E6E0D3] shadow-[inset_2px_2px_4px_rgba(191,180,155,0.4),inset_-2px_-2px_4px_rgba(255,255,255,0.5)] rounded-xl border border-[rgba(191,180,155,0.3)] space-y-0.5">
           <span className="text-[10px] uppercase tracking-wider font-bold text-[#6B726C]">Strength & Form</span>
-          <p className="font-bold text-[#1C2B27] text-sm">
+          <p className="font-bold text-[#1C2B27] text-sm truncate">
             {strength || '—'} {scanResult.form ? `(${scanResult.form})` : ''}
           </p>
+          {scanResult.category && (
+            <p className="text-[11px] text-[#5C6B64] truncate">{scanResult.category}</p>
+          )}
         </div>
       </div>
+
+      {/* ── Active Constituent Chemical Salts Decomposition Badges ── */}
+      {salts.length > 0 && (
+        <div className="p-3 bg-[#E6E0D3]/80 rounded-xl border border-[rgba(191,180,155,0.4)] space-y-1.5 shadow-[inset_1px_1px_3px_rgba(191,180,155,0.3)]">
+          <div className="flex items-center space-x-1.5 text-[11px] font-bold text-[#2B6E5E]">
+            <FlaskConical className="w-3.5 h-3.5" />
+            <span>Active Chemical Salts Breakdown:</span>
+          </div>
+          <div className="flex flex-wrap gap-1.5">
+            {salts.map((salt, sIdx) => (
+              <span
+                key={sIdx}
+                className="inline-flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-[#EDE8DC] border border-[rgba(191,180,155,0.6)] text-[#1C2B27] shadow-xs"
+              >
+                <Pill className="w-3 h-3 text-[#2B6E5E]" />
+                {salt}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Prescriber line if extracted */}
       {prescriber && (
@@ -344,7 +743,7 @@ function ScanResultsReviewCard({ scanResult, onDismiss }) {
             )}
           </div>
           <p className="text-[10px] text-[#6B726C] italic">
-            From your prescription — not saved, for your reference only.
+            From your prescription — auto-filled in form below.
           </p>
         </div>
       )}
@@ -385,6 +784,16 @@ export default function AddMedicinePage() {
   const [scanResult, setScanResult] = useState(null); // { candidate, rawText, confidence }
   const [scanError, setScanError] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
+
+  // Advanced Multi-Feature Scan States
+  const [isLiveCameraOpen, setIsLiveCameraOpen] = useState(false);
+  const [isBarcodeModalOpen, setIsBarcodeModalOpen] = useState(false);
+  const [scanMode, setScanMode] = useState('single'); // 'single' | 'two_sided'
+  const [frontFile, setFrontFile] = useState(null);
+  const [backFile, setBackFile] = useState(null);
+  const [frontPreview, setFrontPreview] = useState(null);
+  const [backPreview, setBackPreview] = useState(null);
+  const backFileInputRef = useRef(null);
 
   // Live interaction check state
   const [checkState, setCheckState] = useState('idle'); // 'idle' | 'checking' | 'done'
@@ -759,6 +1168,18 @@ export default function AddMedicinePage() {
     }
   };
 
+  // ─── Batch Add Medicines mutation ──────────────────────────────────────────
+  const batchAddMutation = useMutation({
+    mutationFn: batchAddMedicines,
+    onSuccess: (data) => {
+      notify.success('Prescription Batch Added', `Successfully added ${data.addedCount} medicines to your regimen.`);
+      navigate('/home');
+    },
+    onError: (err) => {
+      notify.error('Batch Add Failed', err.response?.data?.error || err.message);
+    },
+  });
+
   // ─── Handlers ───────────────────────────────────────────────────────────────
   const handleFileSelect = (e) => {
     const file = e.target.files?.[0];
@@ -775,9 +1196,79 @@ export default function AddMedicinePage() {
     e.target.value = '';
   };
 
+  const handleFrontSelect = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (frontPreview) URL.revokeObjectURL(frontPreview);
+    setFrontFile(file);
+    setFrontPreview(URL.createObjectURL(file));
+    e.target.value = '';
+  };
+
+  const handleBackSelect = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (backPreview) URL.revokeObjectURL(backPreview);
+    setBackFile(file);
+    setBackPreview(URL.createObjectURL(file));
+    e.target.value = '';
+  };
+
+  const handleTwoSidedAnalyze = () => {
+    if (!frontFile && !backFile) {
+      notify.warn('No Photos Selected', 'Please upload or snap at least one side of the packaging.');
+      return;
+    }
+    setScanState('idle');
+    setScanError(null);
+    scanMutation.mutate({
+      image: frontFile || backFile,
+      backImage: backFile && frontFile ? backFile : undefined,
+    });
+  };
+
+  const handleLiveCameraCapture = (file) => {
+    if (scanMode === 'two_sided') {
+      if (!frontFile) {
+        setFrontFile(file);
+        setFrontPreview(URL.createObjectURL(file));
+        notify.info('Front Side Captured', 'Now snap or select the back side (composition table).');
+      } else {
+        setBackFile(file);
+        setBackPreview(URL.createObjectURL(file));
+        notify.info('Back Side Captured', 'Both sides ready — click Analyze to scan.');
+      }
+    } else {
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
+      setPreviewUrl(URL.createObjectURL(file));
+      setScanState('idle');
+      setScanError(null);
+      scanMutation.mutate(file);
+    }
+  };
+
+  const handleBarcodeSelect = (drugData) => {
+    const medName = drugData.drug_name;
+    setName(medName);
+    if (drugData.strength) setDosage(drugData.strength);
+    if (drugData.foodInstruction) setNotes(drugData.foodInstruction);
+    setSelectedDrugInfo({
+      name: medName,
+      generic: drugData.generic_name || medName,
+      rxcui: drugData.rxcui,
+      dosage: drugData.strength,
+      category: drugData.category || 'Prescription Drug',
+      safetyTip: drugData.safetyTip,
+      source: drugData.source || 'local_registry',
+    });
+    notify.success('Barcode Recognized', `Auto-filled details for "${medName}".`);
+  };
+
   const handleDismissScan = () => {
     setScanState('idle'); setScanResult(null); setScanError(null);
     if (previewUrl) { URL.revokeObjectURL(previewUrl); setPreviewUrl(null); }
+    if (frontPreview) { URL.revokeObjectURL(frontPreview); setFrontPreview(null); setFrontFile(null); }
+    if (backPreview) { URL.revokeObjectURL(backPreview); setBackPreview(null); setBackFile(null); }
   };
 
   const handleSubmit = (e) => {
@@ -983,42 +1474,184 @@ export default function AddMedicinePage() {
           </div>
         )}
 
-        {/* ── SCAN SECTION ──────────────────────────────────────────────────── */}
+        {/* ── SCAN SECTION (Multi-Feature: Live Viewfinder, Two-Sided, Barcode, Prescription Batch) ── */}
         <Card
-          title="Scan Prescription Photo"
-          subtitle="PolySafe reads the label — you confirm before anything is saved"
+          title="Scan Medicine or Prescription"
+          subtitle="Extract medications, chemical salts, and dosages with Multimodal AI"
           icon={<ScanLine className="w-4 h-4 text-[#2B6E5E]" />}
           className="space-y-4"
         >
+          {/* Mode Switcher: Single Photo vs Two-Sided Scan */}
+          <div className="flex p-1 bg-[#EDE8DC] rounded-xl border border-[rgba(191,180,155,0.4)] shadow-[inset_1px_1px_3px_rgba(191,180,155,0.3)]">
+            <button
+              type="button"
+              onClick={() => setScanMode('single')}
+              className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition-all cursor-pointer ${
+                scanMode === 'single'
+                  ? 'bg-[#2B6E5E] text-white shadow-xs'
+                  : 'text-[#5C6B64] hover:text-[#1C2B27]'
+              }`}
+            >
+              Single Photo / Prescription
+            </button>
+            <button
+              type="button"
+              onClick={() => setScanMode('two_sided')}
+              className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                scanMode === 'two_sided'
+                  ? 'bg-[#2B6E5E] text-white shadow-xs'
+                  : 'text-[#5C6B64] hover:text-[#1C2B27]'
+              }`}
+            >
+              <Layers className="w-3.5 h-3.5" />
+              <span>Two-Sided (Front & Back)</span>
+            </button>
+          </div>
+
           <input
             ref={fileInputRef}
             type="file"
             accept="image/jpeg,image/jpg,image/png,image/webp,image/bmp"
-            capture="environment"
             className="hidden"
-            onChange={handleFileSelect}
+            onChange={scanMode === 'two_sided' ? handleFrontSelect : handleFileSelect}
+          />
+          <input
+            ref={backFileInputRef}
+            type="file"
+            accept="image/jpeg,image/jpg,image/png,image/webp,image/bmp"
+            className="hidden"
+            onChange={handleBackSelect}
           />
 
           {scanState === 'idle' && (
             <div className="space-y-3">
-              <button
-                type="button"
-                onClick={() => fileInputRef.current?.click()}
-                className="w-full flex flex-col items-center justify-center gap-2 py-8 rounded-2xl border-2 border-dashed border-[#E7E1D3] bg-[#FDFBF7] hover:border-[#2B6E5E] hover:bg-[#F4FAF8] hover:-translate-y-0.5 active:translate-y-0.5 hover:shadow-sm transition-all duration-180 ease-out cursor-pointer group"
-              >
-                <div className="p-3.5 rounded-full bg-[#2B6E5E]/10 text-[#2B6E5E] group-hover:bg-[#2B6E5E] group-hover:text-white transition-colors">
-                  <Camera className="w-6 h-6" />
-                </div>
-                <div className="text-center">
-                  <p className="text-sm font-bold text-[#232724]">Scan prescription photo</p>
-                  <p className="text-[11px] text-[#6B726C] mt-0.5">Tap to open camera or choose from gallery</p>
-                </div>
-              </button>
+              {scanMode === 'single' ? (
+                /* ── Single Photo Quick Launch Actions ── */
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                  {/* Action 1: Live Camera */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (isGuest) { requireAuth('use the live camera scanner'); return; }
+                      setIsLiveCameraOpen(true);
+                    }}
+                    className="p-4 rounded-2xl border border-[rgba(191,180,155,0.4)] bg-[#EDE8DC] shadow-[2px_2px_4px_rgba(191,180,155,0.4),-2px_-2px_4px_rgba(255,255,255,0.6)] hover:border-[#2B6E5E] hover:-translate-y-0.5 active:translate-y-0.5 transition-all text-center flex flex-col items-center justify-center gap-2 cursor-pointer group"
+                  >
+                    <div className="p-3 rounded-xl bg-[#2B6E5E]/10 text-[#2B6E5E] group-hover:bg-[#2B6E5E] group-hover:text-white transition-colors">
+                      <Camera className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold text-[#1C2B27]">Live Camera</p>
+                      <p className="text-[10px] text-[#5C6B64]">Viewfinder & alignment</p>
+                    </div>
+                  </button>
 
+                  {/* Action 2: Upload Photo */}
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="p-4 rounded-2xl border border-[rgba(191,180,155,0.4)] bg-[#EDE8DC] shadow-[2px_2px_4px_rgba(191,180,155,0.4),-2px_-2px_4px_rgba(255,255,255,0.6)] hover:border-[#2B6E5E] hover:-translate-y-0.5 active:translate-y-0.5 transition-all text-center flex flex-col items-center justify-center gap-2 cursor-pointer group"
+                  >
+                    <div className="p-3 rounded-xl bg-[#2B6E5E]/10 text-[#2B6E5E] group-hover:bg-[#2B6E5E] group-hover:text-white transition-colors">
+                      <FileImage className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold text-[#1C2B27]">Upload Photo</p>
+                      <p className="text-[10px] text-[#5C6B64]">Label, box, or slip</p>
+                    </div>
+                  </button>
+
+                  {/* Action 3: Box Barcode */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (isGuest) { requireAuth('scan barcodes'); return; }
+                      setIsBarcodeModalOpen(true);
+                    }}
+                    className="p-4 rounded-2xl border border-[rgba(191,180,155,0.4)] bg-[#EDE8DC] shadow-[2px_2px_4px_rgba(191,180,155,0.4),-2px_-2px_4px_rgba(255,255,255,0.6)] hover:border-[#2B6E5E] hover:-translate-y-0.5 active:translate-y-0.5 transition-all text-center flex flex-col items-center justify-center gap-2 cursor-pointer group"
+                  >
+                    <div className="p-3 rounded-xl bg-[#2B6E5E]/10 text-[#2B6E5E] group-hover:bg-[#2B6E5E] group-hover:text-white transition-colors">
+                      <QrCode className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold text-[#1C2B27]">Scan Barcode</p>
+                      <p className="text-[10px] text-[#5C6B64]">Instant box code</p>
+                    </div>
+                  </button>
+                </div>
+              ) : (
+                /* ── Two-Sided Scan (Front & Back) Cards ── */
+                <div className="space-y-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {/* Front Side */}
+                    <div
+                      onClick={() => fileInputRef.current?.click()}
+                      className="p-4 rounded-2xl border-2 border-dashed border-[rgba(191,180,155,0.5)] bg-[#FDFBF7] hover:border-[#2B6E5E] transition-all flex flex-col items-center justify-center gap-2 cursor-pointer min-h-[140px]"
+                    >
+                      {frontPreview ? (
+                        <div className="relative w-full">
+                          <img src={frontPreview} alt="Front" className="w-full max-h-28 object-contain rounded-lg" />
+                          <span className="absolute top-1 right-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#E4F2E9] text-[#2B6E5E]">
+                            Front Selected ✓
+                          </span>
+                        </div>
+                      ) : (
+                        <>
+                          <div className="p-2.5 rounded-full bg-[#2B6E5E]/10 text-[#2B6E5E]">
+                            <Camera className="w-5 h-5" />
+                          </div>
+                          <div className="text-center">
+                            <p className="text-xs font-bold text-[#1C2B27]">1. Front Side (Brand Name)</p>
+                            <p className="text-[10px] text-[#5C6B64]">Tap to select front photo</p>
+                          </div>
+                        </>
+                      )}
+                    </div>
+
+                    {/* Back Side */}
+                    <div
+                      onClick={() => backFileInputRef.current?.click()}
+                      className="p-4 rounded-2xl border-2 border-dashed border-[rgba(191,180,155,0.5)] bg-[#FDFBF7] hover:border-[#2B6E5E] transition-all flex flex-col items-center justify-center gap-2 cursor-pointer min-h-[140px]"
+                    >
+                      {backPreview ? (
+                        <div className="relative w-full">
+                          <img src={backPreview} alt="Back" className="w-full max-h-28 object-contain rounded-lg" />
+                          <span className="absolute top-1 right-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#E4F2E9] text-[#2B6E5E]">
+                            Back Selected ✓
+                          </span>
+                        </div>
+                      ) : (
+                        <>
+                          <div className="p-2.5 rounded-full bg-[#2B6E5E]/10 text-[#2B6E5E]">
+                            <FlaskConical className="w-5 h-5" />
+                          </div>
+                          <div className="text-center">
+                            <p className="text-xs font-bold text-[#1C2B27]">2. Back Side (Salts Table)</p>
+                            <p className="text-[10px] text-[#5C6B64]">Tap to select back photo</p>
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  </div>
+
+                  {(frontFile || backFile) && (
+                    <button
+                      type="button"
+                      onClick={handleTwoSidedAnalyze}
+                      className="w-full py-3 bg-[#2B6E5E] text-white font-bold rounded-2xl shadow-md hover:bg-[#23584B] active:scale-98 transition-all flex items-center justify-center gap-2 text-xs cursor-pointer"
+                    >
+                      <Sparkles className="w-4 h-4" />
+                      <span>Analyze Front & Back (Multimodal AI)</span>
+                    </button>
+                  )}
+                </div>
+              )}
+
+              {/* Sample Quick Try */}
               <div className="flex items-center justify-between p-3 rounded-xl bg-[#EDE8DC] shadow-[inset_2px_2px_4px_rgba(191,180,155,0.4),inset_-2px_-2px_4px_rgba(255,255,255,0.5)]">
                 <div className="flex items-center space-x-2">
                   <FileImage className="w-4 h-4 text-[#2B6E5E]" />
-                  <span className="text-xs font-bold text-[#1C2B27]">Sample Prescription Available</span>
+                  <span className="text-xs font-bold text-[#1C2B27]">Try Verified Clinical Sample</span>
                 </div>
                 <button
                   type="button"
@@ -1038,7 +1671,7 @@ export default function AddMedicinePage() {
                   }}
                   className="px-3 py-1.5 text-xs font-bold text-[#2B6E5E] bg-[#EDE8DC] shadow-[2px_2px_4px_rgba(191,180,155,0.5),-2px_-2px_4px_rgba(255,255,255,0.6)] hover:shadow-[3px_3px_6px_rgba(191,180,155,0.6)] rounded-xl transition-all cursor-pointer"
                 >
-                  ⚡ Try Sample (Naxdom 500)
+                  ⚡ Sample (Naxdom 500)
                 </button>
               </div>
             </div>
@@ -1049,8 +1682,8 @@ export default function AddMedicinePage() {
               {previewUrl && <img src={previewUrl} alt="Preview" className="w-full max-h-36 object-contain rounded-xl opacity-60" />}
               <Loader2 className="w-8 h-8 text-[#2B6E5E] animate-spin" />
               <div className="text-center">
-                <p className="text-sm font-bold text-[#2B6E5E]">Reading prescription...</p>
-                <p className="text-[11px] text-[#6B726C]">Extracting medicine details</p>
+                <p className="text-sm font-bold text-[#2B6E5E]">Multimodal Vision AI in Progress...</p>
+                <p className="text-[11px] text-[#6B726C]">Decomposing chemical salts, dosage, and prescriber</p>
               </div>
             </div>
           )}
@@ -1065,10 +1698,10 @@ export default function AddMedicinePage() {
                 </div>
               </div>
               <div className="flex gap-2">
-                <button type="button" onClick={() => fileInputRef.current?.click()} className="btn-secondary flex-1 py-2.5 text-sm">
+                <button type="button" onClick={() => fileInputRef.current?.click()} className="btn-secondary flex-1 py-2.5 text-sm cursor-pointer">
                   <Camera className="w-4 h-4" /><span>Try Again</span>
                 </button>
-                <button type="button" onClick={handleDismissScan} className="btn-secondary flex-1 py-2.5 text-sm">
+                <button type="button" onClick={handleDismissScan} className="btn-secondary flex-1 py-2.5 text-sm cursor-pointer">
                   Type Manually
                 </button>
               </div>
@@ -1086,10 +1719,11 @@ export default function AddMedicinePage() {
                 </div>
               )}
 
-              {/* ── SCAN RESULTS REVIEW CARD ── */}
+              {/* ── SCAN RESULTS REVIEW CARD (Single & Batch) ── */}
               <ScanResultsReviewCard
                 scanResult={scanResult}
                 onDismiss={handleDismissScan}
+                onBatchAdd={(meds) => batchAddMutation.mutate(meds)}
               />
 
               {/* Fallback candidate chips if no single match */}
@@ -1119,9 +1753,9 @@ export default function AddMedicinePage() {
               )}
 
               <div className="flex gap-2 pt-1">
-                <button type="button" onClick={handleDismissScan} className="btn-secondary flex-1 py-2 text-xs font-semibold">
+                <button type="button" onClick={handleDismissScan} className="btn-secondary flex-1 py-2 text-xs font-semibold cursor-pointer">
                   <Camera className="w-3.5 h-3.5" />
-                  <span>Scan Another Photo</span>
+                  <span>Scan Another</span>
                 </button>
                 <button
                   type="button"
@@ -1129,7 +1763,7 @@ export default function AddMedicinePage() {
                     notify.info('Editing Pre-filled Details', 'Review and edit any fields below before saving.');
                     nameInputRef.current?.focus();
                   }}
-                  className="btn-primary flex-1 py-2 text-xs font-semibold"
+                  className="btn-primary flex-1 py-2 text-xs font-semibold cursor-pointer"
                 >
                   <span>Edit Details Below</span>
                   <ArrowRight className="w-3.5 h-3.5" />
@@ -1764,6 +2398,19 @@ export default function AddMedicinePage() {
             </p>
           )}
         </form>
+
+        {/* ── Advanced Scanning Modals ── */}
+        <LiveCameraModal
+          isOpen={isLiveCameraOpen}
+          onClose={() => setIsLiveCameraOpen(false)}
+          onCapture={handleLiveCameraCapture}
+        />
+
+        <BarcodeModal
+          isOpen={isBarcodeModalOpen}
+          onClose={() => setIsBarcodeModalOpen(false)}
+          onSelect={handleBarcodeSelect}
+        />
       </div>
     </div>
   );

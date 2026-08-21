@@ -74,25 +74,32 @@ function cleanupFile(filePath) {
   }
 }
 
-// ─── Verbatim Structured Prompt for Gemini Vision ────────────────────────────
-const GEMINI_STRUCTURED_PROMPT = `You are an expert clinical pharmacist and high-accuracy pharmaceutical OCR vision system.
-Analyze this pharmaceutical image — which may be a blister strip, medicine carton/box, bottle label, tube, or prescription slip.
+// ─── Verbatim Structured Prompt for Gemini Vision (Supports Single & Multi-Drug Prescriptions) ──
+const GEMINI_STRUCTURED_PROMPT = `You are an expert clinical pharmacist and pharmaceutical OCR vision system.
+Analyze this pharmaceutical image (which may be a blister strip, front/back packaging, bottle label, carton box, or doctor prescription slip).
 
-Extract the EXACT medication details. Return ONLY valid JSON (no markdown formatting, no code block fences):
+Extract the EXACT medication details. If the image contains a prescription slip with multiple prescribed medicines or multiple boxes, extract ALL medications in the "medications" array.
+Return ONLY valid JSON (no markdown formatting, no code block fences):
 {
-  "drug_name": "Primary brand or medication name (e.g. 'D3B12 PLUS', 'Augmentin 625', 'Naxdom 500')",
-  "generic_name": "Full generic chemical salt composition (e.g. 'Methylcobalamin + Pyridoxine HCl + Folic Acid + Vitamin D3')",
-  "composition": ["Active salt 1 with strength", "Active salt 2 with strength"],
-  "strength": "Overall dosage strength (e.g. '1500mcg + 10mg + 5mg + 1000IU' or '500mg')",
-  "form": "tablet",
-  "category": "Pharmacological category (e.g. 'Vitamin & Mineral Supplement', 'NSAID / Pain Relief', 'Antibiotic')",
-  "frequency": "once",
-  "foodInstruction": "after_food",
-  "manufacturer": "Pharma manufacturer if visible (e.g. 'Healing Pharma'), else null",
+  "is_prescription": false,
   "prescriber": "Doctor name if prescription slip, else null",
-  "suggestedType": "PRESCRIPTION",
-  "safetyTip": "Brief clinical guidance for this drug class",
-  "confidence": "high"
+  "confidence": "high",
+  "medications": [
+    {
+      "drug_name": "Primary brand or medication name (e.g. 'D3B12 PLUS', 'Augmentin 625', 'Naxdom 500')",
+      "generic_name": "Full generic chemical salt composition (e.g. 'Methylcobalamin + Pyridoxine HCl + Folic Acid + Vitamin D3')",
+      "composition": ["Active salt 1 with strength", "Active salt 2 with strength"],
+      "strength": "Overall dosage strength (e.g. '1500 mcg + 10 mg + 5 mg + 1000 IU' or '500mg')",
+      "form": "tablet",
+      "category": "Pharmacological category (e.g. 'Vitamin & Mineral Supplement', 'NSAID / Pain Relief', 'Antibiotic')",
+      "frequency": "once",
+      "timing": "morning",
+      "foodInstruction": "after_food",
+      "manufacturer": "Pharma manufacturer if visible (e.g. 'Healing Pharma'), else null",
+      "suggestedType": "PRESCRIPTION",
+      "safetyTip": "Brief clinical guidance for this drug class"
+    }
+  ]
 }
 
 If this image is clearly not a medicine or prescription image, return: { "error": "not_a_medicine_image" }`;
@@ -106,21 +113,28 @@ ${ocrText.slice(0, 2500)}
 """
 
 Extract the EXACT medication details. Carefully distinguish the primary brand name from manufacturer or boilerplate text (do NOT return pharma company names like 'Healing Pharma', 'Sun Pharma', 'Cipla', 'Torrent' as drug names).
+If multiple medications are detected in a prescription, return all of them in the "medications" array.
 Return ONLY valid JSON (no markdown formatting, no code block fences):
 {
-  "drug_name": "Primary brand or medication name (e.g. 'D3B12 PLUS', 'Augmentin 625', 'Naxdom 500')",
-  "generic_name": "Full generic chemical salt composition (e.g. 'Methylcobalamin + Pyridoxine HCl + Folic Acid + Vitamin D3')",
-  "composition": ["Active salt 1 with strength", "Active salt 2 with strength"],
-  "strength": "Overall dosage strength (e.g. '1500mcg + 10mg + 5mg + 1000IU' or '500mg')",
-  "form": "tablet",
-  "category": "Pharmacological category (e.g. 'Vitamin & Mineral Supplement', 'NSAID / Pain Relief', 'Antibiotic')",
-  "frequency": "once",
-  "foodInstruction": "after_food",
-  "manufacturer": "Pharma manufacturer if visible, else null",
+  "is_prescription": false,
   "prescriber": "Doctor name if prescription slip, else null",
-  "suggestedType": "PRESCRIPTION",
-  "safetyTip": "Brief clinical guidance for this drug class",
-  "confidence": "high"
+  "confidence": "high",
+  "medications": [
+    {
+      "drug_name": "Primary brand or medication name (e.g. 'D3B12 PLUS', 'Augmentin 625', 'Naxdom 500')",
+      "generic_name": "Full generic chemical salt composition (e.g. 'Methylcobalamin + Pyridoxine HCl + Folic Acid + Vitamin D3')",
+      "composition": ["Active salt 1 with strength", "Active salt 2 with strength"],
+      "strength": "Overall dosage strength (e.g. '1500mcg + 10mg + 5mg + 1000IU' or '500mg')",
+      "form": "tablet",
+      "category": "Pharmacological category (e.g. 'Vitamin & Mineral Supplement', 'NSAID / Pain Relief', 'Antibiotic')",
+      "frequency": "once",
+      "timing": "morning",
+      "foodInstruction": "after_food",
+      "manufacturer": "Pharma manufacturer if visible, else null",
+      "suggestedType": "PRESCRIPTION",
+      "safetyTip": "Brief clinical guidance for this drug class"
+    }
+  ]
 }
 
 If this text is clearly not from a pharmaceutical product or prescription, return: { "error": "not_a_medicine_text" }`;
@@ -156,7 +170,7 @@ async function callGeminiTextParser(rawOcrText) {
         .replace(/```$/i, '')
         .trim();
       const parsed = JSON.parse(cleanJson);
-      if (parsed && (parsed.drug_name || parsed.error)) {
+      if (parsed && (parsed.medications?.length > 0 || parsed.drug_name || parsed.error)) {
         return { parsed, raw: text, modelUsed: modelName, isTextOnly: true };
       }
       throw new Error(`Invalid JSON from text parser (${modelName})`);
@@ -173,13 +187,14 @@ async function callGeminiTextParser(rawOcrText) {
   }
 }
 
-// ─── Helper: Call Gemini Vision with Parallel Model Racing ───────────────────
-async function callGeminiVision(filePath, mimeType) {
+// ─── Helper: Call Gemini Vision with Multi-Image / Parallel Racing ───────────
+async function callGeminiVision(filePaths, mimeTypes = []) {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey || apiKey === 'your_gemini_api_key_here' || apiKey.trim().length === 0) {
     throw new Error('GEMINI_API_KEY not configured.');
   }
 
+  const paths = Array.isArray(filePaths) ? filePaths : [filePaths];
   const genAI = new GoogleGenerativeAI(apiKey);
   const candidateModels = [
     'gemini-3.6-flash',
@@ -188,14 +203,21 @@ async function callGeminiVision(filePath, mimeType) {
     'gemini-3.5-flash',
   ];
 
-  const imageBuffer = fs.readFileSync(filePath);
-  const base64Data = imageBuffer.toString('base64');
-  const imagePart = {
-    inlineData: {
-      data: base64Data,
-      mimeType: mimeType || 'image/webp',
-    },
-  };
+  // Build image parts for single or two-sided (front+back) scans
+  const imageParts = paths.filter(p => fs.existsSync(p)).map((p, idx) => {
+    const buf = fs.readFileSync(p);
+    const mime = (Array.isArray(mimeTypes) ? mimeTypes[idx] : mimeTypes) || 'image/webp';
+    return {
+      inlineData: {
+        data: buf.toString('base64'),
+        mimeType: mime,
+      },
+    };
+  });
+
+  if (imageParts.length === 0) {
+    throw new Error('No valid image files to analyze.');
+  }
 
   // Race models in parallel, return the fastest valid extraction
   const promises = candidateModels.map(async (modelName) => {
@@ -204,7 +226,7 @@ async function callGeminiVision(filePath, mimeType) {
       const timeoutPromise = new Promise((_, reject) =>
         setTimeout(() => reject(new Error(`Gemini Vision timeout (${modelName})`)), 9000)
       );
-      const callPromise = model.generateContent([GEMINI_STRUCTURED_PROMPT, imagePart]);
+      const callPromise = model.generateContent([GEMINI_STRUCTURED_PROMPT, ...imageParts]);
       const res = await Promise.race([callPromise, timeoutPromise]);
       const text = res.response.text();
       const cleanJson = text
@@ -213,7 +235,7 @@ async function callGeminiVision(filePath, mimeType) {
         .replace(/```$/i, '')
         .trim();
       const parsed = JSON.parse(cleanJson);
-      if (parsed && (parsed.drug_name || parsed.error)) {
+      if (parsed && (parsed.medications?.length > 0 || parsed.drug_name || parsed.error)) {
         return { parsed, raw: text, modelUsed: modelName, isTextOnly: false };
       }
       throw new Error(`Invalid JSON parsed from ${modelName}`);
@@ -229,11 +251,11 @@ async function callGeminiVision(filePath, mimeType) {
     for (const m of candidateModels) {
       try {
         const model = genAI.getGenerativeModel({ model: m });
-        const res = await model.generateContent([GEMINI_STRUCTURED_PROMPT, imagePart]);
+        const res = await model.generateContent([GEMINI_STRUCTURED_PROMPT, ...imageParts]);
         const text = res.response.text();
         const cleanJson = text.replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/```$/i, '').trim();
         const parsed = JSON.parse(cleanJson);
-        if (parsed && (parsed.drug_name || parsed.error)) {
+        if (parsed && (parsed.medications?.length > 0 || parsed.drug_name || parsed.error)) {
           return { parsed, raw: text, modelUsed: m, isTextOnly: false };
         }
       } catch {
@@ -296,11 +318,18 @@ async function verifyWithRxNorm(drugName, genericName, composition = []) {
 // Step 2B: If OCR text garbled/blurry -> Escalate to Gemini Vision (Multimodal)
 // Step 3: Pharmacological AI Decomposition + RxNorm Validation
 // ═════════════════════════════════════════════════════════════════════════════
+// ═════════════════════════════════════════════════════════════════════════════
+// POST /medicine/scan
+// Supports: Single Medicine, Multi-Medication Prescriptions, and Two-Sided Scans
+// ═════════════════════════════════════════════════════════════════════════════
 router.post(
   '/scan',
   auth,
   (req, res, next) => {
-    upload.single('image')(req, res, (err) => {
+    upload.fields([
+      { name: 'image', maxCount: 1 },
+      { name: 'backImage', maxCount: 1 },
+    ])(req, res, (err) => {
       if (err instanceof multer.MulterError) {
         return res.status(400).json({
           error: err.code === 'LIMIT_FILE_SIZE'
@@ -315,18 +344,26 @@ router.post(
     });
   },
   async (req, res) => {
-    const filePath = req.file?.path;
+    const frontFile = req.files?.['image']?.[0];
+    const backFile = req.files?.['backImage']?.[0];
+    const singleFile = req.file; // in case uploaded as single
 
-    if (!filePath) {
+    const filesToProcess = [frontFile, backFile, singleFile].filter(Boolean);
+    const filePaths = filesToProcess.map(f => f.path);
+    const mimeTypes = filesToProcess.map(f => f.mimetype);
+
+    if (filePaths.length === 0) {
       return res.status(400).json({
         error: 'No image file received. Please attach an image using the "image" field.',
       });
     }
 
+    const primaryFilePath = filePaths[0];
+
     try {
       // ── 0. DEMO MODE: return pre-built sample response with source: "gemini" ─
       if (isDemoMode()) {
-        cleanupFile(filePath);
+        filePaths.forEach(cleanupFile);
         console.log('[scan] DEMO_MODE=true — returning sample Gemini response fixture');
         return res.status(200).json({
           source: 'gemini',
@@ -340,16 +377,22 @@ router.post(
           rxNormVerified: true,
           rxcui: '11289',
           confidence: 'high',
-          raw_extraction: JSON.stringify({
+          isPrescription: false,
+          medicationCount: 1,
+          medications: [{
             drug_name: 'Warfarin',
             generic_name: 'Warfarin Sodium',
             strength: '5mg',
             form: 'tablet',
             frequency: 'once daily',
-            duration: 'ongoing',
-            prescriber: 'Dr. Sarah Wilson',
-            confidence: 'high',
-          }),
+            timing: 'evening',
+            foodInstruction: 'after_food',
+            category: 'Anticoagulant (Blood Thinner)',
+            safetyTip: 'Take consistently at the same time each day. Avoid sudden changes in diet high in Vitamin K.',
+            suggestedType: 'PRESCRIPTION',
+            rxNormVerified: true,
+            rxcui: '11289',
+          }],
           // Backward compatibility mappings
           candidate: 'Warfarin',
           genericName: 'Warfarin Sodium',
@@ -367,11 +410,12 @@ router.post(
       }
 
       // ── STAGE 1: PARALLEL MULTIMODAL GEMINI VISION (Primary — 100% Clinical Accuracy) ──
-      console.log(`[scan] Stage 1: Running Multimodal Gemini Vision on ${filePath}...`);
+      console.log(`[scan] Stage 1: Running Multimodal Gemini Vision on ${filePaths.join(', ')}...`);
       let aiExtraction = null;
+      let tesseractRawText = '';
 
       try {
-        const visionResult = await callGeminiVision(filePath, req.file?.mimetype);
+        const visionResult = await callGeminiVision(filePaths, mimeTypes);
         if (visionResult && visionResult.parsed) {
           aiExtraction = visionResult;
         }
@@ -380,14 +424,14 @@ router.post(
       }
 
       // If Vision failed (e.g. offline/network issue), fallback to local Tesseract OCR
-      if (!aiExtraction || !aiExtraction.parsed || !aiExtraction.parsed.drug_name) {
+      if (!aiExtraction || !aiExtraction.parsed || (!aiExtraction.parsed.drug_name && !aiExtraction.parsed.medications?.length)) {
         try {
           console.log('[scan] Stage 1 Fallback: Running Local Tesseract OCR...');
-          const tResult = await tesseract.recognize(filePath, tesseractConfig);
-          const tText = (tResult || '').trim();
-          if (tText.length >= 10) {
-            const textResult = await callGeminiTextParser(tText);
-            if (textResult && textResult.parsed && textResult.parsed.drug_name) {
+          const tResult = await tesseract.recognize(primaryFilePath, tesseractConfig);
+          tesseractRawText = (tResult || '').trim();
+          if (tesseractRawText.length >= 10) {
+            const textResult = await callGeminiTextParser(tesseractRawText);
+            if (textResult && textResult.parsed && (textResult.parsed.drug_name || textResult.parsed.medications?.length)) {
               aiExtraction = textResult;
             }
           }
@@ -396,87 +440,125 @@ router.post(
         }
       }
 
-      // ── STAGE 3: PHARMACOLOGICAL ENRICHMENT & RXNORM VERIFICATION ───────────
+      // ── STAGE 2: PROCESS ALL EXTRACTED MEDICATIONS (Batch & Single) ─────────
       if (aiExtraction && aiExtraction.parsed) {
         const parsed = aiExtraction.parsed;
 
         if (parsed.error === 'not_a_medicine_image' || parsed.error === 'not_a_medicine_text') {
-          cleanupFile(filePath);
+          filePaths.forEach(cleanupFile);
           return res.status(400).json({
             error: "This doesn't look like a medicine or prescription — try a clearer photo.",
           });
         }
 
-        const drugName = (parsed.drug_name || '').trim();
-        const genericName = (parsed.generic_name || '').trim() || null;
-        const confidence = (parsed.confidence || 'high').toLowerCase();
+        const rawMeds = Array.isArray(parsed.medications) && parsed.medications.length > 0
+          ? parsed.medications
+          : (parsed.drug_name ? [parsed] : []);
 
-        if (drugName && drugName !== 'null' && drugName.length >= 2) {
-          console.log(`[scan] Stage 3: Decomposing "${drugName}" with AI drug resolver & RxNorm...`);
-          
-          const [rxNormRes, aiResolved] = await Promise.all([
-            verifyWithRxNorm(drugName, genericName, parsed.composition || []),
-            resolveDrugWithAI(drugName),
-          ]);
+        const validMeds = rawMeds.filter(m => m && (m.drug_name || m.name) && String(m.drug_name || m.name).trim() !== 'null');
 
-          cleanupFile(filePath);
+        if (validMeds.length > 0) {
+          console.log(`[scan] Stage 2: Enriching ${validMeds.length} detected medication(s) with AI drug resolver & RxNorm...`);
 
-          const finalGenericName = genericName || aiResolved?.genericName || rxNormRes?.confirmedName || null;
-          const finalCategory = parsed.category || aiResolved?.class || (rxNormRes?.verified ? 'Prescription Medicine' : 'General Medication');
-          const finalSafetyTip = parsed.safetyTip || aiResolved?.safetyTip || 'Take as directed by your physician or pharmacist.';
-          const finalFoodInstruction = parsed.foodInstruction || aiResolved?.foodInstruction || 'after_food';
-          const finalType = parsed.suggestedType || (finalCategory.toLowerCase().includes('herb') ? 'HERBAL' : finalCategory.toLowerCase().includes('supplement') || finalCategory.toLowerCase().includes('otc') ? 'OTC' : 'PRESCRIPTION');
+          const enrichedMedications = await Promise.all(
+            validMeds.map(async (med) => {
+              const medName = (med.drug_name || med.name || '').trim();
+              const genName = (med.generic_name || '').trim() || null;
+              const composition = Array.isArray(med.composition) ? med.composition : [];
 
-          // Collect rich fallback candidates
-          const candidatesSet = new Set([
-            drugName,
-            ...(aiResolved?.genericSalts || []),
-            ...(Array.isArray(parsed.composition) ? parsed.composition.map(c => c.replace(/\s+\d+.*$/, '').trim()) : []),
-          ].filter(Boolean));
-          const fallbackCandidates = Array.from(candidatesSet).slice(0, 4);
+              const [rxNormRes, aiResolved] = await Promise.all([
+                verifyWithRxNorm(medName, genName, composition),
+                resolveDrugWithAI(medName),
+              ]);
 
+              const finalGen = genName || aiResolved?.genericName || rxNormRes?.confirmedName || null;
+              const finalCat = med.category || aiResolved?.class || (rxNormRes?.verified ? 'Prescription Medicine' : 'General Medication');
+              const finalSafety = med.safetyTip || aiResolved?.safetyTip || 'Take as directed by your physician or pharmacist.';
+              const finalFood = med.foodInstruction || aiResolved?.foodInstruction || 'after_food';
+              const finalType = med.suggestedType || (finalCat.toLowerCase().includes('herb') ? 'HERBAL' : finalCat.toLowerCase().includes('supplement') || finalCat.toLowerCase().includes('otc') ? 'OTC' : 'PRESCRIPTION');
+
+              const salts = [
+                ...(aiResolved?.genericSalts || []),
+                ...composition.map(c => c.replace(/\s+\d+.*$/, '').trim()),
+              ].filter(Boolean);
+
+              const distinctSalts = Array.from(new Set(salts));
+
+              return {
+                drug_name: medName,
+                generic_name: finalGen,
+                composition: composition.length > 0 ? composition : (aiResolved?.genericSalts || []),
+                genericSalts: distinctSalts,
+                strength: med.strength || aiResolved?.dosageOptions?.[0] || null,
+                form: med.form || 'tablet',
+                category: finalCat,
+                frequency: (med.frequency || '').toLowerCase().includes('twice')
+                  ? 'twice'
+                  : (med.frequency || '').toLowerCase().includes('thrice')
+                  ? 'thrice'
+                  : 'once',
+                timing: med.timing || 'morning',
+                foodInstruction: finalFood,
+                manufacturer: med.manufacturer || null,
+                safetyTip: finalSafety,
+                suggestedType: finalType,
+                rxNormVerified: rxNormRes.verified,
+                rxcui: rxNormRes.rxcui || aiResolved?.standardizedCode || null,
+                dosageOptions: aiResolved?.dosageOptions?.length > 0 ? aiResolved.dosageOptions : (med.strength ? [med.strength] : ['Standard dose']),
+              };
+            })
+          );
+
+          filePaths.forEach(cleanupFile);
+
+          const primaryMed = enrichedMedications[0];
+          const confidence = (parsed.confidence || 'high').toLowerCase();
+          const isPrescription = Boolean(parsed.is_prescription || enrichedMedications.length > 1 || parsed.prescriber);
+          const prescriber = parsed.prescriber || null;
           const sourceTag = aiExtraction.isTextOnly ? 'ocr_gemini_hybrid' : 'gemini_vision';
-          const tokenTag = aiExtraction.isTextOnly ? '~150 tokens (85% token reduction)' : 'Multimodal Vision';
 
           return res.status(200).json({
             source: sourceTag,
             modelUsed: aiExtraction.modelUsed,
-            tokenStrategy: tokenTag,
-            drug_name: drugName,
-            generic_name: finalGenericName,
-            composition: parsed.composition || aiResolved?.genericSalts || [],
-            strength: parsed.strength || aiResolved?.dosageOptions?.[0] || null,
-            form: parsed.form || 'tablet',
-            category: finalCategory,
-            frequency: parsed.frequency || 'once',
-            duration: parsed.duration || null,
-            prescriber: parsed.prescriber || null,
-            manufacturer: parsed.manufacturer || null,
-            rxNormVerified: rxNormRes.verified,
-            rxcui: rxNormRes.rxcui || aiResolved?.standardizedCode || null,
-            confidence: confidence,
+            confidence,
+            isPrescription,
+            prescriber,
+            prescriberName: prescriber,
+            medicationCount: enrichedMedications.length,
+            medications: enrichedMedications,
+
+            // Primary single-drug compatibility fields
+            drug_name: primaryMed.drug_name,
+            generic_name: primaryMed.generic_name,
+            composition: primaryMed.composition,
+            genericSalts: primaryMed.genericSalts,
+            strength: primaryMed.strength,
+            form: primaryMed.form,
+            category: primaryMed.category,
+            frequency: primaryMed.frequency,
+            timing: primaryMed.timing,
+            foodInstruction: primaryMed.foodInstruction,
+            manufacturer: primaryMed.manufacturer,
+            rxNormVerified: primaryMed.rxNormVerified,
+            rxcui: primaryMed.rxcui,
+            safetyTip: primaryMed.safetyTip,
+            suggestedType: primaryMed.suggestedType,
+            dosageOptions: primaryMed.dosageOptions,
             raw_extraction: aiExtraction.raw,
 
-            // Backward compatibility aliases for frontend components
-            candidate: drugName,
-            genericName: finalGenericName,
-            standardizedCode: rxNormRes.rxcui || aiResolved?.standardizedCode || null,
-            verified: true,
-            fallbackCandidates,
-            suggestedDosage: parsed.strength || aiResolved?.dosageOptions?.[0] || '',
-            suggestedType: finalType,
-            category: finalCategory,
-            safetyTip: finalSafetyTip,
-            dosageOptions: aiResolved?.dosageOptions?.length > 0 ? aiResolved.dosageOptions : (parsed.strength ? [parsed.strength] : ['Standard dose']),
-            commonFrequency: (parsed.frequency || '').toLowerCase().includes('twice')
-              ? 'twice'
-              : (parsed.frequency || '').toLowerCase().includes('thrice')
-              ? 'thrice'
-              : 'once',
-            foodInstruction: finalFoodInstruction,
-            prescriberName: parsed.prescriber || null,
-            note: aiExtraction.isTextOnly
-              ? `Extracted via Smart Hybrid OCR + Gemini Text (${tokenTag}).`
+            // Backward compatibility aliases
+            candidate: primaryMed.drug_name,
+            genericName: primaryMed.generic_name,
+            standardizedCode: primaryMed.rxcui,
+            verified: primaryMed.rxNormVerified,
+            fallbackCandidates: [
+              primaryMed.drug_name,
+              ...(primaryMed.genericSalts || []),
+            ].slice(0, 4),
+            suggestedDosage: primaryMed.strength || '',
+            commonFrequency: primaryMed.frequency,
+            note: isPrescription && enrichedMedications.length > 1
+              ? `Prescription slip detected: extracted ${enrichedMedications.length} medications via Gemini AI.`
               : `Extracted via Gemini Vision (${aiExtraction.modelUsed}).`,
           });
         }
@@ -486,7 +568,7 @@ router.post(
       console.log('[scan] Stage 4: Falling back to Local Tesseract Rule Extraction...');
       if (!tesseractRawText) {
         try {
-          const tResult = await tesseract.recognize(filePath, tesseractConfig);
+          const tResult = await tesseract.recognize(primaryFilePath, tesseractConfig);
           tesseractRawText = (tResult || '').trim();
         } catch (tErr) {
           console.warn(`[scan] Local Tesseract OCR failed: ${tErr.message}`);
@@ -496,7 +578,7 @@ router.post(
       const hasTesseractContent = /[A-Za-z0-9]{3,}/.test(tesseractRawText);
 
       if (hasTesseractContent && tesseractRawText.length >= 3) {
-        cleanupFile(filePath);
+        filePaths.forEach(cleanupFile);
 
         const extraction = extractAndRankCandidates(tesseractRawText);
         const verification = await verifyCandidatesWithRxNorm(
@@ -547,9 +629,9 @@ router.post(
 
       if (ocrSpaceKey && ocrSpaceKey.trim().length > 0) {
         const form = new FormData();
-        form.append('file', fs.createReadStream(filePath), {
-          filename: req.file.originalname || 'prescription.jpg',
-          contentType: req.file.mimetype,
+        form.append('file', fs.createReadStream(primaryFilePath), {
+          filename: 'prescription.jpg',
+          contentType: mimeTypes[0] || 'image/jpeg',
         });
         form.append('apikey', ocrSpaceKey);
         form.append('language', 'eng');
@@ -568,7 +650,7 @@ router.post(
           console.warn(`[scan] OCR.space cloud call failed: ${ocrErr.message}`);
         }
 
-        cleanupFile(filePath);
+        filePaths.forEach(cleanupFile);
 
         const parsedResult = ocrResponse?.data?.ParsedResults?.[0];
         const cloudRawText = (parsedResult?.ParsedText ?? '').trim();
@@ -616,7 +698,7 @@ router.post(
         }
       }
 
-      cleanupFile(filePath);
+      filePaths.forEach(cleanupFile);
 
       // If none of the engines returned anything usable
       return res.status(422).json({
@@ -624,7 +706,7 @@ router.post(
         fallback: true,
       });
     } catch (err) {
-      cleanupFile(filePath);
+      filePaths.forEach(cleanupFile);
       console.error('[POST /medicine/scan]', err);
       return res.status(500).json({
         error: 'Scan failed unexpectedly. Please enter the medicine name manually.',
@@ -771,5 +853,66 @@ router.post(
     }
   }
 );
+// ═════════════════════════════════════════════════════════════════════════════
+// GET /medicine/barcode/:code
+// Instant 0-token barcode / 2D DataMatrix lookup
+// ═════════════════════════════════════════════════════════════════════════════
+router.get('/barcode/:code', auth, async (req, res) => {
+  const code = (req.params.code || '').trim();
+  if (!code) {
+    return res.status(400).json({ error: 'Please provide a barcode number.' });
+  }
+
+  try {
+    const pill = await prisma.pillImprint.findFirst({
+      where: {
+        OR: [
+          { imprintCode: { equals: code, mode: 'insensitive' } },
+          { drugName: { contains: code, mode: 'insensitive' } },
+        ],
+      },
+    });
+
+    if (pill) {
+      const resolved = await resolveDrugWithAI(pill.drugName);
+      return res.status(200).json({
+        found: true,
+        source: 'local_registry',
+        drug_name: pill.drugName,
+        generic_name: resolved.genericName,
+        strength: pill.strength || 'Standard dose',
+        form: pill.shape || 'tablet',
+        category: resolved.class,
+        safetyTip: resolved.safetyTip,
+        foodInstruction: resolved.foodInstruction,
+        rxcui: resolved.standardizedCode,
+      });
+    }
+
+    const resolved = await resolveDrugWithAI(code);
+    if (resolved && resolved.layer !== 'none' && resolved.resolvedName !== code) {
+      return res.status(200).json({
+        found: true,
+        source: resolved.layer,
+        drug_name: resolved.resolvedName,
+        generic_name: resolved.genericName,
+        strength: resolved.dosageOptions?.[0] || 'Standard dose',
+        form: 'tablet',
+        category: resolved.class,
+        safetyTip: resolved.safetyTip,
+        foodInstruction: resolved.foodInstruction,
+        rxcui: resolved.standardizedCode,
+      });
+    }
+
+    return res.status(200).json({
+      found: false,
+      code,
+      message: 'Barcode not found in direct registry. You can scan the label photo instead.',
+    });
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
+});
 
 module.exports = router;

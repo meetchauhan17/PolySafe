@@ -484,6 +484,86 @@ router.post('/', auth, requireRole(['PATIENT', 'CAREGIVER']), async (req, res) =
 });
 
 // ═════════════════════════════════════════════════════════════════════════════
+// POST /medicine/batch
+// Add multiple medications from prescription scans in one seamless batch
+// ═════════════════════════════════════════════════════════════════════════════
+router.post('/batch', auth, async (req, res) => {
+  const { userId } = req.user;
+  const { medicines } = req.body;
+
+  if (!Array.isArray(medicines) || medicines.length === 0) {
+    return res.status(400).json({ error: 'Please provide an array of medicines to add.' });
+  }
+
+  try {
+    const patient = await prisma.patient.findUnique({ where: { userId } });
+    if (!patient) {
+      return res.status(404).json({ error: 'Patient profile not found. Please complete onboarding.' });
+    }
+
+    const addedMeds = [];
+    for (const item of medicines) {
+      const name = String(item.name || item.drug_name || '').trim();
+      if (!name) continue;
+
+      const type = ['PRESCRIPTION', 'OTC', 'HERBAL'].includes(item.type) ? item.type : 'PRESCRIPTION';
+      const dosage = item.dosage || item.strength || null;
+
+      // Check if already active in patient regimen
+      const existing = await prisma.medicine.findFirst({
+        where: {
+          patientId: patient.id,
+          name: { equals: name, mode: 'insensitive' },
+          removedAt: null,
+        },
+      });
+
+      if (existing) {
+        addedMeds.push(existing);
+        continue;
+      }
+
+      const resolved = await resolveDrugWithAI(name);
+      const standardizedCode = await lookupRxCui(name) || resolved.standardizedCode;
+      const harmLevel = resolved.harmLevel || getDrugHarmLevel(name, type);
+
+      const created = await prisma.medicine.create({
+        data: {
+          patientId:        patient.id,
+          name,
+          standardizedCode: standardizedCode || null,
+          type,
+          dosage:           dosage || resolved.dosageOptions?.[0] || 'Standard dose',
+          harmLevel,
+          addedBy:          userId,
+          dateAdded:        new Date(),
+        },
+      });
+
+      addedMeds.push({
+        ...created,
+        class: resolved.class,
+        foodInstruction: resolved.foodInstruction,
+        safetyTip: resolved.safetyTip,
+        genericSalts: resolved.genericSalts,
+      });
+    }
+
+    const cumulativeBurden = await calculateCumulativeBurden(patient.id);
+
+    return res.status(201).json({
+      message: `Successfully added ${addedMeds.length} medicine(s) to your regimen.`,
+      addedCount: addedMeds.length,
+      medicines: addedMeds,
+      cumulativeBurden,
+    });
+  } catch (err) {
+    console.error('[POST /medicine/batch]', err);
+    return res.status(500).json({ error: 'Failed to batch add medications.' });
+  }
+});
+
+// ═════════════════════════════════════════════════════════════════════════════
 // GET /medicine (Returns only active, non-discontinued medicines)
 // ═════════════════════════════════════════════════════════════════════════════
 router.get('/', auth, async (req, res) => {
