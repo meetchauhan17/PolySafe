@@ -73,7 +73,7 @@ function CascadeMatchCard({ match, description }) {
         icon={<Pill className="w-4 h-4 text-[#2B6E5E]" />}
         className="space-y-3"
       >
-        <div className="flex items-start space-x-3 p-3.5 bg-[#FDFBF7] border border-[#E7E1D3] rounded-xl">
+        <div className="flex items-start space-x-3 p-3.5 bg-[var(--brand-paper)] border border-[var(--brand-border-subtle)] rounded-xl">
           <div className="p-2 bg-[#2B6E5E]/10 rounded-lg flex-shrink-0">
             <Pill className="w-4 h-4 text-[#2B6E5E]" />
           </div>
@@ -87,7 +87,7 @@ function CascadeMatchCard({ match, description }) {
               {match.medicineDosage && (
                 <span className="text-[10px] text-[#6B726C]">{match.medicineDosage}</span>
               )}
-              <span className="text-[10px] px-2 py-0.5 bg-[#F5F0E8] border border-[#E7E1D3] rounded-md text-[#6B726C] font-semibold">
+              <span className="text-[10px] px-2 py-0.5 bg-[var(--brand-paper)] border border-[var(--brand-border-subtle)] rounded-md text-[#6B726C] font-semibold">
                 {match.medicineType === 'PRESCRIPTION' ? 'Rx' : match.medicineType}
               </span>
             </div>
@@ -123,7 +123,7 @@ function CascadeMatchCard({ match, description }) {
       </Card>
 
       {/* Safety notice */}
-      <div className="flex items-start space-x-2.5 p-4 border-2 border-[#E7E1D3] bg-[#FDFBF7] rounded-2xl">
+      <div className="flex items-start space-x-2.5 p-4 border-2 border-[var(--brand-border-subtle)] bg-[var(--brand-paper)] rounded-2xl">
         <Info className="w-4 h-4 text-[#6B726C] flex-shrink-0 mt-0.5" />
         <p className="text-[11px] text-[#6B726C] leading-relaxed">
           <strong>This is an informational safety alert, not a medical diagnosis.</strong>{' '}
@@ -190,7 +190,7 @@ function NoCascadeCard({ description }) {
         icon={<MessageSquare className="w-4 h-4 text-[#2B6E5E]" />}
         className="space-y-3"
       >
-        <div className="p-4 bg-[#F5F0E8] border border-[#E7E1D3] rounded-xl">
+        <div className="p-4 bg-[var(--brand-paper)] border border-[var(--brand-border-subtle)] rounded-xl">
           <p className="text-sm text-[#4A4F4B] leading-relaxed italic">
             "I've been experiencing {description}. Could any of my current medicines be contributing to this, even if it seems unrelated?"
           </p>
@@ -223,7 +223,7 @@ export default function SymptomResultPage() {
   }
 
   return (
-    <div className="min-h-[88vh] bg-[#EDE8DC] pb-12">
+    <div className="min-h-[88vh] bg-[var(--brand-clay)] pb-12">
       <div className="max-w-2xl mx-auto px-4 py-8 space-y-5">
 
         {/* ── Back nav ───────────────────────────────────────────────────────── */}

@@ -48,7 +48,7 @@ export default function GuestLockModal({ isOpen, onClose, featureName = 'this fe
           <button
             type="button"
             onClick={onClose}
-            className="absolute top-4 right-4 p-2 text-[#6B726C] hover:text-[#232724] rounded-full hover:bg-[#F5F0E8] transition-colors"
+            className="absolute top-4 right-4 p-2 text-[#6B726C] hover:text-[#232724] rounded-full hover:bg-[var(--brand-paper)] transition-colors"
             aria-label="Close modal"
           >
             <X className="w-5 h-5" />
@@ -78,7 +78,7 @@ export default function GuestLockModal({ isOpen, onClose, featureName = 'this fe
             <p>
               You're currently exploring PolySafe in <strong className="text-[#232724]">Guest Demo Mode</strong>.
             </p>
-            <p className="bg-[#FBF8F2] p-3.5 rounded-2xl border border-[#E7E1D3] text-xs text-[#6B726C]">
+            <p className="bg-[var(--brand-paper)] p-3.5 rounded-2xl border border-[var(--brand-border-subtle)] text-xs text-[#6B726C]">
               To <strong className="text-[#2B6E5E]">{featureName}</strong>, save real prescriptions, log symptoms, generate physician share codes, and get personalized interaction warnings, please sign in or create an account.
             </p>
           </div>

@@ -148,7 +148,7 @@ function PatientSummaryCard({ patientId, patientAge }) {
       </Card>
 
       {/* Caregiver permission notice */}
-      <div className="flex items-start gap-2.5 p-3.5 bg-[#F5F0E8] border border-[#E7E1D3] rounded-2xl">
+      <div className="flex items-start gap-2.5 p-3.5 bg-[var(--brand-paper)] border border-[var(--brand-border-subtle)] rounded-2xl">
         <Info className="w-4 h-4 text-[#6B726C] flex-shrink-0 mt-0.5" />
         <p className="text-[11px] text-[#6B726C] leading-relaxed">
           As a caregiver, you see the patient's overall safety status and today's reminders.

@@ -14,11 +14,14 @@
 
 :root {
   /* ── Core Brand Neumorphic Palette ─────────────────────────────────── */
-  --brand-paper: #EDE8DC;                /* Warm Clay App Base */
-  --brand-card: #EDE8DC;                 /* Neumorphic Molded Surface */
-  --brand-surface-subtle: #E6E0D3;       /* Sub-surface / Inset Well */
+  --brand-paper: #FBF8F2;                /* Warm Light Background */
+  --brand-clay: #EDE8DC;                 /* Warm Clay Base Surface */
+  --brand-sub-surface: #E6E0D3;          /* Inset Well Sub-surface */
+  --brand-surface-subtle: #E6E0D3;       /* Sub-surface alias */
+  --brand-card: #FFFFFF;                 /* Explicit white card context */
   --brand-border: transparent;           /* Transparent by default in Neumorphic Soft UI */
-  --brand-border-visible: #DCD5C6;       /* Subtle edge accent when needed */
+  --brand-border-visible: #DCD5C6;       /* Visible edge accent */
+  --brand-border-subtle: #E7E1D3;        /* Subtle border accent */
 
   --brand-text: #1C2B27;                 /* Ink (11.99:1 contrast ratio against #EDE8DC) */
   --brand-muted: #5C6B64;                /* Muted text (4.65:1 contrast ratio against #EDE8DC) */

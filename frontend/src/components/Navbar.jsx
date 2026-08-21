@@ -27,7 +27,7 @@ export default function Navbar() {
   ];
 
   return (
-    <nav className="sticky top-0 z-50 bg-[#FBF8F2]/90 backdrop-blur-md border-b-2 border-[#E7E1D3] px-4 py-3">
+    <nav className="sticky top-0 z-50 bg-[var(--brand-paper)]/90 backdrop-blur-md border-b-2 border-[var(--brand-border-subtle)] px-4 py-3">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         <Link to="/home" className="flex items-center space-x-2.5">
           <div className="p-2 bg-[#2B6E5E] text-white rounded-xl shadow-md">
@@ -67,7 +67,7 @@ export default function Navbar() {
         <div className="flex items-center space-x-2">
           <Link
             to="/onboarding"
-            className="px-3 py-1.5 text-xs font-bold text-[#2B6E5E] bg-[#EDE8DC] shadow-[2px_2px_4px_rgba(191,180,155,0.4),-2px_-2px_4px_rgba(255,255,255,0.6)] hover:bg-[#F4FAF8] rounded-xl border border-[rgba(191,180,155,0.4)] transition-colors flex items-center space-x-1"
+            className="px-3 py-1.5 text-xs font-bold text-[#2B6E5E] bg-[var(--brand-clay)] shadow-[2px_2px_4px_rgba(191,180,155,0.4),-2px_-2px_4px_rgba(255,255,255,0.6)] hover:bg-[#F4FAF8] rounded-xl border border-[rgba(191,180,155,0.4)] transition-colors flex items-center space-x-1"
           >
             <UserCheck className="w-3.5 h-3.5" />
             <span>Onboarding</span>

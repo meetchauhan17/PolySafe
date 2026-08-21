@@ -57,7 +57,7 @@ const addCaregiver = (phone) =>
 const STATUS_CFG = {
   PENDING:  { label: 'Pending',  cls: 'bg-amber-100  text-amber-800  border-amber-200',  icon: <Clock       className="w-3 h-3" /> },
   APPROVED: { label: 'Approved', cls: 'bg-green-100  text-green-800  border-green-200',  icon: <CheckCircle2 className="w-3 h-3" /> },
-  REVOKED:  { label: 'Revoked',  cls: 'bg-[#F5F0E8] text-[#6B726C] border-[#E7E1D3]', icon: <XCircle      className="w-3 h-3" /> },
+  REVOKED:  { label: 'Revoked',  cls: 'bg-[var(--brand-paper)] text-[#6B726C] border-[var(--brand-border-subtle)]', icon: <XCircle      className="w-3 h-3" /> },
 };
 
 // ─── Single connection row ────────────────────────────────────────────────────
@@ -407,7 +407,7 @@ export default function ConnectedPeoplePage() {
         )}
 
         {/* Footer note */}
-        <div className="flex items-start gap-2.5 p-4 border-2 border-[#E7E1D3] bg-[#FDFBF7] rounded-2xl">
+        <div className="flex items-start gap-2.5 p-4 border-2 border-[var(--brand-border-subtle)] bg-[var(--brand-paper)] rounded-2xl">
           <Info className="w-4 h-4 text-[#6B726C] flex-shrink-0 mt-0.5" />
           <p className="text-[11px] text-[#6B726C] leading-relaxed">
             Revoking access takes effect immediately. Revoked connections cannot view any new or existing data. The connection is archived, not deleted.

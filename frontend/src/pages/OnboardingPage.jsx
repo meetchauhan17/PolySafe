@@ -164,7 +164,7 @@ export default function OnboardingPage() {
   };
 
   return (
-    <PageTransition className="min-h-[88vh] bg-[#EDE8DC] flex items-start justify-center px-4 py-10 md:py-16">
+    <PageTransition className="min-h-[88vh] bg-[var(--brand-clay)] flex items-start justify-center px-4 py-10 md:py-16">
       <div className="max-w-2xl w-full space-y-6">
 
         {/* ── Header ─────────────────────────────────────────────────────────── */}
@@ -240,7 +240,7 @@ export default function OnboardingPage() {
             subtitle="Select all that apply — determines organ-specific interaction risk"
             icon={<FlaskConical className="w-4 h-4 text-[#2B6E5E]" />}
             badge={
-              <span className="text-[10px] font-bold text-[#6B726C] bg-[#E7E1D3] px-2 py-0.5 rounded-md">
+              <span className="text-[10px] font-bold text-[#6B726C] bg-[var(--brand-border-subtle)] px-2 py-0.5 rounded-md">
                 OPTIONAL
               </span>
             }
@@ -279,7 +279,7 @@ export default function OnboardingPage() {
             </div>
 
             {conditions.length > 0 && !conditions.includes('none') && (
-              <div className="flex flex-wrap gap-2 pt-2 border-t border-[#E7E1D3]">
+              <div className="flex flex-wrap gap-2 pt-2 border-t border-[var(--brand-border-subtle)]">
                 <span className="text-[11px] font-bold text-[#6B726C] self-center">Selected:</span>
                 {conditions.map((id) => {
                   const opt = CONDITION_OPTIONS.find((o) => o.id === id);
@@ -305,7 +305,7 @@ export default function OnboardingPage() {
             subtitle="Helps flag prescriptions you may react to"
             icon={<Sparkles className="w-4 h-4 text-[#2B6E5E]" />}
             badge={
-              <span className="text-[10px] font-bold text-[#6B726C] bg-[#E7E1D3] px-2 py-0.5 rounded-md">
+              <span className="text-[10px] font-bold text-[#6B726C] bg-[var(--brand-border-subtle)] px-2 py-0.5 rounded-md">
                 SKIP IF NONE
               </span>
             }

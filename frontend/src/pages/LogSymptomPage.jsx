@@ -89,7 +89,7 @@ export default function LogSymptomPage() {
   };
 
   return (
-    <div className="min-h-[88vh] bg-[#EDE8DC] pb-12">
+    <div className="min-h-[88vh] bg-[var(--brand-clay)] pb-12">
       <div className="max-w-2xl mx-auto px-4 py-8 space-y-5">
 
         {/* ── Page header ──────────────────────────────────────────────────── */}
@@ -162,7 +162,7 @@ export default function LogSymptomPage() {
                       className={`text-xs px-3.5 py-1.5 rounded-full font-semibold cursor-pointer transition-all duration-180 ease-out ${
                         isSelected
                           ? 'bg-[#2B6E5E] text-white shadow-sm'
-                          : 'bg-[#EDE8DC] text-[#1C2B27] shadow-[2px_2px_5px_rgba(191,180,155,0.45),-2px_-2px_5px_rgba(255,255,255,0.6)] hover:shadow-[3px_3px_7px_rgba(191,180,155,0.55),-3px_-3px_7px_rgba(255,255,255,0.7)] active:shadow-[inset_2px_2px_4px_rgba(191,180,155,0.5)] hover:text-[#2B6E5E]'
+                          : 'bg-[var(--brand-clay)] text-[#1C2B27] shadow-[2px_2px_5px_rgba(191,180,155,0.45),-2px_-2px_5px_rgba(255,255,255,0.6)] hover:shadow-[3px_3px_7px_rgba(191,180,155,0.55),-3px_-3px_7px_rgba(255,255,255,0.7)] active:shadow-[inset_2px_2px_4px_rgba(191,180,155,0.5)] hover:text-[#2B6E5E]'
                       }`}
                     >
                       {isSelected && <CheckCircle2 className="inline w-3 h-3 mr-1" />}

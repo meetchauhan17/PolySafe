@@ -53,8 +53,8 @@ function CustomChartTooltip({ active, payload, label, mode = 'flags' }) {
     const isModerate = score >= 1 && score < 3;
 
     return (
-      <div className="bg-[#F0EBE0] border border-[#DCD5C6] rounded-xl p-3.5 shadow-md max-w-xs space-y-1.5 font-sans">
-        <div className="flex items-center justify-between gap-2 border-b border-[#DCD5C6] pb-1.5">
+      <div className="bg-[#F0EBE0] border border-[var(--brand-border-visible)] rounded-xl p-3.5 shadow-md max-w-xs space-y-1.5 font-sans">
+        <div className="flex items-center justify-between gap-2 border-b border-[var(--brand-border-visible)] pb-1.5">
           <span className="text-xs font-bold text-[#232724]">{data.label}</span>
           <span
             className="text-[10px] font-extrabold px-2 py-0.5 rounded-full"
@@ -78,8 +78,8 @@ function CustomChartTooltip({ active, payload, label, mode = 'flags' }) {
   }
 
   return (
-    <div className="bg-[#F0EBE0] border border-[#DCD5C6] rounded-xl p-3.5 shadow-md max-w-xs space-y-2 font-sans">
-      <p className="text-xs font-bold text-[#232724] border-b border-[#DCD5C6] pb-1">
+    <div className="bg-[#F0EBE0] border border-[var(--brand-border-visible)] rounded-xl p-3.5 shadow-md max-w-xs space-y-2 font-sans">
+      <p className="text-xs font-bold text-[#232724] border-b border-[var(--brand-border-visible)] pb-1">
         {label || data.period}
       </p>
       <div className="space-y-1 text-xs">
@@ -145,7 +145,7 @@ export default function InsightsPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-[88vh] bg-[#EDE8DC] pb-16">
+      <div className="min-h-[88vh] bg-[var(--brand-clay)] pb-16">
         <InsightsSkeleton />
       </div>
     );
@@ -166,7 +166,7 @@ export default function InsightsPage() {
   const currentLevel = summary.currentBurdenLevel ?? (currentScore >= 3 ? 'Critical' : currentScore >= 1 ? 'Moderate' : 'Normal');
 
   return (
-    <div className="min-h-[88vh] bg-[#EDE8DC] pb-16">
+    <div className="min-h-[88vh] bg-[var(--brand-clay)] pb-16">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 space-y-6">
         {/* ─── Header ─── */}
         <div className="flex items-center space-x-3">
@@ -252,7 +252,7 @@ export default function InsightsPage() {
           className="space-y-4"
         >
           {/* Chart Controls */}
-          <div className="flex items-center justify-between flex-wrap gap-2 pt-1 border-b border-[#E7E1D3] pb-3">
+          <div className="flex items-center justify-between flex-wrap gap-2 pt-1 border-b border-[var(--brand-border-subtle)] pb-3">
             <div className="flex items-center gap-2">
               <span className="text-xs text-[#6B726C] font-semibold">View as:</span>
               <div className="segmented-toggle-container">
@@ -418,7 +418,7 @@ export default function InsightsPage() {
               </div>
 
               {/* Threshold legend */}
-              <div className="flex items-center justify-center gap-4 text-xs font-semibold text-[#6B726C] pt-2 border-t border-[#E7E1D3]">
+              <div className="flex items-center justify-center gap-4 text-xs font-semibold text-[#6B726C] pt-2 border-t border-[var(--brand-border-subtle)]">
                 <span className="flex items-center gap-1.5">
                   <span className="w-2.5 h-2.5 rounded-full bg-[#2F8558]" />
                   0: Normal
@@ -437,7 +437,7 @@ export default function InsightsPage() {
         </Card>
 
         {/* ─── Clinical Pharmacovigilance Guidance ─── */}
-        <div className="flex items-start space-x-3 p-4 border-2 border-[#E7E1D3] bg-[#FDFBF7] rounded-2xl">
+        <div className="flex items-start space-x-3 p-4 border-2 border-[var(--brand-border-subtle)] bg-[var(--brand-paper)] rounded-2xl">
           <Info className="w-4 h-4 text-[#2B6E5E] flex-shrink-0 mt-0.5" />
           <p className="text-xs text-[#6B726C] leading-relaxed">
             <strong>Clinical Pharmacovigilance Note:</strong> Cumulative anticholinergic burden is strongly associated with fall risk, daytime somnolence, and reversible cognitive decline in older adults. Share these trend charts during doctor consultations to support proactive deprescribing reviews.

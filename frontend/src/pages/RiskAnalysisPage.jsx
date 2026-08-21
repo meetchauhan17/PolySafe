@@ -173,7 +173,7 @@ function TypeBadge({ type }) {
     PRESCRIPTION: { bg: 'bg-[#1B4B66]/10 text-[#1B4B66] border-[#1B4B66]/20', label: 'Rx' },
     OTC:          { bg: 'bg-[#8A6D3B]/10 text-[#8A6D3B] border-[#8A6D3B]/20', label: 'OTC' },
     HERBAL:       { bg: 'bg-[#2B6E5E]/10 text-[#2B6E5E] border-[#2B6E5E]/20', label: 'Herbal' },
-  }[type] ?? { bg: 'bg-[#F5F0E8] text-[#6B726C] border-[#E7E1D3]', label: type };
+  }[type] ?? { bg: 'bg-[var(--brand-paper)] text-[#6B726C] border-[var(--brand-border-subtle)]', label: type };
   return (
     <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md border ${cfg.bg}`}>
       {cfg.label}
@@ -185,7 +185,7 @@ function TypeBadge({ type }) {
 function DrugCard({ med, score }) {
   if (!med) return null;
   return (
-    <div className="flex flex-col space-y-2.5 p-4 bg-[#EDE8DC] shadow-[4px_4px_8px_rgba(191,180,155,0.45),-4px_-4px_8px_rgba(255,255,255,0.60)] rounded-2xl">
+    <div className="flex flex-col space-y-2.5 p-4 bg-[var(--brand-clay)] shadow-[4px_4px_8px_rgba(191,180,155,0.45),-4px_-4px_8px_rgba(255,255,255,0.60)] rounded-2xl">
       <div className="flex items-start space-x-3.5">
         <div className="icon-well w-10 h-10 flex-shrink-0">
           <Pill className="w-4 h-4 text-[#2B6E5E]" />
@@ -240,7 +240,7 @@ export default function RiskAnalysisPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-[88vh] bg-[#EDE8DC] pb-16">
+      <div className="min-h-[88vh] bg-[var(--brand-clay)] pb-16">
         <RiskAnalysisSkeleton />
       </div>
     );
@@ -248,7 +248,7 @@ export default function RiskAnalysisPage() {
 
   if (isError || !flag) {
     return (
-      <div className="min-h-[80vh] bg-[#EDE8DC] flex items-center justify-center p-4">
+      <div className="min-h-[80vh] bg-[var(--brand-clay)] flex items-center justify-center p-4">
         <div className="polysafe-card p-8 max-w-md w-full text-center space-y-4">
           <AlertCircle className="w-12 h-12 text-[#B23D25] mx-auto" />
           <h2 className="text-xl font-bold text-[#1C2B27]">Risk flag not found</h2>
@@ -270,7 +270,7 @@ export default function RiskAnalysisPage() {
   const burdenPct = burdenBarPct(burdenScore);
 
   return (
-    <div className="bg-[#EDE8DC] min-h-[88vh] pb-24">
+    <div className="bg-[var(--brand-clay)] min-h-[88vh] pb-24">
       <div className="max-w-2xl mx-auto px-4 py-8 space-y-6">
 
         {/* ── Top navigation ─────────────────────────────────────────────────── */}
@@ -314,12 +314,12 @@ export default function RiskAnalysisPage() {
 
           {/* Drug chips */}
           <div className="flex items-center gap-2.5 mt-4 flex-wrap">
-            <span className="flex items-center gap-1.5 bg-[#EDE8DC] shadow-[3px_3px_6px_rgba(191,180,155,0.45),-3px_-3px_6px_rgba(255,255,255,0.60)] px-3.5 py-1.5 rounded-2xl text-xs font-bold text-[#1C2B27]">
+            <span className="flex items-center gap-1.5 bg-[var(--brand-clay)] shadow-[3px_3px_6px_rgba(191,180,155,0.45),-3px_-3px_6px_rgba(255,255,255,0.60)] px-3.5 py-1.5 rounded-2xl text-xs font-bold text-[#1C2B27]">
               <Pill className="w-3.5 h-3.5 text-[#2B6E5E]" />
               {flag.medicineA?.name}
             </span>
             <span className="text-lg text-[#4A4F4B] font-bold">+</span>
-            <span className="flex items-center gap-1.5 bg-[#EDE8DC] shadow-[3px_3px_6px_rgba(191,180,155,0.45),-3px_-3px_6px_rgba(255,255,255,0.60)] px-3.5 py-1.5 rounded-2xl text-xs font-bold text-[#1C2B27]">
+            <span className="flex items-center gap-1.5 bg-[var(--brand-clay)] shadow-[3px_3px_6px_rgba(191,180,155,0.45),-3px_-3px_6px_rgba(255,255,255,0.60)] px-3.5 py-1.5 rounded-2xl text-xs font-bold text-[#1C2B27]">
               <Pill className="w-3.5 h-3.5 text-[#2B6E5E]" />
               {flag.medicineB?.name}
             </span>
@@ -356,7 +356,7 @@ export default function RiskAnalysisPage() {
           }
           className="space-y-3"
         >
-          <div className="p-4 bg-[#EDE8DC] shadow-[inset_3px_3px_6px_rgba(191,180,155,0.5),inset_-3px_-3px_6px_rgba(255,255,255,0.6)] rounded-2xl">
+          <div className="p-4 bg-[var(--brand-clay)] shadow-[inset_3px_3px_6px_rgba(191,180,155,0.5),inset_-3px_-3px_6px_rgba(255,255,255,0.6)] rounded-2xl">
             {flag.generatedBy === 'timeout' ? (
               <div className="space-y-2">
                 <p className="text-sm text-[#1C2B27] leading-relaxed font-medium">
@@ -376,7 +376,7 @@ export default function RiskAnalysisPage() {
           {flag.patient?.conditions?.length > 0 && (
             <div className="flex flex-wrap gap-2 pt-1">
               {flag.patient.conditions.map((c) => (
-                <span key={c} className="text-[10px] px-3 py-1 bg-[#EDE8DC] shadow-[2px_2px_4px_rgba(191,180,155,0.4),-2px_-2px_4px_rgba(255,255,255,0.5)] rounded-xl text-[#5C6B64] font-semibold">
+                <span key={c} className="text-[10px] px-3 py-1 bg-[var(--brand-clay)] shadow-[2px_2px_4px_rgba(191,180,155,0.4),-2px_-2px_4px_rgba(255,255,255,0.5)] rounded-xl text-[#5C6B64] font-semibold">
                   {c}
                 </span>
               ))}
@@ -415,7 +415,7 @@ export default function RiskAnalysisPage() {
             </p>
           )}
 
-          <div className="flex items-start space-x-2.5 p-3.5 bg-[#EDE8DC] shadow-[inset_2px_2px_5px_rgba(191,180,155,0.45),inset_-2px_-2px_5px_rgba(255,255,255,0.6)] rounded-2xl">
+          <div className="flex items-start space-x-2.5 p-3.5 bg-[var(--brand-clay)] shadow-[inset_2px_2px_5px_rgba(191,180,155,0.45),inset_-2px_-2px_5px_rgba(255,255,255,0.6)] rounded-2xl">
             <ShieldCheck className="w-4 h-4 text-[#5C6B64] flex-shrink-0 mt-0.5" />
             <p className="text-[11px] text-[#5C6B64] italic">
               This is an informational safety alert, not a medical diagnosis. Always consult your doctor before changing medicines.
@@ -452,7 +452,7 @@ export default function RiskAnalysisPage() {
 
           {/* Horizontal progress bar with Inset Well Track & High-Contrast Fill */}
           <div className="space-y-1.5">
-            <div className="h-3.5 bg-[#EDE8DC] shadow-[inset_2px_2px_4px_rgba(191,180,155,0.6),inset_-2px_-2px_4px_rgba(255,255,255,0.7)] rounded-full overflow-hidden">
+            <div className="h-3.5 bg-[var(--brand-clay)] shadow-[inset_2px_2px_4px_rgba(191,180,155,0.6),inset_-2px_-2px_4px_rgba(255,255,255,0.7)] rounded-full overflow-hidden">
               <motion.div
                 className="h-full rounded-full"
                 initial={shouldReduceMotion ? { width: `${burdenPct}%` } : { width: '0%' }}
@@ -485,7 +485,7 @@ export default function RiskAnalysisPage() {
           </p>
 
           {/* Disclaimer note */}
-          <div className="flex items-start space-x-2.5 p-3.5 rounded-2xl bg-[#EDE8DC] shadow-[inset_2px_2px_5px_rgba(191,180,155,0.45),inset_-2px_-2px_5px_rgba(255,255,255,0.6)]">
+          <div className="flex items-start space-x-2.5 p-3.5 rounded-2xl bg-[var(--brand-clay)] shadow-[inset_2px_2px_5px_rgba(191,180,155,0.45),inset_-2px_-2px_5px_rgba(255,255,255,0.6)]">
             <Info className="w-3.5 h-3.5 text-[#5C6B64] flex-shrink-0 mt-0.5" />
             <p className="text-[11px] text-[#5C6B64] leading-relaxed">
               <strong>No single medicine is unsafe alone</strong> — but together, cumulative anticholinergic and sedative load may increase risk of drowsiness, falls, and cognitive effects.

@@ -221,7 +221,7 @@ export default function HomePage() {
 
   if (isError && token) {
     return (
-      <div className="min-h-[80vh] flex items-center justify-center bg-[#EDE8DC] px-4">
+      <div className="min-h-[80vh] flex items-center justify-center bg-[var(--brand-clay)] px-4">
         <div className="polysafe-card p-8 max-w-md w-full text-center space-y-4">
           <AlertCircle className="w-12 h-12 text-rose-500 mx-auto" />
           <h2 className="text-xl font-bold text-[#1C2B27]">Couldn't load your data</h2>
@@ -248,7 +248,7 @@ export default function HomePage() {
   });
 
   return (
-    <div className="bg-[#EDE8DC] min-h-[88vh] pb-28 md:pb-12">
+    <div className="bg-[var(--brand-clay)] min-h-[88vh] pb-28 md:pb-12">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 space-y-6">
 
         {/* ── Demo mode banner ─────────────────────────────────────────────── */}
@@ -410,11 +410,11 @@ export default function HomePage() {
                         animate={{ opacity: 1, y: 0 }}
                         exit={shouldReduceMotion ? undefined : { opacity: 0, scale: 0.95 }}
                         transition={{ duration: 0.2 }}
-                        className="flex items-center space-x-3.5 p-3.5 rounded-2xl bg-[#EDE8DC] shadow-[4px_4px_8px_rgba(191,180,155,0.45),-4px_-4px_8px_rgba(255,255,255,0.60)] transition-all"
+                        className="flex items-center space-x-3.5 p-3.5 rounded-2xl bg-[var(--brand-clay)] shadow-[4px_4px_8px_rgba(191,180,155,0.45),-4px_-4px_8px_rgba(255,255,255,0.60)] transition-all"
                       >
                         {/* Time bubble */}
                         <div className="flex-shrink-0 w-16 text-center">
-                          <span className="text-[11px] font-bold text-[#2B6E5E] bg-[#EDE8DC] shadow-[inset_2px_2px_4px_rgba(191,180,155,0.5),inset_-2px_-2px_4px_rgba(255,255,255,0.6)] px-2 py-1 rounded-xl block leading-snug font-mono">
+                          <span className="text-[11px] font-bold text-[#2B6E5E] bg-[var(--brand-clay)] shadow-[inset_2px_2px_4px_rgba(191,180,155,0.5),inset_-2px_-2px_4px_rgba(255,255,255,0.6)] px-2 py-1 rounded-xl block leading-snug font-mono">
                             {item.time}
                           </span>
                         </div>
@@ -438,7 +438,7 @@ export default function HomePage() {
                           className={`p-2 rounded-xl text-xs transition-colors cursor-pointer ${
                             isDoseReminded
                               ? 'bg-[#2B6E5E] text-white shadow-sm'
-                              : 'bg-[#EDE8DC] text-[#5C6B64] shadow-[inset_2px_2px_4px_rgba(191,180,155,0.4),inset_-2px_-2px_4px_rgba(255,255,255,0.5)] hover:text-[#2B6E5E]'
+                              : 'bg-[var(--brand-clay)] text-[#5C6B64] shadow-[inset_2px_2px_4px_rgba(191,180,155,0.4),inset_-2px_-2px_4px_rgba(255,255,255,0.5)] hover:text-[#2B6E5E]'
                           }`}
                         >
                           {isDoseReminded ? (
@@ -461,7 +461,7 @@ export default function HomePage() {
               title="Active Medicines"
               icon={<Pill className="w-4 h-4 text-[#2B6E5E]" />}
               badge={
-                <span className="text-[11px] font-bold text-[#5C6B64] bg-[#EDE8DC] shadow-[inset_2px_2px_4px_rgba(191,180,155,0.45),inset_-2px_-2px_4px_rgba(255,255,255,0.6)] px-2.5 py-1 rounded-xl">
+                <span className="text-[11px] font-bold text-[#5C6B64] bg-[var(--brand-clay)] shadow-[inset_2px_2px_4px_rgba(191,180,155,0.45),inset_-2px_-2px_4px_rgba(255,255,255,0.6)] px-2.5 py-1 rounded-xl">
                   {medicines.length} total
                 </span>
               }
@@ -477,7 +477,7 @@ export default function HomePage() {
                       animate={{ opacity: 1, scale: 1 }}
                       exit={shouldReduceMotion ? undefined : { opacity: 0, scale: 0.95 }}
                       transition={{ duration: 0.2 }}
-                      className="p-4 rounded-2xl bg-[#EDE8DC] shadow-[4px_4px_8px_rgba(191,180,155,0.45),-4px_-4px_8px_rgba(255,255,255,0.60)] space-y-2.5 flex flex-col justify-between"
+                      className="p-4 rounded-2xl bg-[var(--brand-clay)] shadow-[4px_4px_8px_rgba(191,180,155,0.45),-4px_-4px_8px_rgba(255,255,255,0.60)] space-y-2.5 flex flex-col justify-between"
                     >
                       <div className="space-y-2">
                         <div className="flex items-start justify-between gap-1 flex-wrap">
@@ -505,7 +505,7 @@ export default function HomePage() {
                         <DrugHarmPanel medicine={med} flags={flags} className="mt-1" />
 
                         {med.safetyTip && (
-                          <p className="text-[10px] text-[#5C6B64] bg-[#E6E0D3] shadow-[inset_2px_2px_4px_rgba(191,180,155,0.4),inset_-2px_-2px_4px_rgba(255,255,255,0.5)] p-2.5 rounded-xl border border-[rgba(191,180,155,0.3)] leading-tight">
+                          <p className="text-[10px] text-[#5C6B64] bg-[var(--brand-sub-surface)] shadow-[inset_2px_2px_4px_rgba(191,180,155,0.4),inset_-2px_-2px_4px_rgba(255,255,255,0.5)] p-2.5 rounded-xl border border-[rgba(191,180,155,0.3)] leading-tight">
                             💡 {med.safetyTip}
                           </p>
                         )}
@@ -616,7 +616,7 @@ export default function HomePage() {
                             </div>
 
                             {/* Plain explanation */}
-                            <div className="bg-[#FDFBF7] rounded-xl p-3.5 border border-[#E7E1D3]">
+                            <div className="bg-[var(--brand-paper)] rounded-xl p-3.5 border border-[var(--brand-border-subtle)]">
                               <p className="text-xs font-semibold text-[#232724] leading-relaxed">
                                 {flag.plainExplanation}
                               </p>

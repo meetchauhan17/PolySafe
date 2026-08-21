@@ -126,7 +126,7 @@ export default function TimelinePage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-[88vh] bg-[#EDE8DC] pb-16">
+      <div className="min-h-[88vh] bg-[var(--brand-clay)] pb-16">
         <TimelineSkeleton />
       </div>
     );
@@ -137,7 +137,7 @@ export default function TimelinePage() {
   const herbalCount = medicines.filter((m) => m.type === 'HERBAL').length;
 
   return (
-    <div className="min-h-[88vh] bg-[#EDE8DC] pb-16">
+    <div className="min-h-[88vh] bg-[var(--brand-clay)] pb-16">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 space-y-6">
 
         {/* ── Header ───────────────────────────────────────────────────────── */}
@@ -197,11 +197,11 @@ export default function TimelinePage() {
         {!isLoading && medicines.length > 0 && (
           <div className="flex items-center gap-6 px-1">
             <span className="flex items-center gap-2 text-xs text-[#6B726C] font-semibold">
-              <span className="w-3.5 h-3.5 rounded-full bg-[#EDE8DC] border-[3px] border-[#2B6E5E]" />
+              <span className="w-3.5 h-3.5 rounded-full bg-[var(--brand-clay)] border-[3px] border-[#2B6E5E]" />
               Safe / Normal Entry
             </span>
             <span className="flex items-center gap-2 text-xs text-[#6B726C] font-semibold">
-              <span className="w-3.5 h-3.5 rounded-full bg-[#EDE8DC] border-[3px] border-[#B23D25]" />
+              <span className="w-3.5 h-3.5 rounded-full bg-[var(--brand-clay)] border-[3px] border-[#B23D25]" />
               Interaction Flagged
             </span>
           </div>
@@ -273,7 +273,7 @@ export default function TimelinePage() {
                     >
                       {/* Circular Dot Marker: white fill, colored border (teal #2B6E5E for normal, red #B23D25 for flagged, gray #9CA3AF for discontinued) */}
                       <div
-                        className="w-[18px] h-[18px] rounded-full bg-[#EDE8DC] flex-shrink-0 mt-4 shadow-sm"
+                        className="w-[18px] h-[18px] rounded-full bg-[var(--brand-clay)] flex-shrink-0 mt-4 shadow-sm"
                         style={{
                           border: `3.5px solid ${isDiscontinued ? '#9CA3AF' : isFlagged ? '#B23D25' : '#2B6E5E'}`,
                         }}
@@ -283,7 +283,7 @@ export default function TimelinePage() {
                       <Card
                         variant={isDiscontinued ? 'default' : isFlagged ? 'danger' : 'default'}
                         className={`flex-1 space-y-2.5 transition-shadow hover:shadow-md ${
-                          isDiscontinued ? 'bg-[#F9F7F2] opacity-85 border-[#D8D2C4]' : ''
+                          isDiscontinued ? 'bg-[#F9F7F2] opacity-85 border-[var(--brand-border-subtle)]' : ''
                         }`}
                       >
                         {/* Source Label (uppercase, small, teal or muted) */}
@@ -299,7 +299,7 @@ export default function TimelinePage() {
                           {/* Date Added */}
                           <div className="flex items-center gap-2">
                             {isDiscontinued && (
-                              <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-[#EFEBE0] text-[#6B726C] border border-[#E7E1D3]">
+                              <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-[var(--brand-paper)] text-[#6B726C] border border-[var(--brand-border-subtle)]">
                                 Discontinued {med.removedAt ? `on ${formatDate(med.removedAt)}` : ''}
                               </span>
                             )}
@@ -320,7 +320,7 @@ export default function TimelinePage() {
                               ({med.dosage})
                             </span>
                           )}
-                          <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-[#F5F0E8] border border-[#E7E1D3] text-[#6B726C]">
+                          <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-[var(--brand-paper)] border border-[var(--brand-border-subtle)] text-[#6B726C]">
                             {med.type}
                           </span>
                         </div>
@@ -360,7 +360,7 @@ export default function TimelinePage() {
 
         {/* ── Footer Information ────────────────────────────────────────────── */}
         {!isLoading && medicines.length > 0 && (
-          <div className="flex items-start space-x-3 p-4 border-2 border-[#E7E1D3] bg-[#FDFBF7] rounded-2xl">
+          <div className="flex items-start space-x-3 p-4 border-2 border-[var(--brand-border-subtle)] bg-[var(--brand-paper)] rounded-2xl">
             <Info className="w-4 h-4 text-[#2B6E5E] flex-shrink-0 mt-0.5" />
             <p className="text-xs text-[#6B726C] leading-relaxed">
               <strong>Prescription timeline protection:</strong> Prescribing cascades often develop silently over months as new drugs are introduced to treat side effects of previous drugs. This timeline tracks every addition in sequence to assist clinical de-prescribing reviews.

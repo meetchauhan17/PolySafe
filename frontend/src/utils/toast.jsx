@@ -13,7 +13,7 @@ import { CheckCircle2, AlertCircle, AlertTriangle, Info, X } from 'lucide-react'
 export const notify = {
   success: (title, description) => {
     return toast.custom((t) => (
-      <div className="w-full max-w-sm bg-[#EDE8DC] border-2 border-[#2F8558]/40 rounded-2xl p-4 shadow-[8px_8px_20px_rgba(0,0,0,0.18),-4px_-4px_12px_rgba(255,255,255,0.7)] flex items-start gap-3 relative text-left font-sans">
+      <div className="w-full max-w-sm bg-[var(--brand-clay)] border-2 border-[#2F8558]/40 rounded-2xl p-4 shadow-[8px_8px_20px_rgba(0,0,0,0.18),-4px_-4px_12px_rgba(255,255,255,0.7)] flex items-start gap-3 relative text-left font-sans">
         <div className="p-2 bg-[#E4F2E9] text-[#2F8558] rounded-xl flex-shrink-0 mt-0.5">
           <CheckCircle2 className="w-5 h-5" />
         </div>
@@ -26,7 +26,7 @@ export const notify = {
         <button
           type="button"
           onClick={() => toast.dismiss(t)}
-          className="absolute top-3 right-3 text-[#9CA3AF] hover:text-[#232724] transition-colors p-1 rounded-lg hover:bg-[#F5F0E8]"
+          className="absolute top-3 right-3 text-[#9CA3AF] hover:text-[#232724] transition-colors p-1 rounded-lg hover:bg-[var(--brand-paper)]"
           aria-label="Dismiss notification"
         >
           <X className="w-3.5 h-3.5" />
@@ -37,7 +37,7 @@ export const notify = {
 
   error: (title, description) => {
     return toast.custom((t) => (
-      <div className="w-full max-w-sm bg-[#EDE8DC] border-2 border-[#B23D25]/40 rounded-2xl p-4 shadow-[8px_8px_20px_rgba(0,0,0,0.18),-4px_-4px_12px_rgba(255,255,255,0.7)] flex items-start gap-3 relative text-left font-sans">
+      <div className="w-full max-w-sm bg-[var(--brand-clay)] border-2 border-[#B23D25]/40 rounded-2xl p-4 shadow-[8px_8px_20px_rgba(0,0,0,0.18),-4px_-4px_12px_rgba(255,255,255,0.7)] flex items-start gap-3 relative text-left font-sans">
         <div className="p-2 bg-[#FBE4DE] text-[#B23D25] rounded-xl flex-shrink-0 mt-0.5">
           <AlertCircle className="w-5 h-5" />
         </div>
@@ -50,7 +50,7 @@ export const notify = {
         <button
           type="button"
           onClick={() => toast.dismiss(t)}
-          className="absolute top-3 right-3 text-[#9CA3AF] hover:text-[#232724] transition-colors p-1 rounded-lg hover:bg-[#F5F0E8]"
+          className="absolute top-3 right-3 text-[#9CA3AF] hover:text-[#232724] transition-colors p-1 rounded-lg hover:bg-[var(--brand-paper)]"
           aria-label="Dismiss notification"
         >
           <X className="w-3.5 h-3.5" />
@@ -61,7 +61,7 @@ export const notify = {
 
   warning: (title, description) => {
     return toast.custom((t) => (
-      <div className="w-full max-w-sm bg-[#EDE8DC] border-2 border-[#B5791A]/40 rounded-2xl p-4 shadow-[8px_8px_20px_rgba(0,0,0,0.18),-4px_-4px_12px_rgba(255,255,255,0.7)] flex items-start gap-3 relative text-left font-sans">
+      <div className="w-full max-w-sm bg-[var(--brand-clay)] border-2 border-[#B5791A]/40 rounded-2xl p-4 shadow-[8px_8px_20px_rgba(0,0,0,0.18),-4px_-4px_12px_rgba(255,255,255,0.7)] flex items-start gap-3 relative text-left font-sans">
         <div className="p-2 bg-[#FBEED9] text-[#B5791A] rounded-xl flex-shrink-0 mt-0.5">
           <AlertTriangle className="w-5 h-5" />
         </div>
@@ -74,7 +74,7 @@ export const notify = {
         <button
           type="button"
           onClick={() => toast.dismiss(t)}
-          className="absolute top-3 right-3 text-[#9CA3AF] hover:text-[#232724] transition-colors p-1 rounded-lg hover:bg-[#F5F0E8]"
+          className="absolute top-3 right-3 text-[#9CA3AF] hover:text-[#232724] transition-colors p-1 rounded-lg hover:bg-[var(--brand-paper)]"
           aria-label="Dismiss notification"
         >
           <X className="w-3.5 h-3.5" />
@@ -85,7 +85,7 @@ export const notify = {
 
   info: (title, description) => {
     return toast.custom((t) => (
-      <div className="w-full max-w-sm bg-[#EDE8DC] border-2 border-[#1B4B66]/40 rounded-2xl p-4 shadow-[8px_8px_20px_rgba(0,0,0,0.18),-4px_-4px_12px_rgba(255,255,255,0.7)] flex items-start gap-3 relative text-left font-sans">
+      <div className="w-full max-w-sm bg-[var(--brand-clay)] border-2 border-[#1B4B66]/40 rounded-2xl p-4 shadow-[8px_8px_20px_rgba(0,0,0,0.18),-4px_-4px_12px_rgba(255,255,255,0.7)] flex items-start gap-3 relative text-left font-sans">
         <div className="p-2 bg-[#E6EFF5] text-[#1B4B66] rounded-xl flex-shrink-0 mt-0.5">
           <Info className="w-5 h-5" />
         </div>
@@ -98,7 +98,7 @@ export const notify = {
         <button
           type="button"
           onClick={() => toast.dismiss(t)}
-          className="absolute top-3 right-3 text-[#9CA3AF] hover:text-[#232724] transition-colors p-1 rounded-lg hover:bg-[#F5F0E8]"
+          className="absolute top-3 right-3 text-[#9CA3AF] hover:text-[#232724] transition-colors p-1 rounded-lg hover:bg-[var(--brand-paper)]"
           aria-label="Dismiss notification"
         >
           <X className="w-3.5 h-3.5" />

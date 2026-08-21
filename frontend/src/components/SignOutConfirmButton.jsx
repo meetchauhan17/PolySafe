@@ -65,7 +65,7 @@ export default function SignOutConfirmButton({
         <button
           type="button"
           onClick={() => setShowConfirm(false)}
-          className="px-2 py-1 text-[11px] font-semibold text-[#6B726C] hover:bg-[#F5F0E8] hover:text-[#232724] rounded-lg transition-colors cursor-pointer whitespace-nowrap"
+          className="px-2 py-1 text-[11px] font-semibold text-[#6B726C] hover:bg-[var(--brand-paper)] hover:text-[#232724] rounded-lg transition-colors cursor-pointer whitespace-nowrap"
         >
           Cancel
         </button>
@@ -79,7 +79,7 @@ export default function SignOutConfirmButton({
       onClick={() => setShowConfirm(true)}
       className={
         className ||
-        `flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-[#6B726C] hover:text-[#B23D25] hover:bg-[#FBE4DE]/50 rounded-xl border border-[#E7E1D3] transition-colors cursor-pointer`
+        `flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-[#6B726C] hover:text-[#B23D25] hover:bg-[#FBE4DE]/50 rounded-xl border border-[var(--brand-border-subtle)] transition-colors cursor-pointer`
       }
       title={isGuest ? 'Exit Guest Mode' : 'Sign Out of PolySafe'}
     >

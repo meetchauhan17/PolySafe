@@ -17,7 +17,7 @@ export default function ProtectedRoute({ allowedRoles }) {
 
   if (isLoading) {
     return (
-      <div className="min-h-[85vh] bg-[#FBF8F2] flex items-center justify-center">
+      <div className="min-h-[85vh] bg-[var(--brand-paper)] flex items-center justify-center">
         <HomeSkeleton />
       </div>
     );

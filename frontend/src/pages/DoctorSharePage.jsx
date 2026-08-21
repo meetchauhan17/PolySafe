@@ -339,7 +339,7 @@ export default function DoctorSharePage() {
         )}
 
         {/* Privacy note */}
-        <div className="flex items-start gap-2.5 p-4 border-2 border-[#E7E1D3] rounded-2xl bg-[#FDFBF7]">
+        <div className="flex items-start gap-2.5 p-4 border-2 border-[var(--brand-border-subtle)] rounded-2xl bg-[var(--brand-paper)]">
           <Info className="w-4 h-4 text-[#6B726C] flex-shrink-0 mt-0.5" />
           <p className="text-xs text-[#6B726C] leading-relaxed">
             Codes expire after 24 hours. Each code can only be claimed once. Your doctor will see your medication list, interaction flags, and cumulative burden score — but not any personal details beyond your age and conditions.

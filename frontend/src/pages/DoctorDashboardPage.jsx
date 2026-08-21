@@ -171,7 +171,7 @@ function DoctorSafetyCheckModal({ isOpen, onClose, patientId, patientAge }) {
 
               {/* Autocomplete Dropdown */}
               {showSuggestions && suggestions.length > 0 && (
-                <div className="absolute top-full left-0 right-0 mt-1.5 bg-[#FDFBF7] border border-[#E7E1D3] shadow-lg rounded-2xl overflow-hidden z-20 max-h-48 overflow-y-auto">
+                <div className="absolute top-full left-0 right-0 mt-1.5 bg-[var(--brand-paper)] border border-[var(--brand-border-subtle)] shadow-lg rounded-2xl overflow-hidden z-20 max-h-48 overflow-y-auto">
                   {suggestions.map((s, idx) => (
                     <button
                       key={idx}
@@ -180,7 +180,7 @@ function DoctorSafetyCheckModal({ isOpen, onClose, patientId, patientAge }) {
                         setDrug(s.name);
                         setShowSuggestions(false);
                       }}
-                      className="w-full px-3.5 py-2 text-left text-xs font-semibold text-[#1C2B27] hover:bg-[#EDE8DC] flex items-center justify-between border-b border-black/5 last:border-0 cursor-pointer"
+                      className="w-full px-3.5 py-2 text-left text-xs font-semibold text-[#1C2B27] hover:bg-[var(--brand-clay)] flex items-center justify-between border-b border-black/5 last:border-0 cursor-pointer"
                     >
                       <span>{s.name}</span>
                       {s.harmLevel && <DrugHarmBadge harmLevel={s.harmLevel} size="sm" />}
@@ -471,7 +471,7 @@ function ClaimPanel({ onSuccess }) {
       </form>
 
       {/* Info */}
-      <div className="flex items-start gap-2 p-3.5 bg-[#F5F0E8] border border-[#E7E1D3] rounded-xl">
+      <div className="flex items-start gap-2 p-3.5 bg-[var(--brand-paper)] border border-[var(--brand-border-subtle)] rounded-xl">
         <Info className="w-4 h-4 text-[#6B726C] flex-shrink-0 mt-0.5" />
         <p className="text-[11px] text-[#6B726C] leading-relaxed">
           Once you enter the code, the patient will receive an approval request. You will gain read-only access to their medication timeline after they approve.
@@ -903,7 +903,7 @@ export default function DoctorDashboardPage() {
                   <span>Enter Patient Code</span>
                 </button>
 
-                <div className="border-t border-[#E7E1D3] pt-3">
+                <div className="border-t border-[var(--brand-border-subtle)] pt-3">
                   <div className="max-h-[calc(100vh-320px)] overflow-y-auto pr-1">
                     <ConnectionsList
                       onSelect={handleSelectPatient}

@@ -98,7 +98,7 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="min-h-[88vh] bg-[#EDE8DC] pb-12">
+    <div className="min-h-[88vh] bg-[var(--brand-clay)] pb-12">
       <div className="max-w-2xl mx-auto px-4 py-8 space-y-5">
 
         {/* ── Page header ──────────────────────────────────────────────── */}
@@ -139,7 +139,7 @@ export default function ProfilePage() {
               </div>
             )}
           </div>
-          <div className="p-3 bg-[#F5F0E8] border border-[#E7E1D3] rounded-xl flex items-start gap-2">
+          <div className="p-3 bg-[var(--brand-paper)] border border-[var(--brand-border-subtle)] rounded-xl flex items-start gap-2">
             <Lock className="w-3.5 h-3.5 text-[#6B726C] flex-shrink-0 mt-0.5" />
             <p className="text-[11px] text-[#6B726C] leading-relaxed">
               Account details are managed by PolySafe and cannot be changed here. To change your password, sign out and use "Forgot Password" on the login page.
@@ -221,7 +221,7 @@ export default function ProfilePage() {
                           className={`text-xs font-bold px-3.5 py-2 rounded-xl border transition-all ${
                             active
                               ? 'bg-[#2B6E5E] text-white border-[#2B6E5E] shadow-sm'
-                              : 'bg-[#EDE8DC] text-[#5C6B64] border-[#D8D2C4] hover:border-[#2B6E5E]/40'
+                              : 'bg-[var(--brand-clay)] text-[#5C6B64] border-[#D8D2C4] hover:border-[#2B6E5E]/40'
                           }`}
                         >
                           {opt.label}
@@ -295,7 +295,7 @@ export default function ProfilePage() {
         )}
 
         {/* ── Safety notice ──────────────────────────────────────────────── */}
-        <div className="flex items-start gap-2.5 p-4 bg-[#F5F0E8] border border-[#E7E1D3] rounded-2xl">
+        <div className="flex items-start gap-2.5 p-4 bg-[var(--brand-paper)] border border-[var(--brand-border-subtle)] rounded-2xl">
           <Info className="w-4 h-4 text-[#6B726C] flex-shrink-0 mt-0.5" />
           <p className="text-[11px] text-[#6B726C] leading-relaxed">
             <strong className="text-[#232724]">Why does this matter?</strong> Your age, conditions, and allergies are used by PolySafe's safety engine to personalise drug interaction checks and anticholinergic burden calculations. Keeping this accurate improves your safety alerts.
