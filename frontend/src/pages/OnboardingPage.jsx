@@ -19,6 +19,7 @@ import Card from '../components/Card';
 import PageTransition from '../components/PageTransition';
 import { notify } from '../utils/toast';
 import { useAuth } from '../context/AuthContext';
+import PolySafeInput from '../components/PolySafeInput';
 
 // ─── Condition chip options (from master spec) ───────────────────────────────
 const CONDITION_OPTIONS = [
@@ -218,7 +219,7 @@ export default function OnboardingPage() {
               <label className="block text-xs font-bold text-[#232724] uppercase tracking-wider">
                 Age in Years
               </label>
-              <input
+              <PolySafeInput
                 type="number"
                 min="1"
                 max="120"
@@ -229,7 +230,8 @@ export default function OnboardingPage() {
                   if (errorMsg) setErrorMsg('');
                 }}
                 placeholder="e.g. 68"
-                className={`input-field w-36 text-2xl font-bold text-center ${errorMsg && (!age || Number(age) < 1) ? 'input-error' : ''}`}
+                error={Boolean(errorMsg && (!age || Number(age) < 1))}
+                className="w-36 text-2xl font-bold text-center"
               />
             </div>
           </Card>
@@ -318,12 +320,11 @@ export default function OnboardingPage() {
                   — comma separated, e.g. penicillin, aspirin
                 </span>
               </label>
-              <input
+              <PolySafeInput
                 type="text"
                 value={allergiesText}
                 onChange={(e) => setAllergiesText(e.target.value)}
                 placeholder="Leave blank if none — e.g. penicillin, sulfa drugs, aspirin"
-                className="input-field"
               />
               {allergiesText && (
                 <div className="flex flex-wrap gap-1.5 pt-1">

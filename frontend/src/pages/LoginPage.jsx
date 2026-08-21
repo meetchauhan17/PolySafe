@@ -26,6 +26,7 @@ import Card from '../components/Card';
 import PageTransition from '../components/PageTransition';
 import { notify } from '../utils/toast';
 import { useAuth } from '../context/AuthContext';
+import PolySafeInput from '../components/PolySafeInput';
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -758,19 +759,18 @@ export default function LoginPage() {
                   <label className="block text-xs font-bold text-[#232724] uppercase tracking-wider">
                     Email Address
                   </label>
-                  <div className="relative flex items-center">
-                    <Mail className="w-4 h-4 text-[#6B726C] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none z-10" />
-                    <input
-                      type="email"
-                      required
-                      autoFocus
-                      value={patientEmail}
-                      onBlur={() => setPatientEmailTouched(true)}
-                      onChange={(e) => { setPatientEmail(e.target.value); if (errorMsg) setErrorMsg(null); }}
-                      placeholder="priya@example.com"
-                      className={`input-field has-icon-left pl-11 text-base ${emailError ? 'input-error' : ''}`}
-                    />
-                  </div>
+                  <PolySafeInput
+                    type="email"
+                    required
+                    autoFocus
+                    value={patientEmail}
+                    onBlur={() => setPatientEmailTouched(true)}
+                    onChange={(e) => { setPatientEmail(e.target.value); if (errorMsg) setErrorMsg(null); }}
+                    placeholder="priya@example.com"
+                    error={Boolean(emailError)}
+                    leftIcon={<Mail className="w-4 h-4" />}
+                    className="text-base"
+                  />
                   {emailError && (
                     <p className="text-xs text-rose-600 mt-1 flex items-center gap-1 font-medium">
                       <AlertCircle className="w-3.5 h-3.5" />{emailError}
@@ -821,19 +821,18 @@ export default function LoginPage() {
                 {/* Full Name */}
                 <div className="space-y-1">
                   <label className="block text-xs font-bold text-[#232724] uppercase tracking-wider">Full Name</label>
-                  <div className="relative flex items-center">
-                    <User className="w-4 h-4 text-[#6B726C] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none z-10" />
-                    <input
-                      type="text"
-                      required
-                      autoFocus
-                      value={signupName}
-                      onBlur={() => setSignupTouched((t) => ({ ...t, name: true }))}
-                      onChange={(e) => { setSignupName(e.target.value); if (errorMsg) setErrorMsg(null); }}
-                      placeholder="e.g. Priya Sharma"
-                      className={`input-field has-icon-left pl-11 text-base ${signupErrors.name ? 'input-error' : ''}`}
-                    />
-                  </div>
+                  <PolySafeInput
+                    type="text"
+                    required
+                    autoFocus
+                    value={signupName}
+                    onBlur={() => setSignupTouched((t) => ({ ...t, name: true }))}
+                    onChange={(e) => { setSignupName(e.target.value); if (errorMsg) setErrorMsg(null); }}
+                    placeholder="e.g. Priya Sharma"
+                    error={Boolean(signupErrors.name)}
+                    leftIcon={<User className="w-4 h-4" />}
+                    className="text-base"
+                  />
                   {signupErrors.name && (
                     <p className="text-xs text-rose-600 mt-1 flex items-center gap-1 font-medium">
                       <AlertCircle className="w-3.5 h-3.5" />{signupErrors.name}
@@ -844,18 +843,17 @@ export default function LoginPage() {
                 {/* Password */}
                 <div className="space-y-1">
                   <label className="block text-xs font-bold text-[#232724] uppercase tracking-wider">Password (min. 8 characters)</label>
-                  <div className="relative flex items-center">
-                    <Lock className="w-4 h-4 text-[#6B726C] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none z-10" />
-                    <input
-                      type="password"
-                      required
-                      value={signupPassword}
-                      onBlur={() => setSignupTouched((t) => ({ ...t, password: true }))}
-                      onChange={(e) => { setSignupPassword(e.target.value); if (errorMsg) setErrorMsg(null); }}
-                      placeholder="••••••••••••"
-                      className={`input-field has-icon-left pl-11 text-base ${signupErrors.password ? 'input-error' : ''}`}
-                    />
-                  </div>
+                  <PolySafeInput
+                    type="password"
+                    required
+                    value={signupPassword}
+                    onBlur={() => setSignupTouched((t) => ({ ...t, password: true }))}
+                    onChange={(e) => { setSignupPassword(e.target.value); if (errorMsg) setErrorMsg(null); }}
+                    placeholder="••••••••••••"
+                    error={Boolean(signupErrors.password)}
+                    leftIcon={<Lock className="w-4 h-4" />}
+                    className="text-base"
+                  />
                   {signupErrors.password && (
                     <p className="text-xs text-rose-600 mt-1 flex items-center gap-1 font-medium">
                       <AlertCircle className="w-3.5 h-3.5" />{signupErrors.password}
@@ -969,20 +967,19 @@ export default function LoginPage() {
                 {/* Password */}
                 <div className="space-y-1">
                   <label className="block text-xs font-bold text-[#232724] uppercase tracking-wider">Password</label>
-                  <div className="relative flex items-center">
-                    <Lock className="w-4 h-4 text-[#6B726C] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none z-10" />
-                    <input
-                      type="password"
-                      required
-                      autoFocus
-                      value={loginPassword}
-                      onBlur={() => setLoginTouched({ password: true })}
-                      onChange={(e) => { setLoginPassword(e.target.value); if (errorMsg) setErrorMsg(null); }}
-                      placeholder="••••••••••••"
-                      disabled={lockoutSecsLeft > 0}
-                      className={`input-field has-icon-left pl-11 text-base ${loginPasswordError ? 'input-error' : ''}`}
-                    />
-                  </div>
+                  <PolySafeInput
+                    type="password"
+                    required
+                    autoFocus
+                    value={loginPassword}
+                    onBlur={() => setLoginTouched({ password: true })}
+                    onChange={(e) => { setLoginPassword(e.target.value); if (errorMsg) setErrorMsg(null); }}
+                    placeholder="••••••••••••"
+                    disabled={lockoutSecsLeft > 0}
+                    error={Boolean(loginPasswordError)}
+                    leftIcon={<Lock className="w-4 h-4" />}
+                    className="text-base"
+                  />
                   {loginPasswordError && (
                     <p className="text-xs text-rose-600 mt-1 flex items-center gap-1 font-medium">
                       <AlertCircle className="w-3.5 h-3.5" />{loginPasswordError}
@@ -1188,21 +1185,19 @@ export default function LoginPage() {
                     <label className="block text-xs font-bold text-[#232724] uppercase tracking-wider">
                       Physician Full Name
                     </label>
-                    <div className="relative flex items-center">
-                      <User className="w-4 h-4 text-[#6B726C] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none z-10" />
-                      <input
-                        type="text"
-                        required
-                        value={doctorForm.name}
-                        onBlur={() => setDoctorTouched((t) => ({ ...t, name: true }))}
-                        onChange={(e) => {
-                          setDoctorForm({ ...doctorForm, name: e.target.value });
-                          if (errorMsg) setErrorMsg(null);
-                        }}
-                        placeholder="Dr. Priya Sharma, MD"
-                        className={`input-field has-icon-left pl-11 ${doctorErrors.name ? 'input-error' : ''}`}
-                      />
-                    </div>
+                    <PolySafeInput
+                      type="text"
+                      required
+                      value={doctorForm.name}
+                      onBlur={() => setDoctorTouched((t) => ({ ...t, name: true }))}
+                      onChange={(e) => {
+                        setDoctorForm({ ...doctorForm, name: e.target.value });
+                        if (errorMsg) setErrorMsg(null);
+                      }}
+                      placeholder="Dr. Priya Sharma, MD"
+                      error={Boolean(doctorErrors.name)}
+                      leftIcon={<User className="w-4 h-4" />}
+                    />
                     {doctorErrors.name && (
                       <p className="text-xs text-rose-600 mt-1 flex items-center gap-1 font-medium">
                         <AlertCircle className="w-3.5 h-3.5" />
@@ -1216,21 +1211,19 @@ export default function LoginPage() {
                     <label className="block text-xs font-bold text-[#232724] uppercase tracking-wider">
                       Medical Registration / License No.
                     </label>
-                    <div className="relative flex items-center">
-                      <FileText className="w-4 h-4 text-[#6B726C] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none z-10" />
-                      <input
-                        type="text"
-                        required
-                        value={doctorForm.registrationNumber}
-                        onBlur={() => setDoctorTouched((t) => ({ ...t, registrationNumber: true }))}
-                        onChange={(e) => {
-                          setDoctorForm({ ...doctorForm, registrationNumber: e.target.value });
-                          if (errorMsg) setErrorMsg(null);
-                        }}
-                        placeholder="MCI-2024-88492"
-                        className={`input-field has-icon-left pl-11 ${doctorErrors.registrationNumber ? 'input-error' : ''}`}
-                      />
-                    </div>
+                    <PolySafeInput
+                      type="text"
+                      required
+                      value={doctorForm.registrationNumber}
+                      onBlur={() => setDoctorTouched((t) => ({ ...t, registrationNumber: true }))}
+                      onChange={(e) => {
+                        setDoctorForm({ ...doctorForm, registrationNumber: e.target.value });
+                        if (errorMsg) setErrorMsg(null);
+                      }}
+                      placeholder="MCI-2024-88492"
+                      error={Boolean(doctorErrors.registrationNumber)}
+                      leftIcon={<FileText className="w-4 h-4" />}
+                    />
                     {doctorErrors.registrationNumber && (
                       <p className="text-xs text-rose-600 mt-1 flex items-center gap-1 font-medium">
                         <AlertCircle className="w-3.5 h-3.5" />
@@ -1246,21 +1239,19 @@ export default function LoginPage() {
                 <label className="block text-xs font-bold text-[#232724] uppercase tracking-wider">
                   Professional Email Address
                 </label>
-                <div className="relative flex items-center">
-                  <Mail className="w-4 h-4 text-[#6B726C] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none z-10" />
-                  <input
-                    type="email"
-                    required
-                    value={doctorForm.email}
-                    onBlur={() => setDoctorTouched((t) => ({ ...t, email: true }))}
-                    onChange={(e) => {
-                      setDoctorForm({ ...doctorForm, email: e.target.value });
-                      if (errorMsg) setErrorMsg(null);
-                    }}
-                    placeholder="dr.sharma@hospital.org"
-                    className={`input-field has-icon-left pl-11 ${doctorErrors.email ? 'input-error' : ''}`}
-                  />
-                </div>
+                <PolySafeInput
+                  type="email"
+                  required
+                  value={doctorForm.email}
+                  onBlur={() => setDoctorTouched((t) => ({ ...t, email: true }))}
+                  onChange={(e) => {
+                    setDoctorForm({ ...doctorForm, email: e.target.value });
+                    if (errorMsg) setErrorMsg(null);
+                  }}
+                  placeholder="dr.sharma@hospital.org"
+                  error={Boolean(doctorErrors.email)}
+                  leftIcon={<Mail className="w-4 h-4" />}
+                />
                 {doctorErrors.email && (
                   <p className="text-xs text-rose-600 mt-1 flex items-center gap-1 font-medium">
                     <AlertCircle className="w-3.5 h-3.5" />

@@ -255,23 +255,31 @@
   box-shadow: var(--neu-inset);
 }
 
-/* ─── Form Inputs (Inset Deep Clay Molding) ────────────────────────────────── */
+/* ─── Form Inputs (Neumorphic Clay Inset Molding) ──────────────────────────── */
+/*
+ * Design Rule: Inputs use --brand-clay (same as page surface).
+ * The inset shadow creates perceived depth — no border, no white float.
+ * Focus deepens to --neu-inset-deep and adds a soft teal ring.
+ * Error state overrides colour and adds shake animation.
+ */
 
 .input-field {
-  background-color: var(--brand-card);
-  border: 2px solid transparent;
-  border-radius: var(--radius-input);
-  padding: 0.85rem 1.15rem;
-  color: var(--brand-text);
-  font-size: 0.95rem;
+  background-color: var(--brand-clay);
+  border: none;
+  border-radius: var(--radius-input);        /* 16px */
+  padding: 0.75rem 1rem;                     /* px-4 py-3 */
+  color: #1C2B27;
+  font-size: 1rem;                           /* text-base */
+  font-family: var(--font-body);             /* Source Sans 3 */
   box-shadow: var(--neu-inset);
-  transition: border-color 180ms ease-out, box-shadow 180ms ease-out;
+  transition: box-shadow 200ms ease-out;
   width: 100%;
+  outline: none;
 }
 
 .input-field::placeholder {
-  color: var(--brand-muted);
-  opacity: 0.8;
+  color: #5C6B64;
+  opacity: 0.70;
 }
 
 .input-field.has-icon-left,
@@ -290,51 +298,53 @@
   padding-right: 2.85rem !important;
 }
 
-.input-field:focus {
+.input-field:focus,
+.input-field:focus-visible {
   outline: none;
-  border-color: var(--brand-primary);
-  box-shadow: var(--neu-inset-deep), 0 0 0 3px rgba(43, 110, 94, 0.20);
+  box-shadow: var(--neu-inset-deep), 0 0 0 2px var(--brand-clay), 0 0 0 4px #2B6E5E;
 }
 
 .input-field:disabled {
-  background-color: var(--brand-surface-subtle);
+  background-color: var(--brand-sub-surface);
   cursor: not-allowed;
   opacity: 0.65;
 }
 
-/* OTP 6-Digit Box */
+/* OTP 6-Digit Box — keeps white card background for legibility */
 .otp-box {
   width: 3.25rem;
   height: 3.75rem;
   font-size: 1.6rem;
   font-weight: 700;
   text-align: center;
-  background-color: var(--brand-card);
-  border: 2px solid transparent;
+  background-color: var(--brand-clay);
+  border: none;
   border-radius: var(--radius-input);
   color: var(--brand-primary);
   box-shadow: var(--neu-inset);
-  transition: border-color 180ms ease-out, box-shadow 180ms ease-out, transform 180ms ease-out;
+  transition: box-shadow 200ms ease-out, transform 180ms ease-out;
+  outline: none;
 }
 
-.otp-box:focus {
+.otp-box:focus,
+.otp-box:focus-visible {
   outline: none;
-  border-color: var(--brand-primary);
-  box-shadow: var(--neu-inset-deep), 0 0 0 3px rgba(43, 110, 94, 0.22);
+  box-shadow: var(--neu-inset-deep), 0 0 0 2px var(--brand-clay), 0 0 0 4px #2B6E5E;
   transform: scale(1.03);
 }
 
 /* Validation Error State + Shake Animation */
 .input-error {
-  border-color: var(--status-danger) !important;
+  border: none !important;
   background-color: var(--status-danger-bg) !important;
   color: var(--status-danger-text) !important;
-  box-shadow: var(--neu-inset) !important;
+  box-shadow: var(--neu-inset), inset 0 0 0 2px rgba(178, 61, 37, 0.45) !important;
   animation: input-shake 320ms cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
 }
 
-.input-error:focus {
-  box-shadow: var(--neu-inset-deep), 0 0 0 3px rgba(178, 61, 37, 0.25) !important;
+.input-error:focus,
+.input-error:focus-visible {
+  box-shadow: var(--neu-inset-deep), inset 0 0 0 2px rgba(178, 61, 37, 0.45), 0 0 0 3px rgba(178, 61, 37, 0.25) !important;
 }
 
 @keyframes input-shake {

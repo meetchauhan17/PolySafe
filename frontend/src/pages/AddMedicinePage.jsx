@@ -14,6 +14,8 @@ import Card from '../components/Card';
 import { notify } from '../utils/toast';
 import { useAuth } from '../context/AuthContext';
 import { DrugHarmBadge } from '../components/DrugHarmLevel';
+import PolySafeInput from '../components/PolySafeInput';
+import PolySafeSelect from '../components/PolySafeSelect';
 
 // ─── Medicine type options ────────────────────────────────────────────────────
 const MEDICINE_TYPES = [
@@ -1178,14 +1180,14 @@ export default function AddMedicinePage() {
                   Stamped Imprint Code
                 </label>
                 <div className="flex gap-2">
-                  <div className="relative flex-1">
-                    <Search className="w-4 h-4 text-[#6B726C] absolute left-3.5 top-3.5" />
-                    <input
+                  <div className="flex-1">
+                    <PolySafeInput
                       type="text"
                       value={pillImprintCode}
                       onChange={(e) => setPillImprintCode(e.target.value)}
                       placeholder="e.g. L484, IP 109, M367, 54 543"
-                      className="input-field pl-10 text-sm"
+                      leftIcon={<Search className="w-4 h-4" />}
+                      className="text-sm"
                     />
                   </div>
                   <button
@@ -1599,38 +1601,34 @@ export default function AddMedicinePage() {
                 <label className="block text-xs font-bold text-[#232724] uppercase tracking-wider">
                   Dosage / Strength <span className="normal-case font-normal text-[#6B726C]">— optional</span>
                 </label>
-                <div className="relative flex items-center">
-                  <Pill className="w-4 h-4 text-[#6B726C] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-                  <input
-                    type="text"
-                    value={dosage}
-                    onChange={(e) => setDosage(e.target.value)}
-                    placeholder="e.g. 500mg, 10ml"
-                    className="input-field pl-10"
-                  />
-                </div>
+                <PolySafeInput
+                  type="text"
+                  value={dosage}
+                  onChange={(e) => setDosage(e.target.value)}
+                  placeholder="e.g. 500mg, 10ml"
+                  leftIcon={<Pill className="w-4 h-4" />}
+                  className="text-sm"
+                />
               </div>
 
               <div className="space-y-1.5">
                 <label className="block text-xs font-bold text-[#232724] uppercase tracking-wider">
                   Frequency Schedule
                 </label>
-                <div className="relative flex items-center">
-                  <Clock className="w-4 h-4 text-[#6B726C] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-                  <select
-                    value={frequency}
-                    onChange={(e) => setFrequency(e.target.value)}
-                    className="input-field pl-10 pr-6 appearance-none cursor-pointer"
-                  >
-                    <option value="once">Once daily</option>
-                    <option value="twice">Twice daily</option>
-                    <option value="thrice">3 times daily</option>
-                    <option value="four">4 times daily</option>
-                    <option value="weekly">Weekly</option>
-                    <option value="asneeded">As needed (PRN)</option>
-                    <option value="alternate">Alternate days</option>
-                  </select>
-                </div>
+                <PolySafeSelect
+                  value={frequency}
+                  onChange={(e) => setFrequency(e.target.value)}
+                  leftIcon={<Clock className="w-4 h-4" />}
+                  className="text-sm"
+                >
+                  <option value="once">Once daily</option>
+                  <option value="twice">Twice daily</option>
+                  <option value="thrice">3 times daily</option>
+                  <option value="four">4 times daily</option>
+                  <option value="weekly">Weekly</option>
+                  <option value="asneeded">As needed (PRN)</option>
+                  <option value="alternate">Alternate days</option>
+                </PolySafeSelect>
               </div>
             </div>
 
@@ -1679,38 +1677,32 @@ export default function AddMedicinePage() {
                 <label className="block text-xs font-bold text-[#232724] uppercase tracking-wider">
                   Prescribed By <span className="normal-case font-normal text-[#6B726C]">— optional</span>
                 </label>
-                <div className="relative flex items-center">
-                  <User className="w-4 h-4 text-[#6B726C] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-                  <input
-                    type="text"
-                    value={prescriber}
-                    onChange={(e) => setPrescriber(e.target.value)}
-                    placeholder="Doctor name or Self"
-                    className="input-field pl-10"
-                  />
-                </div>
+                <PolySafeInput
+                  type="text"
+                  value={prescriber}
+                  onChange={(e) => setPrescriber(e.target.value)}
+                  placeholder="Doctor name or Self"
+                  leftIcon={<User className="w-4 h-4" />}
+                />
               </div>
 
               <div className="space-y-1.5">
                 <label className="block text-xs font-bold text-[#232724] uppercase tracking-wider">
                   Meal Instructions <span className="normal-case font-normal text-[#6B726C]">— optional</span>
                 </label>
-                <div className="relative flex items-center">
-                  <CalendarDays className="w-4 h-4 text-[#6B726C] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-                  <select
-                    value={notes}
-                    onChange={(e) => setNotes(e.target.value)}
-                    className="input-field pl-10 pr-6 appearance-none cursor-pointer"
-                  >
-                    <option value="">No special instructions</option>
-                    <option value="before_food">Take before food</option>
-                    <option value="after_food">Take after food</option>
-                    <option value="with_food">Take with food</option>
-                    <option value="empty_stomach">Take on empty stomach</option>
-                    <option value="with_water">Take with plenty of water</option>
-                    <option value="avoid_dairy">Avoid dairy products</option>
-                  </select>
-                </div>
+                <PolySafeSelect
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                  leftIcon={<CalendarDays className="w-4 h-4" />}
+                >
+                  <option value="">No special instructions</option>
+                  <option value="before_food">Take before food</option>
+                  <option value="after_food">Take after food</option>
+                  <option value="with_food">Take with food</option>
+                  <option value="empty_stomach">Take on empty stomach</option>
+                  <option value="with_water">Take with plenty of water</option>
+                  <option value="avoid_dairy">Avoid dairy products</option>
+                </PolySafeSelect>
               </div>
             </div>
           </Card>

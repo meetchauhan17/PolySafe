@@ -16,6 +16,8 @@ import Card from '../components/Card';
 import { notify } from '../utils/toast';
 import { useAuth } from '../context/AuthContext';
 import { Lock } from 'lucide-react';
+import PolySafeTextarea from '../components/PolySafeTextarea';
+import PolySafeInput from '../components/PolySafeInput';
 
 // ─── Quick-select symptom suggestions ────────────────────────────────────────
 const QUICK_SYMPTOMS = [
@@ -131,7 +133,7 @@ export default function LogSymptomPage() {
 
             {/* Description textarea */}
             <div className="space-y-2">
-              <textarea
+              <PolySafeTextarea
                 ref={textareaRef}
                 id="symptom-description"
                 rows={4}
@@ -141,7 +143,8 @@ export default function LogSymptomPage() {
                   if (error) setError('');
                 }}
                 placeholder="e.g. My ankles have been swelling for the past few days, and I feel a bit dizzy when I stand up..."
-                className={`input-field resize-none leading-relaxed ${error && !description.trim() ? 'input-error' : ''}`}
+                error={Boolean(error && !description.trim())}
+                className="resize-none leading-relaxed"
               />
               <p className="text-[10px] text-[#5C6B64] font-mono text-right">{description.length} characters</p>
             </div>
@@ -179,13 +182,13 @@ export default function LogSymptomPage() {
                 <CalendarDays className="w-3.5 h-3.5" />
                 When did it start?
               </label>
-              <input
+              <PolySafeInput
                 id="date-logged"
                 type="date"
                 value={dateLogged}
                 max={todayISO()}
                 onChange={(e) => setDateLogged(e.target.value)}
-                className="input-field"
+                leftIcon={<CalendarDays className="w-4 h-4" />}
               />
               <p className="text-[10px] text-[#9CA3AF]">
                 Defaults to today. Change it if symptoms started earlier.
