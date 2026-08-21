@@ -417,13 +417,13 @@ export function PolypharmacyHarmDashboard({ medicines = [], flags = [], regimenR
       {/* 2 Stat Cards: Average Risk Score & Highest Risk Drug */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {/* Average Risk Score */}
-        <div className={`p-4 rounded-2xl border ${currentTierCfg.border} ${currentTierCfg.bg} space-y-1`}>
+        <div className={`min-w-0 p-4 rounded-2xl border ${currentTierCfg.border} ${currentTierCfg.bg} space-y-1`}>
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-[#5C6B64] uppercase tracking-wider">Average Risk Score</span>
-            <currentTierCfg.Icon className={`w-4 h-4 ${currentTierCfg.iconColor}`} />
+            <currentTierCfg.Icon className={`w-4 h-4 ${currentTierCfg.iconColor} flex-shrink-0`} />
           </div>
-          <div className="flex items-baseline gap-2">
-            <span className="text-2xl font-black" style={{ color: currentTierCfg.color, fontFamily: "'Fraunces', serif" }}>
+          <div className="flex items-baseline gap-2 flex-wrap">
+            <span className="text-xl sm:text-2xl font-black" style={{ color: currentTierCfg.color, fontFamily: "'Fraunces', serif" }}>
               {avgRisk.toFixed(1)} / 5.0
             </span>
             <span className="text-xs font-extrabold px-2 py-0.5 rounded-full border" style={{ borderColor: currentTierCfg.color, color: currentTierCfg.color }}>
@@ -436,13 +436,13 @@ export function PolypharmacyHarmDashboard({ medicines = [], flags = [], regimenR
         </div>
 
         {/* Highest Risk Drug */}
-        <div className={`p-4 rounded-2xl border ${highestCfg.border} ${highestCfg.bg} space-y-1`}>
+        <div className={`min-w-0 p-4 rounded-2xl border ${highestCfg.border} ${highestCfg.bg} space-y-1`}>
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-[#5C6B64] uppercase tracking-wider">Highest Risk Drug</span>
-            <highestCfg.Icon className={`w-4 h-4 ${highestCfg.iconColor}`} />
+            <highestCfg.Icon className={`w-4 h-4 ${highestCfg.iconColor} flex-shrink-0`} />
           </div>
-          <div className="flex items-baseline gap-2">
-            <span className="text-base font-bold text-[#1C2B27] truncate">
+          <div className="flex items-baseline gap-2 flex-wrap min-w-0">
+            <span className="text-sm sm:text-base font-bold text-[#1C2B27] truncate min-w-0">
               {highestDrug.name}
             </span>
             <DrugHarmBadge harmLevel={highestLevel} size="sm" />
@@ -478,7 +478,7 @@ export function PolypharmacyHarmDashboard({ medicines = [], flags = [], regimenR
         </div>
 
         {/* 5 labels underneath */}
-        <div className="grid grid-cols-5 text-[10px] text-center font-bold text-[#5C6B64]">
+        <div className="grid grid-cols-5 text-[9px] sm:text-[10px] text-center font-bold text-[#5C6B64]">
           <span className="text-[#22C55E]">L1 Low</span>
           <span className="text-[#84CC16]">L2 Mild</span>
           <span className="text-[#F59E0B]">L3 Mod</span>

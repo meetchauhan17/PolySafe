@@ -218,20 +218,23 @@ export default function DoctorSharePage() {
               <p className="text-[11px] font-extrabold uppercase tracking-widest text-[#6B726C] text-center">
                 Or share this code manually
               </p>
-              <div className="flex items-center gap-3">
-                <div className="flex-1 flex items-center justify-center gap-2 bg-[#E6E0D3] shadow-[inset_3px_3px_6px_rgba(191,180,155,0.5),inset_-3px_-3px_6px_rgba(255,255,255,0.6)] rounded-2xl py-4 border border-[rgba(191,180,155,0.3)]">
+              {/* Tray + Copy button: stacked on xs, side-by-side on sm+ */}
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
+                {/* 6-digit tray */}
+                <div className="flex-1 flex items-center justify-center gap-1.5 sm:gap-2 bg-[#E6E0D3] shadow-[inset_3px_3px_6px_rgba(191,180,155,0.5),inset_-3px_-3px_6px_rgba(255,255,255,0.6)] rounded-2xl py-3 sm:py-4 px-2 border border-[rgba(191,180,155,0.3)]">
                   {codeData.shareCode.split('').map((digit, i) => (
                     <span
                       key={i}
-                      className="w-10 h-12 flex items-center justify-center text-2xl font-black text-[#1C2B27] bg-[#EDE8DC] rounded-xl shadow-[2px_2px_4px_rgba(191,180,155,0.5),-2px_-2px_4px_rgba(255,255,255,0.6)] border border-[rgba(191,180,155,0.3)]"
+                      className="min-w-[40px] w-10 h-12 sm:w-12 sm:h-14 flex items-center justify-center text-xl sm:text-2xl font-black text-[#1C2B27] bg-[#EDE8DC] rounded-xl shadow-[2px_2px_4px_rgba(191,180,155,0.5),-2px_-2px_4px_rgba(255,255,255,0.6)] border border-[rgba(191,180,155,0.3)]"
                     >
                       {digit}
                     </span>
                   ))}
                 </div>
+                {/* Copy button: full-width row on xs, compact column on sm+ */}
                 <button
                   onClick={handleCopy}
-                  className={`flex flex-col items-center gap-1 p-3 rounded-xl border transition-all duration-180 ease-out cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 text-sm font-bold ${
+                  className={`flex sm:flex-col flex-row items-center justify-center gap-2 sm:gap-1 py-3 sm:p-3 px-4 sm:px-3 rounded-xl border transition-all duration-180 ease-out cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 text-sm font-bold ${
                     copied
                       ? 'border-[#2B6E5E] bg-[#E4F2E9] text-[#2B6E5E]'
                       : 'border-[rgba(191,180,155,0.5)] bg-[#EDE8DC] shadow-[2px_2px_4px_rgba(191,180,155,0.4),-2px_-2px_4px_rgba(255,255,255,0.6)] text-[#5C6B64] hover:text-[#2B6E5E]'

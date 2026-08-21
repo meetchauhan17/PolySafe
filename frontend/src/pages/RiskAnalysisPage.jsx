@@ -472,7 +472,7 @@ export default function RiskAnalysisPage() {
               />
             </div>
             {/* Tick markers */}
-            <div className="flex justify-between text-[9px] text-[#85948C] font-semibold px-1">
+            <div className="flex justify-between text-[8px] sm:text-[9px] text-[#85948C] font-semibold px-1">
               <span>0 Normal</span>
               <span>1–2 Moderate</span>
               <span>3+ Critical</span>
