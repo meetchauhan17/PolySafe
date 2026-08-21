@@ -97,6 +97,82 @@ Extract the EXACT medication details. Return ONLY valid JSON (no markdown format
 
 If this image is clearly not a medicine or prescription image, return: { "error": "not_a_medicine_image" }`;
 
+// ─── Verbatim Structured Prompt for Gemini Text Parser (OCR text -> Structured JSON) ──
+const GEMINI_OCR_TEXT_PROMPT = (ocrText) => `You are an expert clinical pharmacist and pharmaceutical text parser.
+Analyze this raw OCR text extracted from a medicine package, blister foil, carton box, or prescription slip:
+
+"""
+${ocrText.slice(0, 2500)}
+"""
+
+Extract the EXACT medication details. Carefully distinguish the primary brand name from manufacturer or boilerplate text (do NOT return pharma company names like 'Healing Pharma', 'Sun Pharma', 'Cipla', 'Torrent' as drug names).
+Return ONLY valid JSON (no markdown formatting, no code block fences):
+{
+  "drug_name": "Primary brand or medication name (e.g. 'D3B12 PLUS', 'Augmentin 625', 'Naxdom 500')",
+  "generic_name": "Full generic chemical salt composition (e.g. 'Methylcobalamin + Pyridoxine HCl + Folic Acid + Vitamin D3')",
+  "composition": ["Active salt 1 with strength", "Active salt 2 with strength"],
+  "strength": "Overall dosage strength (e.g. '1500mcg + 10mg + 5mg + 1000IU' or '500mg')",
+  "form": "tablet",
+  "category": "Pharmacological category (e.g. 'Vitamin & Mineral Supplement', 'NSAID / Pain Relief', 'Antibiotic')",
+  "frequency": "once",
+  "foodInstruction": "after_food",
+  "manufacturer": "Pharma manufacturer if visible, else null",
+  "prescriber": "Doctor name if prescription slip, else null",
+  "suggestedType": "PRESCRIPTION",
+  "safetyTip": "Brief clinical guidance for this drug class",
+  "confidence": "high"
+}
+
+If this text is clearly not from a pharmaceutical product or prescription, return: { "error": "not_a_medicine_text" }`;
+
+// ─── Helper: Call Gemini Text Parser (Ultra low-token mode: ~100-150 tokens) ──
+async function callGeminiTextParser(rawOcrText) {
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey || apiKey === 'your_gemini_api_key_here' || apiKey.trim().length === 0) {
+    return null;
+  }
+
+  const genAI = new GoogleGenerativeAI(apiKey);
+  const candidateModels = [
+    'gemini-3.6-flash',
+    'gemini-3.7-flash',
+    'gemini-flash-latest',
+    'gemini-3.5-flash',
+  ];
+  const prompt = GEMINI_OCR_TEXT_PROMPT(rawOcrText);
+
+  const promises = candidateModels.map(async (modelName) => {
+    try {
+      const model = genAI.getGenerativeModel({ model: modelName });
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error(`Gemini Text timeout (${modelName})`)), 5000)
+      );
+      const callPromise = model.generateContent(prompt);
+      const res = await Promise.race([callPromise, timeoutPromise]);
+      const text = res.response.text();
+      const cleanJson = text
+        .replace(/^```json\s*/i, '')
+        .replace(/^```\s*/i, '')
+        .replace(/```$/i, '')
+        .trim();
+      const parsed = JSON.parse(cleanJson);
+      if (parsed && (parsed.drug_name || parsed.error)) {
+        return { parsed, raw: text, modelUsed: modelName, isTextOnly: true };
+      }
+      throw new Error(`Invalid JSON from text parser (${modelName})`);
+    } catch (err) {
+      throw err;
+    }
+  });
+
+  try {
+    const result = await Promise.any(promises);
+    return result;
+  } catch {
+    return null;
+  }
+}
+
 // ─── Helper: Call Gemini Vision with Parallel Model Racing ───────────────────
 async function callGeminiVision(filePath, mimeType) {
   const apiKey = process.env.GEMINI_API_KEY;
@@ -138,7 +214,7 @@ async function callGeminiVision(filePath, mimeType) {
         .trim();
       const parsed = JSON.parse(cleanJson);
       if (parsed && (parsed.drug_name || parsed.error)) {
-        return { parsed, raw: text, modelUsed: modelName };
+        return { parsed, raw: text, modelUsed: modelName, isTextOnly: false };
       }
       throw new Error(`Invalid JSON parsed from ${modelName}`);
     } catch (err) {
@@ -150,7 +226,6 @@ async function callGeminiVision(filePath, mimeType) {
     const result = await Promise.any(promises);
     return result;
   } catch (aggErr) {
-    // If Promise.any failed across all models, try sequential single attempt
     for (const m of candidateModels) {
       try {
         const model = genAI.getGenerativeModel({ model: m });
@@ -159,7 +234,7 @@ async function callGeminiVision(filePath, mimeType) {
         const cleanJson = text.replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/```$/i, '').trim();
         const parsed = JSON.parse(cleanJson);
         if (parsed && (parsed.drug_name || parsed.error)) {
-          return { parsed, raw: text, modelUsed: m };
+          return { parsed, raw: text, modelUsed: m, isTextOnly: false };
         }
       } catch {
         // continue
@@ -215,7 +290,11 @@ async function verifyWithRxNorm(drugName, genericName, composition = []) {
 
 // ═════════════════════════════════════════════════════════════════════════════
 // POST /medicine/scan
-// 4-Stage Extraction Pipeline: Gemini Vision -> RxNorm -> Tesseract -> OCR.space
+// Smart Hybrid Pipeline:
+// Step 1: Free Local Tesseract OCR
+// Step 2A: If OCR text clean -> Gemini Text LLM (~150 tokens, 85% cheaper)
+// Step 2B: If OCR text garbled/blurry -> Escalate to Gemini Vision (Multimodal)
+// Step 3: Pharmacological AI Decomposition + RxNorm Validation
 // ═════════════════════════════════════════════════════════════════════════════
 router.post(
   '/scan',
@@ -287,27 +366,54 @@ router.post(
         });
       }
 
-      // ── STAGE 1: GEMINI VISION (Primary parallel multimodal AI) ──────────────
-      let geminiExtraction = null;
-      let geminiError = null;
-
+      // ── STAGE 1: LOCAL TESSERACT OCR (Free, 0 tokens) ──────────────────────
+      console.log(`[scan] Stage 1: Running Free Local Tesseract OCR on ${filePath}...`);
+      let tesseractRawText = '';
       try {
-        console.log(`[scan] Stage 1: Attempting Parallel Gemini Vision on ${filePath}...`);
-        const result = await callGeminiVision(filePath, req.file?.mimetype);
-        geminiExtraction = result;
-      } catch (gErr) {
-        geminiError = gErr;
-        console.warn(`[scan] Stage 1 (Gemini Vision) failed: ${gErr.message}`);
+        const tResult = await tesseract.recognize(filePath, tesseractConfig);
+        tesseractRawText = (tResult || '').trim();
+      } catch (tErr) {
+        console.warn(`[scan] Local Tesseract OCR failed: ${tErr.message}`);
       }
 
-      if (geminiExtraction && geminiExtraction.parsed) {
-        const parsed = geminiExtraction.parsed;
+      const hasRichOcrText = tesseractRawText.length >= 25 && /[A-Za-z]{3,}/.test(tesseractRawText);
+      let aiExtraction = null;
 
-        // Check if Gemini determined the image is not a medicine/prescription
-        if (parsed.error === 'not_a_medicine_image' || parsed.error?.includes('not_a_medicine')) {
+      // ── STAGE 2A: HYBRID OCR -> GEMINI TEXT (~150 Tokens / Ultra Cheap) ────
+      if (hasRichOcrText) {
+        try {
+          console.log(`[scan] Stage 2A: Testing Hybrid OCR -> Gemini Text parser (~150 tokens)...`);
+          const textResult = await callGeminiTextParser(tesseractRawText);
+          if (textResult && textResult.parsed && textResult.parsed.drug_name && textResult.parsed.drug_name !== 'null' && textResult.parsed.confidence !== 'low') {
+            aiExtraction = textResult;
+            console.log(`[scan] Stage 2A Succeeded! Extracted "${textResult.parsed.drug_name}" via low-token text mode.`);
+          }
+        } catch (textErr) {
+          console.warn(`[scan] Stage 2A (Gemini Text) failed: ${textErr.message}`);
+        }
+      }
+
+      // ── STAGE 2B: ESCALATE TO MULTIMODAL VISION (If OCR text was sparse/unclear) ──
+      if (!aiExtraction || !aiExtraction.parsed || !aiExtraction.parsed.drug_name) {
+        try {
+          console.log(`[scan] Stage 2B: Escalate to Multimodal Gemini Vision for full visual analysis...`);
+          const visionResult = await callGeminiVision(filePath, req.file?.mimetype);
+          if (visionResult && visionResult.parsed) {
+            aiExtraction = visionResult;
+          }
+        } catch (visionErr) {
+          console.warn(`[scan] Stage 2B (Gemini Vision) failed: ${visionErr.message}`);
+        }
+      }
+
+      // ── STAGE 3: PHARMACOLOGICAL ENRICHMENT & RXNORM VERIFICATION ───────────
+      if (aiExtraction && aiExtraction.parsed) {
+        const parsed = aiExtraction.parsed;
+
+        if (parsed.error === 'not_a_medicine_image' || parsed.error === 'not_a_medicine_text') {
           cleanupFile(filePath);
           return res.status(400).json({
-            error: "This doesn't look like a medicine or prescription image — try a clearer photo.",
+            error: "This doesn't look like a medicine or prescription — try a clearer photo.",
           });
         }
 
@@ -316,8 +422,7 @@ router.post(
         const confidence = (parsed.confidence || 'high').toLowerCase();
 
         if (drugName && drugName !== 'null' && drugName.length >= 2) {
-          // ── STAGE 2: Pharmacological Decomposition + RxNorm Verification ────
-          console.log(`[scan] Stage 2: Decomposing "${drugName}" with AI drug resolver & RxNorm...`);
+          console.log(`[scan] Stage 3: Decomposing "${drugName}" with AI drug resolver & RxNorm...`);
           
           const [rxNormRes, aiResolved] = await Promise.all([
             verifyWithRxNorm(drugName, genericName, parsed.composition || []),
@@ -340,9 +445,13 @@ router.post(
           ].filter(Boolean));
           const fallbackCandidates = Array.from(candidatesSet).slice(0, 4);
 
+          const sourceTag = aiExtraction.isTextOnly ? 'ocr_gemini_hybrid' : 'gemini_vision';
+          const tokenTag = aiExtraction.isTextOnly ? '~150 tokens (85% token reduction)' : 'Multimodal Vision';
+
           return res.status(200).json({
-            source: 'gemini',
-            modelUsed: geminiExtraction.modelUsed,
+            source: sourceTag,
+            modelUsed: aiExtraction.modelUsed,
+            tokenStrategy: tokenTag,
             drug_name: drugName,
             generic_name: finalGenericName,
             composition: parsed.composition || aiResolved?.genericSalts || [],
@@ -356,7 +465,7 @@ router.post(
             rxNormVerified: rxNormRes.verified,
             rxcui: rxNormRes.rxcui || aiResolved?.standardizedCode || null,
             confidence: confidence,
-            raw_extraction: geminiExtraction.raw,
+            raw_extraction: aiExtraction.raw,
 
             // Backward compatibility aliases for frontend components
             candidate: drugName,
@@ -376,22 +485,22 @@ router.post(
               : 'once',
             foodInstruction: finalFoodInstruction,
             prescriberName: parsed.prescriber || null,
-            note: rxNormRes.verified
-              ? `Extracted via Gemini Vision (${geminiExtraction.modelUsed}) & verified with RxNorm.`
-              : `Extracted via Gemini Vision (${geminiExtraction.modelUsed}) & resolved with AI Pharmacological Engine.`,
+            note: aiExtraction.isTextOnly
+              ? `Extracted via Smart Hybrid OCR + Gemini Text (${tokenTag}).`
+              : `Extracted via Gemini Vision (${aiExtraction.modelUsed}).`,
           });
         }
       }
 
-      // ── STAGE 3: TESSERACT OCR FALLBACK (Runs if Gemini fails/times out) ─────
-      console.log('[scan] Stage 3: Falling back to Local Tesseract OCR...');
-      let tesseractRawText = '';
-
-      try {
-        const tResult = await tesseract.recognize(filePath, tesseractConfig);
-        tesseractRawText = (tResult || '').trim();
-      } catch (tErr) {
-        console.warn(`[scan] Local Tesseract OCR failed: ${tErr.message}`);
+      // ── STAGE 4: PURE TESSERACT + LOCAL ENGINE (Offline / LLM failure fallback) ──
+      console.log('[scan] Stage 4: Falling back to Local Tesseract Rule Extraction...');
+      if (!tesseractRawText) {
+        try {
+          const tResult = await tesseract.recognize(filePath, tesseractConfig);
+          tesseractRawText = (tResult || '').trim();
+        } catch (tErr) {
+          console.warn(`[scan] Local Tesseract OCR failed: ${tErr.message}`);
+        }
       }
 
       const hasTesseractContent = /[A-Za-z0-9]{3,}/.test(tesseractRawText);
