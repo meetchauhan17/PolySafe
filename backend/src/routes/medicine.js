@@ -604,12 +604,23 @@ router.get('/', auth, async (req, res) => {
 });
 
 // ═════════════════════════════════════════════════════════════════════════════
-// PUT /medicine/:id — Edit dosage and/or medicine type (Prescription/OTC/Herbal)
+// PUT /medicine/:id — Edit dosage, type, frequency, food instruction, notes, etc.
 // ═════════════════════════════════════════════════════════════════════════════
 router.put('/:id', auth, requireRole(['PATIENT']), async (req, res) => {
   const { userId } = req.user;
   const { id } = req.params;
-  const { dosage, type, name: prohibitedName, standardizedCode: prohibitedCode } = req.body;
+  const {
+    dosage,
+    type,
+    frequency,
+    foodInstruction,
+    prescribedBy,
+    notes,
+    reminderEnabled,
+    refillDate,
+    name: prohibitedName,
+    standardizedCode: prohibitedCode,
+  } = req.body;
 
   if (prohibitedName !== undefined || prohibitedCode !== undefined) {
     return res.status(400).json({
@@ -624,6 +635,11 @@ router.put('/:id', auth, requireRole(['PATIENT']), async (req, res) => {
     });
   }
 
+  const validFoodInstructions = ['with_food', 'before_food', 'after_food', 'empty_stomach', null, undefined];
+  if (foodInstruction !== undefined && !validFoodInstructions.includes(foodInstruction)) {
+    return res.status(400).json({ error: 'Invalid food instruction value.' });
+  }
+
   try {
     const patient = await prisma.patient.findUnique({ where: { userId } });
     if (!patient) return res.status(404).json({ error: 'Patient profile not found.' });
@@ -634,8 +650,14 @@ router.put('/:id', auth, requireRole(['PATIENT']), async (req, res) => {
     if (!existing) return res.status(404).json({ error: 'Active medicine not found in your list.' });
 
     const updateData = {};
-    if (dosage !== undefined) updateData.dosage = dosage ? String(dosage).trim() : null;
-    if (type) updateData.type = type.toUpperCase();
+    if (dosage !== undefined)          updateData.dosage          = dosage ? String(dosage).trim() : null;
+    if (type)                          updateData.type             = type.toUpperCase();
+    if (frequency !== undefined)       updateData.frequency        = frequency ? String(frequency).trim() : null;
+    if (foodInstruction !== undefined) updateData.foodInstruction  = foodInstruction || null;
+    if (prescribedBy !== undefined)    updateData.prescribedBy     = prescribedBy ? String(prescribedBy).trim() : null;
+    if (notes !== undefined)           updateData.notes            = notes ? String(notes).trim() : null;
+    if (reminderEnabled !== undefined) updateData.reminderEnabled  = Boolean(reminderEnabled);
+    if (refillDate !== undefined)      updateData.refillDate       = refillDate ? new Date(refillDate) : null;
 
     const updatedMedicine = await prisma.medicine.update({
       where: { id },
@@ -652,6 +674,12 @@ router.put('/:id', auth, requireRole(['PATIENT']), async (req, res) => {
         name:             updatedMedicine.name,
         type:             updatedMedicine.type,
         dosage:           updatedMedicine.dosage,
+        frequency:        updatedMedicine.frequency,
+        foodInstruction:  updatedMedicine.foodInstruction,
+        prescribedBy:     updatedMedicine.prescribedBy,
+        notes:            updatedMedicine.notes,
+        reminderEnabled:  updatedMedicine.reminderEnabled,
+        refillDate:       updatedMedicine.refillDate,
         standardizedCode: updatedMedicine.standardizedCode,
         dateAdded:        updatedMedicine.dateAdded,
       },

@@ -839,14 +839,28 @@ export default function HomePage() {
 
 // ─── Sub-Component: Edit Medicine Modal ──────────────────────────────────────
 function EditMedicineModal({ med, isOpen, onClose, onSave, isPending }) {
-  const [dosage, setDosage] = useState('');
-  const [type, setType] = useState('PRESCRIPTION');
+  const [activeTab, setActiveTab] = useState('basic'); // 'basic' | 'schedule' | 'notes'
+  const [dosage, setDosage]               = useState('');
+  const [type, setType]                   = useState('PRESCRIPTION');
+  const [frequency, setFrequency]         = useState('');
+  const [foodInstruction, setFoodInstruction] = useState('after_food');
+  const [prescribedBy, setPrescribedBy]   = useState('');
+  const [notes, setNotes]                 = useState('');
+  const [reminderEnabled, setReminderEnabled] = useState(false);
+  const [refillDate, setRefillDate]       = useState('');
 
-  // Sync state when editingMed changes
+  // Sync state when med changes
   React.useEffect(() => {
     if (med) {
       setDosage(med.dosage || '');
       setType(med.type || 'PRESCRIPTION');
+      setFrequency(med.frequency || '');
+      setFoodInstruction(med.foodInstruction || 'after_food');
+      setPrescribedBy(med.prescribedBy || '');
+      setNotes(med.notes || '');
+      setReminderEnabled(!!med.reminderEnabled);
+      setRefillDate(med.refillDate ? new Date(med.refillDate).toISOString().split('T')[0] : '');
+      setActiveTab('basic');
     }
   }, [med]);
 
@@ -854,94 +868,366 @@ function EditMedicineModal({ med, isOpen, onClose, onSave, isPending }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSave({ id: med.id, name: med.name, dosage, type });
+    onSave({
+      id: med.id,
+      name: med.name,
+      dosage,
+      type,
+      frequency: frequency || null,
+      foodInstruction: foodInstruction || null,
+      prescribedBy: prescribedBy || null,
+      notes: notes || null,
+      reminderEnabled,
+      refillDate: refillDate || null,
+    });
   };
 
+  const FOOD_OPTIONS = [
+    { value: 'after_food',      label: '🍽️ After Food',       hint: 'Take 30 min after a meal' },
+    { value: 'before_food',     label: '⏰ Before Food',       hint: 'Take 30 min before a meal' },
+    { value: 'with_food',       label: '🥛 With Food',         hint: 'Take during a meal' },
+    { value: 'empty_stomach',   label: '💧 Empty Stomach',     hint: 'Take at least 1 hr before eating' },
+  ];
+
+  const FREQUENCY_OPTIONS = [
+    'Once daily (OD)',
+    'Twice daily (BD)',
+    'Three times daily (TDS)',
+    'Four times daily (QID)',
+    'Every 6 hours',
+    'Every 8 hours',
+    'Every 12 hours',
+    'At bedtime (HS)',
+    'As needed (PRN)',
+    'Weekly',
+    'Every other day',
+    'Monthly',
+  ];
+
+  const TABS = [
+    { id: 'basic',    label: '💊 Basic Info',        icon: null },
+    { id: 'schedule', label: '🗓️ Schedule & Timing',  icon: null },
+    { id: 'notes',    label: '📋 Clinical Notes',     icon: null },
+  ];
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs">
-      <div className="polysafe-card p-6 max-w-md w-full bg-[#EDE8DC] space-y-4 shadow-[12px_12px_24px_rgba(191,180,155,0.7),-12px_-12px_24px_rgba(255,255,255,0.8)] border-transparent rounded-[32px]">
-        <div className="flex items-center justify-between border-b border-[rgba(191,180,155,0.35)] pb-3">
-          <div className="flex items-center gap-2">
-            <div className="icon-well w-9 h-9">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95, y: 12 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.95, y: 12 }}
+        transition={{ duration: 0.22, ease: [0.25, 1, 0.5, 1] }}
+        className="w-full max-w-lg bg-[#EDE8DC] rounded-[32px] shadow-[14px_14px_28px_rgba(191,180,155,0.75),-14px_-14px_28px_rgba(255,255,255,0.85)] border border-[rgba(191,180,155,0.3)] overflow-hidden"
+      >
+        {/* Header */}
+        <div className="flex items-center justify-between px-6 pt-5 pb-4 border-b border-[rgba(191,180,155,0.4)]">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-2xl bg-[#2B6E5E]/10 border border-[#2B6E5E]/20 flex items-center justify-center">
               <Pill className="w-4 h-4 text-[#2B6E5E]" />
             </div>
-            <h2 className="text-lg font-bold text-[#1C2B27]" style={{ fontFamily: "'Fraunces', serif" }}>
-              Edit Medication
-            </h2>
+            <div>
+              <h2 className="text-base font-bold text-[#1C2B27]" style={{ fontFamily: "'Fraunces', serif" }}>
+                Edit Medication
+              </h2>
+              <p className="text-[10px] text-[#5C6B64] font-semibold">{med.name}</p>
+            </div>
           </div>
-          <button type="button" onClick={onClose} className="p-1 text-[#5C6B64] hover:text-[#1C2B27] cursor-pointer">
+          <button type="button" onClick={onClose} className="p-1.5 rounded-xl hover:bg-[#D5CEBF]/60 text-[#5C6B64] hover:text-[#1C2B27] transition-colors">
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Drug Name (Fixed) */}
-          <div className="space-y-1">
-            <label className="text-xs font-bold text-[#5C6B64] uppercase tracking-wider">Medicine Name</label>
-            <div className="p-3.5 bg-[#EDE8DC] rounded-2xl shadow-[inset_3px_3px_6px_rgba(191,180,155,0.5),inset_-3px_-3px_6px_rgba(255,255,255,0.6)] text-sm font-bold text-[#1C2B27]">
-              {med.name}
-            </div>
-            <p className="text-[11px] text-[#5C6B64]">
-              Drug name cannot be changed directly to protect clinical history. To replace with a different drug, discontinue this one and add the new medicine.
-            </p>
+        {/* Tab navigation */}
+        <div className="flex gap-1 px-5 pt-3 pb-0">
+          {TABS.map(tab => (
+            <button
+              key={tab.id}
+              type="button"
+              onClick={() => setActiveTab(tab.id)}
+              className={`flex-1 py-2 text-[11px] font-bold rounded-xl transition-all cursor-pointer ${ 
+                activeTab === tab.id
+                  ? 'bg-[#EDE8DC] text-[#2B6E5E] shadow-[3px_3px_6px_rgba(191,180,155,0.55),-3px_-3px_6px_rgba(255,255,255,0.65)]'
+                  : 'text-[#5C6B64] hover:text-[#1C2B27]'
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
+        <form onSubmit={handleSubmit}>
+          <div className="px-6 py-4 space-y-4 max-h-[60vh] overflow-y-auto">
+
+            {/* ── TAB 1: Basic Info ── */}
+            {activeTab === 'basic' && (
+              <div className="space-y-4">
+                {/* Drug Name (immutable) */}
+                <div className="space-y-1">
+                  <label className="text-[10px] font-extrabold text-[#5C6B64] uppercase tracking-widest">Medicine Name</label>
+                  <div className="p-3.5 bg-[#EDE8DC] rounded-2xl shadow-[inset_3px_3px_6px_rgba(191,180,155,0.5),inset_-3px_-3px_6px_rgba(255,255,255,0.6)] text-sm font-bold text-[#1C2B27]">
+                    {med.name}
+                  </div>
+                  <p className="text-[11px] text-[#5C6B64] leading-relaxed">
+                    Drug name is locked to protect clinical history. To use a different drug, discontinue this and add the new one.
+                  </p>
+                </div>
+
+                {/* Medicine Type */}
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-extrabold text-[#5C6B64] uppercase tracking-widest">Medicine Type</label>
+                  <div className="flex p-1 bg-[#EDE8DC] rounded-2xl shadow-[inset_3px_3px_6px_rgba(191,180,155,0.5),inset_-3px_-3px_6px_rgba(255,255,255,0.6)] gap-1">
+                    {[
+                      { value: 'PRESCRIPTION', label: 'Rx (Prescription)', icon: <Stethoscope className="w-3 h-3" /> },
+                      { value: 'OTC', label: 'OTC', icon: <ShoppingBag className="w-3 h-3" /> },
+                      { value: 'HERBAL', label: 'Herbal', icon: <Leaf className="w-3 h-3" /> },
+                    ].map((t) => (
+                      <button
+                        key={t.value}
+                        type="button"
+                        onClick={() => setType(t.value)}
+                        className={`flex-1 py-2 text-[11px] font-bold rounded-xl transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                          type === t.value
+                            ? 'bg-[#EDE8DC] text-[#2B6E5E] shadow-[3px_3px_6px_rgba(191,180,155,0.55),-3px_-3px_6px_rgba(255,255,255,0.65)]'
+                            : 'text-[#5C6B64] hover:text-[#1C2B27]'
+                        }`}
+                      >
+                        {t.icon}
+                        {t.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Dosage */}
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-extrabold text-[#5C6B64] uppercase tracking-widest">Dosage Instructions</label>
+                  <input
+                    type="text"
+                    value={dosage}
+                    onChange={(e) => setDosage(e.target.value)}
+                    placeholder="e.g. 10mg, 500mg, 1 tablet"
+                    className="input-field text-sm"
+                  />
+                </div>
+
+                {/* Prescribed By */}
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-extrabold text-[#5C6B64] uppercase tracking-widest">Prescribed By</label>
+                  <input
+                    type="text"
+                    value={prescribedBy}
+                    onChange={(e) => setPrescribedBy(e.target.value)}
+                    placeholder="e.g. Dr. Sharma, Self-prescribed, OTC purchase"
+                    className="input-field text-sm"
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* ── TAB 2: Schedule & Timing ── */}
+            {activeTab === 'schedule' && (
+              <div className="space-y-4">
+                {/* Frequency */}
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-extrabold text-[#5C6B64] uppercase tracking-widest">Dosing Frequency</label>
+                  <select
+                    value={frequency}
+                    onChange={(e) => setFrequency(e.target.value)}
+                    className="input-field text-sm"
+                  >
+                    <option value="">Select frequency…</option>
+                    {FREQUENCY_OPTIONS.map(f => (
+                      <option key={f} value={f}>{f}</option>
+                    ))}
+                  </select>
+                  <input
+                    type="text"
+                    value={frequency && !FREQUENCY_OPTIONS.includes(frequency) ? frequency : ''}
+                    onChange={(e) => setFrequency(e.target.value)}
+                    placeholder="Or type a custom frequency…"
+                    className="input-field text-sm mt-1.5"
+                  />
+                </div>
+
+                {/* Food Instruction */}
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-extrabold text-[#5C6B64] uppercase tracking-widest">Food Instruction</label>
+                  <div className="grid grid-cols-2 gap-2">
+                    {FOOD_OPTIONS.map(opt => (
+                      <button
+                        key={opt.value}
+                        type="button"
+                        onClick={() => setFoodInstruction(opt.value)}
+                        className={`p-3 rounded-2xl text-left text-xs transition-all cursor-pointer border ${ 
+                          foodInstruction === opt.value
+                            ? 'bg-[#2B6E5E] text-white border-[#2B6E5E] shadow-sm'
+                            : 'bg-[#EDE8DC] text-[#5C6B64] border-[rgba(191,180,155,0.4)] shadow-[3px_3px_6px_rgba(191,180,155,0.4),-3px_-3px_6px_rgba(255,255,255,0.5)] hover:text-[#1C2B27]'
+                        }`}
+                      >
+                        <p className="font-bold text-[11px]">{opt.label}</p>
+                        <p className={`text-[10px] mt-0.5 ${foodInstruction === opt.value ? 'text-white/80' : 'text-[#9CA3AF]'}`}>{opt.hint}</p>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Refill Date */}
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-extrabold text-[#5C6B64] uppercase tracking-widest">
+                    Next Refill / Prescription Renewal Date
+                  </label>
+                  <input
+                    type="date"
+                    value={refillDate}
+                    onChange={(e) => setRefillDate(e.target.value)}
+                    className="input-field text-sm"
+                    min={new Date().toISOString().split('T')[0]}
+                  />
+                  {refillDate && (
+                    <p className="text-[11px] text-[#2B6E5E] font-semibold">
+                      📅 Refill due: {new Date(refillDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}
+                    </p>
+                  )}
+                </div>
+
+                {/* Reminder Toggle */}
+                <div className="flex items-center justify-between p-4 bg-[#EDE8DC] rounded-2xl shadow-[inset_3px_3px_6px_rgba(191,180,155,0.5),inset_-3px_-3px_6px_rgba(255,255,255,0.6)]">
+                  <div>
+                    <p className="text-xs font-extrabold text-[#1C2B27]">Daily Dose Reminders</p>
+                    <p className="text-[11px] text-[#5C6B64]">Receive push reminders for this medicine</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setReminderEnabled(prev => !prev)}
+                    className={`relative w-11 h-6 rounded-full transition-all cursor-pointer border flex items-center ${ 
+                      reminderEnabled
+                        ? 'bg-[#2B6E5E] border-[#2B6E5E] justify-end'
+                        : 'bg-[#D5CEBF] border-[#BFB49B] justify-start'
+                    } px-0.5`}
+                    aria-label="Toggle reminder"
+                  >
+                    <motion.span
+                      layout
+                      className="w-5 h-5 rounded-full bg-white shadow-md"
+                    />
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* ── TAB 3: Clinical Notes ── */}
+            {activeTab === 'notes' && (
+              <div className="space-y-4">
+                {/* Personal Notes */}
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-extrabold text-[#5C6B64] uppercase tracking-widest">Personal Notes & Reminders</label>
+                  <textarea
+                    rows={5}
+                    value={notes}
+                    onChange={(e) => setNotes(e.target.value)}
+                    placeholder="e.g. Take with warm water. Do not crush. INR check on March 15. Avoid grapefruit juice…"
+                    className="input-field text-sm resize-none leading-relaxed"
+                  />
+                  <p className="text-[11px] text-[#5C6B64]">{notes.length}/500 characters</p>
+                </div>
+
+                {/* Quick note chips */}
+                <div className="space-y-2">
+                  <p className="text-[10px] font-extrabold text-[#5C6B64] uppercase tracking-widest">Quick Add Notes</p>
+                  <div className="flex flex-wrap gap-2">
+                    {[
+                      '💧 Take with full glass of water',
+                      '🌙 Best taken at bedtime',
+                      '☀️ Morning dose',
+                      '🚫 Avoid alcohol',
+                      '🍋 Avoid grapefruit',
+                      '💊 Do not crush/chew',
+                      '🏃 Take before exercise',
+                      '🧪 Monitor blood levels',
+                    ].map(chip => (
+                      <button
+                        key={chip}
+                        type="button"
+                        onClick={() => setNotes(prev => prev ? `${prev}\n${chip}` : chip)}
+                        className="text-[11px] px-2.5 py-1 rounded-xl bg-[#EDE8DC] shadow-[2px_2px_4px_rgba(191,180,155,0.5),-2px_-2px_4px_rgba(255,255,255,0.6)] text-[#5C6B64] hover:text-[#1C2B27] transition-colors cursor-pointer border border-[rgba(191,180,155,0.3)]"
+                      >
+                        {chip}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Summary preview */}
+                <div className="p-3.5 bg-[#EDE8DC] rounded-2xl shadow-[inset_3px_3px_6px_rgba(191,180,155,0.5),inset_-3px_-3px_6px_rgba(255,255,255,0.6)] space-y-1.5">
+                  <p className="text-[10px] font-extrabold uppercase tracking-widest text-[#5C6B64]">Current Settings Summary</p>
+                  <div className="space-y-0.5 text-[11px] text-[#1C2B27]">
+                    <p><span className="text-[#5C6B64]">Type:</span> {type}</p>
+                    {dosage && <p><span className="text-[#5C6B64]">Dosage:</span> {dosage}</p>}
+                    {frequency && <p><span className="text-[#5C6B64]">Frequency:</span> {frequency}</p>}
+                    {foodInstruction && <p><span className="text-[#5C6B64]">With Food:</span> {FOOD_OPTIONS.find(f => f.value === foodInstruction)?.label}</p>}
+                    {prescribedBy && <p><span className="text-[#5C6B64]">Prescribed By:</span> {prescribedBy}</p>}
+                    {refillDate && <p><span className="text-[#5C6B64]">Refill Date:</span> {new Date(refillDate).toLocaleDateString('en-IN')}</p>}
+                    <p><span className="text-[#5C6B64]">Reminders:</span> {reminderEnabled ? '✅ Enabled' : '❌ Disabled'}</p>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
-          {/* Type Segmented Toggle */}
-          <div className="space-y-1.5">
-            <label className="text-xs font-bold text-[#5C6B64] uppercase tracking-wider">Medicine Type</label>
-            <div className="flex p-1 bg-[#EDE8DC] rounded-2xl shadow-[inset_3px_3px_6px_rgba(191,180,155,0.5),inset_-3px_-3px_6px_rgba(255,255,255,0.6)] gap-1">
-              {[
-                { value: 'PRESCRIPTION', label: 'Rx (Prescription)' },
-                { value: 'OTC', label: 'OTC' },
-                { value: 'HERBAL', label: 'Herbal' },
-              ].map((t) => (
-                <button
-                  key={t.value}
-                  type="button"
-                  onClick={() => setType(t.value)}
-                  className={`flex-1 py-1.5 text-xs font-bold rounded-xl transition-all cursor-pointer ${
-                    type === t.value
-                      ? 'bg-[#EDE8DC] text-[#2B6E5E] shadow-[3px_3px_6px_rgba(191,180,155,0.55),-3px_-3px_6px_rgba(255,255,255,0.65)]'
-                      : 'text-[#5C6B64] hover:text-[#1C2B27]'
-                  }`}
-                >
-                  {t.label}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Dosage Input */}
-          <div className="space-y-1.5">
-            <label className="text-xs font-bold text-[#5C6B64] uppercase tracking-wider">Dosage Instructions</label>
-            <input
-              type="text"
-              value={dosage}
-              onChange={(e) => setDosage(e.target.value)}
-              placeholder="e.g. 10mg once daily, 500mg at bedtime"
-              className="input-field text-sm font-mono"
-            />
-          </div>
-
-          <div className="flex gap-2.5 pt-2">
+          {/* Footer Actions */}
+          <div className="px-6 pb-5 pt-3 flex gap-2.5 border-t border-[rgba(191,180,155,0.35)]">
+            {/* Tab nav arrows */}
             <button
               type="button"
-              onClick={onClose}
-              className="btn-secondary flex-1 py-2.5 text-sm"
-              disabled={isPending}
+              onClick={() => setActiveTab(t => t === 'schedule' ? 'basic' : t === 'notes' ? 'schedule' : 'basic')}
+              className="btn-secondary py-2.5 px-4 text-xs"
+              disabled={activeTab === 'basic'}
             >
-              Cancel
+              ← Back
             </button>
-            <button
-              type="submit"
-              className="btn-primary flex-1 py-2.5 text-sm"
-              disabled={isPending}
-            >
-              {isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Save Changes'}
-            </button>
+
+            {activeTab !== 'notes' ? (
+              <button
+                type="button"
+                onClick={() => setActiveTab(t => t === 'basic' ? 'schedule' : 'notes')}
+                className="btn-primary flex-1 py-2.5 text-sm"
+              >
+                Next →
+              </button>
+            ) : (
+              <>
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="btn-secondary flex-1 py-2.5 text-sm"
+                  disabled={isPending}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="btn-primary flex-1 py-2.5 text-sm"
+                  disabled={isPending}
+                >
+                  {isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : '💾 Save Changes'}
+                </button>
+              </>
+            )}
+
+            {/* Always show Save on any tab */}
+            {activeTab !== 'notes' && (
+              <button
+                type="submit"
+                className="btn-secondary py-2.5 px-4 text-xs"
+                disabled={isPending}
+                title="Save without continuing"
+              >
+                {isPending ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : '💾 Save'}
+              </button>
+            )}
           </div>
         </form>
-      </div>
+      </motion.div>
     </div>
   );
 }

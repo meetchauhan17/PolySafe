@@ -118,6 +118,14 @@ model Medicine {
   harmLevel        Int          @default(3) // 1=Low, 2=Mild, 3=Moderate, 4=High, 5=Critical (WHO/NCI 5-Tier)
   removedAt        DateTime?    // Soft-delete timestamp: set when medicine is discontinued
 
+  // ── Extended Clinical Metadata (editable by patient) ──────────────────────
+  frequency        String?      // e.g. "Once daily", "Twice daily", "As needed"
+  foodInstruction  String?      // e.g. "with_food", "before_food", "after_food", "empty_stomach"
+  prescribedBy     String?      // Name of prescribing physician or "Self"
+  notes            String?      // Patient's personal notes / reminders
+  reminderEnabled  Boolean      @default(false)
+  refillDate       DateTime?    // Upcoming refill / prescription renewal date
+
   // Relations
   symptoms              Symptom[]         @relation("PossibleCauseMedicine")
   interactionFlagsAsA   InteractionFlag[] @relation("MedicineA")
