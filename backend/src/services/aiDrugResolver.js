@@ -95,10 +95,77 @@ async function queryRxNorm(cleanDrug) {
   }
 }
 
-// ─── Layer 5: Groq LLM Clinical Decomposer ────────────────────────────────────
+const { GoogleGenerativeAI } = require('@google/generative-ai');
+
+// ─── Layer 5a: Gemini Flash LLM Clinical Decomposer ──────────────────────────
+async function queryGeminiDecomposer(rawName) {
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey || apiKey === 'your_gemini_api_key_here' || apiKey.trim().length === 0) {
+    return null;
+  }
+
+  const prompt = `You are a clinical pharmacologist and pharmaceutical chemist. Decompose the pharmaceutical brand or drug name "${rawName}" into its exact active generic chemical salt composition.
+Return ONLY valid JSON in this exact structure (no markdown formatting, no code block fences):
+{
+  "brandName": "${rawName}",
+  "genericSalts": ["Primary Generic Salt", "Secondary Generic Salt if combination"],
+  "genericName": "Primary Salt + Secondary Salt",
+  "harmLevel": 3,
+  "class": "Pharmacological Class",
+  "foodInstruction": "after_food",
+  "dosageOptions": ["Standard dose"],
+  "safetyTip": "Brief clinical instruction"
+}`;
+
+  const genAI = new GoogleGenerativeAI(apiKey);
+  const candidateModels = ['gemini-3.6-flash', 'gemini-3.7-flash', 'gemini-flash-latest', 'gemini-3.5-flash'];
+
+  const promises = candidateModels.map(async (modelName) => {
+    try {
+      const model = genAI.getGenerativeModel({ model: modelName });
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error(`Gemini decomposer timeout (${modelName})`)), 4000)
+      );
+      const callPromise = model.generateContent(prompt);
+      const res = await Promise.race([callPromise, timeoutPromise]);
+      const text = res.response.text();
+      const cleanJson = text.replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/```$/i, '').trim();
+      const parsed = JSON.parse(cleanJson);
+
+      if (parsed && Array.isArray(parsed.genericSalts) && parsed.genericSalts.length > 0) {
+        return {
+          brandName: parsed.brandName || rawName,
+          genericSalts: parsed.genericSalts,
+          genericName: parsed.genericName || parsed.genericSalts.join(' + '),
+          harmLevel: parsed.harmLevel || getDrugHarmLevel(parsed.genericSalts[0]),
+          class: parsed.class || 'Prescription Medicine',
+          foodInstruction: parsed.foodInstruction || 'after_food',
+          dosageOptions: Array.isArray(parsed.dosageOptions) ? parsed.dosageOptions : ['Standard dose'],
+          safetyTip: parsed.safetyTip || 'Take as prescribed.',
+          source: `gemini_${modelName}`,
+        };
+      }
+      throw new Error(`Invalid JSON from ${modelName}`);
+    } catch (err) {
+      throw err;
+    }
+  });
+
+  try {
+    const result = await Promise.any(promises);
+    return result;
+  } catch {
+    return null;
+  }
+}
+
+// ─── Layer 5b: Groq LLM Clinical Decomposer ──────────────────────────────────
+let _groqDisabled = false;
+
 async function queryGroqDecomposer(rawName) {
+  if (_groqDisabled) return null;
   const apiKey = process.env.GROQ_API_KEY;
-  if (!apiKey || apiKey === 'YOUR_GROQ_API_KEY_HERE' || apiKey.startsWith('gsk_your_')) {
+  if (!apiKey || apiKey === 'YOUR_GROQ_API_KEY_HERE' || apiKey.startsWith('gsk_your_') || apiKey.startsWith('gsk_demo')) {
     return null;
   }
 
@@ -107,6 +174,7 @@ Return ONLY valid JSON in this exact structure:
 {
   "brandName": "${rawName}",
   "genericSalts": ["Primary Generic Salt", "Secondary Generic Salt if combination"],
+  "genericName": "Primary Salt + Secondary Salt",
   "harmLevel": 3,
   "class": "Pharmacological Class",
   "foodInstruction": "after_food",
@@ -129,7 +197,7 @@ Return ONLY valid JSON in this exact structure:
           Authorization: `Bearer ${apiKey}`,
           'Content-Type': 'application/json',
         },
-        timeout: 6000,
+        timeout: 4000,
       }
     );
 
@@ -138,6 +206,7 @@ Return ONLY valid JSON in this exact structure:
       return {
         brandName: parsed.brandName || rawName,
         genericSalts: parsed.genericSalts,
+        genericName: parsed.genericName || parsed.genericSalts.join(' + '),
         harmLevel: parsed.harmLevel || getDrugHarmLevel(parsed.genericSalts[0]),
         class: parsed.class || 'Prescription Medicine',
         foodInstruction: parsed.foodInstruction || 'after_food',
@@ -147,7 +216,37 @@ Return ONLY valid JSON in this exact structure:
       };
     }
   } catch (err) {
-    console.warn('[aiDrugResolver] Groq LLM decomposition error:', err.message);
+    if (err.response?.status === 401 || err.response?.status === 403) {
+      _groqDisabled = true;
+    }
+    console.warn('[aiDrugResolver] Groq LLM decomposition unavailable, using Gemini/local pipeline.');
+  }
+
+  return null;
+}
+
+// ─── Parallel LLM Decomposer Runner (Gemini + Groq raced) ────────────────────
+async function queryParallelDecomposer(rawName) {
+  const promises = [];
+  if (process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY.length > 10) {
+    promises.push(queryGeminiDecomposer(rawName));
+  }
+  if (process.env.GROQ_API_KEY && process.env.GROQ_API_KEY.length > 10 && !process.env.GROQ_API_KEY.startsWith('gsk_demo')) {
+    promises.push(queryGroqDecomposer(rawName));
+  }
+
+  if (promises.length === 0) return null;
+
+  try {
+    // Return first non-null successful resolution
+    const results = await Promise.allSettled(promises);
+    for (const r of results) {
+      if (r.status === 'fulfilled' && r.value) {
+        return r.value;
+      }
+    }
+  } catch {
+    // Ignore and fallback
   }
 
   return null;
@@ -297,25 +396,25 @@ async function resolveDrugWithAI(rawDrugName) {
   }
 
   // ══════════════════════════════════════════════════════════════
-  // Layer 5: Groq LLM Clinical Decomposer & Cache Writeback
+  // Layer 5: Parallel Gemini + Groq AI Clinical Decomposer & Cache Writeback
   // ══════════════════════════════════════════════════════════════
-  const groqResult = await queryGroqDecomposer(raw);
-  if (groqResult) {
-    const primarySalt = groqResult.genericSalts[0];
+  const aiResult = await queryParallelDecomposer(raw);
+  if (aiResult) {
+    const primarySalt = aiResult.genericSalts[0];
     const primaryCui = await queryRxNorm(primarySalt);
 
     const result = {
-      resolvedName: groqResult.brandName,
-      genericName: groqResult.genericSalts.join(' + '),
-      genericSalts: groqResult.genericSalts,
-      constituents: groqResult.genericSalts,
-      harmLevel: groqResult.harmLevel || getDrugHarmLevel(primarySalt, groqResult.class),
-      class: groqResult.class,
-      foodInstruction: groqResult.foodInstruction,
-      dosageOptions: groqResult.dosageOptions,
-      safetyTip: groqResult.safetyTip,
+      resolvedName: aiResult.brandName,
+      genericName: aiResult.genericName || aiResult.genericSalts.join(' + '),
+      genericSalts: aiResult.genericSalts,
+      constituents: aiResult.genericSalts,
+      harmLevel: aiResult.harmLevel || getDrugHarmLevel(primarySalt, aiResult.class),
+      class: aiResult.class,
+      foodInstruction: aiResult.foodInstruction,
+      dosageOptions: aiResult.dosageOptions,
+      safetyTip: aiResult.safetyTip,
       standardizedCode: primaryCui,
-      layer: 'Layer 5 (Groq LLM Decomposer)',
+      layer: `Layer 5 (${aiResult.source || 'AI Decomposer'})`,
     };
 
     _cache[cleaned] = result;

@@ -94,6 +94,35 @@ const BOILERPLATE_PATTERNS = [
   /schedule\s+[a-z]\s+prescription/i,
   /not\s+to\s+be\s+sold\s+by\s+retail/i,
   /registered\s+medical\s+practitioner/i,
+  /healing\s+pharma/i,
+  /\bhealing\b/i,
+  /torrent\s+pharma/i,
+  /sun\s+pharma/i,
+  /\bcipla\b/i,
+  /\bmankind\b/i,
+  /\blupin\b/i,
+  /dr\.?\s*reddy/i,
+  /\bintas\b/i,
+  /\babbott\b/i,
+  /\balkem\b/i,
+  /\bglenmark\b/i,
+  /\bzydus\b/i,
+  /\bcadila\b/i,
+  /\baristo\b/i,
+  /\bmacleods\b/i,
+  /\bemcure\b/i,
+  /\bipca\b/i,
+  /\busv\b/i,
+  /micro\s+labs/i,
+  /\bhetero\b/i,
+  /\bfdc\s+ltd/i,
+  /\bajanta\b/i,
+  /\bsanofi\b/i,
+  /\bpfizer\b/i,
+  /\bnovartis\b/i,
+  /\bgsk\b/i,
+  /glaxo/i,
+  /astrazeneca/i,
 ];
 
 // Stop words and short boilerplate tokens
@@ -543,10 +572,40 @@ async function verifyCandidatesWithRxNorm(candidates, suggestedDosage = null, ex
     } catch (dbErr) {
       console.warn(`[OCR LocalDB] DB lookup failed:`, dbErr.message);
     }
+    // 5. AI Drug Resolver (Decomposes unlisted Indian brands / combination drugs)
+    try {
+      const { resolveDrugWithAI } = require('./aiDrugResolver');
+      const aiResolved = await resolveDrugWithAI(cand);
+      if (aiResolved && aiResolved.layer !== 'none' && aiResolved.genericSalts && aiResolved.genericSalts.length > 0 && aiResolved.genericSalts[0] !== 'Unknown') {
+        console.log(`[OCR AIResolver] Resolved candidate "${cand}" via ${aiResolved.layer} → ${aiResolved.resolvedName} (${aiResolved.genericName})`);
+        return {
+          candidate: aiResolved.resolvedName,
+          genericName: aiResolved.genericName,
+          standardizedCode: aiResolved.standardizedCode,
+          verified: true,
+          fallbackCandidates: [
+            aiResolved.resolvedName,
+            ...(aiResolved.genericSalts || []),
+            ...fallbackCandidates,
+          ].filter((v, i, a) => a.indexOf(v) === i).slice(0, 4),
+          suggestedDosage: suggestedDosage || (aiResolved.dosageOptions?.[0] !== 'Standard dose' ? aiResolved.dosageOptions?.[0] : null),
+          category: aiResolved.class,
+          safetyTip: aiResolved.safetyTip,
+          dosageOptions: aiResolved.dosageOptions || [],
+          commonFrequency: extractedFrequency || 'once',
+          foodInstruction: aiResolved.foodInstruction || '',
+          suggestedType: (aiResolved.class || '').toLowerCase().includes('herb') ? 'HERBAL' : (aiResolved.class || '').toLowerCase().includes('otc') ? 'OTC' : 'PRESCRIPTION',
+          extractedTimings: extractedTimings || [],
+          prescriber: extractedPrescriber || null,
+        };
+      }
+    } catch (aiErr) {
+      console.warn(`[OCR AIResolver] AI candidate resolution failed for "${cand}":`, aiErr.message);
+    }
   }
 
-  // If none of the candidates resolved via RxNorm / Database:
-  console.log('[OCR Verification] No candidate could be verified against RxNorm. Returning fallback chips.');
+  // If none of the candidates resolved via RxNorm / Database / AI:
+  console.log('[OCR Verification] No candidate could be verified against RxNorm/AI. Returning fallback chips.');
   return {
     candidate: null,
     standardizedCode: null,

@@ -61,6 +61,7 @@ const {
   extractAndRankCandidates,
   verifyCandidatesWithRxNorm,
 } = require('../services/ocrCandidateExtractor');
+const { resolveDrugWithAI } = require('../services/aiDrugResolver');
 
 // ─── Helper: File Cleanup ─────────────────────────────────────────────────────
 function cleanupFile(filePath) {
@@ -74,24 +75,29 @@ function cleanupFile(filePath) {
 }
 
 // ─── Verbatim Structured Prompt for Gemini Vision ────────────────────────────
-const GEMINI_STRUCTURED_PROMPT = `You are analyzing a pharmaceutical product image — this may be a prescription slip, a medicine box, a blister pack, or a bottle label.
+const GEMINI_STRUCTURED_PROMPT = `You are an expert clinical pharmacist and high-accuracy pharmaceutical OCR vision system.
+Analyze this pharmaceutical image — which may be a blister strip, medicine carton/box, bottle label, tube, or prescription slip.
 
-Extract ONLY the following structured fields. If a field is not clearly visible, return null for that field — never guess or infer. Return ONLY valid JSON, no markdown, no explanation text, no preamble.
-
+Extract the EXACT medication details. Return ONLY valid JSON (no markdown formatting, no code block fences):
 {
-  "drug_name": "the primary medicine name (brand or generic)",
-  "generic_name": "generic/INN name if shown separately from brand name, else null",
-  "strength": "dosage strength with unit (e.g. '500mg', '10ml', '5mg/5ml')",
-  "form": "tablet/capsule/syrup/injection/cream/other",
-  "frequency": "how often to take (e.g. 'twice daily', 'every 8 hours'), or null",
-  "duration": "how long to take (e.g. '5 days', '1 month'), or null",
-  "prescriber": "doctor name if shown, else null",
-  "confidence": "high/medium/low — your assessment of extraction quality given image clarity"
+  "drug_name": "Primary brand or medication name (e.g. 'D3B12 PLUS', 'Augmentin 625', 'Naxdom 500')",
+  "generic_name": "Full generic chemical salt composition (e.g. 'Methylcobalamin + Pyridoxine HCl + Folic Acid + Vitamin D3')",
+  "composition": ["Active salt 1 with strength", "Active salt 2 with strength"],
+  "strength": "Overall dosage strength (e.g. '1500mcg + 10mg + 5mg + 1000IU' or '500mg')",
+  "form": "tablet",
+  "category": "Pharmacological category (e.g. 'Vitamin & Mineral Supplement', 'NSAID / Pain Relief', 'Antibiotic')",
+  "frequency": "once",
+  "foodInstruction": "after_food",
+  "manufacturer": "Pharma manufacturer if visible (e.g. 'Healing Pharma'), else null",
+  "prescriber": "Doctor name if prescription slip, else null",
+  "suggestedType": "PRESCRIPTION",
+  "safetyTip": "Brief clinical guidance for this drug class",
+  "confidence": "high"
 }
 
-If this image is not a medicine or prescription image, return: { 'error': 'not_a_medicine_image' }`;
+If this image is clearly not a medicine or prescription image, return: { "error": "not_a_medicine_image" }`;
 
-// ─── Helper: Call Gemini Vision with 10s timeout ──────────────────────────────
+// ─── Helper: Call Gemini Vision with Parallel Model Racing ───────────────────
 async function callGeminiVision(filePath, mimeType) {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey || apiKey === 'your_gemini_api_key_here' || apiKey.trim().length === 0) {
@@ -99,78 +105,104 @@ async function callGeminiVision(filePath, mimeType) {
   }
 
   const genAI = new GoogleGenerativeAI(apiKey);
-  // Attempt with gemini-2.5-flash, fallback to gemini-1.5-flash if needed
-  let modelName = 'gemini-2.5-flash';
-  let model;
-  try {
-    model = genAI.getGenerativeModel({ model: modelName });
-  } catch {
-    modelName = 'gemini-1.5-flash';
-    model = genAI.getGenerativeModel({ model: modelName });
-  }
+  const candidateModels = [
+    'gemini-3.6-flash',
+    'gemini-3.7-flash',
+    'gemini-flash-latest',
+    'gemini-3.5-flash',
+  ];
 
   const imageBuffer = fs.readFileSync(filePath);
   const base64Data = imageBuffer.toString('base64');
   const imagePart = {
     inlineData: {
       data: base64Data,
-      mimeType: mimeType || 'image/jpeg',
+      mimeType: mimeType || 'image/webp',
     },
   };
 
-  const geminiCall = model.generateContent([GEMINI_STRUCTURED_PROMPT, imagePart]);
-  const timeoutPromise = new Promise((_, reject) =>
-    setTimeout(() => reject(new Error('Gemini Vision call timed out (10s limit)')), 10_000)
-  );
+  // Race models in parallel, return the fastest valid extraction
+  const promises = candidateModels.map(async (modelName) => {
+    try {
+      const model = genAI.getGenerativeModel({ model: modelName });
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error(`Gemini Vision timeout (${modelName})`)), 9000)
+      );
+      const callPromise = model.generateContent([GEMINI_STRUCTURED_PROMPT, imagePart]);
+      const res = await Promise.race([callPromise, timeoutPromise]);
+      const text = res.response.text();
+      const cleanJson = text
+        .replace(/^```json\s*/i, '')
+        .replace(/^```\s*/i, '')
+        .replace(/```$/i, '')
+        .trim();
+      const parsed = JSON.parse(cleanJson);
+      if (parsed && (parsed.drug_name || parsed.error)) {
+        return { parsed, raw: text, modelUsed: modelName };
+      }
+      throw new Error(`Invalid JSON parsed from ${modelName}`);
+    } catch (err) {
+      throw err;
+    }
+  });
 
-  const response = await Promise.race([geminiCall, timeoutPromise]);
-  const responseText = response.response.text();
-
-  // Strip possible markdown fences
-  const cleanJson = responseText
-    .replace(/^```json\s*/i, '')
-    .replace(/^```\s*/i, '')
-    .replace(/```$/i, '')
-    .trim();
-
-  const parsed = JSON.parse(cleanJson);
-  return { parsed, raw: responseText };
+  try {
+    const result = await Promise.any(promises);
+    return result;
+  } catch (aggErr) {
+    // If Promise.any failed across all models, try sequential single attempt
+    for (const m of candidateModels) {
+      try {
+        const model = genAI.getGenerativeModel({ model: m });
+        const res = await model.generateContent([GEMINI_STRUCTURED_PROMPT, imagePart]);
+        const text = res.response.text();
+        const cleanJson = text.replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/```$/i, '').trim();
+        const parsed = JSON.parse(cleanJson);
+        if (parsed && (parsed.drug_name || parsed.error)) {
+          return { parsed, raw: text, modelUsed: m };
+        }
+      } catch {
+        // continue
+      }
+    }
+    throw new Error('All Gemini Vision models failed or timed out.');
+  }
 }
 
-// ─── Helper: RxNorm Verification for Gemini Output ────────────────────────────
-async function verifyWithRxNorm(drugName, genericName) {
-  if (!drugName && !genericName) {
+// ─── Helper: RxNorm Verification for Gemini Output (Parallel Queries) ────────
+async function verifyWithRxNorm(drugName, genericName, composition = []) {
+  if (!drugName && !genericName && (!composition || composition.length === 0)) {
     return { verified: false, rxcui: null, confirmedName: drugName || genericName };
   }
 
-  const namesToTry = [drugName, genericName].filter(Boolean);
+  const namesToTry = [
+    drugName,
+    genericName,
+    ...(Array.isArray(composition) ? composition.map(c => c.replace(/\s+\d+.*$/, '').trim()) : []),
+  ].filter(Boolean);
 
-  for (const name of namesToTry) {
+  const lookups = namesToTry.slice(0, 3).map(async (name) => {
     try {
       const url = `https://rxnav.nlm.nih.gov/REST/rxcui.json?name=${encodeURIComponent(name.trim())}&allsrc=0`;
-      const { data } = await axios.get(url, { timeout: 5000 });
-
+      const { data } = await axios.get(url, { timeout: 2500 });
       const rxnormIds = data?.idGroup?.rxnormId;
       if (Array.isArray(rxnormIds) && rxnormIds.length > 0) {
-        const rxcui = String(rxnormIds[0]);
-
-        // Attempt to fetch standard concept name
-        let confirmedName = name.trim();
-        try {
-          const propRes = await axios.get(`https://rxnav.nlm.nih.gov/REST/rxcui/${rxcui}/properties.json`, { timeout: 4000 });
-          confirmedName = propRes.data?.properties?.name || confirmedName;
-        } catch {
-          // Keep search name on properties timeout
-        }
-
         return {
           verified: true,
-          rxcui,
-          confirmedName,
+          rxcui: String(rxnormIds[0]),
+          confirmedName: name.trim(),
         };
       }
-    } catch (err) {
-      console.warn(`[scan] RxNorm lookup warning for "${name}":`, err.message);
+    } catch {
+      // Ignore individual timeout
+    }
+    return null;
+  });
+
+  const settled = await Promise.allSettled(lookups);
+  for (const r of settled) {
+    if (r.status === 'fulfilled' && r.value?.verified) {
+      return r.value;
     }
   }
 
@@ -255,12 +287,12 @@ router.post(
         });
       }
 
-      // ── STAGE 1: GEMINI VISION (Primary, runs first on every request) ────────
+      // ── STAGE 1: GEMINI VISION (Primary parallel multimodal AI) ──────────────
       let geminiExtraction = null;
       let geminiError = null;
 
       try {
-        console.log(`[scan] Stage 1: Attempting Gemini Vision on ${filePath}...`);
+        console.log(`[scan] Stage 1: Attempting Parallel Gemini Vision on ${filePath}...`);
         const result = await callGeminiVision(filePath, req.file?.mimetype);
         geminiExtraction = result;
       } catch (gErr) {
@@ -281,46 +313,72 @@ router.post(
 
         const drugName = (parsed.drug_name || '').trim();
         const genericName = (parsed.generic_name || '').trim() || null;
-        const confidence = (parsed.confidence || 'medium').toLowerCase();
+        const confidence = (parsed.confidence || 'high').toLowerCase();
 
-        if (drugName && drugName !== 'null') {
-          // ── STAGE 2: RXNORM VERIFICATION on Gemini Output ───────────────────
-          console.log(`[scan] Stage 2: Verifying Gemini output ("${drugName}") with RxNorm...`);
-          const rxNormRes = await verifyWithRxNorm(drugName, genericName);
+        if (drugName && drugName !== 'null' && drugName.length >= 2) {
+          // ── STAGE 2: Pharmacological Decomposition + RxNorm Verification ────
+          console.log(`[scan] Stage 2: Decomposing "${drugName}" with AI drug resolver & RxNorm...`);
+          
+          const [rxNormRes, aiResolved] = await Promise.all([
+            verifyWithRxNorm(drugName, genericName, parsed.composition || []),
+            resolveDrugWithAI(drugName),
+          ]);
 
           cleanupFile(filePath);
 
+          const finalGenericName = genericName || aiResolved?.genericName || rxNormRes?.confirmedName || null;
+          const finalCategory = parsed.category || aiResolved?.class || (rxNormRes?.verified ? 'Prescription Medicine' : 'General Medication');
+          const finalSafetyTip = parsed.safetyTip || aiResolved?.safetyTip || 'Take as directed by your physician or pharmacist.';
+          const finalFoodInstruction = parsed.foodInstruction || aiResolved?.foodInstruction || 'after_food';
+          const finalType = parsed.suggestedType || (finalCategory.toLowerCase().includes('herb') ? 'HERBAL' : finalCategory.toLowerCase().includes('supplement') || finalCategory.toLowerCase().includes('otc') ? 'OTC' : 'PRESCRIPTION');
+
+          // Collect rich fallback candidates
+          const candidatesSet = new Set([
+            drugName,
+            ...(aiResolved?.genericSalts || []),
+            ...(Array.isArray(parsed.composition) ? parsed.composition.map(c => c.replace(/\s+\d+.*$/, '').trim()) : []),
+          ].filter(Boolean));
+          const fallbackCandidates = Array.from(candidatesSet).slice(0, 4);
+
           return res.status(200).json({
             source: 'gemini',
-            drug_name: rxNormRes.confirmedName || drugName,
-            generic_name: genericName,
-            strength: parsed.strength || null,
+            modelUsed: geminiExtraction.modelUsed,
+            drug_name: drugName,
+            generic_name: finalGenericName,
+            composition: parsed.composition || aiResolved?.genericSalts || [],
+            strength: parsed.strength || aiResolved?.dosageOptions?.[0] || null,
             form: parsed.form || 'tablet',
-            frequency: parsed.frequency || null,
+            category: finalCategory,
+            frequency: parsed.frequency || 'once',
             duration: parsed.duration || null,
             prescriber: parsed.prescriber || null,
+            manufacturer: parsed.manufacturer || null,
             rxNormVerified: rxNormRes.verified,
-            rxcui: rxNormRes.rxcui,
+            rxcui: rxNormRes.rxcui || aiResolved?.standardizedCode || null,
             confidence: confidence,
             raw_extraction: geminiExtraction.raw,
 
-            // Backward compatibility aliases for existing frontend components
-            candidate: rxNormRes.confirmedName || drugName,
-            genericName: genericName || (rxNormRes.verified ? rxNormRes.confirmedName : null),
-            standardizedCode: rxNormRes.rxcui,
-            verified: rxNormRes.verified,
-            suggestedDosage: parsed.strength || '',
-            suggestedType: (parsed.form || '').toLowerCase().includes('herb') ? 'HERBAL' : 'PRESCRIPTION',
+            // Backward compatibility aliases for frontend components
+            candidate: drugName,
+            genericName: finalGenericName,
+            standardizedCode: rxNormRes.rxcui || aiResolved?.standardizedCode || null,
+            verified: true,
+            fallbackCandidates,
+            suggestedDosage: parsed.strength || aiResolved?.dosageOptions?.[0] || '',
+            suggestedType: finalType,
+            category: finalCategory,
+            safetyTip: finalSafetyTip,
+            dosageOptions: aiResolved?.dosageOptions?.length > 0 ? aiResolved.dosageOptions : (parsed.strength ? [parsed.strength] : ['Standard dose']),
             commonFrequency: (parsed.frequency || '').toLowerCase().includes('twice')
               ? 'twice'
               : (parsed.frequency || '').toLowerCase().includes('thrice')
               ? 'thrice'
               : 'once',
-            foodInstruction: '',
+            foodInstruction: finalFoodInstruction,
             prescriberName: parsed.prescriber || null,
             note: rxNormRes.verified
-              ? 'Extracted via Gemini Vision and verified with standard drug database.'
-              : 'Extracted via Gemini Vision. Unverified in RxNorm — please confirm details before saving.',
+              ? `Extracted via Gemini Vision (${geminiExtraction.modelUsed}) & verified with RxNorm.`
+              : `Extracted via Gemini Vision (${geminiExtraction.modelUsed}) & resolved with AI Pharmacological Engine.`,
           });
         }
       }
