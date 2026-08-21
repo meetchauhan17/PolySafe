@@ -210,29 +210,36 @@ export function KnownSideEffectsPanel({ medicineId, medicineName, defaultOpen = 
                   No statistically significant adverse reactions (PRR ≥ 2.0) found for {medicineName || 'this medicine'}.
                 </p>
               ) : (
-                <div className="space-y-2 max-h-56 overflow-y-auto pr-1">
+                <div className="space-y-2 max-h-64 overflow-y-auto pr-1">
                   {data.sideEffects.map((se, idx) => {
                     const prr = parseFloat(se.prr);
+                    const isHigh = prr >= 10;
+                    const isMedium = prr >= 5;
+                    const badgeBg = isHigh
+                      ? 'bg-rose-100 text-rose-900 border-rose-300'
+                      : isMedium
+                      ? 'bg-orange-100 text-orange-900 border-orange-300'
+                      : 'bg-amber-100 text-amber-900 border-amber-300';
+
                     return (
                       <div
                         key={idx}
-                        className="flex items-center justify-between p-2.5 rounded-xl bg-[#EDE8DC] border border-[#E7E1D3] shadow-xs text-xs"
+                        className="flex items-center justify-between gap-2.5 p-2.5 rounded-xl bg-[#EDE8DC] border border-[#E7E1D3] shadow-xs text-xs hover:bg-[#E5DFD1] transition-colors"
                       >
-                        <div className="flex items-center gap-2 min-w-0">
+                        <div className="flex items-center gap-2 flex-1 min-w-0">
                           <Activity className="w-3.5 h-3.5 text-rose-500 flex-shrink-0" />
-                          <span className="font-semibold text-[#1C2B27] truncate">{se.sideEffect}</span>
+                          <span className="font-bold text-[#1C2B27] leading-snug break-words">
+                            {se.sideEffect}
+                          </span>
                         </div>
-                        <span
-                          className={`text-[10px] font-extrabold px-2 py-0.5 rounded-lg border flex-shrink-0 ml-2 ${
-                            prr >= 10
-                              ? 'bg-rose-100 text-rose-900 border-rose-300'
-                              : prr >= 5
-                              ? 'bg-orange-100 text-orange-900 border-orange-300'
-                              : 'bg-amber-100 text-amber-900 border-amber-300'
-                          }`}
-                        >
-                          PRR: {prr.toFixed(2)} — statistically significant
-                        </span>
+                        <div className="flex items-center gap-1.5 flex-shrink-0">
+                          <span
+                            className={`text-[10px] font-black px-2 py-0.5 rounded-lg border whitespace-nowrap ${badgeBg}`}
+                            title={`Proportional Reporting Ratio (PRR): ${prr.toFixed(2)} — FDA FAERS statistically significant signal`}
+                          >
+                            PRR {prr.toFixed(1)}×
+                          </span>
+                        </div>
                       </div>
                     );
                   })}
