@@ -140,10 +140,14 @@ PolySafe/
 │   │   │   ├── ocrCandidateExtractor.js      # Token n-gram OCR candidate extractor
 │   │   │   └── regimenRisk.js                # WHO/NCI 5-tier harm and escalation engine
 │   │   └── index.js                          # Express server, Socket.IO setup, error handler
-│   ├── test-all-endpoints.js                 # 18-step master sequential integration test suite
-│   ├── test-block1-auth.js                   # Authentication & lockout test suite
-│   ├── test-unified-3roles-auth.js           # Multi-role authentication validation suite
-│   ├── test-user-specified-accounts.js       # Account provisioning and verification suite
+│   ├── tests/                                # Automated verification & test suites
+│   │   ├── test-all-endpoints.js             # 18-step master sequential integration test suite
+│   │   ├── test-block1-auth.js               # Authentication & lockout test suite
+│   │   ├── test-doctor-safety-check.js       # Pre-prescribing simulation test
+│   │   ├── test-hybrid-scan.js               # OCR vision & parsing test
+│   │   ├── test-indian-resolver.js           # 5-layer Indian formulation test
+│   │   ├── test-unified-3roles-auth.js       # Multi-role authentication validation suite
+│   │   └── test-user-specified-accounts.js   # Account provisioning and verification suite
 │   ├── .env.example                          # Environment variable template
 │   └── package.json                          # Backend dependencies and scripts
 │

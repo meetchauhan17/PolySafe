@@ -10,7 +10,12 @@
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:push": "prisma db push",
-    "seed": "node prisma/seed.js"
+    "seed": "node prisma/seed.js",
+    "test": "node tests/test-all-endpoints.js",
+    "test:auth": "node tests/test-unified-3roles-auth.js",
+    "test:accounts": "node tests/test-user-specified-accounts.js",
+    "test:scan": "node tests/test-hybrid-scan.js",
+    "test:resolver": "node tests/test-indian-resolver.js"
   },
   "prisma": {
     "seed": "node prisma/seed.js"

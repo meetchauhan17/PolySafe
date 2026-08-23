@@ -1,4 +1,4 @@
-const { extractAndRankCandidates, verifyCandidatesWithRxNorm } = require('./src/services/ocrCandidateExtractor');
+const { extractAndRankCandidates, verifyCandidatesWithRxNorm } = require('../src/services/ocrCandidateExtractor');
 
 async function testScenario() {
   const sampleOcrText = `

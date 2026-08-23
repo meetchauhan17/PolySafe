@@ -2,7 +2,7 @@
  * test-block1-auth.js — Comprehensive Automated Verification for BLOCK 1: AUTH & SESSION
  */
 const axios = require('axios');
-const prisma = require('./src/lib/prisma');
+const prisma = require('../src/lib/prisma');
 const API_URL = 'http://localhost:5000';
 
 async function runBlock1Tests() {

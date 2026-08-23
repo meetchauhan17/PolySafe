@@ -38,7 +38,7 @@ async function testScan() {
     'gemini-3.5-flash',
   ];
 
-  const imgPath = path.join(__dirname, 'fixtures/d3b12-test.webp');
+  const imgPath = path.join(__dirname, '..', 'fixtures/d3b12-test.webp');
   const imgBuffer = fs.readFileSync(imgPath);
   const imagePart = {
     inlineData: {

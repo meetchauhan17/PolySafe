@@ -2,7 +2,7 @@
  * test-unified-3roles-auth.js — Comprehensive verification of OTP once on signup, then ID+Password for all 3 roles
  */
 const axios = require('axios');
-const prisma = require('./src/lib/prisma');
+const prisma = require('../src/lib/prisma');
 const API_URL = 'http://localhost:5000';
 
 async function testRoleAuth(role, name, regNum) {

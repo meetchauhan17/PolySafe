@@ -13,7 +13,7 @@ async function runDirectScanTest() {
     { expiresIn: '1h' }
   );
 
-  const imgPath = path.join(__dirname, 'fixtures/d3b12-test.webp');
+  const imgPath = path.join(__dirname, '..', 'fixtures/d3b12-test.webp');
   const form = new FormData();
   form.append('image', fs.createReadStream(imgPath), {
     filename: 'd3b12-test.webp',

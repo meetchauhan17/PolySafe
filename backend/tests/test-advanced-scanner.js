@@ -32,7 +32,7 @@ async function runTests() {
 
   // 3. Test Direct Scan of fixture with Parallel Vision AI
   console.log('\n3. Testing POST /medicine/scan on d3b12-test.webp...');
-  const fixturePath = path.join(__dirname, 'fixtures', 'd3b12-test.webp');
+  const fixturePath = path.join(__dirname, '..', 'fixtures', 'd3b12-test.webp');
   if (fs.existsSync(fixturePath)) {
     const form = new FormData();
     form.append('image', fs.createReadStream(fixturePath));

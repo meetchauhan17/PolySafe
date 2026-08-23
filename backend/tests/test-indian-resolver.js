@@ -2,7 +2,7 @@
 
 const axios = require('axios');
 const { PrismaClient } = require('@prisma/client');
-const { resolveDrugWithAI } = require('./src/services/aiDrugResolver');
+const { resolveDrugWithAI } = require('../src/services/aiDrugResolver');
 
 const prisma = new PrismaClient();
 const API = 'http://localhost:5000';

@@ -4655,5 +4655,27 @@
     "safetyTip": "May cause drowsiness; avoid alcohol and activities requiring mental alertness until response is known.",
     "standardizedCode": "402349",
     "layer": "Layer 5 (gemini_gemini-3.5-flash-lite)"
+  },
+  "naxdum": {
+    "resolvedName": "Naxdom 500",
+    "genericName": "Naproxen + Domperidone",
+    "genericSalts": [
+      "Naproxen",
+      "Domperidone"
+    ],
+    "constituents": [
+      "Naproxen",
+      "Domperidone"
+    ],
+    "harmLevel": 3,
+    "class": "NSAID + Prokinetic (Migraine)",
+    "foodInstruction": "after_food",
+    "dosageOptions": [
+      "250mg+10mg",
+      "500mg+10mg"
+    ],
+    "safetyTip": "Prescribed for acute migraine. Avoid on empty stomach due to NSAID gastric irritation.",
+    "standardizedCode": "7258",
+    "layer": "Layer 3 (Fuzzy Match: Naxdom 500)"
   }
 }
