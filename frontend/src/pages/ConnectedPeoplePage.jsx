@@ -17,7 +17,7 @@ import {
   ArrowLeft, Stethoscope, Heart, Trash2, Loader2, AlertCircle,
   CheckCircle2, Clock, XCircle, Plus, QrCode, Phone, Mail,
   ShieldCheck, Info, ChevronRight, Copy, Check, PenLine,
-  KeyRound, RefreshCw, Lock, Sparkles
+  KeyRound, RefreshCw, Lock
 } from 'lucide-react';
 import Card from '../components/Card';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
@@ -838,7 +838,7 @@ export default function ConnectedPeoplePage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const shouldReduceMotion = useReducedMotion();
-  const { isGuest, token, requireAuth } = useAuth();
+  const { isGuest, token } = useAuth();
 
   const [customLabels, setCustomLabels] = useState(getStoredLabels);
   const [demoList, setDemoList] = useState(DEMO_CONNECTIONS);
@@ -880,7 +880,7 @@ export default function ConnectedPeoplePage() {
 
   const revokeMut = useMutation({
     mutationFn: revokeConnection,
-    onSuccess: (res, id) => {
+    onSuccess: (res) => {
       queryClient.invalidateQueries(['my-connections']);
       notify.warning('Access Removed', res?.message || 'Connection or pending invite cancelled.');
     },

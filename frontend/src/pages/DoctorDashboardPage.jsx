@@ -1,61 +1,52 @@
 /**
  * DoctorDashboardPage.jsx — Clinical Physician Dashboard
  * Route: /doctor-dashboard
- *
- * Capabilities:
- * - Patient Connection Management (6-digit PIN claim & approval status)
- * - Real-Time Regimen Timeline with Provenance & FDA Pharmacovigilance (OFFSIDES)
- * - Pre-Prescribing Safety Simulation Engine
- * - Direct Physician Prescription Issuance (POST /connection/doctor-prescribe)
- * - Clinical Deprescribing & Regimen Optimization Assistant (Beers Criteria & ACB scale)
- * - Patient Logged Symptoms & Prescribing Cascade Correlation
- * - One-Click Print-Ready Clinical Consultation & Risk Assessment Report
  */
 import React, { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import {
- Stethoscope, Loader2, AlertCircle, CheckCircle2, Clock,
- Pill, Leaf, ShoppingBag, AlertOctagon, ChevronRight,
- Users, Shield, Info, TriangleAlert, Plus, Search, X,
- FileText, Activity, Brain, ArrowDownCircle, Printer,
- Sparkles, Check, HeartHandshake, AlertTriangle, Trash2,
- Calendar, CalendarDays, RefreshCw, Layers, Heart, Zap, FlaskConical,
- ArrowLeftRight, Send, MessageSquare, BarChart2,
+  Stethoscope, Loader2, AlertCircle, CheckCircle2, Clock,
+  Pill, Leaf, ShoppingBag, AlertOctagon, ChevronRight,
+  Users, Shield, Info, TriangleAlert, Plus, Search, X,
+  FileText, Activity, Brain, ArrowDownCircle, Printer,
+  Sparkles, Check, AlertTriangle,
+  CalendarDays, Layers, Heart, FlaskConical,
+  ArrowLeftRight, Send, MessageSquare, BarChart2,
 } from 'lucide-react';
 import Card from '../components/Card';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import {
- EmptyDoctorPatientIllustration,
- EmptyDoctorListIllustration,
- EmptyMedicinesIllustration,
+  EmptyDoctorPatientIllustration,
+  EmptyDoctorListIllustration,
+  EmptyMedicinesIllustration,
 } from '../components/EmptyIllustrations';
 import {
- DoctorPatientListSkeleton,
- DoctorPatientDetailSkeleton,
+  DoctorPatientListSkeleton,
+  DoctorPatientDetailSkeleton,
 } from '../components/Skeletons';
 import { notify } from '../utils/toast';
 import { DrugHarmBadge, KnownSideEffectsPanel } from '../components/DrugHarmLevel';
 
 // ─── API helpers ──────────────────────────────────────────────────────────────
 async function claimCode(code) {
- const { data } = await axios.post('/connection/claim-code', { code });
- return data;
+  const { data } = await axios.post('/connection/claim-code', { code });
+  return data;
 }
 
 async function fetchMyConnections() {
- const { data } = await axios.get('/connection/mine');
- return data;
+  const { data } = await axios.get('/connection/mine');
+  return data;
 }
 
 async function fetchPatientTimeline(patientId) {
- const { data } = await axios.get(`/connection/doctor-patient/${patientId}/timeline`);
- return data;
+  const { data } = await axios.get(`/connection/doctor-patient/${patientId}/timeline`);
+  return data;
 }
 
 async function fetchPatientClinicalSummary(patientId) {
- const { data } = await axios.get(`/connection/doctor-patient/${patientId}/clinical-summary`);
- return data;
+  const { data } = await axios.get(`/connection/doctor-patient/${patientId}/clinical-summary`);
+  return data;
 }
 
 async function substitutePatientDrug(payload) {

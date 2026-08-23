@@ -6,11 +6,11 @@ import axios from 'axios';
 import {
  Camera, Pill, Plus, ArrowRight, ArrowLeft, Loader2, AlertCircle,
  CheckCircle2, X, Stethoscope, ShoppingBag, Leaf, Info, ScanLine,
- FileImage, TriangleAlert, AlertTriangle, Edit3, ShieldCheck, ExternalLink,
+ FileImage, TriangleAlert, Edit3, ShieldCheck, ExternalLink,
  Activity, AlertOctagon, Search, HelpCircle, Clock, User, CalendarDays,
  Sun, Sunset, Moon, Coffee, QrCode, FlaskConical, Layers, SwitchCamera,
- CheckSquare, Square, RefreshCw, Maximize2, Sparkles, Building2, Calendar,
- Tag, ShieldAlert, Package, Check,
+ CheckSquare, Square, Sparkles, Building2, Calendar,
+ Tag, ShieldAlert, Package,
 } from 'lucide-react';
 import Card from '../components/Card';
 import { notify } from '../utils/toast';
