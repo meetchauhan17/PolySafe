@@ -33,6 +33,16 @@ import {
  CalendarDays,
  CheckCircle,
  XCircle,
+ Utensils,
+ UtensilsCrossed,
+ Coffee,
+ Droplets,
+ Moon,
+ Sun,
+ Wine,
+ Dumbbell,
+ TestTube2,
+ PenLine,
 } from 'lucide-react';
 import { patientApi } from '../api/auth';
 import Card from '../components/Card';
