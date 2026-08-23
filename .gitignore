@@ -42,6 +42,9 @@ backend/tmp/
 POLYSAFE_COMPLETE_ATOZ_MANUAL.md
 PolySafe_FINAL_Build_Sequence.md
 PolySafe_Master_Project.md
+POLYSAFE_CURRENT_STATE.md
+POLYSAFE_FINAL_CONFIRMATION.md
+POLYSAFE_UI_AUDIT.md
 
 # Large raw datasets & archives (exceed GitHub 100MB file limit)
 *.csv.gz
