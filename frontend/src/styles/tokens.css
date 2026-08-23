@@ -1,93 +1,244 @@
 /**
- * PolySafe Centralized Design Tokens — Neumorphic (Soft UI) Edition
- * frontend/src/styles/tokens.css
- *
- * Warm Clay Neumorphism:
- * - Base Surface: #EDE8DC (warm clay material)
- * - Foreground: #1C2B27 (PolySafe ink, WCAG AAA compliant 11.99:1)
- * - Muted Text: #5C6B64 (WCAG AA compliant 4.65:1)
- * - Accent: #2B6E5E (Trust Teal) | Hover: #3D8A76
- * - Shadows: Calculated for #EDE8DC warm base (highlight rgba(255,255,255,0.65), shadow rgba(191,180,155,0.55))
- * - Typography: Fraunces (Headings) + Source Sans 3 (Body) + IBM Plex Mono (Dosage/Codes)
- * - Radius: 32px (Containers), 16px (Buttons), 12px (Inner tiles), 9999px (Icon Wells)
+ * PolySafe Industrial Skeuomorphic Design System — v5.0
+ * Medical Cyan (#0891b2) + Slate Blue (#2d6a9f) on Blue-Grey Chassis (#eef2f7)
  */
 
 :root {
-  /* ── Core Brand Neumorphic Palette ─────────────────────────────────── */
-  --brand-paper: #FBF8F2;                /* Warm Light Background */
-  --brand-clay: #EDE8DC;                 /* Warm Clay Base Surface */
-  --brand-sub-surface: #E6E0D3;          /* Inset Well Sub-surface */
-  --brand-surface-subtle: #E6E0D3;       /* Sub-surface alias */
-  --brand-card: #FFFFFF;                 /* Explicit white card context */
-  --brand-border: transparent;           /* Transparent by default in Neumorphic Soft UI */
-  --brand-border-visible: #DCD5C6;       /* Visible edge accent */
-  --brand-border-subtle: #E7E1D3;        /* Subtle border accent */
+  /* ── CHASSIS ── */
+  --chassis:       #eef2f7;
+  --chassis-dark:  #dde4ee;
+  --chassis-panel: #f7f9fc;
+  --chassis-light: #f7f9fc;
+  --panel:         #f7f9fc;
 
-  --brand-text: #1C2B27;                 /* Ink (11.99:1 contrast ratio against #EDE8DC) */
-  --brand-muted: #5C6B64;                /* Muted text (4.65:1 contrast ratio against #EDE8DC) */
-  --brand-subtle: #85948C;               /* Subtle text / secondary captions */
+  /* ── TEXT ── */
+  --text-primary:   #0f1923;
+  --text-secondary: #3d5068;
+  --text-muted:     #6b7f96;
+  --text-inverse:   #ffffff;
 
-  --brand-primary: #2B6E5E;              /* Trust Teal Accent */
-  --brand-primary-hover: #3D8A76;        /* Light Teal Accent */
-  --brand-primary-active: #22574A;
-  --brand-primary-light: #E4F2E9;
-  --brand-primary-muted: rgba(43, 110, 94, 0.12);
+  /* ── PRIMARY ACCENT — Medical Cyan ── */
+  --accent-primary:       #0891b2;
+  --accent-primary-dark:  #0670a0;
+  --accent-primary-light: #e0f7fa;
+  --accent-primary-glow:  rgba(8, 145, 178, 0.35);
 
-  /* ── Neumorphic Shadow System ──────────────────────────────────────── */
-  --neu-shadow-light: rgba(255, 255, 255, 0.65);
-  --neu-shadow-dark: rgba(191, 180, 155, 0.55);
+  /* ── SECONDARY ACCENT — Slate Blue ── */
+  --accent-secondary:      #2d6a9f;
+  --accent-secondary-dark: #1e4f7a;
+  --accent-secondary-light:#dbeafe;
+  --accent-secondary-glow: rgba(45, 106, 159, 0.35);
 
-  --neu-extruded: 9px 9px 16px rgba(191, 180, 155, 0.55), -9px -9px 16px rgba(255, 255, 255, 0.65);
-  --neu-extruded-hover: 12px 12px 20px rgba(191, 180, 155, 0.65), -12px -12px 20px rgba(255, 255, 255, 0.75);
-  --neu-extruded-sm: 4px 4px 8px rgba(191, 180, 155, 0.50), -4px -4px 8px rgba(255, 255, 255, 0.65);
-  --neu-inset: inset 6px 6px 10px rgba(191, 180, 155, 0.55), inset -6px -6px 10px rgba(255, 255, 255, 0.65);
-  --neu-inset-deep: inset 10px 10px 20px rgba(191, 180, 155, 0.65), inset -10px -10px 20px rgba(255, 255, 255, 0.75);
-  --neu-inset-sm: inset 3px 3px 6px rgba(191, 180, 155, 0.50), inset -3px -3px 6px rgba(255, 255, 255, 0.60);
+  /* ── ROLE IDENTITY ── */
+  --role-patient:   #0891b2;
+  --role-patient-dark: #0670a0;
+  --role-patient-glow: rgba(8, 145, 178, 0.35);
 
-  /* ── Clinical Safety Statuses (SAFETY CARVE-OUT) ────────────────────── */
-  /* Must NOT blend into clay background; keep real visible high-contrast backgrounds & 2px borders */
-  --status-safe: #2F8558;
-  --status-safe-bg: #E4F2E9;
-  --status-safe-border: #2F8558;
-  --status-safe-text: #1A5C3A;
+  --role-doctor:    #2d6a9f;
+  --role-doctor-dark: #1e4f7a;
+  --role-doctor-glow: rgba(45, 106, 159, 0.35);
 
-  --status-caution: #B5791A;
-  --status-caution-bg: #FBEED9;
-  --status-caution-border: #B5791A;
-  --status-caution-text: #7A4A0A;
+  --role-caregiver: #2d8a6e;
+  --role-caregiver-dark: #1f6b55;
+  --role-caregiver-glow: rgba(45, 138, 110, 0.35);
 
-  --status-danger: #B23D25;
-  --status-danger-bg: #FBE4DE;
-  --status-danger-border: #B23D25;
-  --status-danger-text: #7A1A0A;
+  /* ── CLINICAL LED INDICATORS ── */
+  --led-safe:          #16a34a;
+  --led-safe-glow:     rgba(22, 163, 74, 0.5);
+  --led-caution:       #c07a0a;
+  --led-caution-glow:  rgba(192, 122, 10, 0.5);
+  --led-critical:      #dc2626;
+  --led-critical-glow: rgba(220, 38, 38, 0.5);
+  --led-online:        #0891b2;
+  --led-online-glow:   rgba(8, 145, 178, 0.5);
+  --led-offline:       #6b7f96;
+  --led-offline-glow:  rgba(107, 127, 150, 0.4);
 
-  --status-accent: #E0824B;              /* Timeline Orange Thread */
-  --status-accent-light: #FDF3EB;
+  /* ── SHADOW COLOURS (calibrated for subtle blue-grey chassis depth) ── */
+  --shadow-light: rgba(255, 255, 255, 0.85);
+  --shadow-dark:  rgba(150, 168, 190, 0.35);
 
-  /* ── Role Identity Accents ─────────────────────────────────────────── */
-  --role-patient: #2B6E5E;
-  --role-patient-bg: #E4F2E9;
+  /* ── CALIBRATED CLEAN CLINICAL SHADOW SYSTEM (Crisp, Non-bleeding) ── */
+  --shadow-card:          0 2px 8px -2px rgba(15, 25, 35, 0.08), 0 1px 3px 0 rgba(15, 25, 35, 0.04);
+  --shadow-card-hover:    0 6px 16px -4px rgba(15, 25, 35, 0.12), 0 2px 6px -1px rgba(15, 25, 35, 0.06);
+  --shadow-floating:      0 12px 24px -6px rgba(15, 25, 35, 0.14), 0 4px 10px -2px rgba(15, 25, 35, 0.06);
+  --shadow-pressed:       inset 0 2px 4px 0 rgba(15, 25, 35, 0.08);
+  --shadow-recessed:      inset 0 1px 3px 0 rgba(15, 25, 35, 0.06);
+  --shadow-recessed-deep: inset 0 2px 6px 0 rgba(15, 25, 35, 0.10);
+  --shadow-sm:            0 1px 3px 0 rgba(15, 25, 35, 0.06), 0 1px 2px -1px rgba(15, 25, 35, 0.04);
+  --shadow-accent-primary: 0 4px 12px -2px rgba(8, 145, 178, 0.3);
+  --shadow-accent-pressed: inset 0 2px 4px rgba(6, 112, 160, 0.35);
+  --shadow-accent-teal:    0 4px 12px -2px rgba(45, 106, 159, 0.3);
+  --shadow-accent-teal-pressed: inset 0 2px 4px rgba(30, 79, 122, 0.35);
 
-  --role-doctor: #1B4B66;
-  --role-doctor-bg: #E9F1F5;
-  --role-doctor-border: rgba(27, 75, 102, 0.35);
+  /* ── BRAND SUB-SURFACES & BORDERS (Backward Compat) ── */
+  --brand-surface:        #ffffff;
+  --brand-paper:          var(--chassis-panel);
+  --brand-clay:           var(--chassis);
+  --brand-sub-surface:    var(--chassis-dark);
+  --brand-surface-subtle: var(--chassis-dark);
+  --brand-card:           #ffffff;
+  --brand-border:         transparent;
+  --brand-border-visible: var(--chassis-dark);
+  --brand-border-subtle:  var(--chassis-dark);
+  --brand-text:           var(--text-primary);
+  --brand-muted:          var(--text-muted);
+  --brand-subtle:         var(--text-secondary);
+  --brand-primary:        var(--accent-primary);
+  --brand-primary-hover:  var(--accent-primary-dark);
+  --brand-primary-active: var(--accent-primary-dark);
+  --brand-primary-light:  var(--accent-primary-light);
+  --brand-primary-muted:  rgba(8, 145, 178, 0.12);
 
-  --role-caregiver: #8A6D3B;
-  --role-caregiver-bg: #F7F3EB;
-  --role-caregiver-border: rgba(138, 109, 59, 0.35);
+  /* ── BORDER RADIUS ── */
+  --radius-sm:   4px;
+  --radius-md:   8px;
+  --radius-lg:   12px;
+  --radius-xl:   16px;
+  --radius-2xl:  20px;
+  --radius-full: 9999px;
 
-  /* ── Typography Tokens ─────────────────────────────────────────────── */
-  --font-heading: 'Fraunces', Georgia, serif;
-  --font-body: 'Source Sans 3', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  /* ── TYPOGRAPHY ── */
+  --font-display: 'Inter', sans-serif;
+  --font-body:    'Inter', sans-serif;
+  --font-mono:    'JetBrains Mono', 'Roboto Mono', monospace;
 
-  /* ── Border Radii (Neumorphic Spec) ────────────────────────────────── */
-  --radius-card: 32px;                   /* 32px for containers / cards */
-  --radius-interactive: 32px;
-  --radius-button: 16px;                 /* 16px for buttons */
-  --radius-input: 16px;                  /* 16px for inputs */
-  --radius-inner: 12px;                  /* 12px for inner elements / tiles */
-  --radius-chip: 12px;
-  --radius-well: 9999px;                 /* Circular icon wells */
-  --radius-pill: 9999px;
+  /* ── NEUMORPHIC ALIASES ── */
+  --neu-extruded:         var(--shadow-card);
+  --neu-extruded-hover:   var(--shadow-card-hover);
+  --neu-extruded-sm:      var(--shadow-sm);
+  --neu-inset:            var(--shadow-pressed);
+  --neu-inset-deep:       var(--shadow-recessed-deep);
+  --neu-inset-sm:         var(--shadow-recessed);
+  --status-safe:          var(--led-safe);
+  --status-safe-bg:       #dcfce7;
+  --status-safe-border:   var(--led-safe);
+  --status-safe-text:     #1b5e20;
+  --status-caution:       var(--led-caution);
+  --status-caution-bg:    #fef9c3;
+  --status-caution-border: var(--led-caution);
+  --status-caution-text:  #78350f;
+  --status-danger:        var(--led-critical);
+  --status-danger-bg:     #fee2e2;
+  --status-danger-border: var(--led-critical);
+  --status-danger-text:   #7f1d1d;
+  --role-doctor-bg:       var(--accent-secondary-light);
+  --role-doctor-border:   rgba(45, 106, 159, 0.35);
+  --role-caregiver-bg:    #e0f2fe;
+  --role-caregiver-border: rgba(45, 138, 110, 0.35);
+  --font-heading:         var(--font-display);
+  --radius-card:          var(--radius-2xl);
+  --radius-interactive:   var(--radius-2xl);
+  --radius-button:        var(--radius-lg);
+  --radius-input:         var(--radius-md);
+  --radius-inner:         var(--radius-md);
+  --radius-chip:          var(--radius-md);
+  --radius-well:          var(--radius-full);
+  --radius-pill:          var(--radius-full);
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   DARK MODE
+   ══════════════════════════════════════════════════════════════════════════ */
+[data-theme="dark"],
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* ── CHASSIS ── */
+    --chassis:       #1a2233;
+    --chassis-dark:  #141b29;
+    --chassis-panel: #1f2d42;
+    --chassis-light: #1f2d42;
+    --panel:         #1f2d42;
+    --brand-surface: #1e293b;
+    --brand-card:    #1e293b;
+
+    /* ── TEXT ── */
+    --text-primary:   #e8edf5;
+    --text-secondary: #9baec4;
+    --text-muted:     #5e7899;
+    --text-inverse:   #0f1923;
+
+    /* ── ACCENTS ── */
+    --accent-primary:       #22b8d8;
+    --accent-primary-dark:  #0891b2;
+    --accent-primary-light: rgba(34, 184, 216, 0.15);
+    --accent-primary-glow:  rgba(34, 184, 216, 0.4);
+
+    --accent-secondary:      #4a8fc4;
+    --accent-secondary-dark: #2d6a9f;
+    --accent-secondary-light:#1e293b;
+    --accent-secondary-glow: rgba(74, 143, 196, 0.4);
+
+    /* ── ROLE IDENTITY ── */
+    --role-patient:   #22b8d8;
+    --role-doctor:    #4a8fc4;
+    --role-caregiver: #34c28a;
+
+    /* ── LED INDICATORS ── */
+    --led-safe:          #22c55e;
+    --led-safe-glow:     rgba(34, 197, 94, 0.55);
+    --led-caution:       #f59e0b;
+    --led-caution-glow:  rgba(245, 158, 11, 0.55);
+    --led-critical:      #ef4444;
+    --led-critical-glow: rgba(239, 68, 68, 0.55);
+    --led-online:        #22b8d8;
+    --led-online-glow:   rgba(34, 184, 216, 0.55);
+    --led-offline:       #5e7899;
+    --led-offline-glow:  rgba(94, 120, 153, 0.4);
+
+    /* ── SHADOW COLOURS ── */
+    --shadow-light: rgba(255, 255, 255, 0.06);
+    --shadow-dark:  rgba(0, 0, 0, 0.45);
+  }
+}
+
+/* Explicit light override when user forces light mode via toggle */
+[data-theme="light"] {
+  /* ── CHASSIS ── */
+  --chassis:       #eef2f7;
+  --chassis-dark:  #dde4ee;
+  --chassis-panel: #f7f9fc;
+  --chassis-light: #f7f9fc;
+  --panel:         #f7f9fc;
+  --brand-surface: #ffffff;
+  --brand-card:    #ffffff;
+
+  /* ── TEXT ── */
+  --text-primary:   #0f1923;
+  --text-secondary: #3d5068;
+  --text-muted:     #6b7f96;
+  --text-inverse:   #ffffff;
+
+  /* ── PRIMARY ACCENT — Medical Cyan ── */
+  --accent-primary:       #0891b2;
+  --accent-primary-dark:  #0670a0;
+  --accent-primary-light: #e0f7fa;
+  --accent-primary-glow:  rgba(8, 145, 178, 0.35);
+
+  /* ── SECONDARY ACCENT — Slate Blue ── */
+  --accent-secondary:      #2d6a9f;
+  --accent-secondary-dark: #1e4f7a;
+  --accent-secondary-light:#dbeafe;
+  --accent-secondary-glow: rgba(45, 106, 159, 0.35);
+
+  /* ── ROLE IDENTITY ── */
+  --role-patient:   #0891b2;
+  --role-doctor:    #2d6a9f;
+  --role-caregiver: #2d8a6e;
+
+  /* ── CLINICAL LED INDICATORS ── */
+  --led-safe:          #16a34a;
+  --led-safe-glow:     rgba(22, 163, 74, 0.5);
+  --led-caution:       #c07a0a;
+  --led-caution-glow:  rgba(192, 122, 10, 0.5);
+  --led-critical:      #dc2626;
+  --led-critical-glow: rgba(220, 38, 38, 0.5);
+  --led-online:        #0891b2;
+  --led-online-glow:   rgba(8, 145, 178, 0.5);
+  --led-offline:       #6b7f96;
+  --led-offline-glow:  rgba(107, 127, 150, 0.4);
+
+  /* ── SHADOW COLOURS ── */
+  --shadow-light: rgba(255, 255, 255, 0.75);
+  --shadow-dark:  rgba(170, 185, 205, 0.6);
 }

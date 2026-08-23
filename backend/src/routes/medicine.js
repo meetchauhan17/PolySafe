@@ -712,6 +712,16 @@ router.delete('/:id', auth, requireRole(['PATIENT']), async (req, res) => {
       data:  { removedAt },
     });
 
+    // Delete obsolete interaction flags referencing this discontinued medicine
+    await prisma.interactionFlag.deleteMany({
+      where: {
+        OR: [
+          { medicineAId: id },
+          { medicineBId: id },
+        ],
+      },
+    });
+
     // Recalculate cumulative burden after discontinuation
     const cumulativeBurden = await calculateCumulativeBurden(patient.id);
 

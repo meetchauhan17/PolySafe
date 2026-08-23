@@ -6,7 +6,7 @@
  * Polls every 5s for pending connections (doctor has claimed the code).
  * When a claim is detected, shows an "Approve / Deny" prompt.
  */
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
@@ -54,7 +54,7 @@ function ExpiryCountdown({ expiresAt }) {
  }, [expiresAt]);
 
  return (
- <span className="flex items-center gap-1.5 text-xs text-[#6B726C]">
+ <span className="flex items-center gap-1.5 text-xs text-[var(--text-muted)]">
  <Clock className="w-3.5 h-3.5 text-[#E0824B]" />
  {label}
  </span>
@@ -74,6 +74,7 @@ export default function DoctorSharePage() {
  const [copied, setCopied] = useState(false);
  const [generating, setGenerating] = useState(false);
  const [genError, setGenError] = useState('');
+ const hasGeneratedRef = useRef(false);
 
  // ── Generate code ──────────────────────────────────────────────────────────
  const handleGenerate = useCallback(async () => {
@@ -87,7 +88,7 @@ export default function DoctorSharePage() {
  const result = await generateCode();
  setCodeData(result);
  queryClient.invalidateQueries(['pending-connections']);
- notify.success('Security Code Ready', 'Share this 6-digit PIN or QR code with your doctor.');
+ notify.success('Security Code Ready', 'Share this 6-digit PIN or QR code with your doctor.', { id: 'doctor-security-code-ready' });
  } catch (err) {
  const msg = err?.response?.data?.error || 'Failed to generate code.';
  setGenError(msg);
@@ -97,11 +98,12 @@ export default function DoctorSharePage() {
  }
  }, [isGuest, requireAuth, queryClient]);
 
- // Auto-generate on mount if not guest
+ // Auto-generate on mount if not guest (only once)
  useEffect(() => {
- if (!isGuest) {
- handleGenerate();
- }
+   if (!isGuest && !hasGeneratedRef.current) {
+     hasGeneratedRef.current = true;
+     handleGenerate();
+   }
  }, [isGuest, handleGenerate]);
 
  // ── Copy to clipboard ──────────────────────────────────────────────────────
@@ -114,11 +116,11 @@ export default function DoctorSharePage() {
  });
  };
 
- // ── Poll for pending connections every 5s once code exists ──────────────────
+ // ── Poll for pending connections every 2s once code exists ──────────────────
  const { data: pendingData } = useQuery({
  queryKey: ['pending-connections'],
  queryFn: fetchPending,
- refetchInterval: codeData ? 5000 : false,
+ refetchInterval: codeData ? 2000 : false,
  enabled: !!codeData,
  });
  const pending = pendingData?.pending ?? [];
@@ -146,7 +148,7 @@ export default function DoctorSharePage() {
  });
 
  return (
- <div className="min-h-[88vh] bg-[#EDE8DC] pb-16">
+ <div className="min-h-[88vh] bg-[var(--chassis)] pb-16">
  <div className="max-w-lg mx-auto px-4 py-8 space-y-6">
 
  {/* Header */}
@@ -158,19 +160,19 @@ export default function DoctorSharePage() {
  <ArrowLeft className="w-4 h-4" />
  </button>
  <div className="flex-1">
- <h1 className="text-2xl font-bold text-[#1C2B27]" style={{ fontFamily: "'Fraunces', serif" }}>
+ <h1 className="text-2xl font-bold text-[var(--text-primary)]" >
  Share with Your Doctor
  </h1>
- <p className="text-xs text-[#5C6B64]">Give your doctor read-only access to your medications and risk flags</p>
+ <p className="text-xs text-[var(--text-muted)]">Give your doctor read-only access to your medications and risk flags</p>
  </div>
  </div>
 
  {/* Explainer notice */}
- <div className="flex items-start gap-3 p-4 bg-[#E4F2E9] border border-[#2F8558]/30 rounded-2xl">
- <ShieldCheck className="w-5 h-5 text-[#2B6E5E] flex-shrink-0 mt-0.5" />
+ <div className="flex items-start space-x-3 p-3.5 bg-[var(--accent-primary)]/10 border border-[var(--accent-primary)]/20 rounded-xl text-xs text-[var(--accent-primary)]">
+ <ShieldCheck className="w-4 h-4 flex-shrink-0 mt-0.5" />
  <div>
- <p className="text-sm font-bold text-[#1A5C3A]">Consent-based, read-only access</p>
- <p className="text-xs text-[#2A6945] mt-0.5 leading-relaxed">
+ <p className="font-bold text-[var(--text-primary)]">Consent-based, read-only access</p>
+ <p className="text-xs text-[var(--text-muted)] mt-0.5 leading-relaxed">
  Your doctor can view your timeline and risk analysis. They cannot add or delete medicines. You can revoke access at any time.
  </p>
  </div>
@@ -196,14 +198,14 @@ export default function DoctorSharePage() {
  <Card
  title="Your Invite Code"
  subtitle="Share this QR code or 6-digit PIN with your physician"
- icon={<QrCode className="w-4 h-4 text-[#2B6E5E]" />}
+ icon={<QrCode className="w-4 h-4 text-[var(--accent-primary)]" />}
  badge={<ExpiryCountdown expiresAt={codeData.expiresAt} />}
  className="space-y-5"
  >
  {/* QR Code */}
  {codeData.qrCode && (
  <div className="flex justify-center">
- <div className="p-3 bg-[#E6E0D3] shadow-[inset_3px_3px_6px_rgba(191,180,155,0.5),inset_-3px_-3px_6px_rgba(255,255,255,0.6)] rounded-2xl border border-[rgba(191,180,155,0.4)]">
+ <div className="p-3 bg-[var(--chassis-dark)] shadow-[var(--shadow-recessed)] rounded-2xl border border-[rgba(255,255,255,0.4)]">
  <img
  src={codeData.qrCode}
  alt="QR code for doctor"
@@ -215,17 +217,17 @@ export default function DoctorSharePage() {
 
  {/* 6-digit code */}
  <div className="space-y-2">
- <p className="text-[11px] font-extrabold uppercase tracking-widest text-[#6B726C] text-center">
+ <p className="text-[11px] font-extrabold uppercase tracking-widest text-[var(--text-muted)] text-center">
  Or share this code manually
  </p>
  {/* Tray + Copy button: stacked on xs, side-by-side on sm+ */}
  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
  {/* 6-digit tray */}
- <div className="flex-1 flex items-center justify-center gap-1.5 sm:gap-2 bg-[#E6E0D3] shadow-[inset_3px_3px_6px_rgba(191,180,155,0.5),inset_-3px_-3px_6px_rgba(255,255,255,0.6)] rounded-2xl py-3 sm:py-4 px-2 border border-[rgba(191,180,155,0.3)]">
+ <div className="flex-1 flex items-center justify-center gap-2 sm:gap-3 bg-[var(--chassis-dark)] shadow-[var(--shadow-recessed)] rounded-2xl p-4 sm:p-6 border border-[var(--chassis-dark)]">
  {codeData.shareCode.split('').map((digit, i) => (
  <span
  key={i}
- className="min-w-[40px] w-10 h-12 sm:w-12 sm:h-14 flex items-center justify-center text-xl sm:text-2xl font-black text-[#1C2B27] bg-[#EDE8DC] rounded-xl shadow-[2px_2px_4px_rgba(191,180,155,0.5),-2px_-2px_4px_rgba(255,255,255,0.6)] border border-[rgba(191,180,155,0.3)]"
+ className="min-w-[44px] w-12 h-14 sm:w-14 sm:h-16 flex items-center justify-center text-xl sm:text-2xl font-black text-[var(--text-primary)] bg-[var(--chassis)] rounded-xl shadow-[var(--shadow-sm)] border border-[var(--chassis-dark)]"
  >
  {digit}
  </span>
@@ -235,10 +237,10 @@ export default function DoctorSharePage() {
  <button
  onClick={handleCopy}
  className={`flex sm:flex-col flex-row items-center justify-center gap-2 sm:gap-1 py-3 sm:p-3 px-4 sm:px-3 rounded-xl border transition-all duration-180 ease-out cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 text-sm font-bold ${
- copied
- ? 'border-[#2B6E5E] bg-[#E4F2E9] text-[#2B6E5E]'
- : 'border-[rgba(191,180,155,0.5)] bg-[#EDE8DC] shadow-[2px_2px_4px_rgba(191,180,155,0.4),-2px_-2px_4px_rgba(255,255,255,0.6)] text-[#5C6B64] hover:text-[#2B6E5E]'
- }`}
+    copied
+      ? 'border-[var(--accent-primary)]/40 bg-[var(--accent-primary)]/15 text-[var(--accent-primary)] shadow-sm'
+      : 'border-[var(--chassis-dark)] bg-[var(--chassis)] shadow-[var(--shadow-card)] text-[var(--text-muted)] hover:text-[var(--accent-primary)]'
+  }`}
  >
  <Copy className="w-4 h-4" />
  <span className="text-[10px]">{copied ? 'Copied!' : 'Copy'}</span>
@@ -254,7 +256,7 @@ export default function DoctorSharePage() {
  >
  <RefreshCw className="w-4 h-4" />
  <span>Generate New Code</span>
- {isGuest && <Lock className="w-3.5 h-3.5 text-[#8A6D3B] ml-1" />}
+ {isGuest && <Lock className="w-3.5 h-3.5 text-[var(--role-caregiver)] ml-1" />}
  </button>
  </Card>
  ) : null}
@@ -262,7 +264,7 @@ export default function DoctorSharePage() {
  {/* Pending doctor requests */}
  {pending.length > 0 && (
  <div className="space-y-3">
- <h2 className="text-base font-bold text-[#232724]" style={{ fontFamily: "'Fraunces', serif" }}>
+ <h2 className="text-base font-bold text-[var(--text-primary)]" >
  Awaiting Your Approval
  </h2>
  {pending.map((p) => {
@@ -276,16 +278,16 @@ export default function DoctorSharePage() {
  className="space-y-3"
  >
  <div className="flex items-center gap-3">
- <div className="p-2.5 bg-[#1B4B66]/10 rounded-xl border border-[#1B4B66]/20">
- <Stethoscope className="w-5 h-5 text-[#1B4B66]" />
+ <div className="p-2.5 bg-[var(--accent-secondary)]/10 rounded-xl border border-[var(--accent-secondary)]/20">
+ <Stethoscope className="w-5 h-5 text-[var(--accent-secondary)]" />
  </div>
  <div className="flex-1">
- <p className="text-sm font-bold text-[#232724]">{p.doctorLabel}</p>
- <p className="text-[11px] text-[#6B726C]">Wants to view your medication records</p>
+ <p className="text-sm font-bold text-[var(--text-primary)]">{p.doctorLabel}</p>
+ <p className="text-[11px] text-[var(--text-muted)]">Wants to view your medication records</p>
  </div>
  </div>
 
- <p className="text-xs text-[#6B726C] leading-relaxed">
+ <p className="text-xs text-[var(--text-muted)] leading-relaxed">
  This will give them <strong>read-only</strong> access to your timeline and interaction flags. You can revoke this at any time.
  </p>
 
@@ -317,12 +319,12 @@ export default function DoctorSharePage() {
  {codeData && pending.length === 0 && !generating && (
  <Card className="p-5 space-y-2">
  <div className="flex items-center gap-2.5">
- <div className="p-2 bg-[#E4F2E9] rounded-xl">
- <Users className="w-4 h-4 text-[#2B6E5E]" />
- </div>
+        <div className="p-2 bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] rounded-xl border border-[var(--accent-primary)]/20">
+          <Users className="w-4 h-4 text-[var(--accent-primary)]" />
+        </div>
  <div>
- <p className="text-sm font-bold text-[#232724]">Waiting for your doctor</p>
- <p className="text-xs text-[#6B726C]">
+ <p className="text-sm font-bold text-[var(--text-primary)]">Waiting for your doctor</p>
+ <p className="text-xs text-[var(--text-muted)]">
  Share the code or QR above. This page auto-updates when they connect.
  </p>
  </div>
@@ -332,19 +334,19 @@ export default function DoctorSharePage() {
  {[0, 1, 2].map((i) => (
  <div
  key={i}
- className="w-2 h-2 rounded-full bg-[#2B6E5E]"
+ className="w-2 h-2 rounded-full bg-[var(--accent-primary)]"
  style={{ animation: `pulse-dot 1.4s ease-in-out ${i * 0.16}s infinite` }}
  />
  ))}
- <span className="text-xs text-[#6B726C]">Listening for new connection…</span>
+ <span className="text-xs text-[var(--text-muted)]">Listening for new connection…</span>
  </div>
  </Card>
  )}
 
  {/* Privacy note */}
- <div className="flex items-start gap-2.5 p-4 border-2 border-[var(--brand-border-subtle)] rounded-2xl bg-[var(--brand-paper)]">
- <Info className="w-4 h-4 text-[#6B726C] flex-shrink-0 mt-0.5" />
- <p className="text-xs text-[#6B726C] leading-relaxed">
+ <div className="flex items-start gap-2.5 p-4 border-2 border-[var(--brand-border-subtle)] rounded-2xl bg-[var(--chassis)]">
+ <Info className="w-4 h-4 text-[var(--text-muted)] flex-shrink-0 mt-0.5" />
+ <p className="text-xs text-[var(--text-muted)] leading-relaxed">
  Codes expire after 24 hours. Each code can only be claimed once. Your doctor will see your medication list, interaction flags, and cumulative burden score — but not any personal details beyond your age and conditions.
  </p>
  </div>

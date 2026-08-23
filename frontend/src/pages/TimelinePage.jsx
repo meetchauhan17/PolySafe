@@ -3,27 +3,88 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import {
- ArrowLeft,
- Pill,
- Leaf,
- ShoppingBag,
- Stethoscope,
- AlertTriangle,
- AlertOctagon,
- ShieldCheck,
- CalendarDays,
- Plus,
- Info,
- AlertCircle,
- Loader2,
- ChevronRight,
+  ArrowLeft,
+  Pill,
+  Leaf,
+  ShoppingBag,
+  Stethoscope,
+  AlertTriangle,
+  AlertOctagon,
+  ShieldCheck,
+  CalendarDays,
+  Plus,
+  Info,
+  AlertCircle,
+  Loader2,
+  ChevronRight,
+  FlaskConical,
 } from 'lucide-react';
 import Card from '../components/Card';
+import LedIndicator from '../components/LedIndicator';
+import { DrugHarmBadge } from '../components/DrugHarmLevel';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { EmptyTimelineIllustration } from '../components/EmptyIllustrations';
 import { TimelineSkeleton } from '../components/Skeletons';
 import { useAuth } from '../context/AuthContext';
 import { Lock } from 'lucide-react';
+
+// ─── Helper: Medicine Type Badge ──────────────────────────────────────────────
+function MedicineTypeBadge({ type }) {
+  const map = {
+    PRESCRIPTION: { icon: <Stethoscope className="w-3 h-3" />, label: 'Rx', cls: 'bg-[var(--accent-secondary)]/10 text-[var(--accent-secondary)] border-[var(--accent-secondary)]/25' },
+    OTC: { icon: <ShoppingBag className="w-3 h-3" />, label: 'OTC', cls: 'bg-[var(--role-caregiver)]/10 text-[var(--role-caregiver)] border-[var(--role-caregiver)]/25' },
+    HERBAL: { icon: <Leaf className="w-3 h-3" />, label: 'Herbal', cls: 'bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] border-[var(--accent-primary)]/25' },
+  };
+  const t = map[type] ?? map.PRESCRIPTION;
+  return (
+    <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full border text-[10px] font-bold shadow-xs ${t.cls}`}>
+      {t.icon}
+      <span>{t.label}</span>
+    </span>
+  );
+}
+
+// ─── Helper: Parse Rich Indian or Generic Dosage Strings ──────────────────────
+function parseDosageDetails(dosageStr) {
+  if (!dosageStr) return null;
+  const str = String(dosageStr).trim();
+  if (!str.includes('•') && !str.includes('Salts:')) {
+    return { simple: str };
+  }
+
+  const parts = str.split('•').map(p => p.trim()).filter(p => p && p.toLowerCase() !== 'not specified');
+  let strength = null;
+  let form = null;
+  let salts = null;
+  let frequency = null;
+  let manufacturer = null;
+
+  for (const part of parts) {
+    if (part.startsWith('Salts:')) {
+      salts = part.replace(/^Salts:\s*/i, '').trim();
+    } else if (part.startsWith('Mfr:')) {
+      manufacturer = part.replace(/^Mfr:\s*/i, '').trim();
+    } else if (/^(once|twice|three|four|every|at bedtime|daily|as needed|in morning|in evening|at night)/i.test(part)) {
+      frequency = part;
+    } else if (/^(tablet|capsule|syrup|injection|drops|gel|cream|inhaler|patch|solution|suspension|powder)/i.test(part)) {
+      form = part;
+    } else if (/\d+\s*(mg|mcg|g|ml|iu|%)/i.test(part) && !strength) {
+      strength = part;
+    } else if (!form && /tablet|capsule|syrup/i.test(part)) {
+      form = part;
+    }
+  }
+
+  return {
+    simple: null,
+    strength: strength || (parts.length > 0 && !salts ? parts[0] : null),
+    form,
+    salts,
+    frequency,
+    manufacturer,
+    rawParts: parts,
+  };
+}
 
 const DEMO_TIMELINE_MEDICINES = [
  {
@@ -126,7 +187,7 @@ export default function TimelinePage() {
 
  if (isLoading) {
  return (
- <div className="min-h-[88vh] bg-[var(--brand-clay)] pb-16">
+ <div className="min-h-[88vh] bg-[var(--chassis)] pb-16">
  <TimelineSkeleton />
  </div>
  );
@@ -137,7 +198,7 @@ export default function TimelinePage() {
  const herbalCount = medicines.filter((m) => m.type === 'HERBAL').length;
 
  return (
- <div className="min-h-[88vh] bg-[var(--brand-clay)] pb-16">
+ <div className="min-h-[88vh] bg-[var(--chassis)] pb-16">
  <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 space-y-6">
 
  {/* ── Header ───────────────────────────────────────────────────────── */}
@@ -149,10 +210,10 @@ export default function TimelinePage() {
  <ArrowLeft className="w-4 h-4" />
  </button>
  <div className="flex-1">
- <h1 className="text-2xl font-bold text-[#1C2B27]" style={{ fontFamily: "'Fraunces', serif" }}>
+ <h1 className="text-2xl font-bold text-[var(--text-primary)]" >
  Medication Timeline
  </h1>
- <p className="text-xs text-[#5C6B64]">
+ <p className="text-xs text-[var(--text-muted)]">
  {isGuest ? 'Sample interactive prescription and cascade timeline' : 'Complete chronological prescription and supplement history'}
  </p>
  </div>
@@ -168,7 +229,7 @@ export default function TimelinePage() {
  >
  <Plus className="w-4 h-4" />
  <span>Add Medicine</span>
- {isGuest && <Lock className="w-3 h-3 text-[#EDE8DC] ml-0.5" />}
+ {isGuest && <Lock className="w-3 h-3 text-[var(--chassis)] ml-0.5" />}
  </Link>
  </div>
 
@@ -176,18 +237,18 @@ export default function TimelinePage() {
  {!isLoading && !isError && medicines.length > 0 && (
  <div className="grid grid-cols-3 gap-3">
  {[
- { label: 'Total Tracked', value: medicines.length, color: '#2B6E5E' },
- { label: 'Risk Flags', value: flaggedCount, color: flaggedCount > 0 ? '#B23D25' : '#2B6E5E' },
- { label: 'Herbals & OTC', value: herbalCount, color: '#2B6E5E' },
+ { label: 'Total Tracked', value: medicines.length, color: 'var(--accent-primary)' },
+ { label: 'Risk Flags', value: flaggedCount, color: flaggedCount > 0 ? 'var(--led-critical)' : 'var(--accent-primary)' },
+ { label: 'Herbals & OTC', value: herbalCount, color: 'var(--accent-primary)' },
  ].map((s) => (
  <Card key={s.label} className="p-3.5 text-center space-y-0.5">
  <p
  className="text-2xl font-black"
- style={{ color: s.color, fontFamily: "'Fraunces', serif" }}
+ style={{ color: s.color }}
  >
  {s.value}
  </p>
- <p className="text-[11px] text-[#6B726C] font-semibold">{s.label}</p>
+ <p className="text-[11px] text-[var(--text-muted)] font-semibold">{s.label}</p>
  </Card>
  ))}
  </div>
@@ -196,12 +257,12 @@ export default function TimelinePage() {
  {/* ── Legend ───────────────────────────────────────────────────────── */}
  {!isLoading && medicines.length > 0 && (
  <div className="flex items-center gap-6 px-1">
- <span className="flex items-center gap-2 text-xs text-[#6B726C] font-semibold">
- <span className="w-3.5 h-3.5 rounded-full bg-[var(--brand-clay)] border-[3px] border-[#2B6E5E]" />
+ <span className="flex items-center gap-2 text-xs text-[var(--text-muted)] font-semibold">
+ <span className="w-3.5 h-3.5 rounded-full bg-[var(--chassis)] border-[3px] border-[var(--accent-primary)]" />
  Safe / Normal Entry
  </span>
- <span className="flex items-center gap-2 text-xs text-[#6B726C] font-semibold">
- <span className="w-3.5 h-3.5 rounded-full bg-[var(--brand-clay)] border-[3px] border-[#B23D25]" />
+ <span className="flex items-center gap-2 text-xs text-[var(--text-muted)] font-semibold">
+ <span className="w-3.5 h-3.5 rounded-full bg-[var(--chassis)] border-[3px] border-[var(--led-critical)]" />
  Interaction Flagged
  </span>
  </div>
@@ -225,10 +286,10 @@ export default function TimelinePage() {
  <Card className="p-10 flex flex-col items-center text-center space-y-4">
  <EmptyTimelineIllustration className="w-36 h-36 mx-auto mb-1" />
  <div>
- <h3 className="text-lg font-bold text-[#232724]" style={{ fontFamily: "'Fraunces', serif" }}>
+ <h3 className="text-lg font-bold text-[var(--text-primary)]" >
  No medicines logged yet
  </h3>
- <p className="text-sm text-[#6B726C] mt-1 max-w-sm">
+ <p className="text-sm text-[var(--text-muted)] mt-1 max-w-sm">
  Add your prescriptions, over-the-counter medicines, and herbal supplements to start generating your safety timeline.
  </p>
  </div>
@@ -242,10 +303,9 @@ export default function TimelinePage() {
  {/* ── Timeline Display with Vertical #E0824B Line ───────────────────── */}
  {!isLoading && !isError && medicines.length > 0 && (
  <div className="relative pl-2 py-2">
- {/* Continuous Vertical Line: 3px wide, animated draw-down */}
  <motion.div
  className="absolute left-[19px] top-4 bottom-6 w-[3px] z-0 rounded-full origin-top"
- style={{ backgroundColor: '#E0824B' }}
+ style={{ backgroundColor: 'var(--accent-primary)' }}
  initial={shouldReduceMotion ? { scaleY: 1 } : { scaleY: 0 }}
  animate={{ scaleY: 1 }}
  transition={{ duration: shouldReduceMotion ? 0 : 0.45, ease: 'easeOut' }}
@@ -256,6 +316,7 @@ export default function TimelinePage() {
  {medicines.map((med, index) => {
  const isDiscontinued = !!med.discontinued || !!med.removedAt;
  const isFlagged = !isDiscontinued && med.flagged && med.flags?.length > 0;
+ const details = parseDosageDetails(med.dosage);
 
  return (
  <motion.div
@@ -271,86 +332,131 @@ export default function TimelinePage() {
  }}
  className="relative z-10 flex items-start gap-4"
  >
- {/* Circular Dot Marker: white fill, colored border (teal #2B6E5E for normal, red #B23D25 for flagged, gray #9CA3AF for discontinued) */}
  <div
- className="w-[18px] h-[18px] rounded-full bg-[var(--brand-clay)] flex-shrink-0 mt-4 shadow-sm"
+ className="w-[18px] h-[18px] rounded-full bg-[var(--chassis)] flex-shrink-0 mt-4 shadow-sm"
  style={{
- border: `3.5px solid ${isDiscontinued ? '#9CA3AF' : isFlagged ? '#B23D25' : '#2B6E5E'}`,
+ border: `3px solid ${isDiscontinued ? 'var(--chassis-dark)' : isFlagged ? 'var(--led-critical)' : 'var(--accent-primary)'}`,
  }}
  />
 
- {/* Content Card */}
  <Card
- variant={isDiscontinued ? 'default' : isFlagged ? 'danger' : 'default'}
- className={`flex-1 space-y-2.5 transition-shadow hover:shadow-md ${
- isDiscontinued ? 'bg-[#F9F7F2] opacity-85 border-[var(--brand-border-subtle)]' : ''
+ hideScrews={true}
+ className={`flex-1 space-y-3 transition-all ${
+ isDiscontinued
+ ? '!bg-[#f8f6f0] dark:!bg-white/[0.03] opacity-75 !border-[var(--chassis-dark)]'
+ : isFlagged
+ ? '!bg-[#fef2f2] dark:!bg-rose-950/20 !border-rose-400/50 dark:!border-rose-500/40 shadow-[0_2px_14px_rgba(225,29,72,0.08)]'
+ : 'bg-[var(--chassis)] border-[rgba(255,255,255,0.4)] hover:shadow-[var(--shadow-card)]'
  }`}
  >
- {/* Source Label (uppercase, small, teal or muted) */}
- <div className="flex items-center justify-between gap-2 flex-wrap">
+ <div className="flex items-center justify-between gap-2 flex-wrap pb-1 border-b border-[rgba(255,255,255,0.25)] dark:border-white/5">
  <span
- className={`text-[11px] font-extrabold uppercase tracking-wider ${
- isDiscontinued ? 'text-[#6B726C]' : 'text-[#2B6E5E]'
+ className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold uppercase tracking-wider ${
+ isDiscontinued
+ ? 'bg-[var(--chassis-dark)]/60 text-[var(--text-muted)] border border-[var(--chassis-dark)]'
+ : isFlagged
+ ? 'bg-white/80 dark:bg-black/30 text-[var(--accent-primary)] border border-rose-300/40 shadow-xs'
+ : 'bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] border border-[var(--accent-primary)]/25 shadow-xs'
  }`}
  >
+ <span className={`w-1.5 h-1.5 rounded-full ${isDiscontinued ? 'bg-[#9CA3AF]' : 'bg-[var(--accent-primary)]'}`} />
  {med.sourceLabel || 'Self-logged'}
  </span>
- 
- {/* Date Added */}
+
  <div className="flex items-center gap-2">
  {isDiscontinued && (
- <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-[var(--brand-paper)] text-[#6B726C] border border-[var(--brand-border-subtle)]">
+ <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[var(--chassis)] text-[var(--text-muted)] border border-[var(--chassis-dark)] shadow-xs">
  Discontinued {med.removedAt ? `on ${formatDate(med.removedAt)}` : ''}
  </span>
  )}
- <span className="flex items-center gap-1 text-xs text-[#6B726C]">
+ <span className="inline-flex items-center gap-1 text-xs text-[var(--text-muted)] font-medium">
  <CalendarDays className="w-3.5 h-3.5 text-[#9CA3AF]" />
  Started {formatDate(med.dateAdded)}
  </span>
  </div>
  </div>
 
- {/* Medicine Name (bold) */}
- <div className="flex items-baseline gap-2 flex-wrap">
- <h3 className={`text-base sm:text-lg font-bold ${isDiscontinued ? 'text-[#4A4F4B] line-through decoration-[#9CA3AF]/60' : 'text-[#232724]'}`}>
+ <div className="flex items-center justify-between gap-2 flex-wrap">
+ <div className="flex items-center gap-2.5 flex-wrap">
+ <h3 className={`text-base sm:text-lg font-bold font-display ${isDiscontinued ? 'text-[#4A4F4B] line-through decoration-[#9CA3AF]/60' : 'text-[var(--text-primary)]'}`}>
  {med.name}
  </h3>
- {med.dosage && (
- <span className="text-xs text-[#6B726C] font-medium">
- ({med.dosage})
- </span>
- )}
- <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-[var(--brand-paper)] border border-[var(--brand-border-subtle)] text-[#6B726C]">
- {med.type}
- </span>
+ <MedicineTypeBadge type={med.type} />
+ {med.harmLevel && <DrugHarmBadge harmLevel={med.harmLevel} size="sm" />}
+ </div>
  </div>
 
- {/* Flagged Red Pill Notes */}
- {isFlagged && (
- <div className="flex flex-wrap gap-2 pt-1">
- {med.flags.map((f) => (
- <Link
- key={f.flagId}
- to={`/risk/${f.flagId}`}
- className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1 rounded-full bg-[#FBE4DE] text-[#B23D25] border border-[#B23D25]/30 hover:bg-[#f7d4cb] transition-colors"
- >
- <AlertOctagon className="w-3.5 h-3.5 text-[#B23D25]" />
- <span>Flagged with {f.counterpartName}</span>
- <ChevronRight className="w-3.5 h-3.5 opacity-60" />
- </Link>
- ))}
+ {details && (
+ <div className="space-y-1.5 text-xs">
+ {details.salts && (
+ <div className="flex items-center gap-1.5 text-xs text-[var(--text-secondary)] font-medium">
+ <FlaskConical className="w-3.5 h-3.5 text-[var(--accent-primary)] flex-shrink-0" />
+ <span>Salts: <strong className="text-[var(--text-primary)] font-semibold">{details.salts}</strong></span>
  </div>
  )}
 
- {/* Standardized code badge if present */}
- {med.standardizedCode && (
- <div className="pt-1 flex items-center gap-1.5 text-[11px] text-[#6B726C]">
- <ShieldCheck className="w-3.5 h-3.5 text-[#2B6E5E]" />
- <span>RxNorm CUI: <span className="font-mono font-bold text-[#232724]">{med.standardizedCode}</span></span>
+ {details.simple ? (
+ <p className="text-xs text-[var(--text-muted)] font-mono font-medium">
+ Dose: {details.simple}
+ </p>
+ ) : (
+ <div className="flex items-center gap-2 flex-wrap text-[11px] text-[var(--text-muted)] font-mono">
+ {details.strength && (
+ <span className={`px-2 py-0.5 rounded-md border shadow-xs ${isFlagged ? 'bg-white/90 dark:bg-black/40 border-rose-200/60' : 'bg-[var(--chassis)] border-[rgba(255,255,255,0.4)]'}`}>
+ {details.strength}
+ </span>
+ )}
+ {details.form && (
+ <span className={`px-2 py-0.5 rounded-md border shadow-xs ${isFlagged ? 'bg-white/90 dark:bg-black/40 border-rose-200/60' : 'bg-[var(--chassis)] border-[rgba(255,255,255,0.4)]'}`}>
+ {details.form}
+ </span>
+ )}
+ {details.frequency && (
+ <span className={`px-2 py-0.5 rounded-md border shadow-xs ${isFlagged ? 'bg-white/90 dark:bg-black/40 border-rose-200/60' : 'bg-[var(--chassis)] border-[rgba(255,255,255,0.4)]'}`}>
+ {details.frequency}
+ </span>
+ )}
+ {details.manufacturer && (
+ <span className="text-[10px] text-[var(--text-muted)] opacity-80">
+ Mfr: {details.manufacturer}
+ </span>
+ )}
  </div>
  )}
- </Card>
- </motion.div>
+ </div>
+ )}
+
+                        {/* Flagged Red Interaction Capsule */}
+                        {isFlagged && (
+                          <div className="flex flex-wrap gap-2 pt-1">
+                            {med.flags.map((f) => (
+                              <Link
+                                key={f.flagId}
+                                to={`/risk/${f.flagId}`}
+                                className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white dark:bg-black/50 hover:bg-rose-50 dark:hover:bg-rose-950/40 border border-rose-400/60 shadow-[var(--shadow-sm)] hover:shadow-[var(--shadow-card)] transition-all cursor-pointer group active:scale-[0.99]"
+                              >
+                                <LedIndicator status="critical" size="sm" />
+                                <span className="text-xs font-mono font-bold text-[var(--led-critical)]">
+                                  Flagged with {f.counterpartName}
+                                </span>
+                                <ChevronRight className="w-3.5 h-3.5 text-[var(--led-critical)]/70 group-hover:text-[var(--led-critical)] group-hover:translate-x-0.5 transition-all" />
+                              </Link>
+                            ))}
+                          </div>
+                        )}
+
+                        {/* Standardized code badge if present */}
+                        {med.standardizedCode && (
+                          <div className="pt-0.5 flex items-center">
+                            <span className={`inline-flex items-center gap-1.5 text-[10px] font-medium px-2.5 py-0.5 rounded-full border shadow-xs text-[var(--text-muted)] ${isFlagged ? 'bg-white/80 dark:bg-black/30 border-rose-200/60' : 'bg-[var(--chassis)] border-[rgba(255,255,255,0.4)]'}`}>
+                              <ShieldCheck className="w-3.5 h-3.5 text-[var(--accent-primary)] flex-shrink-0" />
+                              <span>RxNorm CUI:</span>
+                              <span className="font-mono font-bold text-[var(--text-primary)] tracking-wide">{med.standardizedCode}</span>
+                            </span>
+                          </div>
+                        )}
+                      </Card>
+                    </motion.div>
  );
  })}
  </AnimatePresence>
@@ -360,9 +466,9 @@ export default function TimelinePage() {
 
  {/* ── Footer Information ────────────────────────────────────────────── */}
  {!isLoading && medicines.length > 0 && (
- <div className="flex items-start space-x-3 p-4 border-2 border-[var(--brand-border-subtle)] bg-[var(--brand-paper)] rounded-2xl">
- <Info className="w-4 h-4 text-[#2B6E5E] flex-shrink-0 mt-0.5" />
- <p className="text-xs text-[#6B726C] leading-relaxed">
+ <div className="flex items-start space-x-3 p-4 border-2 border-[var(--chassis-dark)] bg-[var(--chassis)] rounded-2xl">
+ <Info className="w-4 h-4 text-[var(--accent-primary)] flex-shrink-0 mt-0.5" />
+ <p className="text-xs text-[var(--text-muted)] leading-relaxed">
  <strong>Prescription timeline protection:</strong> Prescribing cascades often develop silently over months as new drugs are introduced to treat side effects of previous drugs. This timeline tracks every addition in sequence to assist clinical de-prescribing reviews.
  </p>
  </div>

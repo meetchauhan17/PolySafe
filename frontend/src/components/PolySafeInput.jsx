@@ -1,60 +1,101 @@
-/**
- * PolySafeInput — Neumorphic Clay-Surface Input Component
- *
- * Design Rule (non-negotiable):
- * - Background: --brand-clay (same as page surface; inset shadow creates perceived depth)
- * - Shadow: --neu-inset at rest to --neu-inset-deep on focus (handled by .input-field CSS)
- * - Border: none (neumorphic system uses shadows, not borders)
- * - Focus ring: double ring via box-shadow — 2px clay gap + 4px teal outline
- * - Error state: activates .input-error to red tint + shake animation
- *
- * Props:
- * className {string} — extra Tailwind classes (e.g. "w-36 text-2xl text-center")
- * error {boolean} — toggles .input-error state (shake + red tint)
- * leftIcon {node} — rendered absolutely inside the left side (you still pass pl-10 or pl-11 in className)
- * rightIcon {node} — rendered absolutely inside the right side (you still pass pr-10 in className)
- * ...rest — forwarded to the underlying <input> (type, value, onChange, placeholder, etc.)
- */
 import React, { forwardRef } from 'react';
 
+/**
+ * PolySafeInput.jsx — Standard Industrial Neumorphic Input
+ *
+ * - Background: bg-[var(--brand-clay)]
+ * - Shadow: shadow-[var(--shadow-recessed)] at rest, shadow-[var(--shadow-recessed-deep)] on focus
+ * - Border: none
+ * - Radius: rounded-2xl (16px)
+ * - Focus: focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--chassis)]
+ * - Font: font-sans text-base text-[var(--text-primary)]
+ * - Placeholder: placeholder:text-[var(--text-muted)] placeholder:opacity-70
+ * - Padding: px-4 py-3 (with icon offset if icon present)
+ */
+
 const PolySafeInput = forwardRef(function PolySafeInput(
- { className = '', error = false, leftIcon = null, rightIcon = null, ...rest },
- ref
+  {
+    className = '',
+    label,
+    error,
+    helperText,
+    icon: Icon = null,
+    leftIcon = null,
+    rightIcon = null,
+    style = {},
+    id,
+    disabled = false,
+    ...rest
+  },
+  ref
 ) {
- const hasLeft = Boolean(leftIcon);
- const hasRight = Boolean(rightIcon);
+  const ResolvedLeftIcon = Icon || leftIcon;
+  const hasLeft = Boolean(ResolvedLeftIcon);
+  const hasRight = Boolean(rightIcon);
+  const errorMessage = typeof error === 'string' ? error : null;
+  const hasError = Boolean(error);
 
- return (
- <div className="relative flex items-center w-full">
- {/* Left icon — absolutely positioned, pointer-events-none */}
- {hasLeft && (
- <span className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none z-10 text-[#5C6B64]">
- {leftIcon}
- </span>
- )}
+  return (
+    <div className="w-full flex flex-col gap-1.5 text-left">
+      {label && (
+        <label
+          htmlFor={id}
+          className="block text-xs font-extrabold uppercase tracking-widest text-[var(--text-muted)]"
+        >
+          {label}
+        </label>
+      )}
 
- <input
- ref={ref}
- className={[
- 'input-field',
- hasLeft ? 'has-icon-left' : '',
- hasRight ? 'has-icon-right' : '',
- error ? 'input-error' : '',
- className,
- ]
- .filter(Boolean)
- .join(' ')}
- {...rest}
- />
+      <div className="relative flex items-center w-full">
+        {hasLeft && (
+          <span className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none z-10 text-[var(--text-muted)] flex items-center justify-center">
+            {typeof ResolvedLeftIcon === 'function' ? (
+              <ResolvedLeftIcon className="w-4 h-4" />
+            ) : React.isValidElement(ResolvedLeftIcon) ? (
+              ResolvedLeftIcon
+            ) : (
+              ResolvedLeftIcon
+            )}
+          </span>
+        )}
 
- {/* Right icon — absolutely positioned */}
- {hasRight && (
- <span className="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none z-10 text-[#5C6B64]">
- {rightIcon}
- </span>
- )}
- </div>
- );
+        <input
+          ref={ref}
+          id={id}
+          disabled={disabled}
+          style={{
+            paddingLeft: hasLeft ? '44px' : '16px',
+            paddingRight: hasRight ? '44px' : '16px',
+            ...style,
+          }}
+          className={`w-full bg-[var(--chassis)] rounded-2xl border-none shadow-[var(--shadow-recessed)] focus:shadow-[var(--shadow-recessed-deep)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--chassis)] font-sans text-base text-[var(--text-primary)] placeholder:text-[var(--text-muted)] placeholder:opacity-70 px-4 py-3 transition-all duration-200 ease-out disabled:opacity-50 disabled:cursor-not-allowed ${
+            hasError ? 'ring-2 ring-[var(--led-critical)]' : ''
+          } ${className}`}
+          {...rest}
+        />
+
+        {hasRight && (
+          <span className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none z-10 text-[var(--text-muted)] flex items-center justify-center">
+            {typeof rightIcon === 'function' ? (
+              <rightIcon className="w-4 h-4" />
+            ) : (
+              rightIcon
+            )}
+          </span>
+        )}
+      </div>
+
+      {(errorMessage || helperText) && (
+        <span
+          className={`text-xs font-mono mt-0.5 ${
+            hasError ? 'text-[var(--led-critical)] font-semibold' : 'text-[var(--text-muted)]'
+          }`}
+        >
+          {errorMessage || helperText}
+        </span>
+      )}
+    </div>
+  );
 });
 
 export default PolySafeInput;

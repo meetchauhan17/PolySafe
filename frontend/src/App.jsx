@@ -61,7 +61,7 @@ const queryClient = new QueryClient({
 
 function RouteLoadingFallback() {
   return (
-    <div className="min-h-screen bg-[#EDE8DC] flex items-center justify-center">
+    <div className="min-h-screen bg-[var(--chassis)] flex items-center justify-center">
       <HomeSkeleton />
     </div>
   );
@@ -75,6 +75,15 @@ function RootRedirect() {
   if (role === 'DOCTOR') return <Navigate to="/doctor-dashboard" replace />;
   if (role === 'CAREGIVER') return <Navigate to="/caregiver-view" replace />;
   return <Navigate to="/home" replace />;
+}
+
+// Adaptive Layout Shell: Renders role-appropriate layout for shared routes like /profile
+function AppRoleAdaptiveLayout() {
+  const { user } = useAuth();
+  const role = (user?.role || 'PATIENT').toUpperCase();
+  if (role === 'DOCTOR') return <DoctorLayout />;
+  if (role === 'CAREGIVER') return <CaregiverLayout />;
+  return <PatientLayout />;
 }
 
 export default function App() {
@@ -114,9 +123,10 @@ export default function App() {
                     <Route path="/timeline" element={<TimelinePage />} />
                     <Route path="/insights" element={<InsightsPage />} />
                     <Route path="/trends" element={<InsightsPage />} />
+                    <Route path="/connected" element={<ConnectedPeoplePage />} />
                     <Route path="/connected-people" element={<ConnectedPeoplePage />} />
+                    <Route path="/share" element={<DoctorSharePage />} />
                     <Route path="/share-with-doctor" element={<DoctorSharePage />} />
-                    <Route path="/profile" element={<ProfilePage />} />
                   </Route>
                 </Route>
 
@@ -131,6 +141,13 @@ export default function App() {
                 <Route element={<ProtectedRoute allowedRoles={['CAREGIVER']} />}>
                   <Route element={<CaregiverLayout />}>
                     <Route path="/caregiver-view" element={<CaregiverViewPage />} />
+                  </Route>
+                </Route>
+
+                {/* ── 4. MULTI-ROLE SHARED PROFILE (PATIENT, CAREGIVER, DOCTOR) ── */}
+                <Route element={<ProtectedRoute allowedRoles={['PATIENT', 'CAREGIVER', 'DOCTOR']} />}>
+                  <Route element={<AppRoleAdaptiveLayout />}>
+                    <Route path="/profile" element={<ProfilePage />} />
                   </Route>
                 </Route>
 

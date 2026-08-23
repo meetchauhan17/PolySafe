@@ -1,71 +1,96 @@
 import React from 'react';
-import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
-import { AnimatePresence } from 'framer-motion';
-import {
-  Heart,
-  ShieldCheck,
-  LogOut,
-  UserCheck,
-} from 'lucide-react';
+import { Outlet, Link, useLocation } from 'react-router-dom';
+import { Heart, User, ShieldCheck } from 'lucide-react';
 import PageTransition from '../components/PageTransition';
-import { useAuth } from '../context/AuthContext';
 import SignOutConfirmButton from '../components/SignOutConfirmButton';
+import { useAuth } from '../context/AuthContext';
 
-/**
- * CaregiverLayout.jsx — Simple, focused shell for Family Members & Caregivers (Neumorphic Edition)
- *
- * Characteristics:
- * - Clean, distraction-free layout on warm clay (#EDE8DC) canvas
- * - Minimal Top Bar: PolySafe branding, Caregiver Companion tag, Sign Out
- * - Focused purely on checking loved ones' medication status and reminder times
- */
 export default function CaregiverLayout() {
-  const navigate = useNavigate();
   const location = useLocation();
-  const { logout } = useAuth();
+  const { user } = useAuth() || {};
+
+  const isProfile = location.pathname === '/profile';
+  const isDashboard = location.pathname === '/caregiver-view';
 
   return (
-    <div className="min-h-screen bg-[#EDE8DC] text-[#1C2B27] flex flex-col font-sans selection:bg-[#8A6D3B] selection:text-white">
-      {/* ─── Top Bar: Logo + Caregiver Badge + Sign Out ─── */}
-      <header className="sticky top-0 z-40 bg-[#EDE8DC]/95 backdrop-blur-md px-4 py-3 shadow-[0_4px_14px_rgba(191,180,155,0.40)]">
-        <div className="max-w-xl mx-auto flex items-center justify-between">
+    <div className="min-h-screen bg-[var(--chassis)] text-[var(--text-primary)] flex flex-col font-sans selection:bg-[var(--role-caregiver)] selection:text-white">
+      {/* ─── Top Bar ─── */}
+      <header className="sticky top-0 z-40 bg-[var(--chassis)] border-b border-[rgba(255,255,255,0.4)] px-4 sm:px-6 py-3 shadow-[var(--shadow-card)]">
+        <div className="max-w-4xl mx-auto flex items-center justify-between gap-3">
           <Link to="/caregiver-view" className="flex items-center gap-2.5 group">
-            <div className="p-2.5 bg-[#8A6D3B] text-white rounded-2xl shadow-[4px_4px_10px_rgba(191,180,155,0.55),-4px_-4px_10px_rgba(255,255,255,0.65)] group-hover:scale-105 transition-transform">
+            <div
+              className="p-2.5 bg-[var(--chassis)] text-[var(--role-caregiver)] rounded-2xl shadow-[var(--shadow-sm)] group-hover:scale-105 transition-transform"
+            >
               <Heart className="w-5 h-5" />
             </div>
             <div>
               <div className="flex items-center gap-2">
                 <span
-                  className="text-xl font-bold tracking-tight text-[#8A6D3B]"
-                  style={{ fontFamily: "'Fraunces', serif" }}
+                  className="text-xl font-extrabold tracking-tight text-[var(--text-primary)] font-display drop-shadow-[0_1px_0_rgba(255,255,255,0.8)]"
                 >
                   PolySafe
                 </span>
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#8A6D3B]/10 text-[#8A6D3B] border border-[#8A6D3B]/20">
+                <span className="text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded-md bg-[var(--chassis)] text-[var(--role-caregiver)] shadow-[var(--shadow-recessed)]">
                   Caregiver
                 </span>
               </div>
-              <span className="text-[10px] block text-[#5C6B64] font-semibold">
-                Family & Caregiver Companion
+              <span className="text-[10px] font-mono text-[var(--text-muted)] font-bold uppercase tracking-wider hidden sm:inline">
+                Family & Care Companion
               </span>
             </div>
           </Link>
 
-          <SignOutConfirmButton buttonText="Sign Out" />
+          {/* Navigation Items (Hub + Profile) */}
+          <div className="flex items-center gap-2">
+            <Link
+              to="/caregiver-view"
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-mono font-bold transition-all ${
+                isDashboard
+                  ? 'bg-[var(--role-caregiver)] text-white shadow-xs'
+                  : 'bg-[var(--chassis)] text-[var(--text-muted)] hover:text-[var(--text-primary)] shadow-[var(--shadow-sm)]'
+              }`}
+            >
+              <ShieldCheck className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Caregiver Hub</span>
+            </Link>
+
+            <Link
+              to="/profile"
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-mono font-bold transition-all ${
+                isProfile
+                  ? 'bg-[var(--role-caregiver)] text-white shadow-xs'
+                  : 'bg-[var(--chassis)] text-[var(--text-muted)] hover:text-[var(--text-primary)] shadow-[var(--shadow-sm)]'
+              }`}
+            >
+              <User className="w-3.5 h-3.5" />
+              <span>Profile</span>
+            </Link>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <Link
+              to="/profile"
+              className="hidden sm:inline-block text-xs font-mono font-bold text-[var(--text-primary)] px-2 py-1 rounded-lg hover:bg-[var(--chassis-dark)] transition-colors"
+              title="View Caregiver Profile"
+            >
+              {user?.name || user?.email || 'Caregiver'}
+            </Link>
+            <SignOutConfirmButton buttonText="Sign Out" />
+          </div>
         </div>
       </header>
 
-      {/* ─── Single Centered Column Body with PageTransition ─── */}
-      <main className="flex-1">
+      {/* ─── Content ─── */}
+      <main className="flex-1 max-w-4xl mx-auto w-full px-4 py-6">
         <PageTransition key={location.pathname}>
           <Outlet />
         </PageTransition>
       </main>
 
-      {/* ─── Caregiver Disclaimer Footer ─── */}
-      <footer className="bg-[#EDE8DC] py-4 text-center text-xs text-[#5C6B64] shadow-[0_-4px_14px_rgba(191,180,155,0.30)]">
-        <div className="max-w-xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-1">
-          <span className="font-semibold text-[#8A6D3B]">Caregiver Privacy Protection Active</span>
+      {/* ─── Footer ─── */}
+      <footer className="bg-[var(--chassis)] border-t border-[rgba(255,255,255,0.4)] py-4 text-center text-xs font-mono text-[var(--text-muted)] shadow-[var(--shadow-card)]">
+        <div className="max-w-4xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-1">
+          <span className="font-bold text-[var(--role-caregiver)]">CAREGIVER PRIVACY FILTER ACTIVE</span>
           <span>Dosage reminders only · Clinical history protected</span>
         </div>
       </footer>

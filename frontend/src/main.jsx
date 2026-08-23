@@ -4,6 +4,10 @@ import axios from 'axios'
 import './index.css'
 import App from './App.jsx'
 
+// Apply saved theme or system preference before rendering
+const initialTheme = localStorage.getItem('polysafe-theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+document.documentElement.setAttribute('data-theme', initialTheme);
+
 // Configure global API base URL from VITE_API_URL for production deployment (e.g. Vercel -> Render)
 if (import.meta.env.VITE_API_URL) {
   axios.defaults.baseURL = import.meta.env.VITE_API_URL;

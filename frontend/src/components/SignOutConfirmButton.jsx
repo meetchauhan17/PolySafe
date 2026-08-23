@@ -50,22 +50,22 @@ export default function SignOutConfirmButton({
  return (
  <div
  ref={containerRef}
- className="inline-flex items-center gap-1.5 p-1 bg-[#FBE4DE] border border-[#B23D25]/40 rounded-xl shadow-md animate-fadeIn z-20"
+ className="inline-flex items-center gap-1.5 p-1 bg-[var(--chassis)] border border-[var(--led-critical)]/40 rounded-xl shadow-md animate-fadeIn z-20"
  >
- <span className="text-[11px] font-bold text-[#B23D25] px-1.5 whitespace-nowrap">
+ <span className="text-[11px] font-bold text-[var(--led-critical)] px-1.5 whitespace-nowrap">
  {isGuest ? 'Exit demo?' : 'Sign out?'}
  </span>
  <button
  type="button"
  onClick={handleConfirm}
- className="px-2.5 py-1 text-[11px] font-bold bg-[#B23D25] text-white rounded-lg hover:bg-[#8F2E1B] active:scale-95 transition-all cursor-pointer shadow-xs whitespace-nowrap"
+ className="px-2.5 py-1 text-[11px] font-bold bg-[var(--led-critical)] text-white rounded-lg hover:bg-[#8F2E1B] active:scale-95 transition-all cursor-pointer shadow-xs whitespace-nowrap"
  >
  Yes
  </button>
  <button
  type="button"
  onClick={() => setShowConfirm(false)}
- className="px-2 py-1 text-[11px] font-semibold text-[#6B726C] hover:bg-[var(--brand-paper)] hover:text-[#232724] rounded-lg transition-colors cursor-pointer whitespace-nowrap"
+ className="px-2 py-1 text-[11px] font-semibold text-[var(--text-muted)] hover:bg-[var(--chassis)] hover:text-[var(--text-primary)] rounded-lg transition-colors cursor-pointer whitespace-nowrap"
  >
  Cancel
  </button>
@@ -79,7 +79,7 @@ export default function SignOutConfirmButton({
  onClick={() => setShowConfirm(true)}
  className={
  className ||
- `flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-[#6B726C] hover:text-[#B23D25] hover:bg-[#FBE4DE]/50 rounded-xl border border-[var(--brand-border-subtle)] transition-colors cursor-pointer`
+ `flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-[var(--text-muted)] hover:text-[var(--led-critical)] hover:bg-[var(--chassis)]/50 rounded-xl border border-[var(--brand-border-subtle)] transition-colors cursor-pointer`
  }
  title={isGuest ? 'Exit Guest Mode' : 'Sign Out of PolySafe'}
  >

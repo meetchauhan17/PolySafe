@@ -58,24 +58,24 @@ const CONDITION_OPTIONS = [
 // Color map for the chips
 const CHIP_STYLES = {
  amber: {
- base: 'border-[#B5791A]/30 text-[#7A4A0A] bg-[#FBEED9]/60',
- active: 'border-[#B5791A] bg-[#FBEED9] ring-2 ring-[#B5791A]/30 ring-offset-1',
+ base: 'border-[var(--led-caution)]/30 text-[var(--text-primary)] bg-[var(--chassis)]/60',
+ active: 'border-[var(--led-caution)] bg-[var(--chassis)] ring-2 ring-[var(--led-caution)]/30 ring-offset-1',
  },
  blue: {
- base: 'border-[#1B4B66]/30 text-[#1B4B66] bg-[#E9F1F5]/60',
- active: 'border-[#1B4B66] bg-[#E9F1F5] ring-2 ring-[#1B4B66]/30 ring-offset-1',
+ base: 'border-[var(--accent-secondary)]/30 text-[var(--accent-secondary)] bg-[#E9F1F5]/60',
+ active: 'border-[var(--accent-secondary)] bg-[#E9F1F5] ring-2 ring-[var(--accent-secondary)]/30 ring-offset-1',
  },
  orange: {
  base: 'border-[#E0824B]/30 text-[#7A3E14] bg-[#FDF3EB]/60',
  active: 'border-[#E0824B] bg-[#FDF3EB] ring-2 ring-[#E0824B]/30 ring-offset-1',
  },
  rose: {
- base: 'border-[#B23D25]/30 text-[#7A1A0A] bg-[#FBE4DE]/60',
- active: 'border-[#B23D25] bg-[#FBE4DE] ring-2 ring-[#B23D25]/30 ring-offset-1',
+ base: 'border-[var(--led-critical)]/30 text-[#7A1A0A] bg-[var(--chassis)]/60',
+ active: 'border-[var(--led-critical)] bg-[var(--chassis)] ring-2 ring-[var(--led-critical)]/30 ring-offset-1',
  },
  teal: {
- base: 'border-[#2B6E5E]/30 text-[#1A5C3A] bg-[#E4F2E9]/60',
- active: 'border-[#2B6E5E] bg-[#E4F2E9] ring-2 ring-[#2B6E5E]/30 ring-offset-1',
+  base: 'border-[var(--accent-primary)]/30 text-[var(--text-primary)] bg-[var(--accent-primary)]/10',
+  active: 'border-[var(--accent-primary)] bg-[var(--accent-primary)]/20 ring-2 ring-[var(--accent-primary)]/30 ring-offset-1',
  },
 };
 
@@ -165,18 +165,18 @@ export default function OnboardingPage() {
  };
 
  return (
- <PageTransition className="min-h-[88vh] bg-[var(--brand-clay)] flex items-start justify-center px-4 py-10 md:py-16">
+ <PageTransition className="min-h-[88vh] bg-[var(--chassis)] flex items-start justify-center px-4 py-10 md:py-16">
  <div className="max-w-2xl w-full space-y-6">
 
  {/* ── Header ─────────────────────────────────────────────────────────── */}
  <div className="text-center space-y-2">
  <div className="icon-well w-14 h-14 mx-auto mb-1">
- <ShieldCheck className="w-7 h-7 text-[#2B6E5E]" />
+ <ShieldCheck className="w-7 h-7 text-[var(--accent-primary)]" />
  </div>
- <h1 className="text-3xl md:text-4xl text-[#1C2B27] font-bold tracking-tight" style={{ fontFamily: "'Fraunces', serif" }}>
+ <h1 className="text-3xl md:text-4xl text-[var(--text-primary)] font-bold tracking-tight" >
  Set Up Your PolySafe Profile
  </h1>
- <p className="text-sm text-[#5C6B64] max-w-md mx-auto leading-relaxed">
+ <p className="text-sm text-[var(--text-muted)] max-w-md mx-auto leading-relaxed">
  This helps PolySafe tailor interaction checks to your physiology —
  kidney impairment, for example, changes how dozens of drugs are
  metabolised and cleared.
@@ -184,7 +184,7 @@ export default function OnboardingPage() {
  </div>
 
  {/* ── "Only Age Required" Banner ─────────────────────────────────────── */}
- <div className="flex items-start space-x-3 p-3.5 bg-[#2B6E5E]/10 border border-[#2B6E5E]/20 rounded-2xl text-xs text-[#2B6E5E] shadow-sm">
+ <div className="flex items-start space-x-3 p-3.5 bg-[var(--accent-primary)]/10 border border-[var(--accent-primary)]/20 rounded-2xl text-xs text-[var(--accent-primary)] shadow-sm">
  <Info className="w-4 h-4 flex-shrink-0 mt-0.5" />
  <p>
  <strong>Only your age is required.</strong> All other fields are optional — skip anything you'd
@@ -207,16 +207,16 @@ export default function OnboardingPage() {
  <Card
  title="Your Age"
  subtitle="Required — affects dosage thresholds and renal/hepatic risk scoring"
- icon={<HeartPulse className="w-4 h-4 text-[#2B6E5E]" />}
+ icon={<HeartPulse className="w-4 h-4 text-[var(--accent-primary)]" />}
  badge={
- <span className="text-[10px] font-bold bg-[#2B6E5E] text-white px-2 py-0.5 rounded-md">
+ <span className="text-[10px] font-bold bg-[var(--accent-primary)] text-white px-2 py-0.5 rounded-md">
  REQUIRED
  </span>
  }
  className="space-y-4"
  >
  <div className="space-y-1.5">
- <label className="block text-xs font-bold text-[#232724] uppercase tracking-wider">
+ <label className="block text-xs font-bold text-[var(--text-primary)] uppercase tracking-wider">
  Age in Years
  </label>
  <PolySafeInput
@@ -240,9 +240,9 @@ export default function OnboardingPage() {
  <Card
  title="Existing Medical Conditions"
  subtitle="Select all that apply — determines organ-specific interaction risk"
- icon={<FlaskConical className="w-4 h-4 text-[#2B6E5E]" />}
+ icon={<FlaskConical className="w-4 h-4 text-[var(--accent-primary)]" />}
  badge={
- <span className="text-[10px] font-bold text-[#6B726C] bg-[var(--brand-border-subtle)] px-2 py-0.5 rounded-md">
+ <span className="text-[10px] font-bold text-[var(--text-muted)] bg-[var(--chassis-dark)] px-2 py-0.5 rounded-md">
  OPTIONAL
  </span>
  }
@@ -257,7 +257,7 @@ export default function OnboardingPage() {
  key={opt.id}
  type="button"
  onClick={() => toggleCondition(opt.id)}
- className={`flex items-center space-x-3 p-4 rounded-2xl border-2 text-left cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 hover:shadow-sm transition-all duration-180 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2B6E5E] focus-visible:ring-offset-2 ${
+ className={`flex items-center space-x-3 p-4 rounded-2xl border-2 text-left cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 hover:shadow-sm transition-all duration-180 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:ring-offset-2 ${
  isSelected ? styles.active : styles.base + ' hover:opacity-90'
  }`}
  >
@@ -281,8 +281,8 @@ export default function OnboardingPage() {
  </div>
 
  {conditions.length > 0 && !conditions.includes('none') && (
- <div className="flex flex-wrap gap-2 pt-2 border-t border-[var(--brand-border-subtle)]">
- <span className="text-[11px] font-bold text-[#6B726C] self-center">Selected:</span>
+ <div className="flex flex-wrap gap-2 pt-2 border-t border-[var(--chassis-dark)]">
+ <span className="text-[11px] font-bold text-[var(--text-muted)] self-center">Selected:</span>
  {conditions.map((id) => {
  const opt = CONDITION_OPTIONS.find((o) => o.id === id);
  return (
@@ -290,7 +290,7 @@ export default function OnboardingPage() {
  key={id}
  type="button"
  onClick={() => toggleCondition(id)}
- className="inline-flex items-center space-x-1 px-2.5 py-1 bg-[#2B6E5E] text-white text-[11px] font-bold rounded-lg"
+ className="inline-flex items-center space-x-1 px-2.5 py-1 bg-[var(--accent-primary)] text-white text-[11px] font-bold rounded-lg"
  >
  <span>{opt?.label}</span>
  <X className="w-3 h-3" />
@@ -305,18 +305,18 @@ export default function OnboardingPage() {
  <Card
  title="Known Drug Allergies"
  subtitle="Helps flag prescriptions you may react to"
- icon={<Sparkles className="w-4 h-4 text-[#2B6E5E]" />}
+ icon={<Sparkles className="w-4 h-4 text-[var(--accent-primary)]" />}
  badge={
- <span className="text-[10px] font-bold text-[#6B726C] bg-[var(--brand-border-subtle)] px-2 py-0.5 rounded-md">
+ <span className="text-[10px] font-bold text-[var(--text-muted)] bg-[var(--chassis-dark)] px-2 py-0.5 rounded-md">
  SKIP IF NONE
  </span>
  }
  className="space-y-4"
  >
  <div className="space-y-2">
- <label className="block text-xs font-bold text-[#232724] uppercase tracking-wider">
+ <label className="block text-xs font-bold text-[var(--text-primary)] uppercase tracking-wider">
  Drug Allergies{' '}
- <span className="normal-case font-normal text-[#6B726C]">
+ <span className="normal-case font-normal text-[var(--text-muted)]">
  — comma separated, e.g. penicillin, aspirin
  </span>
  </label>
@@ -342,7 +342,7 @@ export default function OnboardingPage() {
  ))}
  </div>
  )}
- <p className="text-[11px] text-[#6B726C]">
+ <p className="text-[11px] text-[var(--text-muted)]">
  Separate multiple allergies with commas. Leave this field empty if you have no known drug allergies.
  </p>
  </div>
@@ -374,12 +374,12 @@ export default function OnboardingPage() {
  className="btn-secondary sm:w-auto px-6 py-4 text-sm"
  >
  <span>Skip for Now</span>
- <ChevronRight className="w-4 h-4 text-[#6B726C]" />
+ <ChevronRight className="w-4 h-4 text-[var(--text-muted)]" />
  </button>
  </div>
 
  {/* Progress micro-copy */}
- <p className="text-center text-[11px] text-[#6B726C]">
+ <p className="text-center text-[11px] text-[var(--text-muted)]">
  You can always update these details in your Profile Settings later.
  </p>
  </form>

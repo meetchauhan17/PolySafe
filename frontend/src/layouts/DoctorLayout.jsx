@@ -1,78 +1,103 @@
 import React from 'react';
-import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
-import { AnimatePresence } from 'framer-motion';
-import PageTransition from '../components/PageTransition';
+import { Outlet, Link, useLocation } from 'react-router-dom';
 import {
   Stethoscope,
   Shield,
-  LogOut,
-  Building2,
-  Lock,
+  User,
+  LayoutDashboard,
 } from 'lucide-react';
+import PageTransition from '../components/PageTransition';
 import { useAuth } from '../context/AuthContext';
 import SignOutConfirmButton from '../components/SignOutConfirmButton';
+import LedIndicator from '../components/LedIndicator';
 
-/**
- * DoctorLayout.jsx — Desktop-oriented clinical shell for Physicians & Doctors (Neumorphic Edition)
- *
- * Characteristics:
- * - Dedicated Clinical Top Bar: PolySafe branding, Physician identifier, Read-Only indicator, Sign Out
- * - Clean workstation workspace on warm clay (#EDE8DC) molded canvas
- * - Strict read-only enforcement: no modification actions exposed
- */
 export default function DoctorLayout() {
-  const navigate = useNavigate();
   const location = useLocation();
-  const { user, logout } = useAuth();
+  const { user } = useAuth() || {};
 
   const doctorName = user?.doctor?.name || user?.name || (user?.email ? `Dr. ${user.email.split('@')[0]}` : 'Dr. Physician, MD');
   const regNumber  = user?.doctor?.registrationNumber || user?.registrationNumber;
 
+  const isProfile = location.pathname === '/profile';
+  const isDashboard = location.pathname === '/doctor-dashboard';
+
   return (
-    <div className="min-h-screen bg-[#EDE8DC] text-[#1C2B27] flex flex-col font-sans selection:bg-[#1B4B66] selection:text-white relative overflow-x-hidden">
+    <div className="min-h-screen bg-[var(--chassis)] text-[var(--text-primary)] flex flex-col font-sans selection:bg-[var(--accent-secondary)] selection:text-white relative overflow-x-hidden">
       {/* ─── Clinical Header ─── */}
-      <header className="sticky top-0 z-40 bg-[#EDE8DC]/90 backdrop-blur-md px-6 py-3.5 shadow-[0_4px_14px_rgba(191,180,155,0.40)] relative">
-        <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
+      <header className="sticky top-0 z-40 bg-[var(--chassis)] border-b border-[rgba(255,255,255,0.4)] px-4 sm:px-6 py-3.5 shadow-[var(--shadow-card)]">
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-3">
           {/* Logo & Portal Branding */}
-          <div className="flex items-center gap-3">
-            <div className="p-2.5 bg-[#1B4B66] text-white rounded-2xl shadow-[4px_4px_10px_rgba(191,180,155,0.55),-4px_-4px_10px_rgba(255,255,255,0.65)]">
+          <Link to="/doctor-dashboard" className="flex items-center gap-3 group">
+            <div
+              className="p-2.5 bg-[var(--chassis)] text-[var(--accent-secondary)] rounded-2xl shadow-[var(--shadow-sm)] group-hover:scale-105 transition-transform"
+              style={{ filter: 'drop-shadow(0 0 6px var(--accent-secondary-glow))' }}
+            >
               <Stethoscope className="w-5 h-5" />
             </div>
             <div>
               <div className="flex items-center gap-2">
                 <span
-                  className="text-xl font-bold tracking-tight text-[#1B4B66]"
-                  style={{ fontFamily: "'Fraunces', serif" }}
+                  className="text-xl font-extrabold tracking-tight text-[var(--text-primary)] font-display drop-shadow-[0_1px_0_rgba(255,255,255,0.8)]"
                 >
                   PolySafe
                 </span>
-                <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-md bg-[#1B4B66]/10 text-[#1B4B66] border border-[#1B4B66]/20">
-                  Doctor Portal
+                <span className="text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded-md bg-[var(--chassis)] text-[var(--accent-secondary)] shadow-[var(--shadow-recessed)]">
+                  Doctor Station
                 </span>
               </div>
-              <span className="text-[11px] text-[#5C6B64] font-semibold">
-                Clinical Pharmacovigilance & Deprescribing Decision Support
+              <span className="text-[11px] font-mono text-[var(--text-muted)] font-semibold hidden sm:inline">
+                Clinical Pharmacovigilance & Deprescribing System
               </span>
             </div>
+          </Link>
+
+          {/* Navigation Items (Workstation + Physician Profile) */}
+          <div className="flex items-center gap-1.5 p-1 bg-[var(--chassis)] border border-[rgba(255,255,255,0.4)] shadow-[var(--shadow-recessed)] rounded-2xl">
+            <Link
+              to="/doctor-dashboard"
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all ${
+                isDashboard
+                  ? 'bg-gradient-to-r from-[#0d9488] to-[#0f766e] text-white font-bold shadow-sm border border-white/20'
+                  : 'text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--chassis-dark)]/30'
+              }`}
+            >
+              <LayoutDashboard className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Workstation</span>
+            </Link>
+
+            <Link
+              to="/profile"
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all ${
+                isProfile
+                  ? 'bg-gradient-to-r from-[#0d9488] to-[#0f766e] text-white font-bold shadow-sm border border-white/20'
+                  : 'text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--chassis-dark)]/30'
+              }`}
+            >
+              <User className="w-3.5 h-3.5" />
+              <span>Profile</span>
+            </Link>
           </div>
 
           {/* Physician Info & Actions */}
-          <div className="flex items-center gap-4">
-            {/* Read-only assurance badge */}
-            <div className="hidden md:flex items-center gap-1.5 px-3 py-1 bg-[#E4F2E9] border border-[#2F8558]/30 rounded-full text-[11px] font-bold text-[#2B6E5E]">
-              <Shield className="w-3.5 h-3.5" />
-              <span>Consent-Based Read-Only Access</span>
+          <div className="flex items-center gap-3">
+            <div className="hidden lg:flex items-center gap-2 px-3 py-1 bg-[var(--chassis)] rounded-full shadow-[var(--shadow-recessed)] text-[11px] font-mono font-bold text-[var(--text-muted)]">
+              <LedIndicator status="online" size="sm" />
+              <span>CONSENT AUDIT ACTIVE</span>
             </div>
 
-            {/* Doctor Profile Tag */}
-            <div className="hidden sm:flex flex-col text-right">
-              <span className="text-xs font-bold text-[#1C2B27]">{doctorName}</span>
+            {/* Doctor Profile Tag (Clickable to Profile) */}
+            <Link
+              to="/profile"
+              className="hidden sm:flex flex-col text-right font-mono p-1.5 rounded-xl hover:bg-[var(--chassis-dark)] transition-colors cursor-pointer"
+              title="View & Edit Physician Profile"
+            >
+              <span className="text-xs font-bold text-[var(--text-primary)]">{doctorName}</span>
               {regNumber && (
-                <span className="text-[10px] font-mono text-[#5C6B64]">Reg: {regNumber}</span>
+                <span className="text-[10px] text-[var(--text-muted)]">MCI: {regNumber}</span>
               )}
-            </div>
+            </Link>
 
-            <SignOutConfirmButton />
+            <SignOutConfirmButton buttonText="Sign Out" />
           </div>
         </div>
       </header>

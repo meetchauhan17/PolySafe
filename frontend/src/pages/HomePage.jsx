@@ -57,45 +57,54 @@ import { HomeSkeleton } from '../components/Skeletons';
 import { useAuth } from '../context/AuthContext';
 import { notify } from '../utils/toast';
 import { DrugHarmBadge, DrugHarmPanel, PolypharmacyHarmDashboard } from '../components/DrugHarmLevel';
+import LedIndicator from '../components/LedIndicator';
 
 // ─── Severity colour map ─────────────────────────────────────────────────────
 const SEVERITY_STYLES = {
- CONTRAINDICATED: {
- border: 'border-red-400',
- bg: 'bg-red-50',
- badge: 'bg-red-100 text-red-800 border-red-200',
- icon: <AlertTriangle className="w-4 h-4 text-red-600 flex-shrink-0" />,
- dot: 'bg-red-500',
- },
- MAJOR: {
- border: 'border-orange-400',
- bg: 'bg-orange-50',
- badge: 'bg-orange-100 text-orange-800 border-orange-200',
- icon: <AlertTriangle className="w-4 h-4 text-orange-500 flex-shrink-0" />,
- dot: 'bg-orange-500',
- },
- MODERATE: {
- border: 'border-amber-400',
- bg: 'bg-amber-50',
- badge: 'bg-amber-100 text-amber-800 border-amber-200',
- icon: <AlertCircle className="w-4 h-4 text-amber-500 flex-shrink-0" />,
- dot: 'bg-amber-400',
- },
- MINOR: {
- border: 'border-yellow-300',
- bg: 'bg-yellow-50',
- badge: 'bg-yellow-100 text-yellow-800 border-yellow-200',
- icon: <AlertCircle className="w-4 h-4 text-yellow-500 flex-shrink-0" />,
- dot: 'bg-yellow-400',
- },
+  CONTRAINDICATED: {
+    border: 'border-[var(--led-critical)]/40',
+    bg: 'bg-[var(--chassis)]',
+    badge: 'bg-[var(--led-critical)]/15 text-[var(--led-critical)] border-[var(--led-critical)]/30 font-bold font-mono',
+    icon: <AlertTriangle className="w-4 h-4 text-[var(--led-critical)] flex-shrink-0" />,
+    dot: 'bg-[var(--led-critical)]',
+    ledStatus: 'critical',
+    textColor: 'var(--led-critical)',
+  },
+  MAJOR: {
+    border: 'border-[var(--led-critical)]/40',
+    bg: 'bg-[var(--chassis)]',
+    badge: 'bg-[var(--led-critical)]/15 text-[var(--led-critical)] border-[var(--led-critical)]/30 font-bold font-mono',
+    icon: <AlertTriangle className="w-4 h-4 text-[var(--led-critical)] flex-shrink-0" />,
+    dot: 'bg-[var(--led-critical)]',
+    ledStatus: 'critical',
+    textColor: 'var(--led-critical)',
+  },
+  MODERATE: {
+    border: 'border-[var(--led-caution)]/40',
+    bg: 'bg-[var(--chassis)]',
+    badge: 'bg-[var(--led-caution)]/15 text-[var(--led-caution)] border-[var(--led-caution)]/30 font-bold font-mono',
+    icon: <AlertCircle className="w-4 h-4 text-[var(--led-caution)] flex-shrink-0" />,
+    dot: 'bg-[var(--led-caution)]',
+    ledStatus: 'caution',
+    textColor: 'var(--led-caution)',
+  },
+  MINOR: {
+    border: 'border-amber-500/30',
+    bg: 'bg-[var(--chassis)]',
+    badge: 'bg-amber-500/10 text-amber-600 border-amber-500/20 font-bold font-mono',
+    icon: <AlertCircle className="w-4 h-4 text-amber-500 flex-shrink-0" />,
+    dot: 'bg-amber-400',
+    ledStatus: 'caution',
+    textColor: 'var(--led-caution)',
+  },
 };
 
 // ─── Medicine type icon/badge ─────────────────────────────────────────────
 function MedicineTypeBadge({ type }) {
  const map = {
- PRESCRIPTION: { icon: <Stethoscope className="w-3 h-3" />, label: 'Rx', cls: 'bg-[#1B4B66]/10 text-[#1B4B66] border-[#1B4B66]/20' },
- OTC: { icon: <ShoppingBag className="w-3 h-3" />, label: 'OTC', cls: 'bg-[#8A6D3B]/10 text-[#8A6D3B] border-[#8A6D3B]/20' },
- HERBAL: { icon: <Leaf className="w-3 h-3" />, label: 'Herbal', cls: 'bg-[#2B6E5E]/10 text-[#2B6E5E] border-[#2B6E5E]/20' },
+ PRESCRIPTION: { icon: <Stethoscope className="w-3 h-3" />, label: 'Rx', cls: 'bg-[var(--accent-secondary)]/10 text-[var(--accent-secondary)] border-[var(--accent-secondary)]/20' },
+ OTC: { icon: <ShoppingBag className="w-3 h-3" />, label: 'OTC', cls: 'bg-[var(--role-caregiver)]/10 text-[var(--role-caregiver)] border-[var(--role-caregiver)]/20' },
+ HERBAL: { icon: <Leaf className="w-3 h-3" />, label: 'Herbal', cls: 'bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] border-[var(--accent-primary)]/20' },
  };
  const t = map[type] ?? map.PRESCRIPTION;
  return (
@@ -184,7 +193,7 @@ function PhysicianDirectivesBanner({ patientId, token }) {
  const getEventStyle = (evt) => {
  const action = evt.action || evt.category || '';
  if (action.includes('PRESCRIBED') || action === 'REGIMEN_ADVICE') {
- return { bg: 'bg-[#E4F2E9]', border: 'border-[#2B6E5E]/30', text: 'text-[#1A5C3A]', icon: <Stethoscope className="w-4 h-4 text-[#2B6E5E] flex-shrink-0" />, label: 'Physician Prescription' };
+ return { bg: 'bg-[var(--chassis)]', border: 'border-[var(--accent-primary)]/30', text: 'text-[var(--text-primary)]', icon: <Stethoscope className="w-4 h-4 text-[var(--accent-primary)] flex-shrink-0" />, label: 'Physician Prescription' };
  }
  if (action.includes('DEPRESCRIBED') || action.includes('TAPER')) {
  return { bg: 'bg-amber-50', border: 'border-amber-200', text: 'text-amber-800', icon: <ArrowLeftRight className="w-4 h-4 text-amber-600 flex-shrink-0" />, label: 'Deprescribing Order' };
@@ -192,7 +201,7 @@ function PhysicianDirectivesBanner({ patientId, token }) {
  if (action.includes('SUBSTITUTED')) {
  return { bg: 'bg-blue-50', border: 'border-blue-200', text: 'text-blue-800', icon: <ArrowLeftRight className="w-4 h-4 text-blue-600 flex-shrink-0" />, label: 'Drug Substitution' };
  }
- return { bg: 'bg-[#EDE8DC]', border: 'border-[#D5CEBF]', text: 'text-[#1C2B27]', icon: <ClipboardList className="w-4 h-4 text-[#5C6B64] flex-shrink-0" />, label: 'Clinical Directive' };
+ return { bg: 'bg-[var(--chassis)]', border: 'border-[var(--chassis-dark)]', text: 'text-[var(--text-primary)]', icon: <ClipboardList className="w-4 h-4 text-[var(--text-muted)] flex-shrink-0" />, label: 'Clinical Directive' };
  };
 
  const formatEvent = (evt) => {
@@ -206,9 +215,9 @@ function PhysicianDirectivesBanner({ patientId, token }) {
  return (
  <div className="space-y-2">
  <div className="flex items-center gap-2">
- <Megaphone className="w-3.5 h-3.5 text-[#2B6E5E]" />
- <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#2B6E5E]">Physician Directives & Updates</span>
- <span className="text-[10px] font-bold text-white bg-[#2B6E5E] px-2 py-0.5 rounded-full">{visible.length}</span>
+ <Megaphone className="w-3.5 h-3.5 text-[var(--accent-primary)]" />
+ <span className="text-[10px] font-extrabold uppercase tracking-widest text-[var(--accent-primary)]">Physician Directives & Updates</span>
+ <span className="text-[10px] font-bold text-white bg-[var(--accent-primary)] px-2 py-0.5 rounded-full">{visible.length}</span>
  </div>
  <AnimatePresence initial={false}>
  {visible.map((evt) => {
@@ -232,7 +241,7 @@ function PhysicianDirectivesBanner({ patientId, token }) {
  <p className={`text-[10px] font-extrabold uppercase tracking-wider mb-0.5 ${style.text}`}>{style.label}</p>
  <p className={`text-xs font-semibold leading-relaxed ${style.text}`}>{formatEvent(evt)}</p>
  {evt.rationale && evt.action !== 'DOCTOR_SUBSTITUTED' && (
- <p className="text-[11px] text-[#5C6B64] mt-0.5">{evt.rationale}</p>
+ <p className="text-[11px] text-[var(--text-muted)] mt-0.5">{evt.rationale}</p>
  )}
  <p className="text-[10px] text-[#9CA3AF] mt-1">
  {evt.doctorName || evt.doctorLabel || 'Physician'} · {new Date(evt.issuedAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
@@ -243,7 +252,7 @@ function PhysicianDirectivesBanner({ patientId, token }) {
  className="p-1 rounded-lg hover:bg-black/10 transition-colors flex-shrink-0 mt-0.5"
  aria-label="Dismiss"
  >
- <X className="w-3.5 h-3.5 text-[#5C6B64]" />
+ <X className="w-3.5 h-3.5 text-[var(--text-muted)]" />
  </button>
  </motion.div>
  );
@@ -300,18 +309,19 @@ export default function HomePage() {
  });
  };
 
- const {
- data: summary,
- isLoading,
- isError,
- error,
- refetch,
- } = useQuery({
- queryKey: ['home-summary', token],
- queryFn: () => patientApi.getHomeSummary(token),
- enabled: !!token && !user?.isGuest,
- staleTime: 30_000,
- });
+  const {
+    data: summary,
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ['home-summary', token],
+    queryFn: () => patientApi.getHomeSummary(token),
+    enabled: !!token && !user?.isGuest,
+    staleTime: 3000,
+    refetchInterval: 4000, // Real-time 4s polling for live doctor prescriptions & safety updates
+  });
 
  // ─── Mutations for Edit & Discontinue ──────────────────────────────────────
  const editMutation = useMutation({
@@ -353,11 +363,11 @@ export default function HomePage() {
 
  if (isError && token) {
  return (
- <div className="min-h-[80vh] flex items-center justify-center bg-[var(--brand-clay)] px-4">
+ <div className="min-h-[80vh] flex items-center justify-center bg-[var(--chassis)] px-4">
  <div className="polysafe-card p-8 max-w-md w-full text-center space-y-4">
  <AlertCircle className="w-12 h-12 text-rose-500 mx-auto" />
- <h2 className="text-xl font-bold text-[#1C2B27]">Couldn't load your data</h2>
- <p className="text-sm text-[#5C6B64]">
+ <h2 className="text-xl font-bold text-[var(--text-primary)]">Couldn't load your data</h2>
+ <p className="text-sm text-[var(--text-muted)]">
  {error?.response?.data?.error || 'Something went wrong. Please try again.'}
  </p>
  <button onClick={() => refetch()} className="btn-primary px-6 py-2.5 text-sm mx-auto">
@@ -380,12 +390,12 @@ export default function HomePage() {
  });
 
  return (
- <div className="bg-[var(--brand-clay)] min-h-[88vh] pb-28 md:pb-12">
+ <div className="bg-[var(--chassis)] min-h-[88vh] pb-28 md:pb-12">
  <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 space-y-6">
 
  {/* ── Demo mode banner ─────────────────────────────────────────────── */}
  {isDemo && (
- <div className="flex items-start space-x-3 p-3.5 bg-[#2B6E5E]/10 border border-[#2B6E5E]/20 rounded-2xl text-xs text-[#2B6E5E] shadow-sm">
+ <div className="flex items-start space-x-3 p-3.5 bg-[var(--accent-primary)]/10 border border-[var(--accent-primary)]/20 rounded-2xl text-xs text-[var(--accent-primary)] shadow-sm">
  <FlaskConical className="w-4 h-4 flex-shrink-0 mt-0.5" />
  <p>
  <strong>Demo Mode</strong> — this is a sample data preview. <Link to="/login" className="underline font-bold">Sign in</Link> to see your real medication summary.
@@ -393,42 +403,51 @@ export default function HomePage() {
  </div>
  )}
 
- {/* ── Page Header ──────────────────────────────────────────────────── */}
- <div className="flex items-start justify-between">
- <div>
- <h1 className="text-2xl sm:text-3xl font-bold text-[#1C2B27]">My Dashboard</h1>
- <p className="text-xs text-[#5C6B64] mt-0.5">{todayLabel}</p>
- </div>
- <button
- onClick={() => refetch()}
- disabled={isLoading || !token}
- className="btn-secondary p-2.5 rounded-2xl disabled:opacity-40"
- title="Refresh"
- >
- <RefreshCw className="w-4 h-4" />
- </button>
- </div>
-
+        {/* ── Page Header ──────────────────────────────────────────────────── */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-[var(--text-primary)] font-display tracking-tight">My Safety Dashboard</h1>
+            <p className="text-xs text-[var(--text-muted)] mt-0.5 font-mono">{todayLabel}</p>
+          </div>
+          <div className="flex items-center gap-2">
+            <Link
+              to="/add-medicine"
+              className="btn-primary py-2 px-3 sm:px-4 text-xs flex items-center gap-1.5 shadow-[var(--shadow-sm)] hover:shadow-[var(--shadow-card)]"
+            >
+              <Plus className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Add Medicine</span>
+            </Link>
+            <button
+              onClick={() => refetch()}
+              disabled={isLoading || !token}
+              className="btn-secondary p-2.5 rounded-2xl disabled:opacity-40"
+              title="Refresh Telemetry"
+              aria-label="Refresh Dashboard Data"
+            >
+              <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
+            </button>
+          </div>
+        </div>
  {/* ═══════════════════════════════════════════════════════════════════
  EMPTY STATE — no medicines yet
  ═══════════════════════════════════════════════════════════════════ */}
- {isEmpty ? (
- <Card className="p-10 flex flex-col items-center text-center space-y-5">
- <EmptyMedicinesIllustration className="w-36 h-36 mx-auto mb-1" />
- <div className="space-y-1.5">
- <h2 className="text-xl font-bold text-[#232724]" style={{ fontFamily: "'Fraunces', serif" }}>
- No medicines yet
- </h2>
- <p className="text-sm text-[#6B726C] max-w-xs mx-auto leading-relaxed">
- Add your first medicine to get started — PolySafe will begin checking for dangerous
- interactions across all your prescriptions.
- </p>
- </div>
- <Link to="/add-medicine" className="btn-primary px-8 py-3.5 text-base">
- <Plus className="w-5 h-5" />
- <span>Add Your First Medicine</span>
- </Link>
- </Card>
+         {isEmpty ? (
+          <Card className="p-10 flex flex-col items-center text-center space-y-5">
+            <EmptyMedicinesIllustration className="w-36 h-36 mx-auto mb-1" />
+            <div className="space-y-1.5">
+              <h2 className="text-xl font-bold text-[var(--text-primary)]">
+                No medicines yet
+              </h2>
+              <p className="text-sm text-[var(--text-muted)] max-w-xs mx-auto leading-relaxed">
+                Add your first medicine to get started — PolySafe will begin checking for dangerous
+                interactions across all your prescriptions.
+              </p>
+            </div>
+            <Link to="/add-medicine" className="btn-primary px-8 py-3.5 text-base">
+              <Plus className="w-5 h-5" />
+              <span>Add Your First Medicine</span>
+            </Link>
+          </Card>
  ) : (
  <>
  {/* ═══════════════════════════════════════════════════════════════
@@ -447,258 +466,257 @@ export default function HomePage() {
  regimenRisk={data?.regimenRisk}
  />
 
- {/* ═══════════════════════════════════════════════════════════════
- STATUS CARD — SAFE or CAUTION
- ═══════════════════════════════════════════════════════════════ */}
- {status === 'SAFE' ? (
- <Card
- variant="safe"
- className="flex-row items-start space-x-4 bg-[#E4F2E9]/40"
- >
- <div className="flex-shrink-0 p-2.5 rounded-full bg-[#CCE9D6] border border-[#2F8558]/30 shadow-inner">
- <CheckCircle2 className="w-7 h-7 text-[#2F8558]" />
- </div>
- <div className="flex-1 min-w-0">
- <div className="flex items-center space-x-2">
- <span className="text-lg font-bold text-[#1A5C3A]" style={{ fontFamily: "'Fraunces', serif" }}>
- No Interactions Detected
- </span>
- <span className="text-[10px] font-bold bg-[#2F8558] text-white px-2.5 py-0.5 rounded-full">
- SAFE
- </span>
- </div>
- <p className="text-sm text-[#2A6945] mt-0.5 leading-snug">
- All {medicines.length} medicine{medicines.length !== 1 ? 's' : ''} in your list have been checked — no harmful interactions found.
- </p>
- <p className="text-[11px] text-[#2A6945]/70 mt-1.5">
- Always inform your doctor when starting a new medication or supplement.
- </p>
- </div>
- </Card>
- ) : (
- <Card
- variant="caution"
- className="flex-row items-start space-x-4 bg-[#FBEED9]/40"
- >
- <div className="flex-shrink-0 p-2.5 rounded-full bg-[#F5E2C4] border border-[#B5791A]/30 shadow-inner animate-breathe-caution">
- <AlertTriangle className="w-7 h-7 text-[#B5791A]" />
- </div>
- <div className="flex-1 min-w-0">
- <div className="flex items-center space-x-2 flex-wrap gap-1">
- <span className="text-lg font-bold text-[#7A4A0A]" style={{ fontFamily: "'Fraunces', serif" }}>
- {flags.length} Interaction{flags.length !== 1 ? 's' : ''} Flagged
- </span>
- <span className="text-[10px] font-bold bg-[#B5791A] text-white px-2.5 py-0.5 rounded-full">
- CAUTION
- </span>
- </div>
- <p className="text-sm text-[#8A5210] mt-0.5 leading-snug">
- Potential drug interactions detected in your medication list. Review the flags below and consult your doctor.
- </p>
- </div>
- </Card>
- )}
+                 {/* ═══════════════════════════════════════════════════════════════
+           STATUS CARD — SAFE or CAUTION
+           ═══════════════════════════════════════════════════════════════ */}
+        {status === 'SAFE' ? (
+          <Card
+            variant="safe"
+            hideScrews={true}
+            className="!flex-row items-center gap-4 p-4 sm:p-5 shadow-xs"
+          >
+            <div className="p-2 rounded-xl bg-emerald-500/10 shadow-xs border border-emerald-500/20 flex-shrink-0">
+              <LedIndicator status="safe" size="md" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-base sm:text-lg font-extrabold text-[var(--text-primary)] font-display">
+                  No Harmful Interactions Detected
+                </span>
+                <span className="text-[10px] font-mono font-bold bg-[var(--led-safe)] text-white px-2.5 py-0.5 rounded-full shadow-xs">
+                  SAFE
+                </span>
+              </div>
+              <p className="text-xs font-mono text-[var(--text-muted)] mt-0.5 leading-snug">
+                All {medicines.length} active medicine{medicines.length !== 1 ? 's' : ''} in your regimen are verified safe against DDInter clinical benchmarks.
+              </p>
+            </div>
+          </Card>
+        ) : (
+          <Card
+            variant="caution"
+            hideScrews={true}
+            className="!flex-row items-center gap-4 p-4 sm:p-5 shadow-xs"
+          >
+            <div className="p-2 rounded-xl bg-amber-500/10 shadow-xs border border-amber-500/20 flex-shrink-0">
+              <LedIndicator status="caution" size="md" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-base sm:text-lg font-extrabold text-[var(--text-primary)] font-display">
+                  {flags.length} Interaction Flag{flags.length !== 1 ? 's' : ''} Active
+                </span>
+                <span className="text-[10px] font-mono font-bold bg-[var(--led-caution)] text-white px-2.5 py-0.5 rounded-full shadow-xs">
+                  CAUTION
+                </span>
+              </div>
+              <p className="text-xs font-mono text-[var(--text-muted)] mt-0.5 leading-snug">
+                Potential pharmacological interactions detected in active regimen. Review interaction telemetry below and consult your doctor.
+              </p>
+            </div>
+          </Card>
+        )}
 
- {/* ═══════════════════════════════════════════════════════════════
- TODAY'S SCHEDULE
- ═══════════════════════════════════════════════════════════════ */}
- <Card
- title="Today's Schedule"
- icon={<Clock className="w-4 h-4 text-[#2B6E5E]" />}
- badge={
- <div className="flex items-center space-x-2">
- <button
- type="button"
- onClick={handleToggleAllReminders}
- className={`text-[11px] font-bold px-2.5 py-1 rounded-lg border flex items-center space-x-1.5 transition-all duration-180 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2B6E5E] active:scale-95 active:opacity-80 ${
- remindersEnabled
- ? 'bg-[#2B6E5E] text-white border-[#2B6E5E]'
- : 'bg-[#E4F2E9] text-[#2B6E5E] border-[#2B6E5E]/20 hover:bg-[#2B6E5E] hover:text-white'
- }`}
- >
- {remindersEnabled ? (
- <>
- <BellRing className="w-3 h-3 text-white animate-pulse" />
- <span>Reminding Active</span>
- </>
- ) : (
- <>
- <Bell className="w-3 h-3 text-[#2B6E5E]" />
- <span>Remind Me</span>
- </>
- )}
- </button>
- <span className="text-[11px] font-bold text-[#6B726C] bg-[#EFEBE0] px-2.5 py-1 rounded-lg">
- {schedule.length} dose{schedule.length !== 1 ? 's' : ''}
- </span>
- </div>
- }
- className="space-y-4"
- >
- <div className="space-y-2.5">
- <AnimatePresence initial={false}>
- {schedule.map((item, i) => {
- const doseKey = `${item.medicineId}-${item.time}-${i}`;
- const isDoseReminded = remindersEnabled || remindedDoses[doseKey];
+        {/* ═══════════════════════════════════════════════════════════════
+           TODAY'S SCHEDULE
+           ═══════════════════════════════════════════════════════════════ */}
+        <Card
+          title="Today's Schedule"
+          icon={<Clock className="w-4 h-4 text-[var(--accent-primary)]" />}
+          badge={
+            <div className="flex items-center space-x-2">
+              <button
+                type="button"
+                onClick={handleToggleAllReminders}
+                className={`text-[11px] font-bold px-2.5 py-1 rounded-lg border flex items-center space-x-1.5 transition-all duration-180 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--chassis)] active:scale-95 active:opacity-80 ${
+                  remindersEnabled
+                    ? 'bg-[var(--accent-primary)] text-white border-[var(--accent-primary)]'
+                    : 'bg-[var(--chassis)] text-[var(--accent-primary)] border-[var(--accent-primary)]/20 hover:bg-[var(--accent-primary)] hover:text-white'
+                }`}
+              >
+                {remindersEnabled ? (
+                  <>
+                    <BellRing className="w-3 h-3 text-white animate-pulse" />
+                    <span>Reminding Active</span>
+                  </>
+                ) : (
+                  <>
+                    <Bell className="w-3 h-3 text-[var(--accent-primary)]" />
+                    <span>Remind Me</span>
+                  </>
+                )}
+              </button>
+              <span className="text-[11px] font-bold text-[var(--text-muted)] bg-[var(--chassis-dark)] px-2.5 py-1 rounded-lg">
+                {schedule.length} dose{schedule.length !== 1 ? 's' : ''}
+              </span>
+            </div>
+          }
+          className="space-y-4"
+        >
+          <div className="space-y-3.5">
+            <AnimatePresence initial={false}>
+              {schedule.map((item, i) => {
+                const doseKey = `${item.medicineId}-${item.time}-${i}`;
+                const isDoseReminded = remindersEnabled || remindedDoses[doseKey];
 
- return (
- <motion.div
- key={item.medicineId + i}
- layout={!shouldReduceMotion}
- initial={shouldReduceMotion ? false : { opacity: 0, y: 8 }}
- animate={{ opacity: 1, y: 0 }}
- exit={shouldReduceMotion ? undefined : { opacity: 0, scale: 0.95 }}
- transition={{ duration: 0.2 }}
- className="flex items-center space-x-3.5 p-3.5 rounded-2xl bg-[var(--brand-clay)] shadow-[4px_4px_8px_rgba(191,180,155,0.45),-4px_-4px_8px_rgba(255,255,255,0.60)] transition-all"
- >
- {/* Time bubble */}
- <div className="flex-shrink-0 w-16 text-center">
- <span className="text-[11px] font-bold text-[#2B6E5E] bg-[var(--brand-clay)] shadow-[inset_2px_2px_4px_rgba(191,180,155,0.5),inset_-2px_-2px_4px_rgba(255,255,255,0.6)] px-2 py-1 rounded-xl block leading-snug font-mono">
- {item.time}
- </span>
- </div>
+                return (
+                  <motion.div
+                    key={item.medicineId + i}
+                    layout={!shouldReduceMotion}
+                    initial={shouldReduceMotion ? false : { opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={shouldReduceMotion ? undefined : { opacity: 0, scale: 0.95 }}
+                    transition={{ duration: 0.2 }}
+                    className="flex items-center space-x-3.5 p-3.5 rounded-2xl bg-[var(--chassis)] shadow-[var(--shadow-sm)] border border-[rgba(255,255,255,0.4)] transition-all"
+                  >
+                    {/* Time bubble */}
+                    <div className="flex-shrink-0 w-16 text-center">
+                      <span className="text-[11px] font-bold text-[var(--accent-primary)] bg-[var(--accent-primary)]/10 border border-[var(--accent-primary)]/20 px-2 py-1 rounded-xl block leading-snug font-mono shadow-xs">
+                        {item.time}
+                      </span>
+                    </div>
 
- {/* Divider dot */}
- <div className="w-1.5 h-1.5 rounded-full bg-[#BFB49B] flex-shrink-0" />
+                    {/* Divider dot */}
+                    <div className="w-1.5 h-1.5 rounded-full bg-[var(--chassis-dark)] flex-shrink-0" />
 
- {/* Medicine info */}
- <div className="flex-1 min-w-0">
- <p className="text-sm font-bold text-[#1C2B27] truncate">{item.name}</p>
- <p className="text-[11px] text-[#5C6B64] font-mono">{item.dosage}</p>
- </div>
+                    {/* Medicine info */}
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-bold text-[var(--text-primary)] truncate">{item.name}</p>
+                      <p className="text-[11px] text-[var(--text-muted)] font-mono">{item.dosage}</p>
+                    </div>
 
- <MedicineTypeBadge type={item.type} />
+                    <MedicineTypeBadge type={item.type} />
 
- {/* Individual Dose Remind Me Button */}
- <button
- type="button"
- onClick={() => handleToggleDoseReminder(doseKey, item.name, item.time)}
- title={isDoseReminded ? 'Reminder active - click to mute' : 'Click to set dose reminder'}
- className={`p-2 rounded-xl text-xs transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2B6E5E] active:scale-95 active:opacity-80 ${
- isDoseReminded
- ? 'bg-[#2B6E5E] text-white shadow-sm'
- : 'bg-[var(--brand-clay)] text-[#5C6B64] shadow-[inset_2px_2px_4px_rgba(191,180,155,0.4),inset_-2px_-2px_4px_rgba(255,255,255,0.5)] hover:text-[#2B6E5E]'
- }`}
- >
- {isDoseReminded ? (
- <BellRing className="w-3.5 h-3.5 text-white" />
- ) : (
- <Bell className="w-3.5 h-3.5" />
- )}
- </button>
- </motion.div>
- );
- })}
- </AnimatePresence>
- </div>
- </Card>
+                    {/* Individual Dose Remind Me Button */}
+                    <button
+                      type="button"
+                      onClick={() => handleToggleDoseReminder(doseKey, item.name, item.time)}
+                      title={isDoseReminded ? 'Reminder active - click to mute' : 'Click to set dose reminder'}
+                      className={`p-2 rounded-xl text-xs transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--chassis)] active:scale-95 active:opacity-80 border border-[rgba(255,255,255,0.3)] ${
+                        isDoseReminded
+                          ? 'bg-[var(--accent-primary)] text-white shadow-sm border-transparent'
+                          : 'bg-[var(--chassis)] text-[var(--text-muted)] shadow-[var(--shadow-sm)] hover:text-[var(--accent-primary)]'
+                      }`}
+                    >
+                      {isDoseReminded ? (
+                        <BellRing className="w-3.5 h-3.5 text-white" />
+                      ) : (
+                        <Bell className="w-3.5 h-3.5" />
+                      )}
+                    </button>
+                  </motion.div>
+                );
+              })}
+            </AnimatePresence>
+          </div>
+        </Card>
 
- {/* ═══════════════════════════════════════════════════════════════
- ACTIVE MEDICINES LIST
- ═══════════════════════════════════════════════════════════════ */}
- <Card
- title="Active Medicines"
- icon={<Pill className="w-4 h-4 text-[#2B6E5E]" />}
- badge={
- <span className="text-[11px] font-bold text-[#5C6B64] bg-[var(--brand-clay)] shadow-[inset_2px_2px_4px_rgba(191,180,155,0.45),inset_-2px_-2px_4px_rgba(255,255,255,0.6)] px-2.5 py-1 rounded-xl">
- {medicines.length} total
- </span>
- }
- className="space-y-4"
- >
- <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
- <AnimatePresence initial={false}>
- {medicines.map((med) => (
- <motion.div
- key={med.id}
- layout={!shouldReduceMotion}
- initial={shouldReduceMotion ? false : { opacity: 0, scale: 0.95 }}
- animate={{ opacity: 1, scale: 1 }}
- exit={shouldReduceMotion ? undefined : { opacity: 0, scale: 0.95 }}
- transition={{ duration: 0.2 }}
- className="p-4 rounded-2xl bg-[var(--brand-clay)] shadow-[4px_4px_8px_rgba(191,180,155,0.45),-4px_-4px_8px_rgba(255,255,255,0.60)] space-y-2.5 flex flex-col justify-between"
- >
- <div className="space-y-2">
- <div className="flex items-start justify-between gap-1 flex-wrap">
- <div className="flex-1 min-w-0 pr-1">
- <p className="text-sm font-bold text-[#1C2B27] leading-tight truncate">
- {med.name}
- </p>
- {med.generic && med.generic.toLowerCase() !== med.name.toLowerCase() && (
- <p className="text-[10px] text-[#5C6B64] truncate">
- {med.generic}
- </p>
- )}
- </div>
- <div className="flex items-center gap-1 flex-shrink-0">
- <DrugHarmBadge category={med.category} name={med.name} flags={flags} />
- <MedicineTypeBadge type={med.type} />
- </div>
- </div>
+        {/* ═══════════════════════════════════════════════════════════════
+           ACTIVE MEDICINES LIST
+           ═══════════════════════════════════════════════════════════════ */}
+        <Card
+          title="Active Medicines"
+          icon={<Pill className="w-4 h-4 text-[var(--accent-primary)]" />}
+          badge={
+            <span className="text-[11px] font-bold text-[var(--text-muted)] bg-[var(--chassis)] shadow-[var(--shadow-sm)] border border-[rgba(255,255,255,0.3)] px-2.5 py-1 rounded-xl">
+              {medicines.length} total
+            </span>
+          }
+          className="space-y-4"
+        >
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <AnimatePresence initial={false}>
+              {medicines.map((med) => (
+                <motion.div
+                  key={med.id}
+                  layout={!shouldReduceMotion}
+                  initial={shouldReduceMotion ? false : { opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={shouldReduceMotion ? undefined : { opacity: 0, scale: 0.95 }}
+                  transition={{ duration: 0.2 }}
+                  className="p-4 sm:p-5 rounded-2xl bg-[var(--chassis)] shadow-[var(--shadow-sm)] border border-[rgba(255,255,255,0.4)] space-y-3 flex flex-col justify-between"
+                >
+                  <div className="space-y-2">
+                    <div className="flex items-start justify-between gap-1 flex-wrap">
+                      <div className="flex-1 min-w-0 pr-1">
+                        <p className="text-sm font-bold text-[var(--text-primary)] leading-tight truncate">
+                          {med.name}
+                        </p>
+                        {med.generic && med.generic.toLowerCase() !== med.name.toLowerCase() && (
+                          <p className="text-[10px] text-[var(--text-muted)] truncate">
+                            {med.generic}
+                          </p>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-1 flex-shrink-0">
+                        <DrugHarmBadge category={med.category} name={med.name} flags={flags} />
+                        <MedicineTypeBadge type={med.type} />
+                      </div>
+                    </div>
 
- {med.dosage && (
- <p className="text-[11px] text-[#5C6B64] font-mono">{med.dosage}</p>
- )}
+                    {med.dosage && (
+                      <p className="text-[11px] text-[var(--text-muted)] font-mono">{med.dosage}</p>
+                    )}
 
- {/* Interactive Drug Harm & Side Effects Panel */}
- <DrugHarmPanel medicine={med} flags={flags} className="mt-1" />
+                    {/* Interactive Drug Harm & Side Effects Panel */}
+                    <DrugHarmPanel medicine={med} flags={flags} className="mt-1" />
 
- {med.safetyTip && (
- <p className="text-[10px] text-[#5C6B64] bg-[var(--brand-sub-surface)] shadow-[inset_2px_2px_4px_rgba(191,180,155,0.4),inset_-2px_-2px_4px_rgba(255,255,255,0.5)] p-2.5 rounded-xl border border-[rgba(191,180,155,0.3)] leading-tight">
- {med.safetyTip}
- </p>
- )}
+                    {med.safetyTip && (
+                      <p className="text-[10px] text-[var(--text-muted)] bg-[var(--brand-sub-surface)] shadow-[var(--shadow-sm)] p-2.5 rounded-xl border border-[var(--chassis-dark)] leading-tight">
+                        {med.safetyTip}
+                      </p>
+                    )}
 
- <p className="text-[10px] text-[#5C6B64]/70">
- Added {new Date(med.dateAdded).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}
- </p>
- </div>
+                    <p className="text-[10px] text-[var(--text-muted)]/70">
+                      Added {new Date(med.dateAdded).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}
+                    </p>
+                  </div>
 
- {/* Edit & Discontinue Action Bar */}
- <div className="flex items-center justify-end gap-2 pt-2 border-t border-[rgba(191,180,155,0.35)]">
- <button
- type="button"
- onClick={() => {
- if (isGuest) {
- openGuestLockModal('edit medication dosage and type');
- return;
- }
- setEditingMed(med);
- }}
- className="inline-flex items-center gap-1 px-3 py-1.5 text-[11px] font-bold text-[#2B6E5E] bg-[#EDE8DC] shadow-[2px_2px_5px_rgba(191,180,155,0.5),-2px_-2px_5px_rgba(255,255,255,0.6)] hover:shadow-[3px_3px_7px_rgba(191,180,155,0.6),-3px_-3px_7px_rgba(255,255,255,0.7)] active:shadow-[inset_2px_2px_4px_rgba(191,180,155,0.5)] rounded-xl transition-all cursor-pointer"
- title="Edit dosage or type"
- >
- <Pencil className="w-3 h-3" />
- <span>Edit</span>
- </button>
- <button
- type="button"
- onClick={() => {
- if (isGuest) {
- openGuestLockModal('discontinue medication');
- return;
- }
- setDiscontinuingMed(med);
- }}
- className="inline-flex items-center gap-1 px-3 py-1.5 text-[11px] font-bold text-[#B23D25] bg-[#EDE8DC] shadow-[2px_2px_5px_rgba(191,180,155,0.5),-2px_-2px_5px_rgba(255,255,255,0.6)] hover:bg-rose-50 hover:shadow-[3px_3px_7px_rgba(191,180,155,0.6),-3px_-3px_7px_rgba(255,255,255,0.7)] active:shadow-[inset_2px_2px_4px_rgba(191,180,155,0.5)] rounded-xl transition-all cursor-pointer"
- title="Discontinue medicine"
- >
- <Trash2 className="w-3 h-3" />
- <span>Discontinue</span>
- </button>
- </div>
- </motion.div>
- ))}
- </AnimatePresence>
- </div>
- </Card>
+                  {/* Edit & Discontinue Action Bar */}
+                  <div className="flex items-center justify-end gap-2 pt-2 border-t border-[var(--chassis-dark)]">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (isGuest) {
+                          openGuestLockModal('edit medication dosage and type');
+                          return;
+                        }
+                        setEditingMed(med);
+                      }}
+                      className="inline-flex items-center gap-1 px-3 py-1.5 text-[11px] font-bold text-[var(--accent-primary)] bg-[var(--chassis)] border border-[rgba(255,255,255,0.3)] shadow-[var(--shadow-sm)] hover:bg-[var(--accent-primary)]/10 rounded-xl transition-all cursor-pointer"
+                      title="Edit dosage or type"
+                    >
+                      <Pencil className="w-3 h-3" />
+                      <span>Edit</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (isGuest) {
+                          openGuestLockModal('discontinue medication');
+                          return;
+                        }
+                        setDiscontinuingMed(med);
+                      }}
+                      className="inline-flex items-center gap-1 px-3 py-1.5 text-[11px] font-bold text-[var(--led-critical)] bg-[var(--chassis)] border border-[rgba(255,255,255,0.3)] shadow-[var(--shadow-sm)] hover:bg-rose-50 rounded-xl transition-all cursor-pointer"
+                      title="Discontinue medicine"
+                    >
+                      <Trash2 className="w-3 h-3" />
+                      <span>Discontinue</span>
+                    </button>
+                  </div>
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </div>
+        </Card>
 
- {/* ═══════════════════════════════════════════════════════════════
+        {/* ═══════════════════════════════════════════════════════════════
  RECENT FLAGS — only shown when flags exist
  ═══════════════════════════════════════════════════════════════ */}
  {flags.length > 0 && (
  <div className="space-y-3">
- <h2 className="text-base font-bold text-[#232724] flex items-center space-x-2">
+ <h2 className="text-base font-bold text-[var(--text-primary)] flex items-center space-x-2">
  <Activity className="w-4 h-4 text-orange-500" />
  <span>Recent Interaction Flags</span>
  <span className="ml-1 text-[10px] font-bold bg-orange-100 text-orange-700 border border-orange-200 px-2 py-0.5 rounded-full">
@@ -727,49 +745,59 @@ export default function HomePage() {
  transition={{ duration: 0.2 }}
  >
  <Card
- variant={variant}
- className="space-y-3"
- >
- {/* Flag header */}
- <div className="flex items-start justify-between gap-2">
- <div className="flex items-center space-x-2">
- {styles.icon}
- <div>
- <div className="flex items-center flex-wrap gap-1.5">
- <span className="text-sm font-bold text-[#232724]">
- {flag.medicineA?.name || 'Medicine A'}
- </span>
- <span className="text-xs text-[#6B726C] font-medium">+</span>
- <span className="text-sm font-bold text-[#232724]">
- {flag.medicineB?.name || 'Medicine B'}
- </span>
- </div>
- <p className="text-[11px] text-[#6B726C] mt-0.5">
- Flagged {new Date(flag.dateFlagged).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
- </p>
- </div>
- </div>
- <span className={`text-[10px] font-bold px-2.5 py-1 rounded-lg border flex-shrink-0 ${styles.badge}`}>
- {flag.severity}
- </span>
- </div>
+											variant={variant}
+											hideScrews={true}
+											className="p-5 space-y-3.5 shadow-[var(--shadow-sm)]"
+										>
+											{/* Flag header */}
+											<div className="flex items-start justify-between gap-3">
+												<div className="flex items-start space-x-3">
+													<div className="p-2 rounded-xl bg-white/80 dark:bg-black/20 shadow-xs border border-black/5 mt-0.5 flex-shrink-0">
+														{styles.icon}
+													</div>
+													<div>
+														<div className="flex items-center flex-wrap gap-1.5">
+															<span className="text-sm font-extrabold text-[var(--text-primary)]">
+																{flag.medicineA?.name || 'Medicine A'}
+															</span>
+															<span className="text-xs text-[var(--text-muted)] font-bold">+</span>
+															<span className="text-sm font-extrabold text-[var(--text-primary)]">
+																{flag.medicineB?.name || 'Medicine B'}
+															</span>
+														</div>
+														<p className="text-[10px] font-mono text-[var(--text-muted)] mt-0.5">
+															Flagged {new Date(flag.dateFlagged).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
+														</p>
+													</div>
+												</div>
+												<span className={`text-[10px] font-mono font-bold uppercase tracking-wider px-2.5 py-1 rounded-md border flex-shrink-0 ${styles.badge}`}>
+													{flag.severity}
+												</span>
+											</div>
 
- {/* Plain explanation */}
- <div className="bg-[var(--brand-paper)] rounded-xl p-3.5 border border-[var(--brand-border-subtle)]">
- <p className="text-xs font-semibold text-[#232724] leading-relaxed">
- {flag.plainExplanation}
- </p>
- </div>
+											{/* Plain explanation */}
+											<div className="bg-white/70 dark:bg-black/20 backdrop-blur-xs rounded-2xl p-3.5 border border-black/5 dark:border-white/10 shadow-xs">
+												<p className="text-xs font-medium text-[var(--text-primary)] leading-relaxed">
+													{flag.plainExplanation}
+												</p>
+											</div>
 
- {/* Action link */}
- <Link
- to={`/risk/${flag.id}`}
- className="inline-flex items-center space-x-1 text-xs font-bold text-[#2B6E5E] hover:underline"
- >
- <span>View full clinical explanation</span>
- <ArrowRight className="w-3.5 h-3.5" />
- </Link>
- </Card>
+											{/* Action button matching the clinical pill capsule component */}
+											<div className="pt-1">
+												<Link
+													to={`/risk/${flag.id}`}
+													className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-full bg-[var(--chassis)] hover:bg-[var(--chassis-dark)] dark:bg-black/30 dark:hover:bg-black/50 border border-[rgba(255,255,255,0.6)] dark:border-white/10 shadow-[var(--shadow-sm)] hover:shadow-[var(--shadow-card)] transition-all cursor-pointer group active:scale-[0.99]"
+												>
+													<div className="flex items-center gap-2">
+														<LedIndicator status={styles.ledStatus || 'critical'} size="sm" />
+														<span className="text-xs font-mono font-bold" style={{ color: styles.textColor || 'var(--led-critical)' }}>
+															View Clinical Explanation
+														</span>
+													</div>
+													<ChevronRight className="w-3.5 h-3.5 text-[var(--text-muted)] group-hover:text-[var(--text-primary)] group-hover:translate-x-0.5 transition-all" />
+												</Link>
+											</div>
+										</Card>
  </motion.div>
  );
  })}
@@ -792,27 +820,27 @@ export default function HomePage() {
  >
  <Activity className="w-4 h-4 text-orange-500" />
  <span>Log Symptom</span>
- {isGuest && <Lock className="w-3 h-3 text-[#8A6D3B] ml-1" />}
+ {isGuest && <Lock className="w-3 h-3 text-[var(--role-caregiver)] ml-1" />}
  </Link>
  <Link
  to="/timeline"
  className="btn-secondary py-3 text-xs sm:text-sm justify-center"
  >
- <Clock className="w-4 h-4 text-[#2B6E5E]" />
+ <Clock className="w-4 h-4 text-[var(--accent-primary)]" />
  <span>Timeline</span>
  </Link>
  <Link
  to="/insights"
- className="btn-secondary py-3 text-xs sm:text-sm justify-center bg-[#E4F2E9]/30 border-[#2B6E5E]/30 text-[#2B6E5E]"
+ className="btn-secondary py-3 text-xs sm:text-sm justify-center bg-[var(--chassis)]/30 border-[var(--accent-primary)]/30 text-[var(--accent-primary)]"
  >
- <TrendingUp className="w-4 h-4 text-[#2B6E5E]" />
+ <TrendingUp className="w-4 h-4 text-[var(--accent-primary)]" />
  <span>Insights</span>
  </Link>
  <Link
  to="/connected-people"
  className="btn-secondary py-3 text-xs sm:text-sm justify-center"
  >
- <Users className="w-4 h-4 text-[#8A6D3B]" />
+ <Users className="w-4 h-4 text-[var(--role-caregiver)]" />
  <span>Connected</span>
  </Link>
  <Link
@@ -825,9 +853,9 @@ export default function HomePage() {
  }}
  className="btn-secondary py-3 text-xs sm:text-sm justify-center sm:col-span-2 relative"
  >
- <QrCode className="w-4 h-4 text-[#1B4B66]" />
+ <QrCode className="w-4 h-4 text-[var(--accent-secondary)]" />
  <span>Doctor QR Share</span>
- {isGuest && <Lock className="w-3 h-3 text-[#8A6D3B] ml-1" />}
+ {isGuest && <Lock className="w-3 h-3 text-[var(--role-caregiver)] ml-1" />}
  </Link>
  </div>
  </>
@@ -946,22 +974,22 @@ function EditMedicineModal({ med, isOpen, onClose, onSave, isPending }) {
  animate={{ opacity: 1, scale: 1, y: 0 }}
  exit={{ opacity: 0, scale: 0.95, y: 12 }}
  transition={{ duration: 0.22, ease: [0.25, 1, 0.5, 1] }}
- className="w-full max-w-lg bg-[#EDE8DC] rounded-[32px] shadow-[14px_14px_28px_rgba(191,180,155,0.75),-14px_-14px_28px_rgba(255,255,255,0.85)] border border-[rgba(191,180,155,0.3)] overflow-hidden"
+ className="w-full max-w-lg bg-[var(--chassis)] rounded-[32px] shadow-[var(--shadow-floating)] border border-white/50 overflow-hidden"
  >
  {/* Header */}
- <div className="flex items-center justify-between px-6 pt-5 pb-4 border-b border-[rgba(191,180,155,0.4)]">
+ <div className="flex items-center justify-between px-6 pt-5 pb-4 border-b border-[var(--chassis-dark)]">
  <div className="flex items-center gap-3">
- <div className="w-9 h-9 rounded-2xl bg-[#2B6E5E]/10 border border-[#2B6E5E]/20 flex items-center justify-center">
- <Pill className="w-4 h-4 text-[#2B6E5E]" />
+ <div className="w-9 h-9 rounded-2xl bg-[var(--accent-primary)]/10 border border-[var(--accent-primary)]/20 flex items-center justify-center">
+ <Pill className="w-4 h-4 text-[var(--accent-primary)]" />
  </div>
  <div>
- <h2 className="text-base font-bold text-[#1C2B27]" style={{ fontFamily: "'Fraunces', serif" }}>
+ <h2 className="text-base font-bold text-[var(--text-primary)]" >
  Edit Medication
  </h2>
- <p className="text-[10px] text-[#5C6B64] font-semibold">{med.name}</p>
+ <p className="text-[10px] text-[var(--text-muted)] font-semibold">{med.name}</p>
  </div>
  </div>
- <button type="button" onClick={onClose} className="p-1.5 rounded-xl hover:bg-[#D5CEBF]/60 text-[#5C6B64] hover:text-[#1C2B27] transition-colors">
+ <button type="button" onClick={onClose} className="p-1.5 rounded-xl hover:bg-[var(--chassis-dark)]/60 text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors">
  <X className="w-5 h-5" />
  </button>
  </div>
@@ -975,8 +1003,8 @@ function EditMedicineModal({ med, isOpen, onClose, onSave, isPending }) {
  onClick={() => setActiveTab(tab.id)}
  className={`flex-1 py-2 text-[11px] font-bold rounded-xl transition-all cursor-pointer flex items-center justify-center gap-1.5 ${ 
  activeTab === tab.id
- ? 'bg-[#EDE8DC] text-[#2B6E5E] shadow-[3px_3px_6px_rgba(191,180,155,0.55),-3px_-3px_6px_rgba(255,255,255,0.65)]'
- : 'text-[#5C6B64] hover:text-[#1C2B27]'
+ ? 'bg-[var(--chassis)] text-[var(--accent-primary)] shadow-[var(--shadow-card)]'
+ : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
  }`}
  >
  {tab.icon}
@@ -993,19 +1021,19 @@ function EditMedicineModal({ med, isOpen, onClose, onSave, isPending }) {
  <div className="space-y-4">
  {/* Drug Name (immutable) */}
  <div className="space-y-1">
- <label className="text-[10px] font-extrabold text-[#5C6B64] uppercase tracking-widest">Medicine Name</label>
- <div className="p-3.5 bg-[#EDE8DC] rounded-2xl shadow-[inset_3px_3px_6px_rgba(191,180,155,0.5),inset_-3px_-3px_6px_rgba(255,255,255,0.6)] text-sm font-bold text-[#1C2B27]">
+ <label className="text-[10px] font-extrabold text-[var(--text-muted)] uppercase tracking-widest">Medicine Name</label>
+ <div className="p-3.5 bg-[var(--chassis)] rounded-2xl shadow-[var(--shadow-card)] text-sm font-bold text-[var(--text-primary)]">
  {med.name}
  </div>
- <p className="text-[11px] text-[#5C6B64] leading-relaxed">
+ <p className="text-[11px] text-[var(--text-muted)] leading-relaxed">
  Drug name is locked to protect clinical history. To use a different drug, discontinue this and add the new one.
  </p>
  </div>
 
  {/* Medicine Type */}
  <div className="space-y-1.5">
- <label className="text-[10px] font-extrabold text-[#5C6B64] uppercase tracking-widest">Medicine Type</label>
- <div className="flex p-1 bg-[#EDE8DC] rounded-2xl shadow-[inset_3px_3px_6px_rgba(191,180,155,0.5),inset_-3px_-3px_6px_rgba(255,255,255,0.6)] gap-1">
+ <label className="text-[10px] font-extrabold text-[var(--text-muted)] uppercase tracking-widest">Medicine Type</label>
+ <div className="flex p-1 bg-[var(--chassis)] rounded-2xl shadow-[var(--shadow-card)] gap-1">
  {[
  { value: 'PRESCRIPTION', label: 'Rx (Prescription)', icon: <Stethoscope className="w-3 h-3" /> },
  { value: 'OTC', label: 'OTC', icon: <ShoppingBag className="w-3 h-3" /> },
@@ -1017,8 +1045,8 @@ function EditMedicineModal({ med, isOpen, onClose, onSave, isPending }) {
  onClick={() => setType(t.value)}
  className={`flex-1 py-2 text-[11px] font-bold rounded-xl transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
  type === t.value
- ? 'bg-[#EDE8DC] text-[#2B6E5E] shadow-[3px_3px_6px_rgba(191,180,155,0.55),-3px_-3px_6px_rgba(255,255,255,0.65)]'
- : 'text-[#5C6B64] hover:text-[#1C2B27]'
+ ? 'bg-[var(--chassis)] text-[var(--accent-primary)] shadow-[var(--shadow-card)]'
+ : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
  }`}
  >
  {t.icon}
@@ -1030,7 +1058,7 @@ function EditMedicineModal({ med, isOpen, onClose, onSave, isPending }) {
 
  {/* Dosage */}
  <div className="space-y-1.5">
- <label className="text-[10px] font-extrabold text-[#5C6B64] uppercase tracking-widest">Dosage Instructions</label>
+ <label className="text-[10px] font-extrabold text-[var(--text-muted)] uppercase tracking-widest">Dosage Instructions</label>
  <input
  type="text"
  value={dosage}
@@ -1042,7 +1070,7 @@ function EditMedicineModal({ med, isOpen, onClose, onSave, isPending }) {
 
  {/* Prescribed By */}
  <div className="space-y-1.5">
- <label className="text-[10px] font-extrabold text-[#5C6B64] uppercase tracking-widest">Prescribed By</label>
+ <label className="text-[10px] font-extrabold text-[var(--text-muted)] uppercase tracking-widest">Prescribed By</label>
  <input
  type="text"
  value={prescribedBy}
@@ -1059,7 +1087,7 @@ function EditMedicineModal({ med, isOpen, onClose, onSave, isPending }) {
  <div className="space-y-4">
  {/* Frequency */}
  <div className="space-y-1.5">
- <label className="text-[10px] font-extrabold text-[#5C6B64] uppercase tracking-widest">Dosing Frequency</label>
+ <label className="text-[10px] font-extrabold text-[var(--text-muted)] uppercase tracking-widest">Dosing Frequency</label>
  <select
  value={frequency}
  onChange={(e) => setFrequency(e.target.value)}
@@ -1081,7 +1109,7 @@ function EditMedicineModal({ med, isOpen, onClose, onSave, isPending }) {
 
  {/* Food Instruction */}
  <div className="space-y-1.5">
- <label className="text-[10px] font-extrabold text-[#5C6B64] uppercase tracking-widest">Food Instruction</label>
+ <label className="text-[10px] font-extrabold text-[var(--text-muted)] uppercase tracking-widest">Food Instruction</label>
  <div className="grid grid-cols-2 gap-2">
  {FOOD_OPTIONS.map(opt => (
  <button
@@ -1090,11 +1118,11 @@ function EditMedicineModal({ med, isOpen, onClose, onSave, isPending }) {
  onClick={() => setFoodInstruction(opt.value)}
  className={`p-3 rounded-2xl text-left text-xs transition-all cursor-pointer border ${ 
  foodInstruction === opt.value
- ? 'bg-[#2B6E5E] text-white border-[#2B6E5E] shadow-sm'
- : 'bg-[#EDE8DC] text-[#5C6B64] border-[rgba(191,180,155,0.4)] shadow-[3px_3px_6px_rgba(191,180,155,0.4),-3px_-3px_6px_rgba(255,255,255,0.5)] hover:text-[#1C2B27]'
+ ? 'bg-[var(--accent-primary)] text-white border-[var(--accent-primary)] shadow-sm'
+ : 'bg-[var(--chassis)] text-[var(--text-muted)] border-[var(--chassis-dark)] shadow-[var(--shadow-card)] hover:text-[var(--text-primary)]'
  }`}
  >
- <div className={`mb-1 ${foodInstruction === opt.value ? 'text-white' : 'text-[#2B6E5E]'}`}>
+ <div className={`mb-1 ${foodInstruction === opt.value ? 'text-white' : 'text-[var(--accent-primary)]'}`}>
  {opt.icon}
  </div>
  <p className="font-bold text-[11px]">{opt.label}</p>
@@ -1106,21 +1134,21 @@ function EditMedicineModal({ med, isOpen, onClose, onSave, isPending }) {
 
  {/* Refill Date */}
  <div className="space-y-1.5">
- <label className="text-[10px] font-extrabold text-[#5C6B64] uppercase tracking-widest">
+ <label className="text-[10px] font-extrabold text-[var(--text-muted)] uppercase tracking-widest">
  Next Refill / Prescription Renewal Date
  </label>
  <div className="relative">
- <CalendarDays className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#5C6B64] pointer-events-none" />
+ <CalendarDays className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-muted)] pointer-events-none" />
  <input
  type="date"
  value={refillDate}
  onChange={(e) => setRefillDate(e.target.value)}
- className="input-field text-sm pl-9"
+ className="input-field text-sm !pl-11 has-icon-left"
  min={new Date().toISOString().split('T')[0]}
  />
  </div>
  {refillDate && (
- <p className="text-[11px] text-[#2B6E5E] font-semibold flex items-center gap-1.5">
+ <p className="text-[11px] text-[var(--accent-primary)] font-semibold flex items-center gap-1.5">
  <CalendarDays className="w-3 h-3" />
  Refill due: {new Date(refillDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}
  </p>
@@ -1128,24 +1156,24 @@ function EditMedicineModal({ med, isOpen, onClose, onSave, isPending }) {
  </div>
 
  {/* Reminder Toggle */}
- <div className="flex items-center justify-between p-4 bg-[#EDE8DC] rounded-2xl shadow-[inset_3px_3px_6px_rgba(191,180,155,0.5),inset_-3px_-3px_6px_rgba(255,255,255,0.6)]">
+ <div className="flex items-center justify-between p-4 bg-[var(--chassis)] rounded-2xl shadow-[var(--shadow-card)]">
  <div>
- <p className="text-xs font-extrabold text-[#1C2B27]">Daily Dose Reminders</p>
- <p className="text-[11px] text-[#5C6B64]">Receive push reminders for this medicine</p>
+ <p className="text-xs font-extrabold text-[var(--text-primary)]">Daily Dose Reminders</p>
+ <p className="text-[11px] text-[var(--text-muted)]">Receive push reminders for this medicine</p>
  </div>
  <button
  type="button"
  onClick={() => setReminderEnabled(prev => !prev)}
  className={`relative w-11 h-6 rounded-full transition-all cursor-pointer border flex items-center ${ 
  reminderEnabled
- ? 'bg-[#2B6E5E] border-[#2B6E5E] justify-end'
- : 'bg-[#D5CEBF] border-[#BFB49B] justify-start'
+ ? 'bg-[var(--accent-primary)] border-[var(--accent-primary)] justify-end'
+ : 'bg-[var(--chassis-dark)] border-[var(--chassis-dark)] justify-start'
  } px-0.5`}
  aria-label="Toggle reminder"
  >
  <motion.span
  layout
- className="w-5 h-5 rounded-full bg-white shadow-md"
+ className="w-5 h-5 rounded-full bg-[var(--chassis)] shadow-md border border-white/60"
  />
  </button>
  </div>
@@ -1157,7 +1185,7 @@ function EditMedicineModal({ med, isOpen, onClose, onSave, isPending }) {
  <div className="space-y-4">
  {/* Personal Notes */}
  <div className="space-y-1.5">
- <label className="text-[10px] font-extrabold text-[#5C6B64] uppercase tracking-widest">Personal Notes & Reminders</label>
+ <label className="text-[10px] font-extrabold text-[var(--text-muted)] uppercase tracking-widest">Personal Notes & Reminders</label>
  <textarea
  rows={5}
  value={notes}
@@ -1165,21 +1193,21 @@ function EditMedicineModal({ med, isOpen, onClose, onSave, isPending }) {
  placeholder="e.g. Take with warm water. Do not crush. INR check on March 15. Avoid grapefruit juice…"
  className="input-field text-sm resize-none leading-relaxed"
  />
- <p className="text-[11px] text-[#5C6B64]">{notes.length}/500 characters</p>
+ <p className="text-[11px] text-[var(--text-muted)]">{notes.length}/500 characters</p>
  </div>
 
  {/* Quick note chips */}
  <div className="space-y-2">
- <p className="text-[10px] font-extrabold text-[#5C6B64] uppercase tracking-widest">Quick Add Notes</p>
+ <p className="text-[10px] font-extrabold text-[var(--text-muted)] uppercase tracking-widest">Quick Add Notes</p>
  <div className="flex flex-wrap gap-2">
  {QUICK_NOTES.map(({ text, icon }) => (
  <button
  key={text}
  type="button"
  onClick={() => setNotes(prev => prev ? `${prev}\n${text}` : text)}
- className="text-[11px] px-2.5 py-1.5 rounded-xl bg-[#EDE8DC] shadow-[2px_2px_4px_rgba(191,180,155,0.5),-2px_-2px_4px_rgba(255,255,255,0.6)] text-[#5C6B64] hover:text-[#1C2B27] transition-colors cursor-pointer border border-[rgba(191,180,155,0.3)] flex items-center gap-1.5"
+ className="text-[11px] px-2.5 py-1.5 rounded-xl bg-[var(--chassis)] shadow-[var(--shadow-card)] text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors cursor-pointer border border-[var(--chassis-dark)] flex items-center gap-1.5"
  >
- <span className="text-[#2B6E5E]">{icon}</span>
+ <span className="text-[var(--accent-primary)]">{icon}</span>
  {text}
  </button>
  ))}
@@ -1187,16 +1215,16 @@ function EditMedicineModal({ med, isOpen, onClose, onSave, isPending }) {
  </div>
 
  {/* Summary preview */}
- <div className="p-3.5 bg-[#EDE8DC] rounded-2xl shadow-[inset_3px_3px_6px_rgba(191,180,155,0.5),inset_-3px_-3px_6px_rgba(255,255,255,0.6)] space-y-1.5">
- <p className="text-[10px] font-extrabold uppercase tracking-widest text-[#5C6B64]">Current Settings Summary</p>
- <div className="space-y-0.5 text-[11px] text-[#1C2B27]">
- <p><span className="text-[#5C6B64]">Type:</span> {type}</p>
- {dosage && <p><span className="text-[#5C6B64]">Dosage:</span> {dosage}</p>}
- {frequency && <p><span className="text-[#5C6B64]">Frequency:</span> {frequency}</p>}
- {foodInstruction && <p><span className="text-[#5C6B64]">With Food:</span> {FOOD_OPTIONS.find(f => f.value === foodInstruction)?.label}</p>}
- {prescribedBy && <p><span className="text-[#5C6B64]">Prescribed By:</span> {prescribedBy}</p>}
- {refillDate && <p><span className="text-[#5C6B64]">Refill Date:</span> {new Date(refillDate).toLocaleDateString('en-IN')}</p>}
- <p><span className="text-[#5C6B64]">Reminders:</span> {reminderEnabled ? <CheckCircle className="w-3.5 h-3.5 inline text-emerald-600 ml-1" /> : <XCircle className="w-3.5 h-3.5 inline text-rose-500 ml-1" />} {reminderEnabled ? 'Enabled' : 'Disabled'}</p>
+ <div className="p-3.5 bg-[var(--chassis)] rounded-2xl shadow-[var(--shadow-card)] space-y-1.5">
+ <p className="text-[10px] font-extrabold uppercase tracking-widest text-[var(--text-muted)]">Current Settings Summary</p>
+ <div className="space-y-0.5 text-[11px] text-[var(--text-primary)]">
+ <p><span className="text-[var(--text-muted)]">Type:</span> {type}</p>
+ {dosage && <p><span className="text-[var(--text-muted)]">Dosage:</span> {dosage}</p>}
+ {frequency && <p><span className="text-[var(--text-muted)]">Frequency:</span> {frequency}</p>}
+ {foodInstruction && <p><span className="text-[var(--text-muted)]">With Food:</span> {FOOD_OPTIONS.find(f => f.value === foodInstruction)?.label}</p>}
+ {prescribedBy && <p><span className="text-[var(--text-muted)]">Prescribed By:</span> {prescribedBy}</p>}
+ {refillDate && <p><span className="text-[var(--text-muted)]">Refill Date:</span> {new Date(refillDate).toLocaleDateString('en-IN')}</p>}
+ <p><span className="text-[var(--text-muted)]">Reminders:</span> {reminderEnabled ? <CheckCircle className="w-3.5 h-3.5 inline text-emerald-600 ml-1" /> : <XCircle className="w-3.5 h-3.5 inline text-rose-500 ml-1" />} {reminderEnabled ? 'Enabled' : 'Disabled'}</p>
  </div>
  </div>
  </div>
@@ -1204,7 +1232,7 @@ function EditMedicineModal({ med, isOpen, onClose, onSave, isPending }) {
  </div>
 
  {/* Footer Actions */}
- <div className="px-6 pb-5 pt-3 flex gap-2.5 border-t border-[rgba(191,180,155,0.35)]">
+ <div className="px-6 pb-5 pt-3 flex gap-2.5 border-t border-[var(--chassis-dark)]">
  {/* Tab nav arrows */}
  <button
  type="button"
@@ -1263,49 +1291,78 @@ function EditMedicineModal({ med, isOpen, onClose, onSave, isPending }) {
 
 // ─── Sub-Component: Discontinue Medicine Modal ───────────────────────────────
 function DiscontinueMedicineModal({ med, isOpen, onClose, onConfirm, isPending }) {
- if (!isOpen || !med) return null;
+  if (!isOpen || !med) return null;
 
- return (
- <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs">
- <div className="polysafe-card p-6 max-w-md w-full bg-[#EDE8DC] space-y-4 shadow-[12px_12px_24px_rgba(191,180,155,0.7),-12px_-12px_24px_rgba(255,255,255,0.8)] border-transparent rounded-[32px]">
- <div className="flex items-start gap-3">
- <div className="p-2.5 bg-[#FBE4DE] text-[#B23D25] border border-[#B23D25]/30 rounded-2xl flex-shrink-0 shadow-sm">
- <Trash2 className="w-6 h-6" />
- </div>
- <div>
- <h2 className="text-lg font-bold text-[#1C2B27]" style={{ fontFamily: "'Fraunces', serif" }}>
- Discontinue Medicine?
- </h2>
- <p className="text-xs text-[#5C6B64] mt-1 leading-relaxed">
- Are you sure you want to stop tracking <strong>{med.name}</strong>?
- </p>
- </div>
- </div>
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95, y: 12 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.95, y: 12 }}
+        transition={{ type: 'spring', damping: 25, stiffness: 350 }}
+        className="p-6 max-w-md w-full bg-[var(--chassis)] space-y-5 shadow-[var(--shadow-floating)] border border-white/60 rounded-[28px] relative overflow-hidden"
+      >
+        {/* Top Danger Accent Strip */}
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-rose-500 via-rose-600 to-amber-500" />
 
- <div className="p-3.5 bg-[#EDE8DC] shadow-[inset_3px_3px_6px_rgba(191,180,155,0.5),inset_-3px_-3px_6px_rgba(255,255,255,0.6)] rounded-2xl text-xs text-[#5C6B64] space-y-1">
- <p>• It will be removed from your active schedule and current interaction alerts.</p>
- <p>• It will be preserved on your <strong>Medication Timeline</strong> as discontinued for your doctors to review.</p>
- </div>
+        <div className="flex items-start gap-3.5 pt-1">
+          <div className="p-3 bg-rose-50 border border-rose-200/80 text-rose-600 rounded-2xl flex-shrink-0 shadow-xs">
+            <Trash2 className="w-6 h-6" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <h2 className="text-lg font-extrabold text-[var(--text-primary)] font-display tracking-tight">
+              Discontinue Medicine?
+            </h2>
+            <p className="text-xs text-[var(--text-muted)] mt-1 leading-relaxed">
+              Are you sure you want to stop tracking <strong className="text-[var(--text-primary)]">{med.name}</strong>?
+            </p>
+          </div>
+        </div>
 
- <div className="flex gap-2.5 pt-2">
- <button
- type="button"
- onClick={onClose}
- className="btn-secondary flex-1 py-2.5 text-sm"
- disabled={isPending}
- >
- Cancel
- </button>
- <button
- type="button"
- onClick={() => onConfirm(med.id)}
- className="btn-danger flex-1 py-2.5 text-sm"
- disabled={isPending}
- >
- {isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Yes, Discontinue'}
- </button>
- </div>
- </div>
- </div>
- );
+        <div className="p-4 bg-[var(--chassis)] border border-[var(--chassis-dark)] shadow-[var(--shadow-recessed)] rounded-2xl text-xs text-[var(--text-muted)] space-y-2 font-mono">
+          <div className="flex items-start gap-2">
+            <span className="text-rose-500 font-bold">•</span>
+            <p className="leading-relaxed">
+              It will be removed from your <span className="font-bold text-[var(--text-primary)]">active schedule</span> and live interaction screening.
+            </p>
+          </div>
+          <div className="flex items-start gap-2">
+            <span className="text-amber-500 font-bold">•</span>
+            <p className="leading-relaxed">
+              It will remain preserved in your <span className="font-bold text-[var(--text-primary)]">Medication Timeline</span> as discontinued for your doctors to review.
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-3 pt-1">
+          <button
+            type="button"
+            onClick={onClose}
+            className="btn-secondary flex-1 py-3 text-xs font-mono font-bold cursor-pointer"
+            disabled={isPending}
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            onClick={() => onConfirm(med.id)}
+            className="btn-danger flex-1 py-3 text-xs font-mono font-bold flex items-center justify-center gap-2 cursor-pointer shadow-md active:scale-98"
+            disabled={isPending}
+          >
+            {isPending ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                <span>Discontinuing…</span>
+              </>
+            ) : (
+              <>
+                <Trash2 className="w-3.5 h-3.5" />
+                <span>Yes, Discontinue</span>
+              </>
+            )}
+          </button>
+        </div>
+      </motion.div>
+    </div>
+  );
 }

@@ -67,5 +67,5 @@ io.on('connection', (socket) => {
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
   console.log(`PolySafe Backend → http://localhost:${PORT}`);
-  console.log(`Email OTP: ${process.env.RESEND_API_KEY ? 'Resend Live' : 'Console Stub'}`);
+  console.log(`Email OTP: ${process.env.SMTP_USER ? `SMTP Live (${process.env.SMTP_USER})` : (process.env.RESEND_API_KEY ? 'Resend Live' : 'Console Stub')}`);
 });

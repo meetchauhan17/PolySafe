@@ -939,10 +939,68 @@ The client application is built with **React 19**, **Vite 8**, **TailwindCSS 4**
 
 ---
 
-## 10. DESIGN SYSTEM, NEOMORPHISM & ZERO-EMOJI ICONOGRAPHY
+## 10. DESIGN SYSTEM — INDUSTRIAL SKEUOMORPHISM (SOFT UI) & ZERO-EMOJI ICONOGRAPHY
 
-### Zero-Emoji Standard
-PolySafe enforces a **strict Zero-Emoji Policy** across all 27+ frontend source files. All emojis have been completely replaced with high-fidelity **Lucide SVG icon widgets**.
+### Industrial Skeuomorphism (Soft UI) Visual Philosophy
+PolySafe v4.0 implements an **Industrial Skeuomorphic (Soft UI)** design system inspired by precision laboratory instruments, physical clinical hardware, and aerospace control consoles. Every component feels tactile, molded, and physically engineered into a continuous cool grey aluminum chassis.
+
+#### Design Tokens (`frontend/src/styles/tokens.css`):
+```css
+:root {
+  /* ── CHASSIS SURFACE ── */
+  --chassis:       #e0e5ec;
+  --chassis-dark:  #d1d9e6;
+  --chassis-light: #eef1f6;
+  --panel:         #f0f2f5;
+
+  /* ── TEXT ── */
+  --text-primary:  #1a1f2e;
+  --text-muted:    #4a5568;
+  --text-inverse:  #ffffff;
+
+  /* ── BRAND ACCENTS: Hematology Purple + Bio Teal ── */
+  --accent-primary:        #7c3aed;
+  --accent-primary-dark:   #5b21b6;
+  --accent-primary-light:  #ede9fe;
+  --accent-primary-glow:   rgba(124, 58, 237, 0.45);
+
+  --accent-secondary:      #0f766e;
+  --accent-secondary-dark: #0d5c56;
+  --accent-secondary-light:#d0fdf4;
+  --accent-secondary-glow: rgba(15, 118, 110, 0.45);
+
+  /* ── CLINICAL LED INDICATORS ── */
+  --led-safe:          #15803d;
+  --led-safe-glow:     rgba(21, 128, 61, 0.55);
+  --led-caution:       #b45309;
+  --led-caution-glow:  rgba(180, 83, 9, 0.55);
+  --led-critical:      #dc2626;
+  --led-critical-glow: rgba(220, 38, 38, 0.55);
+  --led-online:        #22c55e;
+  --led-online-glow:   rgba(34, 197, 94, 0.60);
+
+  /* ── NEUMORPHIC SHADOW SYSTEM ── */
+  --shadow-card:          8px 8px 16px #babecc, -8px -8px 16px #ffffff;
+  --shadow-card-hover:    10px 10px 20px #babecc, -10px -10px 20px #ffffff;
+  --shadow-floating:      12px 12px 24px #babecc, -12px -12px 24px #ffffff, inset 1px 1px 0 rgba(255,255,255,0.5);
+  --shadow-pressed:       inset 6px 6px 12px #babecc, inset -6px -6px 12px #ffffff;
+  --shadow-recessed:      inset 4px 4px 8px #babecc, inset -4px -4px 8px #ffffff;
+  --shadow-recessed-deep: inset 8px 8px 16px #babecc, inset -8px -8px 16px #ffffff;
+  --shadow-sm:            5px 5px 10px #babecc, -5px -5px 10px #ffffff;
+
+  /* ── TYPOGRAPHY ── */
+  --font-display: 'Inter', sans-serif;
+  --font-body:    'Inter', sans-serif;
+  --font-mono:    'JetBrains Mono', 'Roboto Mono', monospace;
+}
+```
+
+#### Physical Control Elements:
+1. **Molded Chassis Panels (`ps-card`)**: 32px border-radius containers with dual-light shadows, physical corner screw indentations, and vertical vent cooling slots.
+2. **Clinical LED Indicators (`LedIndicator.jsx`)**: Glowing status diodes with keyframe pulses (`led-pulse`, `led-pulse-fast`) paired with uppercase monospace telemetry labels.
+3. **Recessed Wells (`ps-input`, `ps-textarea`, `ps-select`)**: Molded negative-space input channels drilled into the chassis surface.
+4. **Tactile Keys (`PolySafeButton.jsx`)**: Mechanical spring push keys with physical displacement on active press (`translateY(2px)` and inset shadows).
+5. **Zero-Emoji Standard**: 100% Lucide SVG widgets across all pages and clinical panels.
 
 #### Lucide Icon Usage Mapping:
 
@@ -970,15 +1028,6 @@ PolySafe enforces a **strict Zero-Emoji Policy** across all 27+ frontend source 
 | Drug Substitution | `<ArrowLeftRight className="w-4 h-4" />` | Doctor Action Bar |
 | Clinical Directive | `<MessageSquare className="w-4 h-4" />` | Doctor Action Bar |
 | Save Action | `<Save className="w-3.5 h-3.5" />` | Modal Footers |
-
-### Color Palette Specification:
-- **Primary Text**: Deep Dark Sage `#1C2B27`
-- **Clinical Accent**: Emerald Forest `#2B6E5E`
-- **Surface Background**: Warm Parchment `#EDE8DC`
-- **Card Background**: Alabaster Cream `#FDFBF7`
-- **Borders & Dividers**: Sand Neutral `#D5CEBF`
-- **Critical Danger**: Crimson Rust `#B23D25`
-- **Moderate Warning**: Honey Amber `#B5791A`
 
 ---
 
@@ -1077,9 +1126,21 @@ npm run preview
 - **v3.0.0**: 4-Stage multimodal prescription OCR with Gemini 2.5 Flash Vision, prescribing cascade detection, FDA OFFSIDES adverse reaction signal mining.
 - **v3.5.0**: Doctor portal overhaul: STOPP/START deprescribing assistant, pre-prescribing safety checks, temporary QR code sharing.
 - **v4.0.0 (Current Release)**:
+  - **Industrial Skeuomorphism (Soft UI) Rebuild**: Complete visual redesign of the PolySafe frontend to a physical, tactile laboratory control console aesthetic.
+  - Base cool grey aluminum chassis (`#e0e5ec`), hematology purple (`#7c3aed`), and bio teal (`#0f766e`) accents with dual-light shadow extrusion and recessed input wells.
+  - Physical control panels (`ps-card`) with corner screw indentations and vertical ventilation cooling slots across all card variants.
+  - Precision clinical LED status indicators (`LedIndicator.jsx`) with glowing pulse keyframes.
+  - Tactile mechanical buttons (`PolySafeButton.jsx`) and recessed well inputs (`PolySafeInput.jsx`, `PolySafeSelect.jsx`, `PolySafeTextarea.jsx`).
   - Added 4-System Organ & System Toxicity Radar (Renal, Hepatic, Cardiovascular, CNS).
   - Added 1-Click Drug Substitution Tool with atomic transaction safety and interaction re-checking.
   - Added Clinical Directive Broadcasting via Socket.IO.
-  - Rebuilt Edit Medication Modal into a 3-Tab suite with 10+ clinical metadata fields.
-  - Complete UI Refactor: Replaced 100% of raw emojis with high-fidelity Lucide SVG icon widgets.
-  - Passed 18/18 master automated integration tests with zero build errors across 2,940 frontend modules.
+  - Fixed `/connected` and `/share` navigation routing in patient & doctor portal shells.
+  - Harmonized Safe, Caution, and Critical Status cards to modern industrial skeuomorphic chassis aesthetics.
+  - **Calibrated Skeuomorphic Shadow System**: Replaced raw, blown-out `#ffffff` neumorphic drop shadows with subtle, calibrated specular light reflections (`rgba(255,255,255,0.7)`) to eliminate white glow halos and element overlap across the entire application.
+  - **Precision OTP Verification Boxes**: Added dedicated `.otp-box` skeuomorphic recessed well styles with fixed 48x56px dimensions and centered monospace numbers, resolving the horizontal overflow bug on the registration verification screen.
+  - **Medical Cyan & Slate Blue Color Token Architecture**: Deployed the refreshed dual-mode color token system in `tokens.css` with Light Mode blue-grey chassis (`#eef2f7`), Medical Cyan (`#0891b2`), Slate Blue (`#2d6a9f`), and Protective Green (`#2d8a6e`), paired with Dark Mode navy-slate chassis (`#1a2233`) and brightened LEDs.
+  - **Dynamic Theme Mode Switcher**: Added dark mode toggle with persistent `localStorage` cache (`polysafe-theme`) and zero-flash inline HTML `<head>` hydration in `index.html` and `Navbar.jsx`.
+  - **Clinical Capsule Action Button Matching ([HomePage.jsx](file:///c:/Meet/xyz/PolySafe/frontend/src/pages/HomePage.jsx))**: Re-styled the "View Clinical Explanation" button to precisely match the `DrugHarmPanel` capsule component (`[ 🟠 L4 · High Risk ⌄ ]`). Features a full-width rounded pill capsule (`rounded-full bg-[var(--chassis)] border border-[rgba(255,255,255,0.6)] shadow-[var(--shadow-sm)]`), an authentic glowing `<LedIndicator size="sm" />`, crisp severity-colored monospace text (`text-xs font-mono font-bold`), and a right-aligned `<ChevronRight />` arrow, creating 100% component consistency across the dashboard.
+  - **Eliminated Inset Card Corner Clipping & Spacing Bug ([DrugHarmLevel.jsx](file:///c:/Meet/xyz/PolySafe/frontend/src/components/DrugHarmLevel.jsx))**: Added explicit `space-y-3.5` flow wrapper inside `PolypharmacyHarmDashboard` so that the 2 Stat Inset Wells and the 5-Tier Spectrum Meter maintain comfortable 14px separation, preventing the rounded corner collision and shadow overlap artifact.
+  - **Refined Spectrum Meter Baseline & Clean Pulse Indicator ([DrugHarmLevel.jsx](file:///c:/Meet/xyz/PolySafe/frontend/src/components/DrugHarmLevel.jsx))**: Fixed the spectrum meter layout so that all 5 tier labels align on a single uniform horizontal baseline inside the card boundaries. Replaced muddy outer drop-shadows with a crisp embedded active pulse dot and clean ring highlight (`ring-2 ring-white/90`), keeping the active tier completely distinct without overflow or clipping.
+  - Passed 18/18 master automated integration tests, 3-role unified auth test suite, and user account verification suite with 100% success.

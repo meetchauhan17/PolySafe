@@ -39,20 +39,23 @@ async function generateUniqueCode() {
 // ═════════════════════════════════════════════════════════════════════════════
 // POST /connection/generate-code
 // Patient-auth: generates a new invite code + QR, creates a PENDING Connection
-// record with no connectedUserId yet (doctor hasn't claimed it yet).
+// record with no connectedUserId yet (doctor or caregiver hasn't claimed it yet).
 // ═════════════════════════════════════════════════════════════════════════════
 router.post('/generate-code', auth, requireRole(['PATIENT']), async (req, res) => {
   const { userId } = req.user;
+  const targetRole = req.body.role === 'CAREGIVER' ? 'CAREGIVER' : 'DOCTOR';
+
   try {
     const patient = await prisma.patient.findUnique({ where: { userId } });
     if (!patient) {
       return res.status(404).json({ error: 'Patient profile not found. Complete onboarding first.' });
     }
 
-    // Delete any existing unclaimed codes for this patient to avoid stale codes
+    // Delete any existing unclaimed codes for this patient and role to avoid stale codes
     await prisma.connection.deleteMany({
       where: {
         patientId:       patient.id,
+        role:            targetRole,
         connectedUserId: null,         // not yet claimed
         status:          'PENDING',
       },
@@ -64,8 +67,8 @@ router.post('/generate-code', auth, requireRole(['PATIENT']), async (req, res) =
     const connection = await prisma.connection.create({
       data: {
         patientId:       patient.id,
-        connectedUserId: null,          // filled when doctor claims
-        role:            'DOCTOR',
+        connectedUserId: null,          // filled when claimed
+        role:            targetRole,
         status:          'PENDING',
         shareCode:       code,
         expiresAt,
@@ -73,17 +76,18 @@ router.post('/generate-code', auth, requireRole(['PATIENT']), async (req, res) =
     });
 
     // Generate QR code as base64 PNG data URL
-    // The QR encodes the raw 6-digit code — the doctor app scans it to pre-fill the field
+    const qrColor = targetRole === 'CAREGIVER' ? '#0D9488' : '#2B6E5E';
     const qrDataUrl = await QRCode.toDataURL(code, {
       width:   300,
       margin:  2,
-      color:   { dark: '#2B6E5E', light: '#FFFFFF' },
+      color:   { dark: qrColor, light: '#FFFFFF' },
     });
 
     return res.status(201).json({
-      connectionId: connection.id,
-      shareCode:    code,
-      qrCode:       qrDataUrl,   // data:image/png;base64,...
+      connectionId:     connection.id,
+      shareCode:        code,
+      role:             targetRole,
+      qrCode:           qrDataUrl,   // data:image/png;base64,...
       expiresAt,
       expiresInMinutes: 1440,
     });
@@ -95,11 +99,10 @@ router.post('/generate-code', auth, requireRole(['PATIENT']), async (req, res) =
 
 // ═════════════════════════════════════════════════════════════════════════════
 // POST /connection/claim-code
-// Doctor-auth: provide a 6-digit code, claim the Connection (sets connectedUserId).
-// Status stays PENDING until the patient approves.
+// Doctor or Caregiver auth: provide a 6-digit code, claim the Connection.
 // ═════════════════════════════════════════════════════════════════════════════
-router.post('/claim-code', auth, requireRole(['DOCTOR']), async (req, res) => {
-  const { userId } = req.user;
+router.post('/claim-code', auth, requireRole(['DOCTOR', 'CAREGIVER']), async (req, res) => {
+  const { userId, role } = req.user;
   const rawCode = req.body.code || req.body.shareCode;
   const code = rawCode ? String(rawCode).trim() : '';
 
@@ -123,9 +126,12 @@ router.post('/claim-code', auth, requireRole(['DOCTOR']), async (req, res) => {
       return res.status(410).json({ error: 'This code has expired. Ask the patient to generate a new one.' });
     }
 
+    // If a caregiver claims a caregiver code, auto-approve for instant setup
+    const newStatus = connection.role === 'CAREGIVER' ? 'APPROVED' : connection.status;
+
     const updated = await prisma.connection.update({
       where: { id: connection.id },
-      data:  { connectedUserId: userId },
+      data:  { connectedUserId: userId, status: newStatus },
       include: {
         patient: {
           select: { id: true, age: true, conditions: true },
@@ -133,12 +139,13 @@ router.post('/claim-code', auth, requireRole(['DOCTOR']), async (req, res) => {
       },
     });
 
-    console.log(`[connection] Doctor ${userId} claimed code ${code} → Connection ${connection.id}`);
+    console.log(`[connection] ${role} ${userId} claimed code ${code} → Connection ${connection.id}`);
 
     return res.status(200).json({
       connectionId: updated.id,
-      status:       updated.status,   // still PENDING — awaiting patient approval
-      message:      'Code claimed successfully. Waiting for patient approval.',
+      role:         updated.role,
+      status:       updated.status,
+      message:      updated.status === 'APPROVED' ? 'Caregiver connection activated!' : 'Code claimed successfully. Waiting for patient approval.',
       patientId:    updated.patient.id,
     });
   } catch (err) {
@@ -210,6 +217,9 @@ router.get('/mine', auth, requireRole(['DOCTOR']), async (req, res) => {
             id: true,
             age: true,
             conditions: true,
+            user: {
+              select: { id: true, name: true, email: true, phone: true },
+            },
             medicines: {
               where: { removedAt: null },
               orderBy: { dateAdded: 'desc' },
@@ -222,14 +232,32 @@ router.get('/mine', auth, requireRole(['DOCTOR']), async (req, res) => {
       orderBy: { createdAt: 'desc' },
     });
 
-    const payload = connections.map((c) => ({
-      connectionId: c.id,
-      patientId:    c.patient.id,
-      patientAge:   c.patient.age,
-      conditions:   c.patient.conditions,
-      recentMeds:   c.patient.medicines,
-      connectedAt:  c.createdAt,
-    }));
+    const payload = connections.map((c) => {
+      const patientUser = c.patient?.user;
+      let patientName = patientUser?.name;
+      if (!patientName || patientName === 'PolySafe User') {
+        if (patientUser?.email) {
+          const raw = patientUser.email.split('@')[0];
+          patientName = raw.replace(/[._-]/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
+        } else if (patientUser?.phone) {
+          patientName = `Patient ···${patientUser.phone.slice(-4)}`;
+        } else {
+          patientName = c.patient?.age ? `Patient (Age ${c.patient.age})` : 'Connected Patient';
+        }
+      }
+
+      return {
+        connectionId: c.id,
+        patientId:    c.patient.id,
+        patientName,
+        patientEmail: patientUser?.email || null,
+        patientPhone: patientUser?.phone || null,
+        patientAge:   c.patient.age,
+        conditions:   c.patient.conditions,
+        recentMeds:   c.patient.medicines,
+        connectedAt:  c.createdAt,
+      };
+    });
 
     return res.status(200).json({ connections: payload });
   } catch (err) {
@@ -286,6 +314,12 @@ router.post('/:id/revoke', auth, requireRole(['PATIENT']), async (req, res) => {
     });
     if (!connection) return res.status(404).json({ error: 'Connection not found.' });
 
+    if (connection.status === 'PENDING' && !connection.connectedUserId) {
+      await prisma.connection.delete({ where: { id } });
+      console.log(`[connection] Patient ${userId} cancelled unclaimed invite ${id}`);
+      return res.status(200).json({ connectionId: id, status: 'REVOKED', message: 'Invitation cancelled.' });
+    }
+
     await prisma.connection.update({
       where: { id },
       data:  { status: 'REVOKED' },
@@ -322,32 +356,41 @@ router.get('/doctor-patient/:patientId/timeline', auth, requireRole(['DOCTOR']),
       include: {
         addedByUser: { select: { id: true, role: true, email: true, phone: true } },
         interactionFlagsAsA: {
-          select: { id: true, severity: true, medicineB: { select: { id: true, name: true } } },
+          select: { id: true, severity: true, medicineB: { select: { id: true, name: true, removedAt: true } } },
         },
         interactionFlagsAsB: {
-          select: { id: true, severity: true, medicineA: { select: { id: true, name: true } } },
+          select: { id: true, severity: true, medicineA: { select: { id: true, name: true, removedAt: true } } },
         },
       },
     });
 
     const payload = medicines.map((med) => {
-      const flagsA = (med.interactionFlagsAsA || []).map((f) => ({
-        flagId: f.id, severity: f.severity, counterpartId: f.medicineB?.id, counterpartName: f.medicineB?.name,
-      }));
-      const flagsB = (med.interactionFlagsAsB || []).map((f) => ({
-        flagId: f.id, severity: f.severity, counterpartId: f.medicineA?.id, counterpartName: f.medicineA?.name,
-      }));
+      const isDiscontinued = !!med.removedAt;
+      const flagsA = isDiscontinued ? [] : (med.interactionFlagsAsA || [])
+        .filter((f) => !f.medicineB?.removedAt)
+        .map((f) => ({
+          flagId: f.id, severity: f.severity, counterpartId: f.medicineB?.id, counterpartName: f.medicineB?.name,
+        }));
+      const flagsB = isDiscontinued ? [] : (med.interactionFlagsAsB || [])
+        .filter((f) => !f.medicineA?.removedAt)
+        .map((f) => ({
+          flagId: f.id, severity: f.severity, counterpartId: f.medicineA?.id, counterpartName: f.medicineA?.name,
+        }));
       const allFlags = [...flagsA, ...flagsB];
       return {
         id: med.id, name: med.name, type: med.type, dosage: med.dosage,
         standardizedCode: med.standardizedCode, dateAdded: med.dateAdded,
-        discontinued: !!med.removedAt, removedAt: med.removedAt,
+        discontinued: isDiscontinued, removedAt: med.removedAt,
         flagged: allFlags.length > 0, flags: allFlags,
       };
     });
 
     const flags = await prisma.interactionFlag.findMany({
-      where:   { patientId },
+      where: {
+        patientId,
+        medicineA: { removedAt: null },
+        medicineB: { removedAt: null },
+      },
       orderBy: { dateFlagged: 'desc' },
       include: {
         medicineA: { select: { id: true, name: true } },
@@ -357,10 +400,40 @@ router.get('/doctor-patient/:patientId/timeline', auth, requireRole(['DOCTOR']),
 
     const patient = await prisma.patient.findUnique({
       where: { id: patientId },
-      select: { age: true, conditions: true, allergies: true },
+      select: {
+        id: true,
+        age: true,
+        conditions: true,
+        allergies: true,
+        user: {
+          select: { id: true, name: true, email: true, phone: true },
+        },
+      },
     });
 
-    return res.status(200).json({ medicines: payload, flags, patient });
+    let patientDisplayName = patient?.user?.name;
+    if (!patientDisplayName || patientDisplayName === 'PolySafe User') {
+      if (patient?.user?.email) {
+        const raw = patient.user.email.split('@')[0];
+        patientDisplayName = raw.replace(/[._-]/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
+      } else if (patient?.user?.phone) {
+        patientDisplayName = `Patient ···${patient.user.phone.slice(-4)}`;
+      } else {
+        patientDisplayName = patient?.age ? `Patient (Age ${patient.age})` : 'Connected Patient';
+      }
+    }
+
+    const patientPayload = patient ? {
+      id: patient.id,
+      age: patient.age,
+      conditions: patient.conditions,
+      allergies: patient.allergies,
+      name: patientDisplayName,
+      email: patient.user?.email || null,
+      phone: patient.user?.phone || null,
+    } : {};
+
+    return res.status(200).json({ medicines: payload, flags, patient: patientPayload });
   } catch (err) {
     console.error('[doctor-patient timeline]', err);
     return res.status(500).json({ error: 'Failed to load patient data.' });
@@ -510,36 +583,73 @@ router.post('/doctor/prescribe-safety-check', auth, requireRole(['DOCTOR']), han
 
 // ═════════════════════════════════════════════════════════════════════════════
 // POST /connection/add-caregiver
-// Patient-auth: invite a caregiver by their phone number.
-// Looks up or creates a User record for that phone (role CAREGIVER).
-// Creates a Connection with role=CAREGIVER, status=PENDING, no shareCode.
+// Patient-auth: invite a caregiver by phone number or email.
+// Looks up or creates a User record for that contact (role CAREGIVER).
+// Creates a Connection with role=CAREGIVER, status=PENDING.
 // ═════════════════════════════════════════════════════════════════════════════
 router.post('/add-caregiver', auth, requireRole(['PATIENT']), async (req, res) => {
   const { userId } = req.user;
-  const { phone }  = req.body;
+  const { phone, email, name, relation } = req.body;
 
-  if (!phone || !/^\+?[1-9]\d{7,14}$/.test(String(phone).trim())) {
-    return res.status(400).json({ error: 'Please provide a valid phone number (E.164 format, e.g. +919876543210).' });
+  let normalizedPhone = null;
+  let normalizedEmail = null;
+
+  if (phone && String(phone).trim()) {
+    let rawPhone = String(phone).trim().replace(/[\s\-\(\)\.]/g, '');
+    if (/^\d{10}$/.test(rawPhone)) {
+      rawPhone = `+91${rawPhone}`;
+    } else if (/^\d{11,14}$/.test(rawPhone) && !rawPhone.startsWith('+')) {
+      rawPhone = `+${rawPhone}`;
+    }
+    if (!/^\+[1-9]\d{7,14}$/.test(rawPhone)) {
+      return res.status(400).json({
+        error: 'Please provide a valid 10-digit mobile number or international format (e.g. +91 98765 43210).',
+      });
+    }
+    normalizedPhone = rawPhone;
+  } else if (email && String(email).trim()) {
+    const rawEmail = String(email).trim().toLowerCase();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(rawEmail)) {
+      return res.status(400).json({ error: 'Please provide a valid email address.' });
+    }
+    normalizedEmail = rawEmail;
+  } else {
+    return res.status(400).json({ error: 'Please provide either a mobile number or an email address.' });
   }
 
-  const normalizedPhone = String(phone).trim();
-
   try {
-    const patient = await prisma.patient.findUnique({ where: { userId } });
+    const patient = await prisma.patient.findUnique({
+      where: { userId },
+      include: { user: { select: { name: true, email: true } } },
+    });
     if (!patient) {
       return res.status(404).json({ error: 'Patient profile not found. Complete onboarding first.' });
     }
 
-    // Look up or create a User for the caregiver's phone
-    let caregiverUser = await prisma.user.findUnique({ where: { phone: normalizedPhone } });
-    if (!caregiverUser) {
-      caregiverUser = await prisma.user.create({
-        data: { phone: normalizedPhone, role: 'CAREGIVER' },
-      });
-    } else if (caregiverUser.role !== 'CAREGIVER') {
-      // If they already have a different role (e.g. PATIENT), still allow — the
-      // connection logic only checks APPROVED connections, not the user's role.
-      // But flag it for the caller.
+    // Look up or create a User for the caregiver
+    let caregiverUser = null;
+    if (normalizedPhone) {
+      caregiverUser = await prisma.user.findUnique({ where: { phone: normalizedPhone } });
+      if (!caregiverUser) {
+        caregiverUser = await prisma.user.create({
+          data: {
+            phone: normalizedPhone,
+            role:  'CAREGIVER',
+            name:  name && String(name).trim() ? String(name).trim() : 'Family Caregiver',
+          },
+        });
+      }
+    } else if (normalizedEmail) {
+      caregiverUser = await prisma.user.findUnique({ where: { email: normalizedEmail } });
+      if (!caregiverUser) {
+        caregiverUser = await prisma.user.create({
+          data: {
+            email: normalizedEmail,
+            role:  'CAREGIVER',
+            name:  name && String(name).trim() ? String(name).trim() : 'Family Caregiver',
+          },
+        });
+      }
     }
 
     // Prevent duplicate active connections
@@ -554,7 +664,7 @@ router.post('/add-caregiver', auth, requireRole(['PATIENT']), async (req, res) =
       return res.status(409).json({
         error: existing.status === 'APPROVED'
           ? 'This caregiver is already connected to your account.'
-          : 'An invite for this caregiver is already pending their acceptance.',
+          : 'An invite for this caregiver is already pending their login.',
         connectionId: existing.id,
         status:       existing.status,
       });
@@ -567,18 +677,26 @@ router.post('/add-caregiver', auth, requireRole(['PATIENT']), async (req, res) =
         role:            'CAREGIVER',
         status:          'PENDING',
         shareCode:       null,
-        expiresAt:       null,  // no expiry for caregiver invites — revocable anytime
+        expiresAt:       null, // no expiry for caregiver invites — revocable anytime
       },
     });
 
-    console.log(`[connection] Patient ${userId} invited caregiver ${caregiverUser.id} (phone ${normalizedPhone})`);
+    const patientDisplayName = patient.user?.name || 'Your family member';
+    const contactIdentifier = normalizedPhone || normalizedEmail;
+    const inviteMessage = `Hi, ${patientDisplayName} has invited you as a family caregiver on PolySafe. Log in with your ${normalizedPhone ? 'mobile number' : 'email'} (${contactIdentifier}) to view medication safety updates & daily reminder schedules.`;
+
+    console.log(`[connection] Patient ${userId} invited caregiver ${caregiverUser.id} (${contactIdentifier})`);
 
     return res.status(201).json({
       connectionId:    connection.id,
       caregiverId:     caregiverUser.id,
       caregiverPhone:  normalizedPhone,
+      caregiverEmail:  normalizedEmail,
+      caregiverName:   name || caregiverUser.name || null,
+      relation:        relation || null,
       status:          'PENDING',
-      message:         'Caregiver invite sent. They can log in with this phone number to accept.',
+      inviteMessage,
+      message:         `Caregiver invite created for ${contactIdentifier}. They can log in to view updates.`,
     });
   } catch (err) {
     console.error('[POST /connection/add-caregiver]', err);
@@ -682,18 +800,18 @@ router.get('/my-connections', auth, requireRole(['PATIENT']), async (req, res) =
     const payload = connections.map((c) => {
       const u = c.connectedUser;
       const label = !u
-        ? 'Unclaimed invite'
+        ? (c.role === 'DOCTOR' ? 'Doctor Access Code' : 'Caregiver Invite Code')
         : u.role === 'DOCTOR'
-        ? (u.email ? `Dr. ${u.email.split('@')[0]}` : u.phone ? `Dr. ···${u.phone.slice(-4)}` : 'Connected Doctor')
-        : u.phone
-        ? `Caregiver ···${u.phone.slice(-4)}`
-        : 'Caregiver';
+        ? (u.name || (u.email ? `Dr. ${u.email.split('@')[0]}` : u.phone ? `Dr. ···${u.phone.slice(-4)}` : 'Connected Doctor'))
+        : (u.name || (u.phone ? `Caregiver ···${u.phone.slice(-4)}` : u.email ? `Caregiver (${u.email})` : 'Caregiver'));
 
       return {
         connectionId:    c.id,
         role:            c.role,
         status:          c.status,
         label,
+        name:            u?.name || null,
+        doctorLabel:     u?.role === 'DOCTOR' ? (u.name || (u.email ? `Dr. ${u.email.split('@')[0]}` : 'Physician')) : null,
         connectedUserId: c.connectedUserId,
         shareCode:       c.role === 'DOCTOR' ? c.shareCode : undefined,
         expiresAt:       c.expiresAt,

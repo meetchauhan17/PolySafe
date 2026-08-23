@@ -155,18 +155,39 @@ router.get('/my-patients', auth, async (req, res) => {
         status:          'APPROVED',
       },
       include: {
-        patient: { select: { id: true, age: true } },
+        patient: {
+          select: {
+            id: true,
+            age: true,
+            user: { select: { id: true, name: true, email: true, phone: true } },
+          },
+        },
       },
       orderBy: { createdAt: 'desc' },
     });
 
     return res.status(200).json({
-      patients: connections.map((c) => ({
-        connectionId: c.id,
-        patientId:    c.patient.id,
-        patientAge:   c.patient.age,
-        connectedAt:  c.createdAt,
-      })),
+      patients: connections.map((c) => {
+        const u = c.patient?.user;
+        let patientName = u?.name;
+        if (!patientName || patientName === 'PolySafe User') {
+          if (u?.email) {
+            const raw = u.email.split('@')[0];
+            patientName = raw.replace(/[._-]/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
+          } else if (u?.phone) {
+            patientName = `Patient ···${u.phone.slice(-4)}`;
+          } else {
+            patientName = c.patient?.age ? `Patient (Age ${c.patient.age})` : 'Family Member';
+          }
+        }
+        return {
+          connectionId: c.id,
+          patientId:    c.patient.id,
+          patientName,
+          patientAge:   c.patient.age,
+          connectedAt:  c.createdAt,
+        };
+      }),
     });
   } catch (err) {
     console.error('[GET /caregiver/my-patients]', err);

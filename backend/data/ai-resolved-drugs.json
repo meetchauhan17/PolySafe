@@ -4596,5 +4596,64 @@
     "safetyTip": "RxNorm validated medication. Take as directed.",
     "standardizedCode": "2418",
     "layer": "Layer 4 (RxNorm REST API)"
+  },
+  "xyzal m": {
+    "resolvedName": "Xyzal M",
+    "genericName": "Levocetirizine + Montelukast",
+    "genericSalts": [
+      "Levocetirizine dihydrochloride",
+      "Montelukast sodium"
+    ],
+    "constituents": [
+      "Levocetirizine dihydrochloride",
+      "Montelukast sodium"
+    ],
+    "harmLevel": 3,
+    "class": "Antihistamine + Leukotriene Receptor Antagonist",
+    "foodInstruction": "after_food",
+    "dosageOptions": [
+      "1 tablet once daily"
+    ],
+    "safetyTip": "May cause drowsiness; avoid driving or operating machinery until you know how the medication affects you.",
+    "standardizedCode": "402349",
+    "layer": "Layer 5 (gemini_gemini-flash-lite-latest)"
+  },
+  "metformin": {
+    "resolvedName": "Metformin",
+    "genericName": "Metformin",
+    "genericSalts": [
+      "Metformin"
+    ],
+    "constituents": [
+      "Metformin"
+    ],
+    "harmLevel": 4,
+    "class": "RxNorm Standard Drug",
+    "foodInstruction": "after_food",
+    "dosageOptions": [
+      "Standard dose"
+    ],
+    "safetyTip": "RxNorm validated medication. Take as directed.",
+    "standardizedCode": "6809",
+    "layer": "Layer 4 (RxNorm REST API)"
+  },
+  "alergin-l": {
+    "resolvedName": "Alergin-L",
+    "genericName": "Levocetirizine",
+    "genericSalts": [
+      "Levocetirizine dihydrochloride"
+    ],
+    "constituents": [
+      "Levocetirizine dihydrochloride"
+    ],
+    "harmLevel": 2,
+    "class": "Antihistamine (Second-generation H1 receptor antagonist)",
+    "foodInstruction": "with_or_without_food",
+    "dosageOptions": [
+      "5 mg once daily"
+    ],
+    "safetyTip": "May cause drowsiness; avoid alcohol and activities requiring mental alertness until response is known.",
+    "standardizedCode": "402349",
+    "layer": "Layer 5 (gemini_gemini-3.5-flash-lite)"
   }
 }

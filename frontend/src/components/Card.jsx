@@ -1,150 +1,125 @@
 import React from 'react';
 
 /**
- * Card.jsx — Reusable Neumorphic container component for PolySafe
+ * Card.jsx — Modern Clinical Surface Panel
  *
- * Neumorphic Standards:
- * - background: #EDE8DC (warm clay molded surface)
- * - border-radius: 32px (rounded-[32px])
- * - padding: 20px (p-5)
- * - box-shadow: 9px 9px 16px rgba(191,180,155,0.55), -9px -9px 16px rgba(255,255,255,0.65)
- * - icon: drilled-in circular well (inset deep shadow)
- *
- * SAFETY CARVE-OUT:
- * - Risk statuses (safe, caution, danger) MUST NOT blend into the clay background.
- * - They strictly keep real, visible high-contrast backgrounds with solid 2px borders:
- * - safe: #E4F2E9 with #2F8558 border
- * - caution: #FBEED9 with #B5791A border
- * - danger: #FBE4DE with #B23D25 border
- *
- * Props:
- * @param {string} [variant='default'] - 'default' | 'caution' | 'danger' | 'safe'
- * @param {string|React.ReactNode} [title] - Optional card heading
- * @param {string|React.ReactNode} [subtitle] - Optional card sub-caption
- * @param {React.ReactNode} [icon] - Optional header icon
- * @param {React.ReactNode} [badge] - Optional pill/tag rendered in the top-right
- * @param {React.ReactNode} [headerAction] - Optional top-right button/action
- * @param {string} [className] - Additional utility classes
- * @param {function} [onClick] - Optional click handler
- * @param {React.ReactNode} children - Card body content
+ * Design Language:
+ * - Background: var(--chassis) (#e0e5ec) default / elevated surface
+ * - Border-radius: rounded-2xl (16-20px) for crisp modern framing
+ * - Subtle glass border & multi-layered soft elevation
+ * - Variant Cards (safe / caution / critical): High-contrast clinical carve-out with pulsing LED indicator and colored border.
  */
 
-const VARIANT_STYLES = {
- default: {
- border: 'border-transparent',
- bg: 'bg-[#EDE8DC]',
- iconBg: 'icon-well text-[#2B6E5E]',
- shadow: '9px 9px 16px rgba(191, 180, 155, 0.55), -9px -9px 16px rgba(255, 255, 255, 0.65)',
- titleColor: 'text-[#1C2B27]',
- subtitleColor: 'text-[#5C6B64]',
- },
- // ─── SAFETY CARVE-OUT STATUSES ──────────────────────────────────────────────
- caution: {
- border: 'border-[#B5791A] border-2',
- bg: 'bg-[#FBEED9]',
- iconBg: 'p-2.5 rounded-full bg-[#F5E2C4] text-[#B5791A] shadow-inner',
- shadow: '6px 6px 14px rgba(191, 180, 155, 0.40), -6px -6px 14px rgba(255, 255, 255, 0.50)',
- titleColor: 'text-[#7A4A0A]',
- subtitleColor: 'text-[#8A5210]',
- },
- danger: {
- border: 'border-[#B23D25] border-2',
- bg: 'bg-[#FBE4DE]',
- iconBg: 'p-2.5 rounded-full bg-[#F5D2C8] text-[#B23D25] shadow-inner',
- shadow: '6px 6px 14px rgba(191, 180, 155, 0.40), -6px -6px 14px rgba(255, 255, 255, 0.50)',
- titleColor: 'text-[#7A1A0A]',
- subtitleColor: 'text-[#962615]',
- },
- safe: {
- border: 'border-[#2F8558] border-2',
- bg: 'bg-[#E4F2E9]',
- iconBg: 'p-2.5 rounded-full bg-[#CCE9D6] text-[#2F8558] shadow-inner',
- shadow: '6px 6px 14px rgba(191, 180, 155, 0.40), -6px -6px 14px rgba(255, 255, 255, 0.50)',
- titleColor: 'text-[#1A5C3A]',
- subtitleColor: 'text-[#206942]',
- },
-};
-
 export default function Card({
- variant = 'default',
- title,
- subtitle,
- icon,
- badge,
- headerAction,
- className = '',
- onClick,
- style = {},
- children,
- ...props
+  variant = 'default',
+  elevated = false,
+  title,
+  subtitle,
+  icon,
+  badge,
+  headerAction,
+  className = '',
+  onClick,
+  style = {},
+  hideScrews = true,
+  children,
+  ...props
 }) {
- const v = VARIANT_STYLES[variant] || VARIANT_STYLES.default;
+  const isVariant = variant === 'safe' || variant === 'caution' || variant === 'critical' || variant === 'danger';
+  const normalizedVariant = variant === 'danger' ? 'critical' : variant;
 
- return (
- <div
- onClick={onClick}
- role={onClick ? 'button' : undefined}
- tabIndex={onClick ? 0 : undefined}
- onKeyDown={
- onClick
- ? (e) => {
- if (e.key === 'Enter' || e.key === ' ') {
- e.preventDefault();
- onClick(e);
- }
- }
- : undefined
- }
- style={{
- boxShadow: v.shadow,
- ...style,
- }}
- className={`rounded-[32px] ${v.border} ${v.bg} p-6 transition-all duration-200 ease-out flex flex-col ${
- onClick
- ? 'cursor-pointer hover:-translate-y-0.5 hover:shadow-[12px_12px_20px_rgba(191,180,155,0.65),-12px_-12px_20px_rgba(255,255,255,0.75)] active:translate-y-0.5 active:shadow-[inset_6px_6px_10px_rgba(191,180,155,0.55),inset_-6px_-6px_10px_rgba(255,255,255,0.65)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2B6E5E]'
- : ''
- } ${className}`}
- {...props}
- >
- {/* Optional Card Header */}
- {(title || icon || badge || headerAction) && (
- <div className="flex items-start justify-between gap-3 mb-4 flex-shrink-0">
- <div className="flex items-center gap-3 min-w-0">
- {icon && (
- <div className={`p-2.5 rounded-full flex-shrink-0 ${v.iconBg}`}>
- {icon}
- </div>
- )}
- {title && (
- <div className="min-w-0">
- <h3
- className={`text-base sm:text-lg font-bold tracking-tight leading-snug ${v.titleColor}`}
- style={{ fontFamily: "'Fraunces', serif" }}
- >
- {title}
- </h3>
- {subtitle && (
- <p className={`text-xs mt-0.5 leading-normal ${v.subtitleColor}`}>
- {subtitle}
- </p>
- )}
- </div>
- )}
- </div>
+  let variantClasses = '';
+  let ledColorClass = '';
+  let ledGlowClass = '';
 
- {(badge || headerAction) && (
- <div className="flex items-center gap-2 flex-shrink-0">
- {badge}
- {headerAction}
- </div>
- )}
- </div>
- )}
+  if (normalizedVariant === 'safe') {
+    variantClasses = 'ps-card--safe border border-[var(--led-safe)]/40 bg-[var(--brand-surface)]';
+    ledColorClass = 'bg-[var(--led-safe)]';
+    ledGlowClass = 'shadow-[0_0_8px_2px_var(--led-safe-glow)] animate-[led-pulse_2s_ease-in-out_infinite]';
+  } else if (normalizedVariant === 'caution') {
+    variantClasses = 'ps-card--caution border border-[var(--led-caution)]/40 bg-[var(--brand-surface)]';
+    ledColorClass = 'bg-[var(--led-caution)]';
+    ledGlowClass = 'shadow-[0_0_8px_2px_var(--led-caution-glow)] animate-[led-pulse_2s_ease-in-out_infinite]';
+  } else if (normalizedVariant === 'critical') {
+    variantClasses = 'ps-card--critical border border-[var(--led-critical)]/45 bg-[var(--brand-surface)]';
+    ledColorClass = 'bg-[var(--led-critical)]';
+    ledGlowClass = 'shadow-[0_0_8px_2px_var(--led-critical-glow)] animate-[led-pulse_1.2s_ease-in-out_infinite]';
+  }
 
- {/* Card Content */}
- <div className="flex-1 flex flex-col min-w-0">
- {children}
- </div>
- </div>
- );
+  const baseShadow = elevated
+    ? 'shadow-[var(--shadow-floating)]'
+    : 'shadow-[var(--shadow-card)]';
+
+  return (
+    <div
+      onClick={onClick}
+      role={onClick ? 'button' : undefined}
+      tabIndex={onClick ? 0 : undefined}
+      onKeyDown={
+        onClick
+          ? (e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                onClick(e);
+              }
+            }
+          : undefined
+      }
+      style={{
+        ...style,
+      }}
+      className={`relative bg-[var(--brand-surface)] text-[var(--text-primary)] rounded-2xl p-5 sm:p-6 transition-all duration-200 ease-out flex flex-col border border-[rgba(255,255,255,0.7)] dark:border-white/5 ${baseShadow} hover:-translate-y-0.5 hover:shadow-[var(--shadow-card-hover)] ${
+        onClick
+          ? 'cursor-pointer active:translate-y-0.5 active:shadow-[var(--shadow-pressed)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]'
+          : ''
+      } ${variantClasses} ${className}`}
+      {...props}
+    >
+      {/* Pulsing LED on Status Variant Cards */}
+      {isVariant && (
+        <div className="absolute top-4 right-4 flex items-center gap-1.5 z-10 pointer-events-none">
+          <div className={`w-2.5 h-2.5 rounded-full ${ledColorClass} ${ledGlowClass}`} />
+        </div>
+      )}
+
+      {/* Optional Card Header */}
+      {(title || icon || badge || headerAction) && (
+        <div className="flex items-start justify-between gap-3 mb-4 flex-shrink-0 relative z-10">
+          <div className="flex items-center gap-3 min-w-0">
+            {icon && (
+              <div
+                className="p-2.5 rounded-xl flex-shrink-0 bg-[var(--chassis)] text-[var(--accent-primary)] shadow-[var(--shadow-sm)] border border-[var(--chassis-dark)]/40"
+              >
+                {icon}
+              </div>
+            )}
+            {title && (
+              <div className="min-w-0">
+                <h3 className="text-base sm:text-lg font-bold tracking-tight leading-snug text-[var(--text-primary)] font-display">
+                  {title}
+                </h3>
+                {subtitle && (
+                  <p className="text-xs mt-0.5 leading-normal text-[var(--text-muted)]">
+                    {subtitle}
+                  </p>
+                )}
+              </div>
+            )}
+          </div>
+
+          {(badge || headerAction) && (
+            <div className="flex items-center gap-2 flex-shrink-0">
+              {badge}
+              {headerAction}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Card Content */}
+      <div className="flex-1 flex flex-col min-w-0 relative z-10">
+        {children}
+      </div>
+    </div>
+  );
 }

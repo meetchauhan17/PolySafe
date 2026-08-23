@@ -35,10 +35,10 @@ const otpSendLimiter = rateLimit({
   },
 });
 
-/** 10 login attempts per IP per 15 minutes */
+/** 50 login attempts per IP per 15 minutes */
 const loginIpLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 10,
+  max: 50,
   standardHeaders: true,
   legacyHeaders: false,
   handler: (_req, res) => {
@@ -52,14 +52,15 @@ const loginIpLimiter = rateLimit({
 
 const checkEmailSchema = z.object({
   email: z.string().email('Invalid email address'),
-  role: z.enum(['PATIENT', 'CAREGIVER']),
+  role: z.enum(['PATIENT', 'CAREGIVER', 'DOCTOR']),
 });
 
 const signupSendOtpSchema = z.object({
   name: z.string().min(2, 'Full name must be at least 2 characters'),
   email: z.string().email('Invalid email address'),
   password: z.string().min(8, 'Password must be at least 8 characters'),
-  role: z.enum(['PATIENT', 'CAREGIVER']),
+  role: z.enum(['PATIENT', 'CAREGIVER', 'DOCTOR']),
+  registrationNumber: z.string().optional(),
 });
 
 const verifySignupOtpSchema = z.object({
@@ -70,7 +71,7 @@ const verifySignupOtpSchema = z.object({
 const patientLoginSchema = z.object({
   email: z.string().email('Invalid email address'),
   password: z.string().min(1, 'Password is required'),
-  role: z.enum(['PATIENT', 'CAREGIVER']),
+  role: z.enum(['PATIENT', 'CAREGIVER', 'DOCTOR']),
 });
 
 const doctorSignupSchema = z.object({
