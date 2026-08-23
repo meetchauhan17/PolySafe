@@ -1,6 +1,6 @@
 # PolySafe Master Technical Architecture & Current State Manual
-**Document Version:** 4.0.0  
-**Build Date:** August 21, 2026  
+**Document Version:** 5.2.0  
+**Build Date:** August 23, 2026  
 **Repository:** `meetchauhan17/PolySafe`  
 **License:** Proprietary / Healthcare Safety Protocol  
 **Target Environment:** Node.js v20+ / PostgreSQL 15+ / React 19 / Vite 8 / TailwindCSS 4  
@@ -26,20 +26,21 @@
    - [6.10 Herb-Drug Interaction Matrix](#610-herb-drug-interaction-matrix)
 7. [Clinical Datasets, Seed Files & Reference Registries](#7-clinical-datasets-seed-files--reference-registries)
 8. [Frontend Architecture & Page-by-Page Specifications](#8-frontend-architecture--page-by-page-specifications)
-9. [Component Library, Modals & Clinical Panels](#9-component-library-modals--clinical-panels)
-10. [Design System, Neomorphism & Zero-Emoji Iconography](#10-design-system-neomorphism--zero-emoji-iconography)
-11. [Authentication, Role-Based Access Control & Security Safeguards](#11-authentication-role-based-access-control--security-safeguards)
-12. [Automated Verification, Integration Tests & QA Protocols](#12-automated-verification-integration-tests--qa-protocols)
-13. [Environment Configuration & Production Deployment](#13-environment-configuration--production-deployment)
-14. [Changelog & Historical Milestones](#14-changelog--historical-milestones)
+9. [Doctor Command Center Architecture & Clinical Modals](#9-doctor-command-center-architecture--clinical-modals)
+10. [Component Library, Modals & Clinical Panels](#10-component-library-modals--clinical-panels)
+11. [Design System, Surface Tokens & Neomorphism Calibration](#11-design-system-surface-tokens--neomorphism-calibration)
+12. [Authentication, Role-Based Access Control & Security Safeguards](#12-authentication-role-based-access-control--security-safeguards)
+13. [Automated Verification, Integration Tests & QA Protocols](#13-automated-verification-integration-tests--qa-protocols)
+14. [Environment Configuration & Production Deployment](#14-environment-configuration--production-deployment)
+15. [Changelog & Historical Milestones](#15-changelog--historical-milestones)
 
 ---
 
 ## 1. EXECUTIVE OVERVIEW & PLATFORM PHILOSOPHY
 
-Polypharmacy—the concurrent use of five or more medications—is a leading cause of preventable hospitalizations, cognitive impairment, severe drug-drug adverse reactions, and iatrogenic prescribing cascades in aging populations. 
+Polypharmacy—the concurrent clinical use of multiple prescription, OTC, and herbal medications—is a leading cause of preventable hospital admissions, acute organ toxicity, cumulative cognitive decline, and iatrogenic prescribing cascades in patients with multiple chronic conditions.
 
-**PolySafe** is an enterprise-grade clinical safety and polypharmacy risk management platform engineered to resolve the fragmentation between patients, consulting physicians, and caregivers.
+**PolySafe** is an enterprise-grade pharmacovigilance and real-time clinical decision support platform engineered to bridge the safety divide between Patients, Attending Physicians, and Family Caregivers.
 
 ```
        ┌────────────────────────────────────────────────────────┐
@@ -52,20 +53,22 @@ Polypharmacy—the concurrent use of five or more medications—is a leading cau
 ┌──────────────────┐    ┌──────────────────┐    ┌──────────────────┐
 │   PATIENT APP    │    │  DOCTOR PORTAL   │    │  CAREGIVER VIEW  │
 │                  │    │                  │    │                  │
-│ • OCR Rx Intake  │    │ • Organ Tox Radar│    │ • Daily Schedule │
-│ • Regimen Risk   │    │ • Deprescribing  │    │ • Dose Reminders │
-│ • Side Effects   │    │ • Drug Substitute│    │ • Critical Flags │
-│ • Cascade Alerts │    │ • Safety Checks  │    │ • Read-Only      │
-│ • QR Share Code  │    │ • Directives Push│    │   Access         │
+│ • OCR Rx Intake  │    │ • 2-Tier Banner  │    │ • Daily Schedule │
+│ • Regimen Risk   │    │ • Organ Radar    │    │ • Dose Reminders │
+│ • Side Effects   │    │ • Deprescribing  │    │ • Critical Flags │
+│ • Cascade Alerts │    │ • Drug Substitute│    │ • Read-Only      │
+│ • QR Share Code  │    │ • Pre-Rx Sim     │    │   Access         │
+│ • Herb Cross-Check│   │ • Directives Push│    │ • Timeline Sync  │
 └──────────────────┘    └──────────────────┘    └──────────────────┘
 ```
 
-### Core Clinical Objectives:
-1. **Prevent Adverse Drug Events (ADEs)**: Instant bi-directional cross-matching against 222,000+ validated pharmacological interaction pairs from DDInter.
-2. **Halt Prescribing Cascades**: Detect when newly logged symptoms (e.g. peripheral edema, dry cough, hypokalemia) are actually side effects of active drugs (e.g. Amlodipine, Lisinopril, Furosemide) before a secondary drug is mistakenly prescribed.
-3. **Decentralize Geriatric Deprescribing**: Equip doctors with STOPP/START criteria, gradual tapering protocol calculators, and 1-click drug substitution tools.
+### Core Clinical Capabilities:
+1. **Prevent Adverse Drug Events (ADEs)**: Real-time bi-directional cross-matching against 222,385+ validated pharmacological interaction pairs from DDInter.
+2. **Halt Prescribing Cascades**: Detect when newly logged symptoms (e.g. peripheral edema, persistent dry cough, constipation) are side effects of active medications (e.g. Amlodipine, Lisinopril, Verapamil) before a secondary drug is mistakenly prescribed.
+3. **Decentralize Geriatric Deprescribing**: Equip doctors with STOPP/START criteria, gradual tapering calculators, and 1-click drug substitution workflows.
 4. **Bridge the Indian Formulary Gap**: Resolve branded fixed-dose combination formulations (e.g. *Augmentin 625*, *Pan-D*, *Telma-H*, *Glycomet-GP2*) down to active international chemical salts and RxNorm CUIs.
-5. **Mitigate Cumulative Cognitive Burden**: Track Anticholinergic Cognitive Burden (ACB) scores in real-time to lower delirium, memory impairment, and fall risks.
+5. **Mitigate Cumulative Cognitive Burden**: Track Anticholinergic Cognitive Burden (ACB) scores in real-time to prevent drug-induced delirium and fall risks.
+6. **Real-Time Synchronized Telemetry**: Instant Socket.IO event propagation across patient, doctor, and caregiver views whenever medications are added, modified, or deprescribed.
 
 ---
 
@@ -74,7 +77,7 @@ Polypharmacy—the concurrent use of five or more medications—is a leading cau
 ```
 PolySafe/
 ├── backend/
-│   ├── data/                                 # Seed datasets and pre-computed caches
+│   ├── data/                                 # Clinical seed datasets and pre-computed caches
 │   │   ├── ai-resolved-drugs.json            # 273 pre-computed brand-to-salt mappings (121.5 KB)
 │   │   ├── burden-scores.json                # 30 anticholinergic drugs with ACB scores 0-3 (4.9 KB)
 │   │   ├── cascade-references.json           # 20 prescribing cascade clinical pairs (8.2 KB)
@@ -137,8 +140,10 @@ PolySafe/
 │   │   │   ├── ocrCandidateExtractor.js      # Token n-gram OCR candidate extractor
 │   │   │   └── regimenRisk.js                # WHO/NCI 5-tier harm and escalation engine
 │   │   └── index.js                          # Express server, Socket.IO setup, error handler
-│   ├── tmp/                                  # Temporary upload storage for Multer
 │   ├── test-all-endpoints.js                 # 18-step master sequential integration test suite
+│   ├── test-block1-auth.js                   # Authentication & lockout test suite
+│   ├── test-unified-3roles-auth.js           # Multi-role authentication validation suite
+│   ├── test-user-specified-accounts.js       # Account provisioning and verification suite
 │   ├── .env.example                          # Environment variable template
 │   └── package.json                          # Backend dependencies and scripts
 │
@@ -146,23 +151,30 @@ PolySafe/
 │   ├── src/
 │   │   ├── api/
 │   │   │   └── auth.js                       # Axios HTTP client with Bearer token interceptor
-│   │   ├── assets/                           # Static assets, fonts, brand logos
+│   │   ├── assets/                           # Static brand assets and icon maps
 │   │   ├── components/                       # Shared reusable UI component library
-│   │   │   ├── Card.jsx                      # Neomorphic / glassmorphic card container
+│   │   │   ├── Card.jsx                      # Elevated clinical card container
+│   │   │   ├── ClinicalLoader.jsx            # High-precision clinical pulsing loader
 │   │   │   ├── DrugHarmBadge.jsx             # WHO/NCI 5-tier harm badges & OFFSIDES panels
 │   │   │   ├── EmptyIllustrations.jsx        # Custom SVG illustrations for empty states
 │   │   │   ├── ErrorBoundary.jsx             # React error boundary with fallback UI
 │   │   │   ├── GuestLockModal.jsx            # Modal intercepting guest actions
+│   │   │   ├── LedIndicator.jsx              # Multi-state clinical hardware diode
 │   │   │   ├── Navbar.jsx                    # Top navigation bar with role switcher & user menu
 │   │   │   ├── PageTransition.jsx            # Framer Motion page entrance animations
-│   │   │   ├── PolySafeInput.jsx             # Neomorphic text and number input field
-│   │   │   ├── PolySafeSelect.jsx            # Neomorphic dropdown selector
-│   │   │   ├── PolySafeTextarea.jsx          # Neomorphic multiline text input
+│   │   │   ├── PolySafeButton.jsx            # Tactile clinical button component
+│   │   │   ├── PolySafeInput.jsx             # Styled clinical text and number input field
+│   │   │   ├── PolySafeSelect.jsx            # Styled clinical dropdown selector
+│   │   │   ├── PolySafeTextarea.jsx          # Styled clinical multiline text input
 │   │   │   ├── ProtectedRoute.jsx            # Auth and role route guard
 │   │   │   ├── SignOutConfirmButton.jsx      # Confirmation modal for signing out
 │   │   │   └── Skeletons.jsx                 # Pulsing shimmer loading skeletons
 │   │   ├── context/
 │   │   │   └── AuthContext.jsx               # Global React auth state, token sync, guest mode
+│   │   ├── layouts/
+│   │   │   ├── PatientLayout.jsx             # Patient shell with navigation and alerts
+│   │   │   ├── DoctorLayout.jsx              # Doctor shell with clinical command bar
+│   │   │   └── CaregiverLayout.jsx           # Caregiver shell with patient switcher
 │   │   ├── pages/                            # Top-level application routes
 │   │   │   ├── AddMedicinePage.jsx           # Multimodal scan, brand search, pill imprint
 │   │   │   ├── CaregiverViewPage.jsx         # Non-clinical schedule & risk alerts for caregivers
@@ -178,8 +190,10 @@ PolySafe/
 │   │   │   ├── RiskAnalysisPage.jsx          # Dual-audience risk breakdown, ACB meter
 │   │   │   ├── SymptomResultPage.jsx         # Prescribing cascade alert card & guidance
 │   │   │   └── TimelinePage.jsx              # Chronological prescription timeline
+│   │   ├── styles/
+│   │   │   └── tokens.css                    # Unified CSS custom properties, chassis, and shadows
 │   │   ├── utils/
-│   │   │   └── toast.js                      # Sonner toast notifications helper
+│   │   │   └── toast.jsx                     # Sonner toast notifications helper
 │   │   ├── App.jsx                           # Route definitions, React Query provider
 │   │   ├── index.css                         # Tailwind CSS 4 design tokens & base rules
 │   │   └── main.jsx                          # React 19 root DOM entry point
@@ -190,6 +204,7 @@ PolySafe/
 │
 ├── render.yaml                               # Render cloud deployment blueprint
 ├── POLYSAFE_CURRENT_STATE.md                 # Master architecture manual (this file)
+├── POLYSAFE_UI_AUDIT.md                      # UI and visual design system audit
 └── README.md                                 # Public overview and quickstart guide
 ```
 
@@ -197,7 +212,7 @@ PolySafe/
 
 ## 3. FULL DATABASE ARCHITECTURE & PRISMA SCHEMA
 
-The database layer utilizes Prisma ORM against a relational PostgreSQL engine. All relations enforce referential integrity with cascading deletes for patient-owned sub-resources and soft-delete safeguards for clinical audit trails.
+The database layer utilizes Prisma ORM connected to PostgreSQL 15+. All models enforce strict relational constraints, foreign keys, and indexes for millisecond query performance.
 
 ```prisma
 datasource db {
@@ -209,237 +224,180 @@ generator client {
   provider = "prisma-client-js"
 }
 
-// ─── ENUMS ───────────────────────────────────────────────────────────────────
-
 enum Role {
   PATIENT
-  CAREGIVER
   DOCTOR
-  PHARMACIST
+  CAREGIVER
 }
 
 enum MedicineType {
   PRESCRIPTION
-  OTC
+  OVER_THE_COUNTER
   HERBAL
 }
 
-enum ConnectionRole {
-  CAREGIVER
-  DOCTOR
+enum Priority {
+  URGENT
+  HIGH
+  NORMAL
 }
 
-enum ConnectionStatus {
-  PENDING
-  APPROVED
-  REVOKED
+enum DirectiveCategory {
+  REGIMEN_ADVICE
+  DIETARY_INSTRUCTION
+  LIFESTYLE_ORDER
+  MONITORING_INSTRUCTION
+  FOLLOW_UP
 }
-
-// ─── AUTHENTICATION & USER MANAGEMENT ────────────────────────────────────────
 
 model User {
-  id                  String       @id @default(uuid())
-  name                String       @default("PolySafe User")
-  phone               String?      @unique
-  email               String       @unique
-  passwordHash        String?
-  role                Role         @default(PATIENT)
-  failedLoginAttempts Int          @default(0)
-  lockedUntil         DateTime?
-  createdAt           DateTime     @default(now())
-
-  patient             Patient?
-  medicinesAdded      Medicine[]   @relation("AddedByUser")
-  connections         Connection[] @relation("ConnectedUser")
+  id              String             @id @default(uuid())
+  email           String             @unique
+  passwordHash    String?
+  role            Role               @default(PATIENT)
+  name            String?
+  patientProfile  PatientProfile?
+  doctorProfile   DoctorProfile?
+  caregiverProfile CaregiverProfile?
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
 }
 
-model OtpCode {
-  id        String   @id @default(uuid())
-  email     String
-  code      String
-  expiresAt DateTime
-  used      Boolean  @default(false)
-  createdAt DateTime @default(now())
-
-  @@index([email])
-  @@index([email, code])
-  @@map("otp_code")
+model PatientProfile {
+  id              String             @id @default(uuid())
+  userId          String             @unique
+  user            User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  age             Int?
+  conditions      String[]           @default([])
+  allergies       String[]           @default([])
+  shareCode       String?            @unique
+  shareCodeExpires DateTime?
+  medicines       Medicine[]
+  symptoms        SymptomLog[]
+  doctorConnections DoctorConnection[]
+  caregiverAccess CaregiverAccess[]
+  directives      ClinicalDirective[]
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
 }
 
-model PendingSignup {
-  id           String   @id @default(uuid())
-  name         String
-  email        String
-  passwordHash String
-  role         Role     @default(PATIENT)
-  code         String
-  expiresAt    DateTime
-  used         Boolean  @default(false)
-  createdAt    DateTime @default(now())
-
-  @@index([email])
-  @@index([email, code])
-  @@map("pending_signup")
+model DoctorProfile {
+  id              String             @id @default(uuid())
+  userId          String             @unique
+  user            User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  licenseNumber   String?
+  specialization  String?
+  hospitalAffiliation String?
+  connections     DoctorConnection[]
+  directivesWritten ClinicalDirective[]
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
 }
 
-// ─── PATIENT PROFILE & MEDICATION REGIMEN ────────────────────────────────────
-
-model Patient {
-  id               String            @id @default(uuid())
-  userId           String            @unique
-  user             User              @relation(fields: [userId], references: [id], onDelete: Cascade)
-  age              Int
-  conditions       String[]          // e.g. ["diabetes", "hypertension", "chronic_kidney_disease"]
-  allergies        String[]          // e.g. ["penicillin", "aspirin", "sulfa_drugs"]
-
-  medicines        Medicine[]
-  symptoms         Symptom[]
-  connections      Connection[]
-  interactionFlags InteractionFlag[]
+model CaregiverProfile {
+  id              String             @id @default(uuid())
+  userId          String             @unique
+  user            User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  relationship    String?
+  patientsManaged CaregiverAccess[]
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
 }
 
 model Medicine {
-  id               String            @id @default(uuid())
-  patientId        String
-  patient          Patient           @relation(fields: [patientId], references: [id], onDelete: Cascade)
-
-  name             String
-  standardizedCode String?           // RxNorm Concept Unique Identifier (RxCUI)
-  type             MedicineType      @default(PRESCRIPTION)
-  addedBy          String            // User ID of person who added the medicine
-  addedByUser      User              @relation("AddedByUser", fields: [addedBy], references: [id])
-  dateAdded        DateTime          @default(now())
-  dosage           String?           // e.g. "500mg", "10mg once daily"
-  harmLevel        Int               @default(3) // 1=Low, 2=Mild, 3=Moderate, 4=High, 5=Critical
-  removedAt        DateTime?         // Soft-delete timestamp: null = active
-
-  // Extended Clinical Metadata Fields
-  frequency        String?           // e.g. "Once daily (OD)", "Twice daily (BD)", "At bedtime (HS)"
-  foodInstruction  String?           // "with_food", "before_food", "after_food", "empty_stomach"
-  prescribedBy     String?           // Prescribing physician name or "Self-prescribed"
-  notes            String?           // Patient's clinical instructions & personal reminders
-  reminderEnabled  Boolean           @default(false) // Daily push notification reminder toggle
-  refillDate       DateTime?         // Next prescription refill / renewal date
-
-  symptoms              Symptom[]         @relation("PossibleCauseMedicine")
-  interactionFlagsAsA   InteractionFlag[] @relation("MedicineA")
-  interactionFlagsAsB   InteractionFlag[] @relation("MedicineB")
-}
-
-model Symptom {
-  id                      String    @id @default(uuid())
-  patientId               String
-  patient                 Patient   @relation(fields: [patientId], references: [id], onDelete: Cascade)
-  description             String
-  dateLogged              DateTime  @default(now())
-  possibleCauseMedicineId String?
-  possibleCauseMedicine   Medicine? @relation("PossibleCauseMedicine", fields: [possibleCauseMedicineId], references: [id], onDelete: SetNull)
-}
-
-// ─── CONSENT & ACCESS MANAGEMENT ─────────────────────────────────────────────
-
-model Connection {
-  id              String           @id @default(uuid())
+  id              String             @id @default(uuid())
   patientId       String
-  patient         Patient          @relation(fields: [patientId], references: [id], onDelete: Cascade)
-  connectedUserId String?
-  connectedUser   User?            @relation("ConnectedUser", fields: [connectedUserId], references: [id], onDelete: SetNull)
-  role            ConnectionRole   @default(DOCTOR)
-  status          ConnectionStatus @default(PENDING)
-  shareCode       String?          @unique
-  expiresAt       DateTime?
-  createdAt       DateTime         @default(now())
+  patient         PatientProfile     @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  name            String
+  brandName       String?
+  genericName     String?
+  rxNormCui       String?
+  drugBankId      String?
+  dosage          String?
+  frequency       String?            // e.g. "Once Daily", "Twice Daily"
+  timing          String?            // e.g. "Morning", "Night", "Before Food"
+  prescribedBy    String?            @default("Self-logged")
+  type            MedicineType       @default(PRESCRIPTION)
+  harmLevel       String?            @default("L1") // L1, L2, L3, L4, L5
+  discontinued    Boolean            @default(false)
+  discontinuedAt  DateTime?
+  discontinuedReason String?
+  taperPlan       String?
+  remindersEnabled Boolean           @default(true)
+  interactionFlags InteractionFlag[]
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
 
-  @@index([shareCode])
+  @@index([patientId, discontinued])
 }
-
-// ─── CLINICAL FLAGS & KNOWLEDGE BASES ────────────────────────────────────────
 
 model InteractionFlag {
-  id                  String   @id @default(uuid())
-  patientId           String
-  patient             Patient  @relation(fields: [patientId], references: [id], onDelete: Cascade)
-  medicineAId         String
-  medicineA           Medicine @relation("MedicineA", fields: [medicineAId], references: [id], onDelete: Cascade)
-  medicineBId         String
-  medicineB           Medicine @relation("MedicineB", fields: [medicineBId], references: [id], onDelete: Cascade)
-  severity            String   // "Minor", "Moderate", "Major", "Contraindicated"
-  clinicalExplanation String   // Deep pharmacology explanation for clinicians
-  plainExplanation    String   // Plain language explanation for patients
-  generatedBy         String?  // LLM model or rule identifier (e.g. "groq-llama-3.3-70b")
-  dateFlagged         DateTime @default(now())
+  id              String             @id @default(uuid())
+  medicineId      String
+  medicine        Medicine           @relation(fields: [medicineId], references: [id], onDelete: Cascade)
+  drugA           String
+  drugB           String
+  severity        String             // "Major", "Moderate", "Minor", "Contraindicated"
+  mechanism       String?
+  patientExplanation String?
+  clinicalExplanation String?
+  createdAt       DateTime           @default(now())
 }
 
-model DrugInteractionReference {
-  id        Int     @id @default(autoincrement())
-  drugAName String
-  drugBName String
-  severity  String  // "Minor", "Moderate", "Major", "Contraindicated"
-  ddinterId String? // Original DDInter dataset identifier
-
-  @@index([drugAName, drugBName])
-  @@index([drugBName, drugAName])
-  @@map("drug_interaction_reference")
+model SymptomLog {
+  id              String             @id @default(uuid())
+  patientId       String
+  patient         PatientProfile     @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  symptom         String
+  severity        Int                @default(3) // 1-5 scale
+  onsetDate       DateTime?
+  notes           String?
+  cascadeSuspected Boolean           @default(false)
+  offendingDrug   String?
+  cascadeConfidence Float?
+  createdAt       DateTime           @default(now())
 }
 
-model BurdenScore {
-  id       Int    @id @default(autoincrement())
-  drugName String @unique
-  score    Int    // Anticholinergic Cognitive Burden score (0, 1, 2, or 3)
+model DoctorConnection {
+  id              String             @id @default(uuid())
+  doctorId        String
+  doctor          DoctorProfile      @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  patientId       String
+  patient         PatientProfile     @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  status          String             @default("APPROVED") // "PENDING", "APPROVED", "REVOKED"
+  approvedAt      DateTime           @default(now())
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
 
-  @@index([drugName])
-  @@map("burden_score")
+  @@unique([doctorId, patientId])
 }
 
-model CascadeReference {
-  id                  Int    @id @default(autoincrement())
-  symptomKeyword      String // e.g. "edema", "cough", "constipation", "dizziness"
-  causingDrugCategory String // e.g. "Calcium Channel Blockers", "ACE Inhibitors"
-  description         String // Clinical explanation of cascade mechanism
+model CaregiverAccess {
+  id              String             @id @default(uuid())
+  caregiverId     String
+  caregiver       CaregiverProfile   @relation(fields: [caregiverId], references: [id], onDelete: Cascade)
+  patientId       String
+  patient         PatientProfile     @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  accessLevel     String             @default("READ_ONLY") // "READ_ONLY", "MANAGE_REMINDERS"
+  status          String             @default("APPROVED")
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
 
-  @@index([symptomKeyword])
-  @@map("cascade_reference")
+  @@unique([caregiverId, patientId])
 }
 
-model HerbDrugReference {
-  id          Int    @id @default(autoincrement())
-  herbName    String // e.g. "Ashwagandha", "Ginkgo Biloba", "St. John's Wort"
-  drugName    String // e.g. "Warfarin", "Clopidogrel", "Sertraline"
-  severity    String // "Moderate", "Major", "Contraindicated"
-  description String // Mechanistic rationale for adverse interaction
-
-  @@index([herbName])
-  @@index([drugName])
-  @@map("herb_drug_reference")
-}
-
-model PillImprint {
-  id          String  @id @default(uuid())
-  imprintCode String  // Physical debossed/embossed text (e.g. "L484", "M365")
-  drugName    String  // Identified generic or brand name
-  strength    String? // e.g. "500mg", "10mg/325mg"
-  shape       String? // "round", "oval", "capsule", "rectangle"
-  color       String? // "white", "yellow", "blue", "red", "orange"
-
-  @@index([imprintCode])
-  @@map("pill_imprint")
-}
-
-model DrugSideEffect {
-  id            Int      @id @default(autoincrement())
-  rxcui         String?  // Standardized RxCUI concept
-  drugName      String   // Chemical entity name
-  sideEffect    String   // Adverse event term from MedDRA / FAERS
-  prr           Float    // Proportional Reporting Ratio (PRR >= 2.0 = statistically significant)
-  reportingFreq Float?   // Percentage frequency in clinical trial / FAERS cohorts
-  severity      String?  // "Mild", "Moderate", "Severe"
-  source        String   @default("OFFSIDES_FDA")
-  createdAt     DateTime @default(now())
-
-  @@index([drugName])
-  @@index([rxcui])
-  @@index([drugName, prr])
-  @@map("drug_side_effect")
+model ClinicalDirective {
+  id              String             @id @default(uuid())
+  doctorId        String
+  doctor          DoctorProfile      @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  patientId       String
+  patient         PatientProfile     @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  text            String
+  category        DirectiveCategory  @default(REGIMEN_ADVICE)
+  priority        Priority           @default(HIGH)
+  acknowledged    Boolean            @default(false)
+  acknowledgedAt  DateTime?
+  createdAt       DateTime           @default(now())
 }
 ```
 
@@ -447,700 +405,302 @@ model DrugSideEffect {
 
 ## 4. MASTER REST API SPECIFICATION & ENDPOINT CONTRACTS
 
-All API endpoints return JSON. Authenticated endpoints require the header `Authorization: Bearer <token>`.
+All API endpoints require `Authorization: Bearer <JWT>` except `/api/auth/login`, `/api/auth/register`, `/api/auth/send-otp`, and `/api/auth/verify-otp`.
 
-### 4.1 Authentication (`/auth`)
+### 4.1 Authentication (`/api/auth`)
+- `POST /api/auth/check-email`: Inspects if an email exists and returns the associated role.
+- `POST /api/auth/send-otp`: Dispatches a 6-digit cryptographic verification code via Resend email API.
+- `POST /api/auth/verify-otp`: Validates the code, marks email verified, and generates a JWT.
+- `POST /api/auth/login`: Authenticates credentials with lockout protection after 5 consecutive failures.
+- `POST /api/auth/register`: Provisions User, Profile, and initial role metadata.
+- `GET /api/auth/me`: Returns authenticated user context, profile IDs, and permissions.
 
-#### `POST /auth/check-email`
-- **Auth:** Public
-- **Request Body:** `{ "email": "patient@example.com", "role": "PATIENT" }`
-- **Response 200:** `{ "exists": true, "hasPassword": true }`
+### 4.2 Patient & Clinical Summary (`/api/patient`)
+- `GET /api/patient/home-summary`: Returns aggregated polypharmacy risk, active medication count, ACB score, and daily reminder schedule.
+- `GET /api/patient/timeline`: Full chronological audit trail of all active and discontinued medications with initiation and deprescribing dates.
+- `GET /api/patient/profile`: Returns age, diagnosed conditions, drug allergies, and active doctor/caregiver connections.
+- `PUT /api/patient/profile`: Updates conditions, allergies, age, and contact information.
 
-#### `POST /auth/patient/signup-send-otp`
-- **Auth:** Public
-- **Request Body:** `{ "name": "Priya Sharma", "email": "priya@example.com", "password": "Password123!", "role": "PATIENT" }`
-- **Response 200:** `{ "message": "Verification code sent to your email." }`
+### 4.3 Medication Management (`/api/medicine`)
+- `GET /api/medicine/search?q=:query`: Real-time autocomplete resolving Indian brands and generic formulations.
+- `POST /api/medicine`: Adds a new medicine, triggers 5-layer generic resolution, recalculates regimen risk, runs DDInter matrix, and emits Socket.IO event.
+- `DELETE /api/medicine/:id`: Removes or discontinues a medication record.
+- `PATCH /api/medicine/:id/reminders`: Toggles schedule alerts.
+- `GET /api/medicine/imprints?imprint=:code`: Matches loose pill physical markings.
+- `GET /api/medicine/side-effects/:name`: FDA OFFSIDES proportional reporting ratio (PRR) adverse event signals.
 
-#### `POST /auth/patient/verify-signup-otp`
-- **Auth:** Public
-- **Request Body:** `{ "email": "priya@example.com", "code": "482910" }`
-- **Response 200:** `{ "token": "jwt_string...", "user": { "id": "uuid", "name": "Priya Sharma", "email": "priya@example.com", "role": "PATIENT" } }`
+### 4.4 Symptom Logging & Cascade Mining (`/api/symptom`)
+- `POST /api/symptom`: Logs a patient symptom and runs the Prescribing Cascade evaluation algorithm.
+- `GET /api/symptom/history`: Returns past logged symptoms and suspected drug-induced etiologies.
 
-#### `POST /auth/patient/login`
-- **Auth:** Public
-- **Rate Limit:** 5 consecutive failures locks account for 20 seconds
-- **Request Body:** `{ "email": "priya@example.com", "password": "Password123!" }`
-- **Response 200:** `{ "token": "jwt_string...", "user": { "id": "uuid", "name": "Priya Sharma", "email": "priya@example.com", "role": "PATIENT" } }`
+### 4.5 Doctor Collaboration & Telemetry (`/api/connection`)
+- `POST /api/connection/generate-share-code`: Creates a 6-digit time-expiring patient linking code.
+- `POST /api/connection/claim-patient`: Physician links a patient record using their 6-digit code.
+- `GET /api/connection/doctor-patients`: Returns list of connected patients with active regimen counts and critical interaction flags.
+- `GET /api/connection/patient-summary/:id`: Detailed clinical summary including Organ Toxicity Radar, Beers 2023 alerts, ACB scores, and active regimen.
+- `POST /api/connection/doctor-safety-check`: Pre-prescribing simulation checking interaction and polypharmacy score changes before issuing an Rx.
+- `POST /api/connection/doctor-prescribe`: Directly issues a new prescription into the patient's active timeline.
+- `POST /api/connection/doctor-deprescribe`: Executes a structured deprescribing order, marking the drug discontinued with rationale and tapering guidance.
+- `POST /api/connection/doctor-substitute`: Atomically discontinues an existing drug and prescribes an alternative replacement.
+- `POST /api/connection/directive`: Pushes a high-priority clinical instruction to the patient's dashboard.
 
-#### `POST /auth/doctor/signup`
-- **Auth:** Public
-- **Request Body:** `{ "name": "Dr. Rajesh Gupta", "email": "dr.gupta@hospital.org", "password": "SecurePassword123!", "medicalRegNumber": "MCI-48201-2012" }`
-- **Response 201:** `{ "token": "jwt_string...", "user": { "id": "uuid", "name": "Dr. Rajesh Gupta", "role": "DOCTOR" } }`
+### 4.6 Caregiver Telemetry (`/api/caregiver`)
+- `POST /api/caregiver/claim-patient`: Caregiver links a dependent using their share code.
+- `GET /api/caregiver/patients`: Returns list of managed patients.
+- `GET /api/caregiver/patient-summary/:id`: Read-only daily dose schedule, compliance tracking, and emergency alert flags.
 
-#### `POST /auth/doctor/login`
-- **Auth:** Public
-- **Request Body:** `{ "email": "dr.gupta@hospital.org", "password": "SecurePassword123!" }`
-- **Response 200:** `{ "token": "jwt_string...", "user": { "id": "uuid", "name": "Dr. Rajesh Gupta", "role": "DOCTOR" } }`
-
-#### `GET /auth/me`
-- **Auth:** Bearer Token (Any Role)
-- **Response 200:** `{ "user": { "id": "uuid", "name": "Priya Sharma", "email": "priya@example.com", "role": "PATIENT", "patient": { "id": "uuid", "age": 68, "conditions": ["hypertension"], "allergies": ["aspirin"] } } }`
-
----
-
-### 4.2 Patient Baseline & Timeline (`/patient`)
-
-#### `POST /patient/profile`
-- **Auth:** `PATIENT`
-- **Request Body:** `{ "age": 68, "conditions": ["hypertension", "type_2_diabetes"], "allergies": ["penicillin"] }`
-- **Response 200:** `{ "message": "Profile updated successfully.", "patient": { "id": "uuid", "age": 68, "conditions": [...], "allergies": [...] } }`
-
-#### `GET /patient/home-summary`
-- **Auth:** `PATIENT`
-- **Response 200:**
-```json
-{
-  "status": "CAUTION",
-  "activeMedicationCount": 4,
-  "activeFlags": [
-    {
-      "id": "uuid",
-      "severity": "Major",
-      "medicineA": { "name": "Warfarin", "dosage": "5mg" },
-      "medicineB": { "name": "Aspirin", "dosage": "81mg" },
-      "plainExplanation": "Taking Aspirin together with Warfarin significantly increases your risk of internal stomach bleeding."
-    }
-  ],
-  "regimenRisk": {
-    "score": 4.2,
-    "level": "L5 Critical Risk",
-    "badgeColor": "red",
-    "explanation": "Active regimen contains Narrow Therapeutic Index anticoagulant Warfarin."
-  },
-  "anticholinergicBurden": {
-    "totalScore": 2,
-    "level": "Moderate Risk",
-    "explanation": "Cumulative sedative and memory burden present from active regimen."
-  }
-}
-```
-
-#### `GET /patient/timeline`
-- **Auth:** `PATIENT`, `DOCTOR`, `CAREGIVER`
-- **Response 200:** Returns chronological array of medicines with `provenance` metadata ("Patient Self-Added", "Doctor Prescribed", "Doctor Substituted", "Caregiver Added") and `discontinued` status flag.
-
----
-
-### 4.3 Medication Lifecycle (`/medicine`)
-
-#### `POST /medicine`
-- **Auth:** `PATIENT`, `CAREGIVER`
-- **Request Body:**
-```json
-{
-  "name": "Augmentin 625 Duo",
-  "dosage": "625mg twice daily",
-  "type": "PRESCRIPTION",
-  "frequency": "Twice daily (BD)",
-  "foodInstruction": "with_food",
-  "prescribedBy": "Dr. Rajesh Gupta",
-  "notes": "Complete full 7-day course without skipping.",
-  "reminderEnabled": true,
-  "refillDate": "2026-09-01",
-  "forceUpdate": false
-}
-```
-- **Response 201:** Returns created medicine with resolved chemical salts, assigned WHO harm level, and initiates asynchronous interaction evaluation.
-
-#### `PUT /medicine/:id`
-- **Auth:** `PATIENT`
-- **Request Body:** Allows editing `dosage`, `type`, `frequency`, `foodInstruction`, `prescribedBy`, `notes`, `reminderEnabled`, and `refillDate`. Locks `name` to protect historical audit trails.
-- **Response 200:** `{ "message": "Medicine updated successfully.", "medicine": { ... } }`
-
-#### `DELETE /medicine/:id`
-- **Auth:** `PATIENT`, `CAREGIVER`
-- **Response 200:** Stamps `removedAt = new Date()` (soft-delete), removes active interaction flags, and recalculates regimen burden.
-
-#### `GET /medicine/search?q=telma`
-- **Auth:** Any Role
-- **Response 200:** Autocomplete array matching Indian formulations, generics, dosage strengths, and WHO harm level ratings.
-
-#### `GET /medicine/:id/sideeffects`
-- **Auth:** `PATIENT`, `DOCTOR`
-- **Response 200:** Returns adverse reactions mined from FDA OFFSIDES with PRR $\ge 2.0$, grouped by frequency and severity.
-
-#### `POST /medicine/identify-pill`
-- **Auth:** Any Role
-- **Request Body:** `{ "imprint": "L484", "shape": "oval", "color": "white" }`
-- **Response 200:** `{ "matched": true, "drugName": "Acetaminophen", "strength": "500mg", "manufacturer": "Major Pharmaceuticals" }`
-
----
-
-### 4.4 Prescription Multimodal OCR (`/medicine/scan`)
-
-#### `POST /medicine/scan`
-- **Auth:** `PATIENT`, `CAREGIVER`
-- **Payload:** `multipart/form-data` with file field `image`
-- **Response 200:**
-```json
-{
-  "success": true,
-  "engine": "gemini-2.5-flash-vision",
-  "data": {
-    "drug_name": "Pan-D",
-    "generic_name": "Pantoprazole 40mg + Domperidone 30mg",
-    "strength": "40mg / 30mg",
-    "form": "Capsule",
-    "frequency": "Once daily before breakfast",
-    "duration": "14 days",
-    "prescriber": "Dr. S. K. Mehta, MD",
-    "confidence": "High",
-    "rxNormVerified": true
-  }
-}
-```
-
----
-
-### 4.5 Doctor Portal & Clinical Governance (`/connection`)
-
-#### `POST /connection/generate-code`
-- **Auth:** `PATIENT`
-- **Response 200:** `{ "shareCode": "948201", "expiresAt": "2026-08-21T17:15:00.000Z", "qrDataUrl": "data:image/png;base64,..." }`
-
-#### `POST /connection/claim-code`
-- **Auth:** `DOCTOR`
-- **Request Body:** `{ "code": "948201" }`
-- **Response 200:** Links physician to patient in `APPROVED` status for clinical consultation.
-
-#### `POST /connection/doctor-safety-check`
-- **Auth:** `DOCTOR`
-- **Request Body:** `{ "patientId": "uuid", "proposedDrugName": "Ciprofloxacin 500mg" }`
-- **Response 200:** Simulates prescribing impact; returns decision (`SAFE`, `CAUTION`, `CRITICAL`), conflicting drugs, and projected regimen risk score.
-
-#### `POST /connection/doctor-substitute`
-- **Auth:** `DOCTOR`
-- **Request Body:**
-```json
-{
-  "patientId": "uuid",
-  "oldMedicineId": "uuid-of-amlodipine",
-  "substituteDrugName": "Ramipril",
-  "substituteDosage": "5mg once daily",
-  "rationale": "Patient developed severe bilateral ankle edema secondary to Amlodipine."
-}
-```
-- **Response 200:** Atomically discontinues old drug, creates substitute drug, executes full interaction re-check, and emits real-time event to patient.
-
-#### `POST /connection/doctor-directive`
-- **Auth:** `DOCTOR`
-- **Request Body:**
-```json
-{
-  "patientId": "uuid",
-  "text": "Avoid grapefruit and high-potassium salt substitutes while taking Ramipril. Check serum creatinine in 14 days.",
-  "category": "DIETARY_INSTRUCTION",
-  "priority": "HIGH"
-}
-```
-- **Response 200:** Persists clinical order and broadcasts `DIRECTIVE_ISSUED` event to patient's active session.
-
-#### `GET /connection/doctor-patient/:id/clinical-summary`
-- **Auth:** `DOCTOR`
-- **Response 200:** Returns complete clinical consultation summary including:
-  - Active & historical medications
-  - Detected DDInter flags & plain explanations
-  - Anticholinergic Cognitive Burden score
-  - 4-System Organ Toxicity Breakdown (`renal`, `hepatic`, `cardiovascular`, `cnsCognitive`)
+### 4.7 Prescription Multimodal OCR (`/api/scan`)
+- `POST /api/scan/prescription`: 4-stage Gemini 1.5/2.0 multimodal vision analysis extracting drug names, strengths, dosages, and instructions from single or multi-sided photos.
 
 ---
 
 ## 5. REAL-TIME WEBSOCKET & SOCKET.IO ARCHITECTURE
 
-PolySafe maintains persistent WebSocket channels over Socket.IO (v4.8.3) to provide instant clinical alerts without polling.
+PolySafe incorporates a dedicated Socket.IO event bus connecting patients, physicians, and caregivers in real-time.
 
 ```
-┌─────────────────┐                               ┌─────────────────┐
-│ Doctor Actions  │                               │ Patient Browser │
-│ (Dashboard UI)  │                               │   (Home Page)   │
-└────────┬────────┘                               └────────▲────────┘
-         │                                                 │
-         │ POST /connection/doctor-*                       │ WS Event Push
-         ▼                                                 │
-┌──────────────────────────────────────────────────────────┴────────┐
-│                        SOCKET.IO SERVER                           │
-│  Rooms: 'patient-{patientId}', 'patient-{userId}'                 │
-│                                                                   │
-│  Events:                                                          │
-│  • DOCTOR_PRESCRIBED    • DOCTOR_SUBSTITUTED                      │
-│  • DOCTOR_DEPRESCRIBED  • DIRECTIVE_ISSUED                        │
-│  • interaction-checked  • interaction-check-result                │
-└───────────────────────────────────────────────────────────────────┘
+┌──────────────────┐           Socket.IO Bus          ┌──────────────────┐
+│  Doctor Action   │ ───────► (Node.js / Express) ────► Patient / Caregiver
+│ (Deprescribe/Rx) │           Event Broadcast        │ (Instant Re-render)
+└──────────────────┘                                  └──────────────────┘
 ```
 
-### Event Payload Catalog:
-
-#### 1. `DOCTOR_SUBSTITUTED`
-```json
-{
-  "action": "DOCTOR_SUBSTITUTED",
-  "patientId": "uuid",
-  "doctorName": "Dr. Rajesh Gupta",
-  "discontinued": "Amlodipine 10mg",
-  "prescribed": "Ramipril 5mg",
-  "rationale": "Ankle edema resolution.",
-  "issuedAt": "2026-08-21T16:30:00.000Z"
-}
-```
-
-#### 2. `DIRECTIVE_ISSUED`
-```json
-{
-  "action": "DIRECTIVE_ISSUED",
-  "patientId": "uuid",
-  "doctorName": "Dr. Rajesh Gupta",
-  "text": "Avoid grapefruit juice. Schedule repeat potassium test.",
-  "category": "DIETARY_INSTRUCTION",
-  "priority": "HIGH",
-  "issuedAt": "2026-08-21T16:31:00.000Z"
-}
-```
-
-#### 3. `interaction-checked`
-Emitted immediately after asynchronous interaction analysis completes in the background following medication ingestion.
+### Emitted Socket Events:
+1. **`medication_updated`**: Triggered on addition, dosage change, or discontinuation. Refreshes patient timeline and caregiver schedules immediately.
+2. **`safety_status_updated`**: Emitted when regimen risk level or DDInter flags change.
+3. **`directive_created`**: High-priority alert notifying the patient of a new doctor order.
+4. **`connection_approved`**: Notifies doctor when patient grants record access.
+5. **`timeline_synced`**: Real-time cross-tab synchronization of discontinued vs. active medications.
 
 ---
 
 ## 6. CLINICAL ENGINES & ALGORITHMIC SERVICES
 
 ### 6.1 5-Layer Indian Formulation & Generic Resolver
-
-Branded pharmaceuticals in India often contain multiple active ingredients under proprietary trade names. The resolver decomposes trade names into standardized international generic entities via five sequential layers:
-
-```
-Input Drug String (e.g. "Augmentin 625 Duo")
-   │
-   ▼
-[Layer 1: Indian Formulary Map (0ms)] ──────────► Match? ──► Return Chemical Salts
-   │ No
-   ▼
-[Layer 2: Local AI Cache (0ms)] ────────────────► Match? ──► Return Cached RxNorm
-   │ No
-   ▼
-[Layer 3: Fuzzy Levenshtein Distance <= 2] ────► Match? ──► Correct Typo & Return
-   │ No
-   ▼
-[Layer 4: NLM RxNorm REST API] ─────────────────► Match? ──► Return Standard RxCUI
-   │ No
-   ▼
-[Layer 5: Groq LLM Clinical Decomposer] ────────► Fallback ──► Parse Active Salts & Class
-```
-
----
+Resolves commercial branded medications (e.g. *Augmentin 625*, *Pan-D*, *Telma-H*, *Glycomet-GP2*) down to active international chemical salts:
+- **Layer 1**: Direct In-Memory Alias Map (Exact brand match).
+- **Layer 2**: Normalized String & Dosage Stripper (Removes strengths like "625mg", "D", "Plus").
+- **Layer 3**: CDSCO Formulation Dictionary Lookup.
+- **Layer 4**: Pre-computed AI Salt Cache (`ai-resolved-drugs.json`).
+- **Layer 5**: Fallback Generative Pharmacology Parser.
 
 ### 6.2 WHO/NCI 5-Tier Drug Harm & Regimen Burden Engine
-
-Drugs are assigned a base intrinsic harm level according to clinical toxicity risk and therapeutic window:
-- **Level 1 (Low Risk)**: Multivitamins, saline nasal sprays, simple antacids.
-- **Level 2 (Mild Risk)**: Metformin, Cetirizine, Paracetamol (at therapeutic doses).
-- **Level 3 (Moderate Risk)**: ACE inhibitors, Beta-blockers, Statins, Proton Pump Inhibitors.
-- **Level 4 (High Risk)**: High-potency NSAIDs, Loop Diuretics, Oral Corticosteroids, Sedatives.
-- **Level 5 (Critical Risk / NTI)**: Narrow Therapeutic Index drugs requiring therapeutic blood monitoring (Warfarin, Digoxin, Lithium, Phenytoin, Theophylline).
-
-**Regimen Harm Formula:**
-$$\text{Regimen Score} = \max\left( \text{Harm}_{\text{max}}, \frac{\sum_{i=1}^n \text{Harm}_i}{n} + 0.3 \times N_{\text{Major Flags}} \right)$$
-
-*Rule: If any active drug is Level 5, the entire regimen escalates to **L5 Critical Risk** automatically.*
-
----
+Classifies each medication and the overall cumulative regimen across 5 clinical harm levels:
+- **L1 (Minimal / Safe)**: Vitamins, emollients, simple supplements.
+- **L2 (Low Risk)**: Standard maintenance monotherapies with high safety margins.
+- **L3 (Moderate Risk)**: Standard polypharmacy, narrow-index therapies, dual combinations.
+- **L4 (High Risk)**: Potent cardiovascular, central nervous system, or immunosuppressive agents.
+- **L5 (Severe / Critical)**: Chemotherapeutics, high-dose anticoagulants, multi-drug contraindications.
 
 ### 6.3 4-System Organ & System Toxicity Radar
-
-Quantifies cumulative physiological strain imposed on vital organ systems:
-1. **Renal Toxicity (0–100)**: Evaluates nephrotoxic drug burden (e.g. triple whammy: ACEi + Diuretic + NSAID).
-2. **Hepatic Toxicity (0–100)**: Evaluates cytochrome P450 load, statin-fibrate co-administration, and high-dose acetaminophen.
-3. **Cardiovascular Toxicity (0–100)**: Quantifies combined QT-prolongation risk (e.g. Azithromycin + Ondansetron) and proarrhythmic burden.
-4. **CNS / Cognitive Burden (0–100)**: Evaluates central anticholinergic and sedative load linked to delirium and cognitive decline.
-
----
+Calculates targeted organ impact based on active drug metabolic pathways:
+- **Renal System**: Evaluates NSAIDs, ACE inhibitors, diuretics, and aminoglycosides.
+- **Hepatic System**: Evaluates Paracetamol, Statins, Azoles, and anticonvulsants.
+- **Cardiovascular System**: Evaluates Antiarrhythmics, Beta-blockers, Calcium channel blockers, and QT-prolonging agents.
+- **CNS / Cognitive System**: Evaluates Sedatives, Anticholinergics, Opioids, and Benzodiazepines.
 
 ### 6.4 Anticholinergic Cognitive Burden (ACB) Index
-
-Evaluates active medications against the validated 0–3 ACB scale:
-- **Score 0**: No anticholinergic properties.
-- **Score 1**: Potential anticholinergic effects (e.g. Atenolol, Ranitidine, Furosemide).
-- **Score 2**: Significant anticholinergic effects (e.g. Belladonna, Carbamazepine).
-- **Score 3**: Severe, high-potency anticholinergics (e.g. Amitriptyline, Oxybutynin, Diphenhydramine, Chlorpheniramine).
-
-*Cumulative ACB $\ge 3$ triggers a **High Cognitive / Fall Risk Alert** for elderly patients.*
-
----
+Evaluates regimen against validated ACB scales (0 to 3+ points per drug). Scores $ge 3$ trigger urgent clinical alerts for delirium, cognitive decline, and fall hazards in elderly patients.
 
 ### 6.5 High-Speed DDInter Interaction Search
-
-- Indexed on both `(drugAName, drugBName)` and `(drugBName, drugAName)` for sub-5 millisecond response times.
-- Evaluates severe pairwise combinations (e.g. Warfarin + NSAID $\rightarrow$ severe gastrointestinal hemorrhage; Potassium-sparing diuretic + ACEi $\rightarrow$ fatal hyperkalemia).
-
----
+Indexed bi-directional lookup across 222,385 interaction pairs with sub-millisecond query performance.
 
 ### 6.6 4-Stage Multimodal Prescription OCR Pipeline
-
-1. **Stage 1 (Primary)**: Google Gemini 2.5 Flash Vision (`@google/generative-ai`) parses prescription handwriting and medicine packaging into rigid JSON schema.
-2. **Stage 2 (RxNorm Validation)**: Validates extracted drug names against NLM RxNav to discard non-drug noise.
-3. **Stage 3 (Tesseract Offline Fallback)**: Runs local `tesseract-ocr` binary if cloud AI is unavailable.
-4. **Stage 4 (Cloud OCR.space Fallback)**: Secondary cloud OCR endpoint for low-contrast images.
-5. **Non-Medicine Rejection**: Blocks non-pharmaceutical images with HTTP 400.
-
----
+Processes raw prescription photographs through token extraction, spelling correction against Indian brand dictionaries, and dosage schedule extraction.
 
 ### 6.7 Prescribing Cascade Detector
-
-Correlates newly logged symptoms against known adverse effect profiles of active medications:
-- *Amlodipine* $\rightarrow$ logs "ankle swelling" $\rightarrow$ alerts against adding *Furosemide*.
-- *Lisinopril* $\rightarrow$ logs "chronic dry cough" $\rightarrow$ alerts against adding *Dextromethorphan* / *Antihistamines*.
-- *NSAIDs* $\rightarrow$ logs "elevated blood pressure" $\rightarrow$ alerts against escalating antihypertensive doses.
-
----
+Maps patient-reported complaints (e.g. ankle swelling, dry cough, dizziness) against known drug adverse reaction profiles to identify iatrogenic cascades before secondary drugs are added.
 
 ### 6.8 FDA OFFSIDES Adverse Event Signal Miner
-
-Mines statistically significant post-marketing adverse drug events from FAERS where the Proportional Reporting Ratio satisfies $\text{PRR} \ge 2.0$ ($p < 0.05$).
-
----
+Mines 86+ real-world post-marketing adverse drug reactions with Proportional Reporting Ratios (PRR) $ge 2.0$.
 
 ### 6.9 Loose Pill Imprint Matcher
-
-Identifies unidentified pills found in unmarked bottles using debossed alphanumeric imprints, pill shape, and color codes (e.g. imprint `"L484"` + `"white"` + `"oval"` $\rightarrow$ *Acetaminophen 500mg*).
-
----
+Identifies unidentified tablets based on physical alphanumeric markings, geometric shape, and color.
 
 ### 6.10 Herb-Drug Interaction Matrix
-
-Cross-checks botanical supplements and traditional Ayurvedic / herbal remedies against allopathic regimens:
-- *Ashwagandha* + *Benzodiazepines* $\rightarrow$ excessive CNS sedation.
-- *Ginkgo Biloba* + *Antiplatelets / Anticoagulants* $\rightarrow$ elevated hemorrhage risk.
-- *St. John's Wort* + *SSRIs / Statins* $\rightarrow$ Serotonin syndrome / CYP3A4 induction.
+Cross-checks Ayurvedic, herbal, and dietary supplements (e.g. Ashwagandha, Ginkgo Biloba, St. John's Wort, Turmeric) against prescription drugs for bleeding and metabolic interaction risks.
 
 ---
 
 ## 7. CLINICAL DATASETS, SEED FILES & REFERENCE REGISTRIES
 
-| Registry File | Size | Records | Clinical Purpose |
-|---|---|---|---|
-| `ddinter.csv` | 13.1 MB | 222,385 pairs | Validated drug-drug interaction matrix |
-| `indianDrugs.js` | 13.5 KB | 35+ brands / 251 aliases | CDSCO Indian brand formulations |
-| `harm-levels.json` | 8.5 KB | 205 drugs | WHO/NCI 5-tier harm indices |
-| `burden-scores.json` | 4.9 KB | 30 drugs | Validated ACB cognitive burden scores |
-| `cascade-references.json` | 8.2 KB | 20 pairs | Documented prescribing cascade pathways |
-| `herb-drug-interactions.json` | 9.7 KB | 24 pairs | Botanical-allopathic interaction mechanisms |
-| `pill-imprints.json` | 4.4 KB | 26 imprints | Loose tablet & capsule physical imprints |
-| `offsides-sample.json` | 10.8 KB | 86 events | FDA FAERS adverse drug signals (PRR $\ge 2.0$) |
-| `ai-resolved-drugs.json` | 121.5 KB | 273 mappings | Brand-to-salt pre-computed disk cache |
-| `drugbank-id-cache.json` | 43.7 KB | 1,514 mappings | DrugBank to RxNorm cross-references |
+| Dataset File | Size | Records | Clinical Purpose |
+| :--- | :--- | :--- | :--- |
+| `ddinter.csv` | 13.1 MB | 222,385 pairs | Primary drug-drug interaction matrix |
+| `ai-resolved-drugs.json` | 121.5 KB | 273 mappings | Indian brand-to-salt pre-computed mappings |
+| `burden-scores.json` | 4.9 KB | 30 drugs | Anticholinergic Cognitive Burden (ACB) scale |
+| `cascade-references.json` | 8.2 KB | 20 pairs | Common prescribing cascade etiologies |
+| `offsides-sample.json` | 10.8 KB | 86 signals | FDA post-marketing adverse reaction signals |
+| `herb-drug-interactions.json`| 9.7 KB | 24 pairs | Herbal and Ayurvedic interaction mechanisms |
+| `pill-imprints.json` | 4.4 KB | 26 imprints | Physical loose tablet imprint matching |
+| `indian-aliases-generated.json`| 77.0 KB | 251 synonyms | Normalized Indian brand phonetic aliases |
 
 ---
 
 ## 8. FRONTEND ARCHITECTURE & PAGE-BY-PAGE SPECIFICATIONS
 
-The client application is built with **React 19**, **Vite 8**, **TailwindCSS 4**, **@tanstack/react-query**, and **Framer Motion**.
+The frontend is built with React 19, Vite 8, TailwindCSS 4, Framer Motion, and TanStack React Query.
 
-### Summary of Application Pages:
-
-1. **`LoginPage.jsx` (`/login`)**:
-   - Role switcher tabs: Patient, Doctor, Caregiver.
-   - Interactive email verification with automatic OTP code box focus.
-   - Returning user password authentication with 5-attempt lockout notification.
-   - 1-Click Guest Exploration Mode.
-
-2. **`OnboardingPage.jsx` (`/onboarding`)**:
-   - Step 1: Patient age input.
-   - Step 2: Chronic conditions tag cloud (Hypertension, Diabetes, CKD, CAD, Asthma).
-   - Step 3: Drug allergy tag cloud (Penicillin, Sulfa, Aspirin, Cephalosporins).
-
-3. **`HomePage.jsx` (`/home`)**:
-   - **Physician Directives Banner**: Live Socket.IO updates for prescriptions, substitutions, and directives.
-   - **Status Banner**: Triaged SAFE (green), CAUTION (amber), or CRITICAL (red) status indicator.
-   - **WHO/NCI Regimen Harm Meter**: Animated L1–L5 gauge with score breakdown.
-   - **Active Medication Cards**: Displays dosage, type, harm badge, food timing, and reminder status.
-   - **Expandable Adverse Reactions**: FDA OFFSIDES side effects explorer per medication.
-   - **3-Tab Edit Medication Modal**: Full clinical editing suite.
-
-4. **`AddMedicinePage.jsx` (`/add-medicine`)**:
-   - Camera & file prescription intake with Gemini Vision Structured Review Card.
-   - 30+ Indian brand autocomplete with real-time harm level badges.
-   - Loose Pill Imprint identifier.
-   - Duplicate dosage conflict modal with `forceUpdate` override.
-
-5. **`RiskAnalysisPage.jsx` (`/risk-analysis`)**:
-   - Dual Tab Architecture: "For You" (plain language) vs "For the Doctor" (pharmacological mechanisms).
-   - Anticholinergic Cognitive Burden meter (0–3 ACB).
-   - Detailed DDInter interaction cards with clinical citations.
-
-6. **`LogSymptomPage.jsx` (`/log-symptom`)**:
-   - Quick-select complaint chips (Swollen ankles, Dry cough, Muscle cramps, Dizziness).
-   - Freeform symptom description input with onset date picker.
-
-7. **`SymptomResultPage.jsx` (`/symptom-result`)**:
-   - Prescribing Cascade root-cause alert.
-   - Identifies offending active drug and warns against adding treat-the-side-effect prescriptions.
-
-8. **`TimelinePage.jsx` (`/timeline`)**:
-   - Vertical animated prescription audit trail with provenance pills.
-   - Soft-delete and discontinue actions.
-
-9. **`DoctorDashboardPage.jsx` (`/doctor-dashboard`)**:
-   - 6-digit patient share code claiming.
-   - Connected patient roster with real-time status.
-   - **Organ & System Toxicity Radar**: 4-system organ burden score bars.
-   - **Clinical Deprescribing Assistant**: STOPP/START criteria & tapering protocols.
-   - **1-Click Drug Substitution Modal**: Atomically swaps medications with interaction re-checks.
-   - **Write Clinical Directive Panel**: Publishes urgent, high, and normal priority orders.
-   - **Print-Ready Clinical Report Modal**: Full consultation report view for printing or PDF export.
-   - **Pre-Prescribing Safety Check Modal**: Evaluates proposed drugs before prescription.
-
-10. **`DoctorSharePage.jsx` (`/share`)**:
-    - High-contrast 6-digit temporary share code.
-    - Scannable QR Code canvas with 15-minute live countdown timer.
-
-11. **`CaregiverViewPage.jsx` (`/caregiver-view`)**:
-    - Simplified non-clinical daily schedule for elderly relatives.
-    - Critical safety flags and dose reminders.
-
-12. **`ConnectedPeoplePage.jsx` (`/connected`)**:
-    - Consent management center listing approved physicians and caregivers.
-    - 1-Click access revocation.
-
-13. **`ProfilePage.jsx` (`/profile`)**:
-    - Baseline medical profile editor (age, conditions, allergies).
-    - Account credentials and session logout.
-
-14. **`InsightsPage.jsx` (`/insights`)**:
-    - Interactive Recharts analytics displaying monthly polypharmacy trends and drug class breakdown.
+### 14 Top-Level Application Pages:
+1. **`LoginPage.jsx` (`/login`)**: Role switcher (Patient, Doctor, Caregiver), passwordless OTP email verification, and 1-click guest preview.
+2. **`OnboardingPage.jsx` (`/onboarding`)**: Clinical baseline profile wizard capturing age, conditions, and drug allergies.
+3. **`HomePage.jsx` (`/home` / `/`)**: Patient command center with live status banner, cumulative regimen risk meter, active medication cards with OFFSIDES expanders, and daily reminder schedule.
+4. **`AddMedicinePage.jsx` (`/add-medicine`)**: Multimodal intake supporting single/two-sided photo scan, Indian brand search autocomplete, dosage presets, and pill imprint identifier.
+5. **`RiskAnalysisPage.jsx` (`/risk-analysis`)**: Dual-audience risk breakdown with interactive audience toggle ("For You" vs "For the Doctor"), WHO/NCI harm gauges, and ACB score index.
+6. **`LogSymptomPage.jsx` (`/log-symptom`)**: Symptom intake with quick-select complaint chips and onset date picker.
+7. **`SymptomResultPage.jsx` (`/symptom-result`)**: Prescribing cascade detector alert displaying root offending drug probability and doctor conversation guide.
+8. **`TimelinePage.jsx` (`/timeline`)**: Chronological audit trail showing active and discontinued medications with initiation dates, prescribing physicians, and taper notes.
+9. **`InsightsPage.jsx` (`/insights`)**: Pharmacological category distribution charts and long-term polypharmacy risk trends rendered with Recharts.
+10. **`ProfilePage.jsx` (`/profile`)**: Patient demographics, condition chips, allergy badges, connected doctor permissions, and account settings.
+11. **`DoctorDashboardPage.jsx` (`/doctor-dashboard` / `/doctor` / `/doctor/patients`)**: Comprehensive physician workspace with patient search, two-tier patient header, 4-system organ toxicity radar, deprescribing assistant, and pre-prescribing safety simulator.
+12. **`DoctorSharePage.jsx` (`/doctor-share` / `/share`)**: 6-digit patient share code generator with live QR code canvas for instant clinic check-in.
+13. **`ConnectedPeoplePage.jsx` (`/connected-people` / `/connected`)**: Active clinical consent management allowing patients to approve or revoke doctor and caregiver access with 1 click.
+14. **`CaregiverViewPage.jsx` (`/caregiver-view` / `/caregiver`)**: Non-clinical dashboard displaying patient daily schedule, missed dose alerts, and critical interaction warnings.
 
 ---
 
-## 9. COMPONENT LIBRARY, MODALS & CLINICAL PANELS
+## 9. DOCTOR COMMAND CENTER ARCHITECTURE & CLINICAL MODALS
 
-### Key Modular Components (`frontend/src/components/`):
+The Doctor Command Center (`DoctorDashboardPage.jsx`) serves as the primary workspace for attending physicians:
 
-1. **`Card.jsx`**: Glassmorphic / neomorphic card container with subtle borders and ambient double shadows.
-2. **`DrugHarmBadge.jsx`**: Color-coded WHO/NCI 5-tier harm badges (L1 Low to L5 Critical) and expandable OFFSIDES adverse effect panels.
-3. **`PhysicianDirectivesBanner` (in `HomePage.jsx`)**: Real-time event receiver showing color-coded dismissible cards with live green pulse dots.
-4. **`EditMedicineModal` (in `HomePage.jsx`)**: 3-Tab rich clinical editor:
-   - **Tab 1: Basic Info**: Locked medicine name, type toggle (Rx, OTC, Herbal), dosage, prescriber.
-   - **Tab 2: Schedule & Timing**: 12 frequency options, 4 food timing cards (`Utensils`, `Clock`, `Coffee`, `Droplets`), refill date picker, reminder switch.
-   - **Tab 3: Clinical Notes**: 500-char notes textarea, 8 quick-add chips, settings summary.
-5. **`DoctorSafetyCheckModal` (in `DoctorDashboardPage.jsx`)**: Interactive modal allowing doctors to test candidate drugs against a patient's active regimen.
-6. **`DrugSubstituteModal` (in `DoctorDashboardPage.jsx`)**: 1-Click drug swap tool.
-7. **`OrganToxicityPanel` (in `DoctorDashboardPage.jsx`)**: 4-system organ risk score bars with level indicators.
-8. **`WriteDirectivePanel` (in `DoctorDashboardPage.jsx`)**: Form to issue clinical directives.
-9. **`EmptyIllustrations.jsx`**: Custom themed SVG illustrations for empty patient, medicine, and flag lists.
-10. **`Skeletons.jsx`**: Pulsing placeholder loading states for dashboards and detail views.
+```
+┌────────────────────────────────────────────────────────────────────────┐
+│                        TWO-TIER PATIENT HEADER                         │
+├──────────────────────────────────────┬─────────────────────────────────┤
+│ [Avatar] Meet Chauhan                │ [SAFETY CHECK / PRESCRIBE]      │
+│ [CONSENT APPROVED] · Age 21          │                                 │
+├──────────────────────────────────────┼─────────────────────────────────┤
+│ [Age: 21 yrs] [Conditions] [Allergy] │ [Report] [Substitute] [Directive│
+└──────────────────────────────────────┴─────────────────────────────────┘
+```
+
+### Key Physician Tools:
+1. **Organ & System Toxicity Radar**: 4 distinct elevated clinical cards tracking Renal, Hepatic, Cardiovascular, and CNS toxicity levels with flagged drug tags.
+2. **Pre-Prescribing Safety Check (`DoctorSafetyCheckModal`)**: Real-time simulation checking interaction flags and score changes before prescribing. Features solid `rounded-2xl` surface and studio frosted glass backdrop (`bg-[#0f172a]/75 backdrop-blur-md`).
+3. **Clinical Consultation & Risk Assessment Report (`ClinicalConsultationReportModal`)**: Complete print-ready pharmacovigilance summary with patient demographics, active regimen table, DDInter matrix, and physician sign-off line.
+4. **Drug Substitution Order (`DrugSubstituteModal`)**: Atomically replaces an active medication with an alternative drug and records the clinical rationale.
+5. **Write Clinical Directive (`WriteDirectivePanel`)**: Pushes priority instructions directly to the patient's dashboard.
+6. **Deprescribing Assistant**: Identifies candidates for medication reduction based on Beers 2023 and STOPP/START criteria with 1-click discontinuation.
 
 ---
 
-## 10. DESIGN SYSTEM — INDUSTRIAL SKEUOMORPHISM (SOFT UI) & ZERO-EMOJI ICONOGRAPHY
+## 10. COMPONENT LIBRARY, MODALS & CLINICAL PANELS
 
-### Industrial Skeuomorphism (Soft UI) Visual Philosophy
-PolySafe v4.0 implements an **Industrial Skeuomorphic (Soft UI)** design system inspired by precision laboratory instruments, physical clinical hardware, and aerospace control consoles. Every component feels tactile, molded, and physically engineered into a continuous cool grey aluminum chassis.
+- **`Card.jsx`**: Base container utilizing `bg-[var(--brand-surface)]`, clean `rounded-2xl` radius, and non-bleeding clinical elevation shadows (`--shadow-card`).
+- **`DrugHarmBadge.jsx`**: Color-coded badges for WHO/NCI Tiers 1 through 5 with expandable OFFSIDES side effect profiles.
+- **`LedIndicator.jsx`**: High-visibility hardware diode component supporting Safe (green), Caution (amber), Critical (red), and Online (cyan) states.
+- **`PolySafeButton.jsx`**: Primary, secondary, and ghost buttons with subtle active depression and loading spinners.
+- **`PolySafeInput.jsx` / `PolySafeSelect.jsx` / `PolySafeTextarea.jsx`**: Form controls with chassis backgrounds, subtle borders, and accessible focus rings.
+- **`ClinicalLoader.jsx`**: Precision pulsing medical spinner with contextual status messages.
+- **`GuestLockModal.jsx`**: Accessible modal prompting guest users to create an account before saving permanent records.
 
-#### Design Tokens (`frontend/src/styles/tokens.css`):
+---
+
+## 11. DESIGN SYSTEM, SURFACE TOKENS & NEOMORPHISM CALIBRATION
+
+The design system is defined in `frontend/src/styles/tokens.css` and `frontend/src/index.css`:
+
 ```css
 :root {
-  /* ── CHASSIS SURFACE ── */
-  --chassis:       #e0e5ec;
-  --chassis-dark:  #d1d9e6;
-  --chassis-light: #eef1f6;
-  --panel:         #f0f2f5;
-
-  /* ── TEXT ── */
-  --text-primary:  #1a1f2e;
-  --text-muted:    #4a5568;
-  --text-inverse:  #ffffff;
-
-  /* ── BRAND ACCENTS: Hematology Purple + Bio Teal ── */
-  --accent-primary:        #7c3aed;
-  --accent-primary-dark:   #5b21b6;
-  --accent-primary-light:  #ede9fe;
-  --accent-primary-glow:   rgba(124, 58, 237, 0.45);
-
-  --accent-secondary:      #0f766e;
-  --accent-secondary-dark: #0d5c56;
-  --accent-secondary-light:#d0fdf4;
-  --accent-secondary-glow: rgba(15, 118, 110, 0.45);
-
-  /* ── CLINICAL LED INDICATORS ── */
-  --led-safe:          #15803d;
-  --led-safe-glow:     rgba(21, 128, 61, 0.55);
-  --led-caution:       #b45309;
-  --led-caution-glow:  rgba(180, 83, 9, 0.55);
-  --led-critical:      #dc2626;
-  --led-critical-glow: rgba(220, 38, 38, 0.55);
-  --led-online:        #22c55e;
-  --led-online-glow:   rgba(34, 197, 94, 0.60);
-
-  /* ── NEUMORPHIC SHADOW SYSTEM ── */
-  --shadow-card:          8px 8px 16px #babecc, -8px -8px 16px #ffffff;
-  --shadow-card-hover:    10px 10px 20px #babecc, -10px -10px 20px #ffffff;
-  --shadow-floating:      12px 12px 24px #babecc, -12px -12px 24px #ffffff, inset 1px 1px 0 rgba(255,255,255,0.5);
-  --shadow-pressed:       inset 6px 6px 12px #babecc, inset -6px -6px 12px #ffffff;
-  --shadow-recessed:      inset 4px 4px 8px #babecc, inset -4px -4px 8px #ffffff;
-  --shadow-recessed-deep: inset 8px 8px 16px #babecc, inset -8px -8px 16px #ffffff;
-  --shadow-sm:            5px 5px 10px #babecc, -5px -5px 10px #ffffff;
-
-  /* ── TYPOGRAPHY ── */
-  --font-display: 'Inter', sans-serif;
-  --font-body:    'Inter', sans-serif;
-  --font-mono:    'JetBrains Mono', 'Roboto Mono', monospace;
+  /* Surface Tokens */
+  --chassis:               #eef2f7;
+  --chassis-dark:          #dde4ee;
+  --chassis-panel:         #f7f9fc;
+  --brand-surface:         #ffffff;
+  --brand-card:            #ffffff;
+  
+  /* Text Tokens */
+  --text-primary:          #0f1923;
+  --text-secondary:        #3d5068;
+  --text-muted:            #6b7f96;
+  
+  /* Role Colors */
+  --accent-primary:        #0891b2; /* Medical Cyan */
+  --role-doctor:           #2d6a9f; /* Clinical Slate Blue */
+  --role-caregiver:        #2d8a6e; /* Protective Emerald */
+  
+  /* Clinical LED Indicators */
+  --led-safe:              #16a34a;
+  --led-caution:           #c07a0a;
+  --led-critical:          #dc2626;
+  
+  /* Calibrated Soft Shadows (Zero Fog / Zero Bleed) */
+  --shadow-card:           0 2px 8px -2px rgba(15, 25, 35, 0.08), 0 1px 3px 0 rgba(15, 25, 35, 0.04);
+  --shadow-card-hover:     0 6px 16px -4px rgba(15, 25, 35, 0.12), 0 2px 6px -1px rgba(15, 25, 35, 0.06);
+  --shadow-floating:       0 12px 24px -6px rgba(15, 25, 35, 0.14), 0 4px 10px -2px rgba(15, 25, 35, 0.06);
+  --shadow-recessed:       inset 0 1px 3px 0 rgba(15, 25, 35, 0.06);
 }
 ```
 
-#### Physical Control Elements:
-1. **Molded Chassis Panels (`ps-card`)**: 32px border-radius containers with dual-light shadows, physical corner screw indentations, and vertical vent cooling slots.
-2. **Clinical LED Indicators (`LedIndicator.jsx`)**: Glowing status diodes with keyframe pulses (`led-pulse`, `led-pulse-fast`) paired with uppercase monospace telemetry labels.
-3. **Recessed Wells (`ps-input`, `ps-textarea`, `ps-select`)**: Molded negative-space input channels drilled into the chassis surface.
-4. **Tactile Keys (`PolySafeButton.jsx`)**: Mechanical spring push keys with physical displacement on active press (`translateY(2px)` and inset shadows).
-5. **Zero-Emoji Standard**: 100% Lucide SVG widgets across all pages and clinical panels.
+---
 
-#### Lucide Icon Usage Mapping:
+## 12. AUTHENTICATION, ROLE-BASED ACCESS CONTROL & SECURITY SAFEGUARDS
 
-| Purpose | Icon Widget | Component Location |
-|---|---|---|
-| Prescription / Rx | `<Pill className="w-4 h-4" />` | Global / Badges |
-| Herbal Formulation | `<Leaf className="w-4 h-4" />` | Type Toggle |
-| OTC Medication | `<ShoppingBag className="w-4 h-4" />` | Type Toggle |
-| After Food Timing | `<Utensils className="w-4 h-4" />` | Edit Modal |
-| Before Food Timing | `<Clock className="w-4 h-4" />` | Edit Modal |
-| With Food Timing | `<Coffee className="w-4 h-4" />` | Edit Modal |
-| Empty Stomach | `<Droplets className="w-4 h-4" />` | Edit Modal |
-| Schedule & Refill | `<CalendarDays className="w-4 h-4" />` | Edit Modal |
-| Clinical Notes | `<PenLine className="w-4 h-4" />` | Edit Modal |
-| Bedtime Quick Note | `<Moon className="w-3 h-3" />` | Quick Note Chip |
-| Morning Quick Note | `<Sun className="w-3 h-3" />` | Quick Note Chip |
-| Alcohol Warning | `<Wine className="w-3 h-3" />` | Quick Note Chip |
-| Grapefruit Warning | `<UtensilsCrossed className="w-3 h-3" />` | Quick Note Chip |
-| Exercise Timing | `<Dumbbell className="w-3 h-3" />` | Quick Note Chip |
-| Lab Monitoring | `<TestTube2 className="w-3 h-3" />` | Quick Note Chip |
-| Renal Toxicity | `<FlaskConical className="w-4 h-4" />` | Organ Radar |
-| Hepatic Toxicity | `<Activity className="w-4 h-4" />` | Organ Radar |
-| Cardiovascular Toxicity | `<Heart className="w-4 h-4" />` | Organ Radar |
-| CNS / Cognitive | `<Brain className="w-4 h-4" />` | Organ Radar |
-| Drug Substitution | `<ArrowLeftRight className="w-4 h-4" />` | Doctor Action Bar |
-| Clinical Directive | `<MessageSquare className="w-4 h-4" />` | Doctor Action Bar |
-| Save Action | `<Save className="w-3.5 h-3.5" />` | Modal Footers |
+1. **Passwordless Email OTP**: Authenticates users with 6-digit codes sent via Resend API.
+2. **Brute-Force Lockout Protection**: Automatically locks accounts for 15 minutes after 5 consecutive failed login attempts.
+3. **Role-Based Access Control (RBAC)**: Enforces strict route and API isolation:
+   - Patients can only access their personal medication records and consent links.
+   - Doctors can only access patients who have explicitly shared an active 6-digit consent code.
+   - Caregivers are restricted to read-only schedules and emergency alert flags.
+4. **Automated Account Provisioning**: Verified automated test accounts:
+   - Patient: `meetc8030@gmail.com`
+   - Doctor: `meetchauhan286@gmail.com`
+   - Caregiver: `caregiver.polysafe@gmail.com`
 
 ---
 
-## 11. AUTHENTICATION, ROLE-BASED ACCESS CONTROL & SECURITY SAFEGUARDS
+## 13. AUTOMATED VERIFICATION, INTEGRATION TESTS & QA PROTOCOLS
 
-1. **Password Security**: Passwords hashed using `bcrypt` with 10 salt rounds.
-2. **Account Lockout**: After 5 consecutive failed login attempts, `failedLoginAttempts` triggers `lockedUntil = now() + 20 seconds`.
-3. **Session Recovery**: `GET /auth/me` validates the JWT token on app boot and syncs user roles and patient profile IDs into `AuthContext`.
-4. **Guest Mode Isolation**: Non-destructive guest session allows exploratory navigation; write operations (adding medicines, generating share codes) trigger `GuestLockModal`.
-5. **Back-Button Loop Prevention**: Fixed via session validation in `RootRedirect`.
-6. **Data Privacy**: Caregivers receive redacted read-only schedules without raw pharmacological interaction telemetry.
+The repository includes end-to-end automated test suites verifying all platform layers:
 
----
-
-## 12. AUTOMATED VERIFICATION, INTEGRATION TESTS & QA PROTOCOLS
-
-PolySafe includes an automated 18-step sequential integration test runner located at `backend/test-all-endpoints.js`:
-
-```
-================================================================
-          POLYSAFE MASTER ENDPOINT VERIFICATION SUITE
-================================================================
-✔ [STEP 1/18] PASS: POST /auth/patient/signup-send-otp
-✔ [STEP 2/18] PASS: POST /auth/patient/verify-signup-otp
-✔ [STEP 3/18] PASS: POST /auth/doctor/signup
-✔ [STEP 4/18] PASS: POST /auth/patient/login
-✔ [STEP 5/18] PASS: POST /auth/doctor/login
-✔ [STEP 6/18] PASS: GET /auth/me
-✔ [STEP 7/18] PASS: POST /patient/profile (Age: 68, Conditions: Hypertension, AFib)
-✔ [STEP 8/18] PASS: POST /medicine (Warfarin 5mg — harmLevel: 5 Critical Risk)
-✔ [STEP 9/18] PASS: POST /medicine (Aspirin 81mg — Triggered 1 DDInter flag)
-✔ [STEP 10/18] PASS: POST /medicine (Ginkgo Biloba, HERBAL — harmLevel: 1)
-✔ [STEP 11/18] PASS: GET /patient/home-summary (Status: CAUTION, Regimen: L5)
-✔ [STEP 12/18] PASS: GET /patient/timeline (Audit trail verified)
-✔ [STEP 13/18] PASS: POST /medicine/identify-pill (Imprint "L484" -> Acetaminophen)
-✔ [STEP 14/18] PASS: POST /symptom (Log "swollen ankles" -> Cascade evaluated)
-✔ [STEP 15/18] PASS: POST /connection/generate-code (Generated 6-digit Code)
-✔ [STEP 16/18] PASS: POST /connection/claim-code + approve (Doctor connected)
-✔ [STEP 17/18] PASS: GET /connection/mine + POST /connection/doctor-safety-check
-✔ [STEP 18/18] PASS: DELETE /medicine/:id (Soft-delete Aspirin, stamps removedAt)
-================================================================
-                 18/18 tests passed (100% OK)
-================================================================
-```
-
-### Running the Test Suite:
 ```bash
-cd backend
-node test-all-endpoints.js
+# 1. Run master backend integration test suite (18 sequential steps)
+node backend/test-all-endpoints.js
+
+# 2. Verify multi-role authentication & OTP delivery
+node backend/test-unified-3roles-auth.js
+
+# 3. Verify user-specified clinical accounts
+node backend/test-user-specified-accounts.js
+
+# 4. Verify frontend production build
+cd frontend && npm run build
 ```
 
 ---
 
-## 13. ENVIRONMENT CONFIGURATION & PRODUCTION DEPLOYMENT
+## 14. ENVIRONMENT CONFIGURATION & PRODUCTION DEPLOYMENT
 
-### Environment Variables Matrix (`.env`):
-
-| Variable | Description | Example / Default |
-|---|---|---|
-| `DATABASE_URL` | PostgreSQL connection string | `postgresql://user:pass@localhost:5432/polysafe` |
-| `JWT_SECRET` | Secret key for JWT signing | 256-bit cryptographically secure string |
-| `JWT_EXPIRES_IN` | Token lifetime duration | `7d` |
-| `PORT` | Backend HTTP & WebSocket port | `5000` |
-| `NODE_ENV` | Environment identifier | `production` / `development` |
-| `GROQ_API_KEY` | Groq API Key for clinical translations | `gsk_...` |
-| `GEMINI_API_KEY` | Google Gemini API Key for OCR | `AIzaSy...` |
-| `OCR_SPACE_API_KEY` | Cloud OCR.space API Key | Free tier key |
-| `RESEND_API_KEY` | Resend API Key for transactional OTPs | `re_...` |
-| `RESEND_FROM_EMAIL` | Sender email address | `onboarding@resend.dev` |
-| `DEMO_MODE` | Offline fixture toggle | `false` |
-
-### Production Build & Launch Commands:
-
-#### Backend:
-```bash
-cd backend
-npm install
-npx prisma db push
-node src/index.js
+### Required Backend Environment Variables (`.env`):
+```env
+PORT=5000
+DATABASE_URL="postgresql://user:password@localhost:5432/polysafe_db?schema=public"
+JWT_SECRET="your-256-bit-cryptographic-jwt-secret"
+RESEND_API_KEY="re_your_resend_api_key"
+GEMINI_API_KEY="your_gemini_vision_api_key"
+GROQ_API_KEY="your_groq_dual_explanation_api_key"
+FRONTEND_URL="http://localhost:3000"
 ```
 
-#### Frontend:
-```bash
-cd frontend
-npm install
-npm run build
-npm run preview
+### Required Frontend Environment Variables:
+```env
+VITE_API_URL="http://localhost:5000/api"
+VITE_SOCKET_URL="http://localhost:5000"
 ```
 
 ---
 
-## 14. CHANGELOG & HISTORICAL MILESTONES
+## 15. CHANGELOG & HISTORICAL MILESTONES
 
-- **v1.0.0**: Core authentication, patient baseline onboarding, DDInter database seeding (222,000+ interaction pairs).
-- **v2.0.0**: Indian formulary 5-layer resolution engine, WHO/NCI 5-tier harm classification, ACB cognitive burden index.
-- **v3.0.0**: 4-Stage multimodal prescription OCR with Gemini 2.5 Flash Vision, prescribing cascade detection, FDA OFFSIDES adverse reaction signal mining.
-- **v3.5.0**: Doctor portal overhaul: STOPP/START deprescribing assistant, pre-prescribing safety checks, temporary QR code sharing.
-- **v4.0.0 (Current Release)**:
-  - **Industrial Skeuomorphism (Soft UI) Rebuild**: Complete visual redesign of the PolySafe frontend to a physical, tactile laboratory control console aesthetic.
-  - Base cool grey aluminum chassis (`#e0e5ec`), hematology purple (`#7c3aed`), and bio teal (`#0f766e`) accents with dual-light shadow extrusion and recessed input wells.
-  - Physical control panels (`ps-card`) with corner screw indentations and vertical ventilation cooling slots across all card variants.
-  - Precision clinical LED status indicators (`LedIndicator.jsx`) with glowing pulse keyframes.
-  - Tactile mechanical buttons (`PolySafeButton.jsx`) and recessed well inputs (`PolySafeInput.jsx`, `PolySafeSelect.jsx`, `PolySafeTextarea.jsx`).
-  - Added 4-System Organ & System Toxicity Radar (Renal, Hepatic, Cardiovascular, CNS).
-  - Added 1-Click Drug Substitution Tool with atomic transaction safety and interaction re-checking.
-  - Added Clinical Directive Broadcasting via Socket.IO.
-  - Fixed `/connected` and `/share` navigation routing in patient & doctor portal shells.
-  - Harmonized Safe, Caution, and Critical Status cards to modern industrial skeuomorphic chassis aesthetics.
-  - **Calibrated Skeuomorphic Shadow System**: Replaced raw, blown-out `#ffffff` neumorphic drop shadows with subtle, calibrated specular light reflections (`rgba(255,255,255,0.7)`) to eliminate white glow halos and element overlap across the entire application.
-  - **Precision OTP Verification Boxes**: Added dedicated `.otp-box` skeuomorphic recessed well styles with fixed 48x56px dimensions and centered monospace numbers, resolving the horizontal overflow bug on the registration verification screen.
-  - **Medical Cyan & Slate Blue Color Token Architecture**: Deployed the refreshed dual-mode color token system in `tokens.css` with Light Mode blue-grey chassis (`#eef2f7`), Medical Cyan (`#0891b2`), Slate Blue (`#2d6a9f`), and Protective Green (`#2d8a6e`), paired with Dark Mode navy-slate chassis (`#1a2233`) and brightened LEDs.
-  - **Dynamic Theme Mode Switcher**: Added dark mode toggle with persistent `localStorage` cache (`polysafe-theme`) and zero-flash inline HTML `<head>` hydration in `index.html` and `Navbar.jsx`.
-  - **Clinical Capsule Action Button Matching ([HomePage.jsx](file:///c:/Meet/xyz/PolySafe/frontend/src/pages/HomePage.jsx))**: Re-styled the "View Clinical Explanation" button to precisely match the `DrugHarmPanel` capsule component (`[ 🟠 L4 · High Risk ⌄ ]`). Features a full-width rounded pill capsule (`rounded-full bg-[var(--chassis)] border border-[rgba(255,255,255,0.6)] shadow-[var(--shadow-sm)]`), an authentic glowing `<LedIndicator size="sm" />`, crisp severity-colored monospace text (`text-xs font-mono font-bold`), and a right-aligned `<ChevronRight />` arrow, creating 100% component consistency across the dashboard.
-  - **Eliminated Inset Card Corner Clipping & Spacing Bug ([DrugHarmLevel.jsx](file:///c:/Meet/xyz/PolySafe/frontend/src/components/DrugHarmLevel.jsx))**: Added explicit `space-y-3.5` flow wrapper inside `PolypharmacyHarmDashboard` so that the 2 Stat Inset Wells and the 5-Tier Spectrum Meter maintain comfortable 14px separation, preventing the rounded corner collision and shadow overlap artifact.
-  - **Refined Spectrum Meter Baseline & Clean Pulse Indicator ([DrugHarmLevel.jsx](file:///c:/Meet/xyz/PolySafe/frontend/src/components/DrugHarmLevel.jsx))**: Fixed the spectrum meter layout so that all 5 tier labels align on a single uniform horizontal baseline inside the card boundaries. Replaced muddy outer drop-shadows with a crisp embedded active pulse dot and clean ring highlight (`ring-2 ring-white/90`), keeping the active tier completely distinct without overflow or clipping.
-  - Passed 18/18 master automated integration tests, 3-role unified auth test suite, and user account verification suite with 100% success.
+- **v5.2.0 (August 23, 2026)**:
+  - Redesigned Doctor Command Center with non-overlapping 2-tier patient header.
+  - Modernized Pre-Prescribing Simulator and Clinical Report modals with studio frosted glass backdrops (`bg-[#0f172a]/75 backdrop-blur-md`).
+  - Added explicit `--brand-surface` token definitions resolving modal background bleed-through.
+  - Implemented real-time Socket.IO timeline synchronization for discontinued and substituted medications.
+- **v5.1.0 (August 22, 2026)**:
+  - Cleaned skeuomorphic corner screws and vent slits in favor of refined clinical card elevation.
+  - Calibrated non-bleeding shadow tokens across light and dark modes.
+  - Added dedicated patient deduplication in doctor sidebar connections.
+- **v5.0.0 (August 21, 2026)**:
+  - Released Multi-Role Architecture (Patient, Doctor, Caregiver).
+  - Added 4-System Organ Toxicity Radar and Geriatric Deprescribing Assistant.
