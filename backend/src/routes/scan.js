@@ -741,6 +741,181 @@ router.post(
 const PILL_SAFETY_CAVEAT =
   "This is a limited reference lookup, not a medical identification. If you're not certain, do not take this pill — check with a pharmacist.";
 
+/**
+ * AI & RxNav Fallback Pill Imprint Resolver
+ * Resolves unknown imprint codes via Groq, Gemini Flash, and NLM RxNav APIs.
+ */
+async function identifyPillWithAI(imprintCode) {
+  if (!imprintCode || !String(imprintCode).trim()) return [];
+  const cleanCode = String(imprintCode).trim();
+
+  // 1. Try Groq LLM (llama-3.3-70b-versatile)
+  const groqKey = process.env.GROQ_API_KEY;
+  if (groqKey && !groqKey.startsWith('gsk_demo') && groqKey.length > 10) {
+    try {
+      const groqRes = await axios.post(
+        'https://api.groq.com/openai/v1/chat/completions',
+        {
+          model: 'llama-3.3-70b-versatile',
+          messages: [
+            {
+              role: 'system',
+              content: `You are an expert clinical pharmacist and pharmaceutical chemist.
+Given a stamped tablet/capsule imprint code, identify the real FDA, EMA, or CDSCO approved medication.
+Return ONLY a valid JSON object matching: { "matches": [ { "imprintCode": "${cleanCode}", "drugName": "Exact Brand / Generic Drug Name", "genericName": "Generic Salt Name", "strength": "e.g. 500mg", "shape": "e.g. Round/Oval", "color": "e.g. White", "class": "Class", "manufacturer": "Manufacturer" } ] }`
+            },
+            {
+              role: 'user',
+              content: `Identify the pill with stamped imprint code: "${cleanCode}". If multiple strengths or manufacturers share this imprint, list the most common ones.`
+            }
+          ],
+          temperature: 0.1,
+          response_format: { type: 'json_object' }
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${groqKey}`,
+            'Content-Type': 'application/json'
+          },
+          timeout: 6000
+        }
+      );
+
+      const raw = groqRes.data?.choices?.[0]?.message?.content;
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        let list = parsed.matches || parsed.pills || parsed.candidates || (Array.isArray(parsed) ? parsed : Object.values(parsed)[0]);
+        if (Array.isArray(list) && list.length > 0) {
+          const results = [];
+          for (const item of list) {
+            if (item && item.drugName) {
+              const pillRecord = {
+                id: `ai_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
+                imprintCode: item.imprintCode || cleanCode,
+                drugName: item.drugName,
+                strength: item.strength || 'Standard dose',
+                shape: item.shape || 'Tablet',
+                color: item.color || 'White',
+                genericName: item.genericName || item.drugName,
+                isAiResolved: true,
+              };
+              results.push(pillRecord);
+              try {
+                await prisma.pillImprint.create({
+                  data: {
+                    imprintCode: pillRecord.imprintCode,
+                    drugName: pillRecord.drugName,
+                    strength: pillRecord.strength,
+                    shape: pillRecord.shape,
+                    color: pillRecord.color,
+                  }
+                }).catch(() => {});
+              } catch (_) {}
+            }
+          }
+          if (results.length > 0) return results;
+        }
+      }
+    } catch (groqErr) {
+      console.warn('[identifyPillWithAI] Groq lookup failed:', groqErr.message);
+    }
+  }
+
+  // 2. Try Gemini Flash API
+  const geminiKey = process.env.GEMINI_API_KEY || (process.env.GEMINI_API_KEYS ? process.env.GEMINI_API_KEYS.split(',')[0].trim() : null);
+  if (geminiKey && geminiKey.length > 10 && geminiKey !== 'your_gemini_api_key_here') {
+    try {
+      const genAI = new GoogleGenerativeAI(geminiKey);
+      const model = genAI.getGenerativeModel({ model: 'gemini-flash-lite-latest' });
+      const prompt = `Identify the medication with pill imprint code "${cleanCode}". Return ONLY valid JSON array (no markdown code fences):
+[
+  {
+    "imprintCode": "${cleanCode}",
+    "drugName": "Exact Drug Name",
+    "genericName": "Generic Salt Name",
+    "strength": "e.g. 50mg",
+    "shape": "Round/Oval/Capsule",
+    "color": "White/Blue/Yellow"
+  }
+]`;
+      const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('Gemini timeout')), 6000));
+      const res = await Promise.race([model.generateContent(prompt), timeoutPromise]);
+      const text = res.response.text();
+      const cleanJson = text.replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/```$/i, '').trim();
+      let parsed = JSON.parse(cleanJson);
+      let list = Array.isArray(parsed) ? parsed : (parsed.matches || parsed.pills || Object.values(parsed)[0]);
+      if (Array.isArray(list) && list.length > 0) {
+        const results = [];
+        for (const item of list) {
+          if (item && item.drugName) {
+            const pillRecord = {
+              id: `ai_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
+              imprintCode: item.imprintCode || cleanCode,
+              drugName: item.drugName,
+              strength: item.strength || 'Standard dose',
+              shape: item.shape || 'Tablet',
+              color: item.color || 'White',
+              genericName: item.genericName || item.drugName,
+              isAiResolved: true,
+            };
+            results.push(pillRecord);
+            try {
+              await prisma.pillImprint.create({
+                data: {
+                  imprintCode: pillRecord.imprintCode,
+                  drugName: pillRecord.drugName,
+                  strength: pillRecord.strength,
+                  shape: pillRecord.shape,
+                  color: pillRecord.color,
+                }
+              }).catch(() => {});
+            } catch (_) {}
+          }
+        }
+        if (results.length > 0) return results;
+      }
+    } catch (geminiErr) {
+      console.warn('[identifyPillWithAI] Gemini lookup failed:', geminiErr.message);
+    }
+  }
+
+  // 3. Try NLM RxNav approximate term search (Free NIH Government API)
+  try {
+    const rxnavRes = await axios.get(
+      `https://rxnav.nlm.nih.gov/REST/approximateTerm.json?term=${encodeURIComponent(cleanCode)}&maxEntries=3`,
+      { timeout: 4000 }
+    );
+    const candidates = rxnavRes.data?.approximateGroup?.candidate;
+    if (Array.isArray(candidates) && candidates.length > 0) {
+      const results = [];
+      for (const cand of candidates) {
+        if (cand?.rxcui) {
+          const propRes = await axios.get(
+            `https://rxnav.nlm.nih.gov/REST/rxcui/${cand.rxcui}/properties.json`,
+            { timeout: 3000 }
+          ).catch(() => null);
+          const name = propRes?.data?.properties?.name || `RxCUI ${cand.rxcui}`;
+          results.push({
+            id: `rxnav_${cand.rxcui}`,
+            imprintCode: cleanCode,
+            drugName: name,
+            strength: 'See prescription label',
+            shape: 'Tablet/Capsule',
+            color: 'Reference match',
+            genericName: name,
+            isAiResolved: true,
+          });
+        }
+      }
+      if (results.length > 0) return results;
+    }
+  } catch (rxnavErr) {
+    console.warn('[identifyPillWithAI] RxNav lookup failed:', rxnavErr.message);
+  }
+
+  return [];
+}
+
 router.post(
   '/identify-pill',
   auth,
@@ -850,6 +1025,20 @@ router.post(
         }
       }
 
+      // If no match in local database, use AI (Groq / Gemini / RxNav)
+      if (matchedPills.length === 0 && candidateTokens.length > 0) {
+        const primaryToken = candidateTokens[0];
+        const aiMatches = await identifyPillWithAI(primaryToken);
+        if (Array.isArray(aiMatches) && aiMatches.length > 0) {
+          for (const m of aiMatches) {
+            if (!seenIds.has(m.id)) {
+              seenIds.add(m.id);
+              matchedPills.push(m);
+            }
+          }
+        }
+      }
+
       return res.status(200).json({
         success: true,
         extractedText: extractedRawText,
@@ -859,7 +1048,7 @@ router.post(
         caveat: PILL_SAFETY_CAVEAT,
         note: matchedPills.length > 0
           ? `Found ${matchedPills.length} possible reference match${matchedPills.length !== 1 ? 'es' : ''}. User confirmation is required before adding.`
-          : 'No reference matches found for this imprint code in our limited dataset. Please consult a pharmacist.',
+          : 'No reference matches found for this imprint code in our dataset. Please consult a pharmacist.',
       });
     } catch (err) {
       cleanupFile(filePath);
