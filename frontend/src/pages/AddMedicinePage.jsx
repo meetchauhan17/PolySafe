@@ -931,47 +931,53 @@ export default function AddMedicinePage() {
  const [pillMatches, setPillMatches] = useState([]);
  const [pillError, setPillError] = useState(null);
 
- const searchPillMutation = useMutation({
- mutationFn: async ({ file, imprintCode }) => {
- if (file) {
- const formData = new FormData();
- formData.append('image', file);
- const { data } = await axios.post('/medicine/identify-pill', formData, {
- headers: { 'Content-Type': 'multipart/form-data' },
- });
- return data;
- } else {
- const { data } = await axios.post('/medicine/identify-pill', { imprintCode });
- return data;
- }
- },
- onMutate: () => {
- setPillState('searching');
- setPillError(null);
- },
- onSuccess: (data) => {
- setPillState('results');
- setPillMatches(data?.possibleMatches || []);
- if (data?.count === 0) {
- notify.info('No Exact Imprint Match', 'Try re-verifying the code or selecting from formulary search.');
- } else {
- notify.success('Matches Found', `Found ${data.count} candidate medication(s) matching imprint.`);
- }
- },
- onError: (err) => {
- setPillState('error');
- setPillError(err?.response?.data?.error || 'Pill lookup failed.');
- notify.error('Pill Lookup Failed', err?.response?.data?.error || 'Could not identify pill.');
- },
- });
+  const searchPillMutation = useMutation({
+    mutationFn: async ({ file, imprintCode }) => {
+      if (file) {
+        const formData = new FormData();
+        formData.append('image', file);
+        const { data } = await axios.post('/medicine/identify-pill', formData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        });
+        return data;
+      } else {
+        const { data } = await axios.post('/medicine/identify-pill', { imprintCode });
+        return data;
+      }
+    },
+    onMutate: () => {
+      setPillState('searching');
+      setPillError(null);
+    },
+    onSuccess: (data) => {
+      setPillState('results');
+      setPillMatches(data?.possibleMatches || []);
+      if (data?.count === 0) {
+        notify.info('No Exact Imprint Match', 'Try re-verifying the code or selecting from formulary search.');
+      } else {
+        notify.success('Matches Found', `Found ${data.count} candidate medication(s) matching imprint.`);
+      }
+    },
+    onError: (err) => {
+      setPillState('error');
+      setPillError(err?.response?.data?.error || 'Pill lookup failed.');
+      notify.error('Pill Lookup Failed', err?.response?.data?.error || 'Could not identify pill.');
+    },
+  });
 
- const handlePillManualSearch = (e) => {
- e.preventDefault();
- if (!pillImprintCode.trim()) return;
- setPillState('searching');
- setPillError(null);
- searchPillMutation.mutate({ imprintCode: pillImprintCode.trim() });
- };
+  const handlePillManualSearch = (e) => {
+    e.preventDefault();
+    if (!pillImprintCode.trim()) return;
+    setPillState('searching');
+    setPillError(null);
+    searchPillMutation.mutate({ imprintCode: pillImprintCode.trim() });
+  };
+
+  const handlePillFileSelect = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    searchPillMutation.mutate({ file });
+  };
 
  const handleSelectPillMatch = (match) => {
  setName(match.drugName);
