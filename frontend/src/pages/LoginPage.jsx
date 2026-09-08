@@ -14,6 +14,8 @@ import {
   AlertCircle, 
   Loader2, 
   ShieldCheck, 
+  Shield,
+  Activity,
   Sparkles,
   RefreshCw,
   KeyRound,
@@ -22,9 +24,9 @@ import {
   X,
   LogIn,
   UserPlus,
+  ChevronRight,
 } from 'lucide-react';
 import { authApi } from '../api/auth';
-import Card from '../components/Card';
 import PageTransition from '../components/PageTransition';
 import { notify } from '../utils/toast';
 import { useAuth } from '../context/AuthContext';
@@ -370,31 +372,100 @@ export default function LoginPage() {
   };
 
   const roleLabels = {
-    PATIENT: { title: 'Patient', subtitle: 'Self medication & interaction safety', color: 'text-[var(--role-patient)]', badge: 'bg-[var(--role-patient)]/10 text-[var(--role-patient)] border-[var(--role-patient)]/20' },
-    CAREGIVER: { title: 'Family / Caregiver', subtitle: 'Dose schedules & caregiver oversight', color: 'text-[var(--role-caregiver)]', badge: 'bg-[var(--role-caregiver)]/10 text-[var(--role-caregiver)] border-[var(--role-caregiver)]/20' },
-    DOCTOR: { title: 'Doctor / Clinician', subtitle: 'Clinical oversight, deprescribing & EHR', color: 'text-[var(--role-doctor)]', badge: 'bg-[var(--role-doctor)]/10 text-[var(--role-doctor)] border-[var(--role-doctor)]/20' },
+    PATIENT: { 
+      title: 'Patient Portal', 
+      subtitle: 'Self medication tracking & real-time interaction safety', 
+      color: 'text-[#0891b2]', 
+      badge: 'bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border-cyan-500/20',
+      accentBorder: 'hover:border-cyan-500/60',
+      accentGlow: 'hover:shadow-[0_12px_32px_-4px_rgba(8,145,178,0.22)]',
+      gradient: 'from-cyan-500/10 via-teal-500/5 to-transparent'
+    },
+    CAREGIVER: { 
+      title: 'Family & Caregiver', 
+      subtitle: 'Schedule adherence monitoring & safety status check-ins', 
+      color: 'text-[#059669]', 
+      badge: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20',
+      accentBorder: 'hover:border-emerald-500/60',
+      accentGlow: 'hover:shadow-[0_12px_32px_-4px_rgba(5,150,105,0.22)]',
+      gradient: 'from-emerald-500/10 via-teal-500/5 to-transparent'
+    },
+    DOCTOR: { 
+      title: 'Doctor & Clinician', 
+      subtitle: 'Clinical longitudinal oversight, Beers deprescribing & EHR notes', 
+      color: 'text-[#4f46e5]', 
+      badge: 'bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/20',
+      accentBorder: 'hover:border-indigo-500/60',
+      accentGlow: 'hover:shadow-[0_12px_32px_-4px_rgba(79,70,229,0.22)]',
+      gradient: 'from-indigo-500/10 via-blue-500/5 to-transparent'
+    },
   };
 
   return (
-    <PageTransition className="min-h-[88vh] bg-[var(--chassis)] flex items-center justify-center px-4 py-12">
-      <div className="max-w-xl w-full space-y-6">
+    <PageTransition className="relative min-h-[92vh] bg-[var(--chassis)] flex items-center justify-center px-4 py-12 sm:py-16 overflow-hidden">
+      
+      {/* ── Atmospheric Ambient Lighting Orbs ── */}
+      <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[600px] h-[350px] bg-gradient-to-b from-[var(--accent-primary)]/15 via-cyan-400/5 to-transparent rounded-full blur-3xl pointer-events-none -z-10" />
+      <div className="absolute top-1/3 -left-48 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none -z-10" />
+      <div className="absolute bottom-10 -right-48 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none -z-10" />
 
-        {/* Brand Header */}
-        <div className="text-center space-y-2">
-          <div className="icon-well w-16 h-16 mx-auto mb-2">
-            <ShieldCheck className="w-8 h-8 text-[var(--accent-primary)]" />
+      <div className="max-w-xl w-full space-y-7 relative z-10">
+
+        {/* ── Brand Hero Header ── */}
+        <div className="text-center space-y-3">
+          
+          {/* Status Badge */}
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[var(--brand-surface)]/80 backdrop-blur-md border border-[var(--chassis-dark)] shadow-[var(--shadow-sm)]">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--led-safe)] opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-[var(--led-safe)] shadow-[0_0_6px_var(--led-safe)]" />
+            </span>
+            <span className="text-[11px] font-bold tracking-wider uppercase text-[var(--text-secondary)] font-mono">
+              Clinical Polypharmacy AI &middot; v2.4
+            </span>
           </div>
-          <h1 className="text-3xl md:text-4xl text-[var(--text-primary)] font-bold tracking-tight font-display">
-            PolySafe
-          </h1>
-          <p className="text-xs text-[var(--text-muted)] max-w-sm mx-auto font-mono">
-            AI Polypharmacy Interaction & Cumulative Burden Protection System
-          </p>
+
+          {/* Logo Emblem */}
+          <div className="relative inline-block">
+            <div className="w-16 h-16 sm:w-18 sm:h-18 mx-auto rounded-3xl bg-gradient-to-tr from-[var(--brand-surface)] to-[var(--chassis-panel)] p-0.5 shadow-[var(--shadow-card)] border border-white/80 dark:border-white/10 flex items-center justify-center group">
+              <div className="w-full h-full rounded-[22px] bg-gradient-to-b from-cyan-500/10 via-transparent to-teal-500/10 flex items-center justify-center">
+                <ShieldCheck className="w-8 h-8 sm:w-9 sm:h-9 text-[var(--accent-primary)] drop-shadow-[0_2px_8px_rgba(8,145,178,0.35)] transition-transform duration-300 group-hover:scale-105" />
+              </div>
+            </div>
+            {/* Ambient ring glow behind shield */}
+            <div className="absolute inset-0 w-16 h-16 sm:w-18 sm:h-18 mx-auto rounded-3xl bg-[var(--accent-primary)]/20 blur-xl -z-10" />
+          </div>
+
+          {/* Title & Subtitle */}
+          <div>
+            <h1 className="text-3xl sm:text-4xl text-[var(--text-primary)] font-extrabold tracking-tight font-display">
+              Poly<span className="text-[var(--accent-primary)]">Safe</span>
+            </h1>
+            <p className="text-xs sm:text-sm text-[var(--text-muted)] max-w-md mx-auto mt-1 leading-relaxed">
+              Continuous drug-drug interaction detection, cascade prevention, and cognitive burden protection.
+            </p>
+          </div>
+
+          {/* Clinical Metrics / Trust Signals */}
+          <div className="flex flex-wrap items-center justify-center gap-2 pt-0.5">
+            <span className="inline-flex items-center gap-1.5 bg-[var(--brand-surface)]/70 backdrop-blur-xs px-2.5 py-1 rounded-lg border border-[var(--chassis-dark)]/80 text-[11px] font-mono text-[var(--text-secondary)] shadow-xs">
+              <Shield className="w-3 h-3 text-[var(--accent-primary)]" />
+              222K+ DDInter Pairs
+            </span>
+            <span className="inline-flex items-center gap-1.5 bg-[var(--brand-surface)]/70 backdrop-blur-xs px-2.5 py-1 rounded-lg border border-[var(--chassis-dark)]/80 text-[11px] font-mono text-[var(--text-secondary)] shadow-xs">
+              <Activity className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
+              Real-Time ACB Radar
+            </span>
+            <span className="inline-flex items-center gap-1.5 bg-[var(--brand-surface)]/70 backdrop-blur-xs px-2.5 py-1 rounded-lg border border-[var(--chassis-dark)]/80 text-[11px] font-mono text-[var(--text-secondary)] shadow-xs">
+              <Lock className="w-3 h-3 text-indigo-600 dark:text-indigo-400" />
+              Zero-Trust RBAC
+            </span>
+          </div>
         </div>
 
-        {/* Global Error Alert */}
+        {/* ── Global Error Alert ── */}
         {errorMsg && (
-          <div className="p-4 bg-[var(--chassis)] border-2 border-[var(--led-critical)]/30 rounded-2xl flex items-start space-x-3 text-[var(--led-critical)] text-sm animate-fadeIn shadow-xs">
+          <div className="p-4 bg-[var(--brand-surface)] border-2 border-[var(--led-critical)]/40 rounded-2xl flex items-start space-x-3 text-[var(--led-critical)] text-sm animate-fadeIn shadow-[var(--shadow-card)]">
             <AlertCircle className="w-5 h-5 text-[var(--led-critical)] flex-shrink-0 mt-0.5" />
             <div className="flex-1 font-mono">
               <p className="font-semibold">{errorMsg}</p>
@@ -403,150 +474,238 @@ export default function LoginPage() {
         )}
 
         {/* ══════════════════════════════════════════════════════════════════
-            STEP 0: ROLE SELECTION CARDS
+            STEP 0: ROLE SELECTION CARDS (PREMIUM CLINICAL PORTAL)
         ══════════════════════════════════════════════════════════════════ */}
         {!selectedRole && (
-          <Card className="p-6 md:p-8 space-y-6">
-            <div className="text-center space-y-1">
-              <h2 className="text-2xl text-[var(--text-primary)] font-bold font-display">
-                Select Your Role
+          <div className="bg-[var(--brand-surface)]/90 backdrop-blur-xl border border-white/80 dark:border-white/10 rounded-3xl p-6 sm:p-8 space-y-6 shadow-[0_16px_40px_-12px_rgba(15,25,35,0.08)] dark:shadow-[0_16px_40px_-12px_rgba(0,0,0,0.45)]">
+            
+            <div className="text-center space-y-1 pb-1">
+              <h2 className="text-xl sm:text-2xl text-[var(--text-primary)] font-bold tracking-tight font-display">
+                Select Your Access Portal
               </h2>
               <p className="text-xs text-[var(--text-muted)] font-mono">
-                Sign In with password or create a new verified account
+                Sign in with credentials or create a verified healthcare profile
               </p>
             </div>
 
-            {/* Three primary tappable role cards */}
+            {/* Three primary interactive role cards */}
             <div className="grid grid-cols-1 gap-3.5">
-              {/* Card 1: Patient */}
+              
+              {/* ── Role 1: Patient ── */}
               <div
                 onClick={() => {
                   setSelectedRole('PATIENT');
                   setAuthMode('login');
                   resetFormState();
                 }}
-                className="p-5 flex items-start space-x-4 group cursor-pointer bg-[var(--chassis)] shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-card-hover)] active:shadow-[var(--shadow-pressed)] rounded-2xl transition-all duration-180 border border-[rgba(255,255,255,0.4)]"
+                className="group relative p-4.5 sm:p-5 rounded-2xl bg-[var(--chassis)] hover:bg-gradient-to-r hover:from-cyan-500/[0.08] hover:to-transparent border border-[rgba(255,255,255,0.7)] dark:border-white/5 hover:border-cyan-500/50 shadow-[var(--shadow-card)] hover:shadow-[0_12px_28px_-6px_rgba(8,145,178,0.18)] active:shadow-[var(--shadow-pressed)] cursor-pointer transition-all duration-200"
               >
-                <div className="icon-well w-12 h-12 flex-shrink-0 group-hover:scale-105 transition-transform">
-                  <User className="w-6 h-6 text-[var(--accent-primary)]" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-lg font-bold text-[var(--text-primary)] group-hover:text-[var(--accent-primary)] transition-colors font-display">
-                      Patient
-                    </h3>
-                    <span className="text-[10px] font-bold uppercase tracking-wider bg-[var(--chassis)] shadow-[var(--shadow-sm)] border border-[var(--accent-primary)]/20 text-[var(--accent-primary)] px-2.5 py-0.5 rounded-full">
-                      Sign In / Sign Up
-                    </span>
+                <div className="flex items-start gap-4">
+                  {/* Icon Well */}
+                  <div className="w-12 h-12 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-600 dark:text-cyan-400 flex items-center justify-center flex-shrink-0 group-hover:scale-105 group-hover:bg-cyan-500 group-hover:text-white transition-all duration-200 shadow-xs">
+                    <User className="w-6 h-6" />
                   </div>
-                  <p className="text-xs text-[var(--text-muted)] mt-1 leading-relaxed">
-                    Track prescriptions, OTC drugs, herbal remedies, and get real-time interaction alerts.
-                  </p>
+
+                  {/* Body */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2">
+                        <h3 className="text-base sm:text-lg font-bold text-[var(--text-primary)] group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors font-display">
+                          Patient
+                        </h3>
+                        <span className="w-1.5 h-1.5 rounded-full bg-cyan-500" />
+                      </div>
+                      <span className="text-[10px] font-bold uppercase tracking-wider bg-[var(--brand-surface)] border border-cyan-500/30 text-cyan-700 dark:text-cyan-300 px-2.5 py-0.5 rounded-full shadow-xs">
+                        Sign In / Sign Up
+                      </span>
+                    </div>
+
+                    <p className="text-xs text-[var(--text-muted)] mt-1 leading-relaxed">
+                      Track prescriptions, OTC drugs, herbal supplements, and receive real-time interaction alerts.
+                    </p>
+
+                    {/* Micro-Features */}
+                    <div className="flex flex-wrap items-center gap-1.5 mt-2.5 text-[10px] font-mono text-[var(--text-secondary)]">
+                      <span className="bg-[var(--brand-surface)]/80 px-2 py-0.5 rounded-md border border-[var(--chassis-dark)]">
+                        OTC & Herbs Check
+                      </span>
+                      <span className="bg-[var(--brand-surface)]/80 px-2 py-0.5 rounded-md border border-[var(--chassis-dark)]">
+                        ACB Delirium Meter
+                      </span>
+                      <span className="bg-[var(--brand-surface)]/80 px-2 py-0.5 rounded-md border border-[var(--chassis-dark)]">
+                        Vision Scan
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Action Arrow */}
+                  <div className="w-8 h-8 rounded-xl bg-[var(--brand-surface)] border border-[var(--chassis-dark)] flex items-center justify-center self-center flex-shrink-0 group-hover:border-cyan-500/50 group-hover:bg-cyan-500 group-hover:text-white text-[var(--text-muted)] transition-all duration-200">
+                    <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+                  </div>
                 </div>
-                <ArrowRight className="w-5 h-5 text-[var(--text-muted)] group-hover:text-[var(--accent-primary)] group-hover:translate-x-1 transition-all self-center flex-shrink-0" />
               </div>
 
-              {/* Card 2: Caregiver */}
+              {/* ── Role 2: Family / Caregiver ── */}
               <div
                 onClick={() => {
                   setSelectedRole('CAREGIVER');
                   setAuthMode('login');
                   resetFormState();
                 }}
-                className="p-5 flex items-start space-x-4 group cursor-pointer bg-[var(--chassis)] shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-card-hover)] active:shadow-[var(--shadow-pressed)] rounded-2xl transition-all duration-180 border border-[rgba(255,255,255,0.4)]"
+                className="group relative p-4.5 sm:p-5 rounded-2xl bg-[var(--chassis)] hover:bg-gradient-to-r hover:from-emerald-500/[0.08] hover:to-transparent border border-[rgba(255,255,255,0.7)] dark:border-white/5 hover:border-emerald-500/50 shadow-[var(--shadow-card)] hover:shadow-[0_12px_28px_-6px_rgba(16,185,129,0.18)] active:shadow-[var(--shadow-pressed)] cursor-pointer transition-all duration-200"
               >
-                <div className="icon-well w-12 h-12 flex-shrink-0 group-hover:scale-105 transition-transform">
-                  <HeartHandshake className="w-6 h-6 text-[var(--role-caregiver)]" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-lg font-bold text-[var(--text-primary)] group-hover:text-[var(--role-caregiver)] transition-colors font-display">
-                      Family / Caregiver
-                    </h3>
-                    <span className="text-[10px] font-bold uppercase tracking-wider bg-[var(--chassis)] shadow-[var(--shadow-sm)] border border-[var(--role-caregiver)]/20 text-[var(--role-caregiver)] px-2.5 py-0.5 rounded-full">
-                      Sign In / Sign Up
-                    </span>
+                <div className="flex items-start gap-4">
+                  {/* Icon Well */}
+                  <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center flex-shrink-0 group-hover:scale-105 group-hover:bg-emerald-600 group-hover:text-white transition-all duration-200 shadow-xs">
+                    <HeartHandshake className="w-6 h-6" />
                   </div>
-                  <p className="text-xs text-[var(--text-muted)] mt-1 leading-relaxed">
-                    Monitor family member dose schedules, check safety statuses, and send check-in reminders.
-                  </p>
+
+                  {/* Body */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2">
+                        <h3 className="text-base sm:text-lg font-bold text-[var(--text-primary)] group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors font-display">
+                          Family / Caregiver
+                        </h3>
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                      </div>
+                      <span className="text-[10px] font-bold uppercase tracking-wider bg-[var(--brand-surface)] border border-emerald-500/30 text-emerald-700 dark:text-emerald-300 px-2.5 py-0.5 rounded-full shadow-xs">
+                        Sign In / Sign Up
+                      </span>
+                    </div>
+
+                    <p className="text-xs text-[var(--text-muted)] mt-1 leading-relaxed">
+                      Monitor family dose schedules, check safety statuses, and send check-in reminders with privacy protection.
+                    </p>
+
+                    {/* Micro-Features */}
+                    <div className="flex flex-wrap items-center gap-1.5 mt-2.5 text-[10px] font-mono text-[var(--text-secondary)]">
+                      <span className="bg-[var(--brand-surface)]/80 px-2 py-0.5 rounded-md border border-[var(--chassis-dark)]">
+                        Privacy Redaction
+                      </span>
+                      <span className="bg-[var(--brand-surface)]/80 px-2 py-0.5 rounded-md border border-[var(--chassis-dark)]">
+                        Daily Timing Schedule
+                      </span>
+                      <span className="bg-[var(--brand-surface)]/80 px-2 py-0.5 rounded-md border border-[var(--chassis-dark)]">
+                        Multi-Patient Switcher
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Action Arrow */}
+                  <div className="w-8 h-8 rounded-xl bg-[var(--brand-surface)] border border-[var(--chassis-dark)] flex items-center justify-center self-center flex-shrink-0 group-hover:border-emerald-500/50 group-hover:bg-emerald-600 group-hover:text-white text-[var(--text-muted)] transition-all duration-200">
+                    <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+                  </div>
                 </div>
-                <ArrowRight className="w-5 h-5 text-[var(--text-muted)] group-hover:text-[var(--role-caregiver)] group-hover:translate-x-1 transition-all self-center flex-shrink-0" />
               </div>
 
-              {/* Card 3: Doctor */}
+              {/* ── Role 3: Doctor / Clinician ── */}
               <div
                 onClick={() => {
                   setSelectedRole('DOCTOR');
                   setAuthMode('login');
                   resetFormState();
                 }}
-                className="p-5 flex items-start space-x-4 group cursor-pointer bg-[var(--chassis)] shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-card-hover)] active:shadow-[var(--shadow-pressed)] rounded-2xl transition-all duration-180 border border-[rgba(255,255,255,0.4)]"
+                className="group relative p-4.5 sm:p-5 rounded-2xl bg-[var(--chassis)] hover:bg-gradient-to-r hover:from-indigo-500/[0.08] hover:to-transparent border border-[rgba(255,255,255,0.7)] dark:border-white/5 hover:border-indigo-500/50 shadow-[var(--shadow-card)] hover:shadow-[0_12px_28px_-6px_rgba(79,70,229,0.18)] active:shadow-[var(--shadow-pressed)] cursor-pointer transition-all duration-200"
               >
-                <div className="icon-well w-12 h-12 flex-shrink-0 group-hover:scale-105 transition-transform">
-                  <Stethoscope className="w-6 h-6 text-[var(--accent-secondary)]" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-lg font-bold text-[var(--text-primary)] group-hover:text-[var(--accent-secondary)] transition-colors font-display">
-                      Doctor / Clinician
-                    </h3>
-                    <span className="text-[10px] font-bold uppercase tracking-wider bg-[var(--chassis)] shadow-[var(--shadow-sm)] border border-[var(--accent-secondary)]/20 text-[var(--accent-secondary)] px-2.5 py-0.5 rounded-full">
-                      Sign In / Sign Up
-                    </span>
+                <div className="flex items-start gap-4">
+                  {/* Icon Well */}
+                  <div className="w-12 h-12 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center flex-shrink-0 group-hover:scale-105 group-hover:bg-indigo-600 group-hover:text-white transition-all duration-200 shadow-xs">
+                    <Stethoscope className="w-6 h-6" />
                   </div>
-                  <p className="text-xs text-[var(--text-muted)] mt-1 leading-relaxed">
-                    Access patient timelines, pre-prescribing safety simulations, deprescribing tools, and EHR notes.
-                  </p>
+
+                  {/* Body */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2">
+                        <h3 className="text-base sm:text-lg font-bold text-[var(--text-primary)] group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors font-display">
+                          Doctor / Clinician
+                        </h3>
+                        <span className="w-1.5 h-1.5 rounded-full bg-indigo-500" />
+                      </div>
+                      <span className="text-[10px] font-bold uppercase tracking-wider bg-[var(--brand-surface)] border border-indigo-500/30 text-indigo-700 dark:text-indigo-300 px-2.5 py-0.5 rounded-full shadow-xs">
+                        Sign In / Sign Up
+                      </span>
+                    </div>
+
+                    <p className="text-xs text-[var(--text-muted)] mt-1 leading-relaxed">
+                      Access patient timelines, pre-prescribing safety simulations, STOPP/START deprescribing, and clinical directives.
+                    </p>
+
+                    {/* Micro-Features */}
+                    <div className="flex flex-wrap items-center gap-1.5 mt-2.5 text-[10px] font-mono text-[var(--text-secondary)]">
+                      <span className="bg-[var(--brand-surface)]/80 px-2 py-0.5 rounded-md border border-[var(--chassis-dark)]">
+                        Pre-Prescribing Simulation
+                      </span>
+                      <span className="bg-[var(--brand-surface)]/80 px-2 py-0.5 rounded-md border border-[var(--chassis-dark)]">
+                        Beers 2023 Criteria
+                      </span>
+                      <span className="bg-[var(--brand-surface)]/80 px-2 py-0.5 rounded-md border border-[var(--chassis-dark)]">
+                        4-Organ Toxicity Radar
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Action Arrow */}
+                  <div className="w-8 h-8 rounded-xl bg-[var(--brand-surface)] border border-[var(--chassis-dark)] flex items-center justify-center self-center flex-shrink-0 group-hover:border-indigo-500/50 group-hover:bg-indigo-600 group-hover:text-white text-[var(--text-muted)] transition-all duration-200">
+                    <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+                  </div>
                 </div>
-                <ArrowRight className="w-5 h-5 text-[var(--text-muted)] group-hover:text-[var(--accent-secondary)] group-hover:translate-x-1 transition-all self-center flex-shrink-0" />
+              </div>
+
+            </div>
+
+            {/* ── Refined Divider ── */}
+            <div className="relative flex items-center justify-center my-5">
+              <div className="border-t border-[var(--chassis-dark)] w-full" />
+              <div className="bg-[var(--brand-surface)] px-4 py-0.5 rounded-full border border-[var(--chassis-dark)] shadow-xs absolute">
+                <span className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-wider font-mono flex items-center gap-1.5">
+                  <Sparkles className="w-3 h-3 text-[var(--accent-primary)]" />
+                  Or Explore Without Account
+                </span>
               </div>
             </div>
 
-            {/* Divider */}
-            <div className="relative flex items-center justify-center my-4">
-              <div className="border-t border-[rgba(255,255,255,0.4)] w-full" />
-              <span className="bg-[var(--chassis)] px-3 text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-wider absolute font-mono">
-                or explore without an account
-              </span>
-            </div>
-
-            {/* Card 4: Continue as Guest */}
+            {/* ── Card 4: Continue as Guest (Interactive Sandbox) ── */}
             <div
               onClick={() => {
                 enterGuestMode();
-                notify.info('Demo Mode Active', 'Exploring PolySafe with realistic sample data.');
+                notify.info('Demo Sandbox Active', 'Exploring PolySafe with pre-loaded clinical sample data.');
                 navigate('/home', { replace: true });
               }}
-              className="p-4 rounded-2xl border-2 border-[var(--chassis-dark)] hover:border-[var(--accent-primary)] bg-[var(--chassis)] hover:bg-[var(--accent-primary-light)]/20 flex items-center space-x-3.5 group cursor-pointer transition-all duration-180"
+              className="group relative p-4.5 rounded-2xl bg-gradient-to-r from-amber-500/[0.06] via-cyan-500/[0.04] to-indigo-500/[0.06] border border-amber-500/30 hover:border-amber-500/70 shadow-[var(--shadow-card)] hover:shadow-[0_12px_28px_-6px_rgba(245,158,11,0.18)] active:shadow-[var(--shadow-pressed)] flex items-center space-x-4 cursor-pointer transition-all duration-200"
             >
-              <div className="p-2.5 bg-[var(--chassis)] shadow-[var(--shadow-card)] border border-[var(--chassis-dark)] text-[var(--accent-primary)] rounded-xl group-hover:bg-[var(--accent-primary)] group-hover:text-white transition-colors">
+              <div className="w-11 h-11 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-600 dark:text-amber-400 flex items-center justify-center flex-shrink-0 group-hover:scale-105 group-hover:bg-amber-500 group-hover:text-white transition-all duration-200 shadow-xs">
                 <Compass className="w-5 h-5" />
               </div>
-              <div className="flex-1">
-                <div className="flex items-center justify-between">
-                  <h4 className="text-sm font-bold text-[var(--text-primary)] group-hover:text-[var(--accent-primary)] transition-colors font-display">
-                    Continue as Guest
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center justify-between gap-2">
+                  <h4 className="text-sm font-bold text-[var(--text-primary)] group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors font-display">
+                    Continue as Guest Explorer
                   </h4>
-                  <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-[var(--accent-primary)] bg-[var(--accent-primary)]/10 px-2.5 py-0.5 rounded-full border border-[var(--accent-primary)]/30 shadow-xs">
-                    <Sparkles className="w-3 h-3 text-[var(--accent-primary)]" />
-                    Instant Demo
+                  <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-amber-700 dark:text-amber-300 bg-amber-500/15 px-2.5 py-0.5 rounded-full border border-amber-500/30 shadow-xs font-mono">
+                    <Sparkles className="w-3 h-3" />
+                    Instant Sandbox
                   </span>
                 </div>
-                <p className="text-xs text-[var(--text-muted)] mt-0.5 font-mono">
-                  Browse sample medications, risk graphs, and timeline cascades.
+                <p className="text-xs text-[var(--text-muted)] mt-0.5 leading-relaxed">
+                  Browse sample medications, risk graphs, cascade timeline, and 4-organ radar without registration.
                 </p>
               </div>
-              <ArrowRight className="w-4 h-4 text-[#9CA3AF] group-hover:text-[var(--accent-primary)] group-hover:translate-x-1 transition-all" />
+              <div className="w-7 h-7 rounded-lg bg-[var(--brand-surface)] border border-amber-500/20 flex items-center justify-center flex-shrink-0 group-hover:bg-amber-500 group-hover:text-white text-[var(--text-muted)] transition-all duration-200">
+                <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+              </div>
             </div>
-          </Card>
+
+          </div>
         )}
 
         {/* ══════════════════════════════════════════════════════════════════
             ROLE AUTH CARD (EXPLICIT SIGN IN VS SIGN UP TABS FOR ALL 3 ROLES)
         ══════════════════════════════════════════════════════════════════ */}
         {selectedRole && (
-          <Card className="p-6 md:p-8 space-y-6">
+          <div className="bg-[var(--brand-surface)]/95 backdrop-blur-xl border border-white/80 dark:border-white/10 rounded-3xl p-6 sm:p-8 space-y-6 shadow-[0_16px_40px_-12px_rgba(15,25,35,0.08)] dark:shadow-[0_16px_40px_-12px_rgba(0,0,0,0.45)]">
+            
             {/* Card Header: Back button + Role pill */}
             <div className="flex items-center justify-between pb-4 border-b border-[var(--chassis-dark)]">
               <button
@@ -560,29 +719,32 @@ export default function LoginPage() {
                     resetFormState();
                   }
                 }}
-                className="text-xs font-bold text-[var(--text-muted)] hover:text-[var(--accent-primary)] flex items-center space-x-1 transition-colors cursor-pointer font-mono"
+                className="group text-xs font-bold text-[var(--text-muted)] hover:text-[var(--accent-primary)] flex items-center space-x-1.5 transition-colors cursor-pointer font-mono"
               >
-                <ArrowLeft className="w-4 h-4" />
+                <div className="w-6 h-6 rounded-lg bg-[var(--chassis)] flex items-center justify-center group-hover:bg-[var(--accent-primary)]/10 transition-colors">
+                  <ArrowLeft className="w-3.5 h-3.5" />
+                </div>
                 <span>{authMode === 'otp' ? 'Back to Form' : 'Change Role'}</span>
               </button>
-              <span className={`text-xs font-semibold px-2.5 py-1 rounded-lg border font-mono ${roleLabels[selectedRole]?.badge}`}>
+              
+              <span className={`text-xs font-bold px-3 py-1 rounded-full border font-mono shadow-xs ${roleLabels[selectedRole]?.badge}`}>
                 {roleLabels[selectedRole]?.title}
               </span>
             </div>
 
             {/* Explicit Segmented Switcher: Sign In vs Sign Up */}
             {authMode !== 'otp' && (
-              <div className="flex items-center gap-1.5 p-1.5 bg-[var(--chassis)] border border-[rgba(255,255,255,0.4)] rounded-2xl shadow-[var(--shadow-recessed)] w-full">
+              <div className="flex items-center gap-1.5 p-1.5 bg-[var(--chassis)] border border-[var(--chassis-dark)] rounded-2xl shadow-[var(--shadow-recessed)] w-full">
                 <button
                   type="button"
                   onClick={() => {
                     setAuthMode('login');
                     setErrorMsg(null);
                   }}
-                  className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                  className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                     authMode === 'login'
-                      ? 'bg-gradient-to-r from-[#0891b2] to-[#0e7490] text-white font-bold shadow-sm border border-white/20'
-                      : 'bg-transparent text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--chassis-dark)]/50'
+                      ? 'bg-gradient-to-r from-[#0891b2] to-[#0e7490] text-white shadow-sm border border-white/20'
+                      : 'bg-transparent text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--brand-surface)]/60'
                   }`}
                 >
                   <LogIn className="w-4 h-4 flex-shrink-0" />
@@ -594,10 +756,10 @@ export default function LoginPage() {
                     setAuthMode('signup');
                     setErrorMsg(null);
                   }}
-                  className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                  className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                     authMode === 'signup'
-                      ? 'bg-gradient-to-r from-[#0891b2] to-[#0e7490] text-white font-bold shadow-sm border border-white/20'
-                      : 'bg-transparent text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--chassis-dark)]/50'
+                      ? 'bg-gradient-to-r from-[#0891b2] to-[#0e7490] text-white shadow-sm border border-white/20'
+                      : 'bg-transparent text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--brand-surface)]/60'
                   }`}
                 >
                   <UserPlus className="w-4 h-4 flex-shrink-0" />
@@ -620,7 +782,7 @@ export default function LoginPage() {
 
                 {/* Lockout banner */}
                 {lockoutSecsLeft > 0 && (
-                  <div className="p-4 bg-[var(--chassis)] border-2 border-[var(--led-caution)] rounded-2xl text-sm text-[var(--text-primary)] space-y-1 shadow-sm font-mono">
+                  <div className="p-4 bg-amber-500/10 border-2 border-[var(--led-caution)] rounded-2xl text-sm text-[var(--text-primary)] space-y-1 shadow-sm font-mono">
                     <div className="flex items-center gap-2 font-bold text-[var(--text-primary)]">
                       <AlertCircle className="w-4 h-4 text-[var(--led-caution)] flex-shrink-0" />
                       Account temporarily locked
@@ -728,7 +890,7 @@ export default function LoginPage() {
               <form onSubmit={handleSignUpSubmit} className="space-y-4">
                 <div className="space-y-1">
                   <h2 className="text-2xl text-[var(--text-primary)] font-bold font-display">
-                    Create {roleLabels[selectedRole]?.title} Account
+                    Create {roleLabels[selectedRole]?.title}
                   </h2>
                   <p className="text-xs text-[var(--text-muted)] font-mono">
                     A 6-digit OTP code will be sent to your email to verify your account once.
@@ -990,7 +1152,7 @@ export default function LoginPage() {
                 </div>
               </form>
             )}
-          </Card>
+          </div>
         )}
       </div>
     </PageTransition>
