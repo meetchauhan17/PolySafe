@@ -4677,5 +4677,26 @@
     "safetyTip": "Prescribed for acute migraine. Avoid on empty stomach due to NSAID gastric irritation.",
     "standardizedCode": "7258",
     "layer": "Layer 3 (Fuzzy Match: Naxdom 500)"
+  },
+  "xyzalm": {
+    "resolvedName": "XyzalM",
+    "genericName": "Levocetirizine + Montelukast",
+    "genericSalts": [
+      "Levocetirizine dihydrochloride",
+      "Montelukast sodium"
+    ],
+    "constituents": [
+      "Levocetirizine dihydrochloride",
+      "Montelukast sodium"
+    ],
+    "harmLevel": 3,
+    "class": "Antihistamine + Leukotriene Receptor Antagonist",
+    "foodInstruction": "after_food",
+    "dosageOptions": [
+      "1 tablet once daily"
+    ],
+    "safetyTip": "May cause drowsiness or dizziness; avoid alcohol and use caution when driving or operating machinery.",
+    "standardizedCode": "402349",
+    "layer": "Layer 5 (gemini_gemini-3.5-flash-lite)"
   }
 }

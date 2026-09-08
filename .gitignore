@@ -45,6 +45,9 @@ PolySafe_Master_Project.md
 POLYSAFE_CURRENT_STATE.md
 POLYSAFE_FINAL_CONFIRMATION.md
 POLYSAFE_UI_AUDIT.md
+ROUND1_SUBMISSION_DATA.md
+*.docx
+build_submission.js
 
 # Large raw datasets & archives (exceed GitHub 100MB file limit)
 *.csv.gz
