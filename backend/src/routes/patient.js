@@ -240,8 +240,19 @@ router.get('/home-summary', auth, async (req, res) => {
     // 3. Compute WHO/NCI 5-Tier Regimen Risk
     const regimenRisk = await calculateRegimenRisk(patient.id);
 
-    // 4. Determine overall status
-    const status = interactionFlags.length > 0 ? 'CAUTION' : 'SAFE';
+    // 4. Determine overall status (integrates pairwise interaction flags + WHO/NCI regimen risk tier)
+    const hasMajorFlag = interactionFlags.some(f =>
+      ['MAJOR', 'CONTRAINDICATED'].includes((f.severity || '').toUpperCase())
+    );
+    const hasCriticalHarm = regimenRisk?.level === 5;
+    const hasHighHarm = regimenRisk?.level === 4;
+
+    let status = 'SAFE';
+    if (hasMajorFlag || hasCriticalHarm) {
+      status = 'CRITICAL';
+    } else if (interactionFlags.length > 0 || hasHighHarm) {
+      status = 'CAUTION';
+    }
 
     return res.status(200).json({
       status,
@@ -258,6 +269,7 @@ router.get('/home-summary', auth, async (req, res) => {
           name: m.name,
           type: m.type,
           dosage: m.dosage,
+          purpose: m.purpose || null,
           harmLevel,
           standardizedCode: m.standardizedCode,
           dateAdded: m.dateAdded,

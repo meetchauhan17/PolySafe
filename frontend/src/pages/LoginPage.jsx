@@ -24,8 +24,6 @@ import {
   X,
   LogIn,
   UserPlus,
-  Sun,
-  Moon,
   Zap,
 } from 'lucide-react';
 import { authApi } from '../api/auth';
@@ -38,19 +36,6 @@ export default function LoginPage() {
   const navigate = useNavigate();
   const { user, token, login, enterGuestMode } = useAuth();
 
-  // ─── Theme Mode Switcher ──────────────────────────────────────────────────
-  const [theme, setTheme] = useState(() => {
-    return document.documentElement.getAttribute('data-theme') || 
-      localStorage.getItem('polysafe-theme') || 
-      (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-  });
-
-  const toggleTheme = () => {
-    const nextTheme = theme === 'dark' ? 'light' : 'dark';
-    setTheme(nextTheme);
-    document.documentElement.setAttribute('data-theme', nextTheme);
-    localStorage.setItem('polysafe-theme', nextTheme);
-  };
 
   // ─── On Mount: Redirect already authenticated sessions (replace: true) ─────
   useEffect(() => {
@@ -392,35 +377,35 @@ export default function LoginPage() {
       title: 'Patient Portal', 
       subtitle: 'Self medication tracking & real-time interaction safety', 
       accentGradient: 'from-sky-500 to-blue-600',
-      badge: 'bg-sky-500/10 text-sky-700 dark:text-sky-300 border-sky-500/30',
+      badge: 'bg-sky-500/10 text-sky-700 border-sky-500/30',
       btnGradient: 'from-sky-600 to-blue-600 hover:from-sky-500 hover:to-blue-500',
     },
     CAREGIVER: { 
       title: 'Family & Caregiver', 
       subtitle: 'Schedule adherence monitoring & safety status check-ins', 
       accentGradient: 'from-emerald-500 to-teal-600',
-      badge: 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/30',
+      badge: 'bg-emerald-500/10 text-emerald-700 border-emerald-500/30',
       btnGradient: 'from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500',
     },
     DOCTOR: { 
       title: 'Doctor & Clinician', 
       subtitle: 'Clinical longitudinal oversight, Beers deprescribing & EHR notes', 
       accentGradient: 'from-blue-600 to-indigo-600',
-      badge: 'bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 border-indigo-500/30',
+      badge: 'bg-indigo-500/10 text-indigo-700 border-indigo-500/30',
       btnGradient: 'from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500',
     },
   };
 
   return (
-    <PageTransition className="relative min-h-screen bg-slate-50 dark:bg-[#070b14] text-slate-900 dark:text-slate-100 flex flex-col justify-between overflow-x-hidden selection:bg-blue-500 selection:text-white transition-colors duration-300">
+    <PageTransition className="relative min-h-screen bg-[#dce4ee] text-slate-900 flex flex-col justify-between overflow-x-hidden selection:bg-blue-500 selection:text-white">
       
       {/* ── Background Precision Dot Matrix ── */}
-      <div className="absolute inset-0 bg-[radial-gradient(#94a3b8_1px,transparent_1px)] dark:bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:24px_24px] opacity-40 dark:opacity-60 pointer-events-none" />
+      <div className="absolute inset-0 bg-[radial-gradient(#94a3b8_1px,transparent_1px)] [background-size:24px_24px] opacity-25 pointer-events-none" />
 
       {/* ── Atmospheric Ambient Lighting Orbs ── */}
       <div className="absolute -top-36 left-1/2 -translate-x-1/2 w-[850px] h-[450px] bg-gradient-to-b from-blue-600/15 via-cyan-500/10 to-transparent rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute top-1/4 -left-48 w-[450px] h-[450px] bg-emerald-500/10 dark:bg-emerald-500/15 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-10 -right-48 w-[450px] h-[450px] bg-indigo-600/10 dark:bg-indigo-500/15 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-1/4 -left-48 w-[450px] h-[450px] bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-10 -right-48 w-[450px] h-[450px] bg-indigo-600/10 rounded-full blur-3xl pointer-events-none" />
 
       {/* ── Top Floating Navigation Bar ── */}
       <header className="relative w-full max-w-6xl mx-auto flex items-center justify-between px-4 sm:px-6 py-4 z-20">
@@ -429,10 +414,10 @@ export default function LoginPage() {
             <ShieldCheck className="w-5 h-5" />
           </div>
           <div className="flex flex-col">
-            <span className="text-base font-extrabold tracking-tight text-slate-900 dark:text-white font-display">
+            <span className="text-base font-extrabold tracking-tight text-slate-900 font-display">
               Poly<span className="bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">Safe</span>
             </span>
-            <span className="text-[10px] font-mono text-slate-500 dark:text-slate-400 uppercase tracking-widest -mt-0.5">
+            <span className="text-[10px] font-mono text-slate-500 uppercase tracking-widest -mt-0.5">
               Clinical Polypharmacy AI
             </span>
           </div>
@@ -440,7 +425,7 @@ export default function LoginPage() {
 
         <div className="flex items-center gap-2.5 sm:gap-3">
           {/* Live System Indicator */}
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border border-slate-200 dark:border-slate-800 text-[11px] font-semibold text-slate-700 dark:text-slate-300 shadow-xs">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/80 backdrop-blur-md border border-slate-200 text-[11px] font-semibold text-slate-700 shadow-xs">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75" />
               <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
@@ -449,20 +434,6 @@ export default function LoginPage() {
             <span className="sm:hidden">v2.4</span>
           </div>
 
-          {/* Theme Toggle Button */}
-          <button
-            type="button"
-            onClick={toggleTheme}
-            className="p-2 rounded-xl bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-cyan-400 hover:border-blue-400 dark:hover:border-cyan-500/50 shadow-xs transition-all cursor-pointer"
-            title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-            aria-label="Toggle theme mode"
-          >
-            {theme === 'dark' ? (
-              <Sun className="w-4 h-4 text-amber-400 animate-fadeIn" />
-            ) : (
-              <Moon className="w-4 h-4 text-slate-700 animate-fadeIn" />
-            )}
-          </button>
         </div>
       </header>
 
@@ -475,34 +446,34 @@ export default function LoginPage() {
             <div className="text-center space-y-3 mb-8 sm:mb-10">
               
               {/* Top Pill Status */}
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border border-slate-200 dark:border-slate-800 shadow-xs">
-                <Zap className="w-3.5 h-3.5 text-blue-600 dark:text-cyan-400" />
-                <span className="text-[11px] font-bold tracking-wider uppercase text-slate-700 dark:text-slate-300 font-mono">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/90 backdrop-blur-md border border-slate-200 shadow-xs">
+                <Zap className="w-3.5 h-3.5 text-blue-600" />
+                <span className="text-[11px] font-bold tracking-wider uppercase text-slate-700 font-mono">
                   Continuous Clinical Safety Architecture
                 </span>
               </div>
 
               {/* Main Headline */}
-              <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-white font-display">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-slate-900 font-display">
                 Select Your <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-500 bg-clip-text text-transparent">Access Portal</span>
               </h1>
 
-              <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 max-w-xl mx-auto leading-relaxed">
+              <p className="text-xs sm:text-sm text-slate-600 max-w-xl mx-auto leading-relaxed">
                 AI-powered multi-drug interaction intelligence, Beers deprescribing guidance, and cognitive anticholinergic burden monitoring.
               </p>
 
               {/* Trust Metrics Chips */}
               <div className="flex flex-wrap items-center justify-center gap-2 pt-1">
-                <span className="inline-flex items-center gap-1.5 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xs px-3.5 py-1 rounded-full border border-slate-200 dark:border-slate-800 text-[11px] font-semibold text-slate-700 dark:text-slate-300 shadow-2xs">
-                  <Shield className="w-3.5 h-3.5 text-blue-600 dark:text-cyan-400" />
+                <span className="inline-flex items-center gap-1.5 bg-white/80 backdrop-blur-xs px-3.5 py-1 rounded-full border border-slate-200 text-[11px] font-semibold text-slate-700 shadow-2xs">
+                  <Shield className="w-3.5 h-3.5 text-blue-600" />
                   222K+ Interaction Rules
                 </span>
-                <span className="inline-flex items-center gap-1.5 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xs px-3.5 py-1 rounded-full border border-slate-200 dark:border-slate-800 text-[11px] font-semibold text-slate-700 dark:text-slate-300 shadow-2xs">
-                  <Activity className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                <span className="inline-flex items-center gap-1.5 bg-white/80 backdrop-blur-xs px-3.5 py-1 rounded-full border border-slate-200 text-[11px] font-semibold text-slate-700 shadow-2xs">
+                  <Activity className="w-3.5 h-3.5 text-emerald-600" />
                   Real-Time ACB Radar
                 </span>
-                <span className="inline-flex items-center gap-1.5 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xs px-3.5 py-1 rounded-full border border-slate-200 dark:border-slate-800 text-[11px] font-semibold text-slate-700 dark:text-slate-300 shadow-2xs">
-                  <Lock className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
+                <span className="inline-flex items-center gap-1.5 bg-white/80 backdrop-blur-xs px-3.5 py-1 rounded-full border border-slate-200 text-[11px] font-semibold text-slate-700 shadow-2xs">
+                  <Lock className="w-3.5 h-3.5 text-indigo-600" />
                   Zero-Trust RBAC
                 </span>
               </div>
@@ -511,7 +482,7 @@ export default function LoginPage() {
 
           {/* ── Global Error Alert ── */}
           {errorMsg && (
-            <div className="mb-6 p-4 bg-rose-50 dark:bg-rose-950/40 border-2 border-rose-500/40 rounded-2xl flex items-start space-x-3 text-rose-700 dark:text-rose-300 text-sm animate-fadeIn shadow-md">
+            <div className="mb-6 p-4 bg-rose-50 border-2 border-rose-500/40 rounded-2xl flex items-start space-x-3 text-rose-700 text-sm animate-fadeIn shadow-md">
               <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5 text-rose-500" />
               <div className="flex-1 font-mono">
                 <p className="font-semibold">{errorMsg}</p>
@@ -535,7 +506,7 @@ export default function LoginPage() {
                     setAuthMode('login');
                     resetFormState();
                   }}
-                  className="group relative bg-white dark:bg-slate-900/90 backdrop-blur-xl rounded-3xl p-6 sm:p-7 flex flex-col justify-between border border-slate-200 dark:border-slate-800 hover:border-sky-500/60 dark:hover:border-sky-400/60 shadow-[0_10px_30px_-5px_rgba(0,0,0,0.05)] hover:shadow-[0_20px_40px_-10px_rgba(14,165,233,0.25)] hover:-translate-y-1.5 active:scale-[0.99] cursor-pointer transition-all duration-300"
+                  className="group relative bg-slate-50 backdrop-blur-xl rounded-3xl p-6 sm:p-7 flex flex-col justify-between border border-slate-200 hover:border-sky-500/60 shadow-[0_10px_30px_-5px_rgba(0,0,0,0.05)] hover:shadow-[0_20px_40px_-10px_rgba(14,165,233,0.25)] hover:-translate-y-1.5 active:scale-[0.99] cursor-pointer transition-all duration-300"
                 >
                   {/* Glowing Top Accent Line */}
                   <div className="absolute top-0 left-6 right-6 h-1 bg-gradient-to-r from-sky-400 via-cyan-400 to-blue-500 rounded-b-full opacity-70 group-hover:opacity-100 transition-opacity" />
@@ -543,25 +514,25 @@ export default function LoginPage() {
                   <div className="space-y-5">
                     {/* Role Header with Squircle Icon & Badge */}
                     <div className="flex items-center justify-between">
-                      <div className="w-13 h-13 rounded-2xl bg-gradient-to-br from-sky-500/10 to-blue-500/20 text-sky-600 dark:text-sky-400 border border-sky-500/30 flex items-center justify-center group-hover:scale-105 group-hover:bg-gradient-to-tr group-hover:from-sky-500 group-hover:to-blue-600 group-hover:text-white transition-all duration-300 shadow-sm">
+                      <div className="w-13 h-13 rounded-2xl bg-gradient-to-br from-sky-500/10 to-blue-500/20 text-sky-600 border border-sky-500/30 flex items-center justify-center group-hover:scale-105 group-hover:bg-gradient-to-tr group-hover:from-sky-500 group-hover:to-blue-600 group-hover:text-white transition-all duration-300 shadow-sm">
                         <User className="w-6 h-6" />
                       </div>
-                      <span className="text-[10px] font-bold uppercase tracking-wider bg-sky-500/10 text-sky-700 dark:text-sky-300 border border-sky-500/25 px-2.5 py-1 rounded-full font-mono">
+                      <span className="text-[10px] font-bold uppercase tracking-wider bg-sky-500/10 text-sky-700 border border-sky-500/25 px-2.5 py-1 rounded-full font-mono">
                         Personal Care
                       </span>
                     </div>
 
                     <div>
-                      <h3 className="text-xl font-bold text-slate-900 dark:text-white group-hover:text-sky-600 dark:group-hover:text-sky-400 transition-colors font-display">
+                      <h3 className="text-xl font-bold text-slate-900 group-hover:text-sky-600 transition-colors font-display">
                         Patient Portal
                       </h3>
-                      <p className="text-xs text-slate-600 dark:text-slate-400 mt-1.5 leading-relaxed">
+                      <p className="text-xs text-slate-600 mt-1.5 leading-relaxed">
                         Track daily prescriptions, OTC & herbal remedies, and receive instant interaction warnings.
                       </p>
                     </div>
 
                     {/* Feature Checklist */}
-                    <div className="space-y-2.5 pt-3 border-t border-slate-100 dark:border-slate-800/80 text-xs text-slate-700 dark:text-slate-300">
+                    <div className="space-y-2.5 pt-3 border-t border-slate-100 text-xs text-slate-700">
                       <div className="flex items-center gap-2.5">
                         <CheckCircle2 className="w-4 h-4 text-sky-500 flex-shrink-0" />
                         <span>222K Drug-Drug interaction flags</span>
@@ -578,7 +549,7 @@ export default function LoginPage() {
                   </div>
 
                   {/* Card Action Button */}
-                  <div className="mt-6 pt-3 border-t border-slate-100 dark:border-slate-800/80">
+                  <div className="mt-6 pt-3 border-t border-slate-100">
                     <div className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-sky-600 to-blue-600 hover:from-sky-500 hover:to-blue-500 text-white font-semibold text-xs flex items-center justify-between shadow-md shadow-sky-600/20 group-hover:shadow-lg group-hover:shadow-sky-600/30 transition-all">
                       <span>Enter Patient Portal</span>
                       <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -593,7 +564,7 @@ export default function LoginPage() {
                     setAuthMode('login');
                     resetFormState();
                   }}
-                  className="group relative bg-white dark:bg-slate-900/90 backdrop-blur-xl rounded-3xl p-6 sm:p-7 flex flex-col justify-between border border-slate-200 dark:border-slate-800 hover:border-emerald-500/60 dark:hover:border-emerald-400/60 shadow-[0_10px_30px_-5px_rgba(0,0,0,0.05)] hover:shadow-[0_20px_40px_-10px_rgba(16,185,129,0.25)] hover:-translate-y-1.5 active:scale-[0.99] cursor-pointer transition-all duration-300"
+                  className="group relative bg-slate-50 backdrop-blur-xl rounded-3xl p-6 sm:p-7 flex flex-col justify-between border border-slate-200 hover:border-emerald-500/60 shadow-[0_10px_30px_-5px_rgba(0,0,0,0.05)] hover:shadow-[0_20px_40px_-10px_rgba(16,185,129,0.25)] hover:-translate-y-1.5 active:scale-[0.99] cursor-pointer transition-all duration-300"
                 >
                   {/* Glowing Top Accent Line */}
                   <div className="absolute top-0 left-6 right-6 h-1 bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-500 rounded-b-full opacity-70 group-hover:opacity-100 transition-opacity" />
@@ -601,25 +572,25 @@ export default function LoginPage() {
                   <div className="space-y-5">
                     {/* Role Header with Squircle Icon & Badge */}
                     <div className="flex items-center justify-between">
-                      <div className="w-13 h-13 rounded-2xl bg-gradient-to-br from-emerald-500/10 to-teal-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 flex items-center justify-center group-hover:scale-105 group-hover:bg-gradient-to-tr group-hover:from-emerald-500 group-hover:to-teal-600 group-hover:text-white transition-all duration-300 shadow-sm">
+                      <div className="w-13 h-13 rounded-2xl bg-gradient-to-br from-emerald-500/10 to-teal-500/20 text-emerald-600 border border-emerald-500/30 flex items-center justify-center group-hover:scale-105 group-hover:bg-gradient-to-tr group-hover:from-emerald-500 group-hover:to-teal-600 group-hover:text-white transition-all duration-300 shadow-sm">
                         <HeartHandshake className="w-6 h-6" />
                       </div>
-                      <span className="text-[10px] font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/25 px-2.5 py-1 rounded-full font-mono">
+                      <span className="text-[10px] font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-700 border border-emerald-500/25 px-2.5 py-1 rounded-full font-mono">
                         Family Proxy
                       </span>
                     </div>
 
                     <div>
-                      <h3 className="text-xl font-bold text-slate-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors font-display">
+                      <h3 className="text-xl font-bold text-slate-900 group-hover:text-emerald-600 transition-colors font-display">
                         Family / Caregiver
                       </h3>
-                      <p className="text-xs text-slate-600 dark:text-slate-400 mt-1.5 leading-relaxed">
+                      <p className="text-xs text-slate-600 mt-1.5 leading-relaxed">
                         Monitor loved ones' daily dose schedules and safety statuses without intrusive clinical notes.
                       </p>
                     </div>
 
                     {/* Feature Checklist */}
-                    <div className="space-y-2.5 pt-3 border-t border-slate-100 dark:border-slate-800/80 text-xs text-slate-700 dark:text-slate-300">
+                    <div className="space-y-2.5 pt-3 border-t border-slate-100 text-xs text-slate-700">
                       <div className="flex items-center gap-2.5">
                         <CheckCircle2 className="w-4 h-4 text-emerald-500 flex-shrink-0" />
                         <span>Daily dosage timing & schedule</span>
@@ -636,7 +607,7 @@ export default function LoginPage() {
                   </div>
 
                   {/* Card Action Button */}
-                  <div className="mt-6 pt-3 border-t border-slate-100 dark:border-slate-800/80">
+                  <div className="mt-6 pt-3 border-t border-slate-100">
                     <div className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-semibold text-xs flex items-center justify-between shadow-md shadow-emerald-600/20 group-hover:shadow-lg group-hover:shadow-emerald-600/30 transition-all">
                       <span>Enter Caregiver Portal</span>
                       <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -651,7 +622,7 @@ export default function LoginPage() {
                     setAuthMode('login');
                     resetFormState();
                   }}
-                  className="group relative bg-white dark:bg-slate-900/90 backdrop-blur-xl rounded-3xl p-6 sm:p-7 flex flex-col justify-between border border-slate-200 dark:border-slate-800 hover:border-indigo-500/60 dark:hover:border-indigo-400/60 shadow-[0_10px_30px_-5px_rgba(0,0,0,0.05)] hover:shadow-[0_20px_40px_-10px_rgba(99,102,241,0.25)] hover:-translate-y-1.5 active:scale-[0.99] cursor-pointer transition-all duration-300"
+                  className="group relative bg-slate-50 backdrop-blur-xl rounded-3xl p-6 sm:p-7 flex flex-col justify-between border border-slate-200 hover:border-indigo-500/60 shadow-[0_10px_30px_-5px_rgba(0,0,0,0.05)] hover:shadow-[0_20px_40px_-10px_rgba(99,102,241,0.25)] hover:-translate-y-1.5 active:scale-[0.99] cursor-pointer transition-all duration-300"
                 >
                   {/* Glowing Top Accent Line */}
                   <div className="absolute top-0 left-6 right-6 h-1 bg-gradient-to-r from-blue-500 via-indigo-500 to-violet-600 rounded-b-full opacity-70 group-hover:opacity-100 transition-opacity" />
@@ -659,25 +630,25 @@ export default function LoginPage() {
                   <div className="space-y-5">
                     {/* Role Header with Squircle Icon & Badge */}
                     <div className="flex items-center justify-between">
-                      <div className="w-13 h-13 rounded-2xl bg-gradient-to-br from-blue-500/10 to-indigo-500/20 text-indigo-600 dark:text-indigo-400 border border-indigo-500/30 flex items-center justify-center group-hover:scale-105 group-hover:bg-gradient-to-tr group-hover:from-blue-600 group-hover:to-indigo-600 group-hover:text-white transition-all duration-300 shadow-sm">
+                      <div className="w-13 h-13 rounded-2xl bg-gradient-to-br from-blue-500/10 to-indigo-500/20 text-indigo-600 border border-indigo-500/30 flex items-center justify-center group-hover:scale-105 group-hover:bg-gradient-to-tr group-hover:from-blue-600 group-hover:to-indigo-600 group-hover:text-white transition-all duration-300 shadow-sm">
                         <Stethoscope className="w-6 h-6" />
                       </div>
-                      <span className="text-[10px] font-bold uppercase tracking-wider bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 border border-indigo-500/25 px-2.5 py-1 rounded-full font-mono">
+                      <span className="text-[10px] font-bold uppercase tracking-wider bg-indigo-500/10 text-indigo-700 border border-indigo-500/25 px-2.5 py-1 rounded-full font-mono">
                         Verified Clinician
                       </span>
                     </div>
 
                     <div>
-                      <h3 className="text-xl font-bold text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors font-display">
+                      <h3 className="text-xl font-bold text-slate-900 group-hover:text-indigo-600 transition-colors font-display">
                         Doctor / Clinician
                       </h3>
-                      <p className="text-xs text-slate-600 dark:text-slate-400 mt-1.5 leading-relaxed">
+                      <p className="text-xs text-slate-600 mt-1.5 leading-relaxed">
                         Longitudinal timelines, pre-prescribing safety simulations, and Beers deprescribing tools.
                       </p>
                     </div>
 
                     {/* Feature Checklist */}
-                    <div className="space-y-2.5 pt-3 border-t border-slate-100 dark:border-slate-800/80 text-xs text-slate-700 dark:text-slate-300">
+                    <div className="space-y-2.5 pt-3 border-t border-slate-100 text-xs text-slate-700">
                       <div className="flex items-center gap-2.5">
                         <CheckCircle2 className="w-4 h-4 text-indigo-500 flex-shrink-0" />
                         <span>Pre-prescribing risk simulator</span>
@@ -694,7 +665,7 @@ export default function LoginPage() {
                   </div>
 
                   {/* Card Action Button */}
-                  <div className="mt-6 pt-3 border-t border-slate-100 dark:border-slate-800/80">
+                  <div className="mt-6 pt-3 border-t border-slate-100">
                     <div className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-semibold text-xs flex items-center justify-between shadow-md shadow-indigo-600/20 group-hover:shadow-lg group-hover:shadow-indigo-600/30 transition-all">
                       <span>Enter Clinician Portal</span>
                       <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -711,29 +682,29 @@ export default function LoginPage() {
                   notify.info('Demo Sandbox Active', 'Exploring PolySafe with pre-loaded clinical sample data.');
                   navigate('/home', { replace: true });
                 }}
-                className="group relative p-5 sm:p-6 rounded-3xl bg-gradient-to-r from-slate-900 via-slate-800 to-indigo-950 text-white border border-slate-700/80 hover:border-amber-400/70 shadow-xl hover:shadow-[0_16px_36px_-6px_rgba(245,158,11,0.25)] hover:-translate-y-0.5 active:scale-[0.99] flex flex-col sm:flex-row sm:items-center justify-between gap-4 cursor-pointer transition-all duration-300"
+                className="group relative p-5 sm:p-6 rounded-3xl bg-gradient-to-r from-amber-50 via-orange-50 to-amber-50 border-2 border-amber-200/80 hover:border-amber-400 shadow-[0_4px_16px_-4px_rgba(245,158,11,0.15)] hover:shadow-[0_12px_32px_-6px_rgba(245,158,11,0.25)] hover:-translate-y-0.5 active:scale-[0.99] flex flex-col sm:flex-row sm:items-center justify-between gap-4 cursor-pointer transition-all duration-300"
               >
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-2xl bg-amber-500/20 border border-amber-500/40 text-amber-300 flex items-center justify-center flex-shrink-0 group-hover:scale-105 group-hover:bg-amber-500 group-hover:text-slate-950 transition-all duration-300 shadow-md">
+                  <div className="w-12 h-12 rounded-2xl bg-amber-100 border border-amber-300/80 text-amber-600 flex items-center justify-center flex-shrink-0 group-hover:scale-105 group-hover:bg-amber-500 group-hover:text-white transition-all duration-300 shadow-sm">
                     <Compass className="w-6 h-6" />
                   </div>
                   <div>
                     <div className="flex flex-wrap items-center gap-2">
-                      <h4 className="text-base font-bold text-white group-hover:text-amber-300 transition-colors font-display">
+                      <h4 className="text-base font-bold text-slate-800 group-hover:text-amber-700 transition-colors font-display">
                         Explore Live Without Registration
                       </h4>
-                      <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-amber-300 bg-amber-500/20 px-2.5 py-0.5 rounded-full border border-amber-500/40 font-mono">
+                      <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-amber-700 bg-amber-100 px-2.5 py-0.5 rounded-full border border-amber-300/80 font-mono">
                         <Sparkles className="w-3 h-3" />
                         Instant Sandbox
                       </span>
                     </div>
-                    <p className="text-xs text-slate-300 mt-1 leading-relaxed">
+                    <p className="text-xs text-slate-500 mt-1 leading-relaxed">
                       Test multi-drug interactions, cascade timelines, and 4-organ toxicity radar using pre-loaded geriatric polypharmacy profiles.
                     </p>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2 self-end sm:self-center px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 text-xs font-bold shadow-md shadow-amber-500/20 group-hover:shadow-lg transition-all flex-shrink-0">
+                <div className="flex items-center gap-2 self-end sm:self-center px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-white text-xs font-bold shadow-md shadow-amber-500/25 group-hover:shadow-lg transition-all flex-shrink-0">
                   <span>Launch Demo Sandbox</span>
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </div>
@@ -746,10 +717,10 @@ export default function LoginPage() {
               ROLE AUTH CARD (SIGN IN VS SIGN UP FORM MODAL VIEW)
           ══════════════════════════════════════════════════════════════════ */}
           {selectedRole && (
-            <div className="bg-white/95 dark:bg-slate-900/95 backdrop-blur-2xl border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-8 space-y-6 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.15)] dark:shadow-[0_20px_50px_-12px_rgba(0,0,0,0.6)]">
+            <div className="bg-slate-50/95 backdrop-blur-2xl border border-slate-200 rounded-3xl p-6 sm:p-8 space-y-6 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.12)]">
               
               {/* Card Header: Back button + Role pill */}
-              <div className="flex items-center justify-between pb-4 border-b border-slate-200 dark:border-slate-800">
+              <div className="flex items-center justify-between pb-4 border-b border-slate-200">
                 <button
                   type="button"
                   onClick={() => {
@@ -761,9 +732,9 @@ export default function LoginPage() {
                       resetFormState();
                     }
                   }}
-                  className="group text-xs font-bold text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-cyan-400 flex items-center space-x-2 transition-colors cursor-pointer font-mono"
+                  className="group text-xs font-bold text-slate-500 hover:text-blue-600 flex items-center space-x-2 transition-colors cursor-pointer font-mono"
                 >
-                  <div className="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center group-hover:bg-blue-500/10 transition-colors">
+                  <div className="w-7 h-7 rounded-lg bg-slate-100 flex items-center justify-center group-hover:bg-blue-500/10 transition-colors">
                     <ArrowLeft className="w-4 h-4" />
                   </div>
                   <span>{authMode === 'otp' ? 'Back to Form' : 'All Portals'}</span>
@@ -776,7 +747,7 @@ export default function LoginPage() {
 
               {/* Segmented Switcher: Sign In vs Sign Up */}
               {authMode !== 'otp' && (
-                <div className="flex items-center gap-1.5 p-1.5 bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/60 rounded-2xl w-full">
+                <div className="flex items-center gap-1.5 p-1.5 bg-slate-100 border border-slate-200 rounded-2xl w-full">
                   <button
                     type="button"
                     onClick={() => {
@@ -786,7 +757,7 @@ export default function LoginPage() {
                     className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                       authMode === 'login'
                         ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-sm'
-                        : 'bg-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                        : 'bg-transparent text-slate-600 hover:text-slate-900'
                     }`}
                   >
                     <LogIn className="w-4 h-4 flex-shrink-0" />
@@ -801,7 +772,7 @@ export default function LoginPage() {
                     className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                       authMode === 'signup'
                         ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-sm'
-                        : 'bg-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                        : 'bg-transparent text-slate-600 hover:text-slate-900'
                     }`}
                   >
                     <UserPlus className="w-4 h-4 flex-shrink-0" />
@@ -814,24 +785,24 @@ export default function LoginPage() {
               {authMode === 'login' && (
                 <form onSubmit={handleSignInSubmit} className="space-y-4">
                   <div className="space-y-1">
-                    <h2 className="text-2xl text-slate-900 dark:text-white font-bold font-display">
+                    <h2 className="text-2xl text-slate-900 font-bold font-display">
                       {roleLabels[selectedRole]?.title} Sign In
                     </h2>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 font-mono">
+                    <p className="text-xs text-slate-500 font-mono">
                       Enter your email and password to access your clinical dashboard.
                     </p>
                   </div>
 
                   {/* Lockout banner */}
                   {lockoutSecsLeft > 0 && (
-                    <div className="p-4 bg-amber-500/10 border-2 border-amber-500/40 rounded-2xl text-sm text-slate-900 dark:text-white space-y-1 shadow-sm font-mono">
-                      <div className="flex items-center gap-2 font-bold text-amber-700 dark:text-amber-400">
+                    <div className="p-4 bg-amber-500/10 border-2 border-amber-500/40 rounded-2xl text-sm text-slate-900 space-y-1 shadow-sm font-mono">
+                      <div className="flex items-center gap-2 font-bold text-amber-700">
                         <AlertCircle className="w-4 h-4 text-amber-500 flex-shrink-0" />
                         Account temporarily locked
                       </div>
-                      <p className="text-xs text-slate-700 dark:text-slate-300 pl-6">
+                      <p className="text-xs text-slate-700 pl-6">
                         Too many failed attempts. Try again in{' '}
-                        <strong className="font-bold font-mono text-slate-900 dark:text-white">
+                        <strong className="font-bold font-mono text-slate-900">
                           {lockoutSecsLeft} second{lockoutSecsLeft !== 1 ? 's' : ''}
                         </strong>.
                       </p>
@@ -840,7 +811,7 @@ export default function LoginPage() {
 
                   {/* Email Address */}
                   <div className="space-y-1">
-                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider font-mono">
+                    <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider font-mono">
                       Email Address
                     </label>
                     <PolySafeInput
@@ -864,7 +835,7 @@ export default function LoginPage() {
 
                   {/* Password */}
                   <div className="space-y-1">
-                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider font-mono">
+                    <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider font-mono">
                       Password
                     </label>
                     <PolySafeInput
@@ -893,9 +864,9 @@ export default function LoginPage() {
                         type="checkbox"
                         checked={remindMe}
                         onChange={(e) => { setRemindMe(e.target.checked); localStorage.setItem('polysafe_remind_me', String(e.target.checked)); }}
-                        className="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 border-slate-300 dark:border-slate-700 cursor-pointer"
+                        className="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 border-slate-300 cursor-pointer"
                       />
-                      <span className="font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">
+                      <span className="font-medium text-slate-600 hover:text-slate-900 transition-colors">
                         Remember email on this device
                       </span>
                     </label>
@@ -914,12 +885,12 @@ export default function LoginPage() {
                   </button>
 
                   {/* Switch to sign up */}
-                  <p className="text-center text-xs text-slate-500 dark:text-slate-400 font-mono pt-2">
+                  <p className="text-center text-xs text-slate-500 font-mono pt-2">
                     New to PolySafe?{' '}
                     <button
                       type="button"
                       onClick={() => { setAuthMode('signup'); setErrorMsg(null); }}
-                      className="font-bold text-blue-600 dark:text-cyan-400 hover:underline cursor-pointer"
+                      className="font-bold text-blue-600 hover:underline cursor-pointer"
                     >
                       Create a new account
                     </button>
@@ -931,17 +902,17 @@ export default function LoginPage() {
               {authMode === 'signup' && (
                 <form onSubmit={handleSignUpSubmit} className="space-y-4">
                   <div className="space-y-1">
-                    <h2 className="text-2xl text-slate-900 dark:text-white font-bold font-display">
+                    <h2 className="text-2xl text-slate-900 font-bold font-display">
                       Create {roleLabels[selectedRole]?.title} Account
                     </h2>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 font-mono">
+                    <p className="text-xs text-slate-500 font-mono">
                       A 6-digit verification code will be sent to your email to verify your identity.
                     </p>
                   </div>
 
                   {/* Full Name */}
                   <div className="space-y-1">
-                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider font-mono">
+                    <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider font-mono">
                       {selectedRole === 'DOCTOR' ? 'Physician Full Name' : 'Full Name'}
                     </label>
                     <PolySafeInput
@@ -966,7 +937,7 @@ export default function LoginPage() {
                   {/* Doctor Medical Registration Number */}
                   {selectedRole === 'DOCTOR' && (
                     <div className="space-y-1">
-                      <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider font-mono">
+                      <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider font-mono">
                         Medical Registration / License No.
                       </label>
                       <PolySafeInput
@@ -990,7 +961,7 @@ export default function LoginPage() {
 
                   {/* Email Address */}
                   <div className="space-y-1">
-                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider font-mono">
+                    <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider font-mono">
                       Email Address
                     </label>
                     <PolySafeInput
@@ -1013,7 +984,7 @@ export default function LoginPage() {
 
                   {/* Password */}
                   <div className="space-y-1">
-                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider font-mono">
+                    <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider font-mono">
                       Password (min. 8 characters)
                     </label>
                     <PolySafeInput
@@ -1034,25 +1005,25 @@ export default function LoginPage() {
                     )}
                     {/* Password strength meter */}
                     {password && (
-                      <div className="mt-2 space-y-1.5 p-3 bg-slate-100 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 rounded-xl text-xs">
+                      <div className="mt-2 space-y-1.5 p-3 bg-slate-100 border border-slate-200 rounded-xl text-xs">
                         <div className="flex items-center justify-between font-mono">
-                          <span className="text-slate-500 dark:text-slate-400">Password Strength:</span>
+                          <span className="text-slate-500">Password Strength:</span>
                           <span className="font-bold" style={{ color: passwordStrength.color }}>{passwordStrength.label}</span>
                         </div>
-                        <div className="h-1.5 w-full bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                        <div className="h-1.5 w-full bg-slate-200 rounded-full overflow-hidden">
                           <div
                             className="h-full rounded-full transition-all duration-300"
                             style={{ width: `${(passwordStrength.score / 3) * 100}%`, backgroundColor: passwordStrength.color }}
                           />
                         </div>
-                        <div className="grid grid-cols-2 gap-1 pt-1 text-[11px] text-slate-500 dark:text-slate-400 font-mono">
+                        <div className="grid grid-cols-2 gap-1 pt-1 text-[11px] text-slate-500 font-mono">
                           <div className="flex items-center gap-1">
                             {passwordStrength.hasLen ? <Check className="w-3 h-3 text-emerald-500" /> : <X className="w-3 h-3 text-slate-400" />}
-                            <span className={passwordStrength.hasLen ? 'text-slate-900 dark:text-white font-medium' : ''}>8+ characters</span>
+                            <span className={passwordStrength.hasLen ? 'text-slate-900 font-medium' : ''}>8+ characters</span>
                           </div>
                           <div className="flex items-center gap-1">
                             {passwordStrength.hasNum ? <Check className="w-3 h-3 text-emerald-500" /> : <X className="w-3 h-3 text-slate-400" />}
-                            <span className={passwordStrength.hasNum ? 'text-slate-900 dark:text-white font-medium' : ''}>Contains number</span>
+                            <span className={passwordStrength.hasNum ? 'text-slate-900 font-medium' : ''}>Contains number</span>
                           </div>
                         </div>
                       </div>
@@ -1066,9 +1037,9 @@ export default function LoginPage() {
                         type="checkbox"
                         checked={remindMe}
                         onChange={(e) => { setRemindMe(e.target.checked); localStorage.setItem('polysafe_remind_me', String(e.target.checked)); }}
-                        className="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 border-slate-300 dark:border-slate-700 cursor-pointer"
+                        className="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 border-slate-300 cursor-pointer"
                       />
-                      <span className="font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">
+                      <span className="font-medium text-slate-600 hover:text-slate-900 transition-colors">
                         Remember email on this device
                       </span>
                     </label>
@@ -1087,12 +1058,12 @@ export default function LoginPage() {
                   </button>
 
                   {/* Switch to sign in */}
-                  <p className="text-center text-xs text-slate-500 dark:text-slate-400 font-mono pt-2">
+                  <p className="text-center text-xs text-slate-500 font-mono pt-2">
                     Already have an account?{' '}
                     <button
                       type="button"
                       onClick={() => { setAuthMode('login'); setErrorMsg(null); }}
-                      className="font-bold text-blue-600 dark:text-cyan-400 hover:underline cursor-pointer"
+                      className="font-bold text-blue-600 hover:underline cursor-pointer"
                     >
                       Sign in with password
                     </button>
@@ -1105,22 +1076,22 @@ export default function LoginPage() {
                 <form onSubmit={handleVerifyOtp} className="space-y-5">
                   <div className="space-y-2">
                     <div className="flex items-center gap-2.5">
-                      <div className="p-2.5 rounded-xl bg-blue-500/10 text-blue-600 dark:text-cyan-400 border border-blue-500/20 shadow-xs">
+                      <div className="p-2.5 rounded-xl bg-blue-500/10 text-blue-600 border border-blue-500/20 shadow-xs">
                         <KeyRound className="w-5 h-5" />
                       </div>
-                      <h2 className="text-2xl text-slate-900 dark:text-white font-bold font-display">
+                      <h2 className="text-2xl text-slate-900 font-bold font-display">
                         Verify Your Email
                       </h2>
                     </div>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 font-mono">
-                      Enter the 6-digit code sent to <strong className="text-slate-900 dark:text-white">{email}</strong>.
+                    <p className="text-xs text-slate-500 font-mono">
+                      Enter the 6-digit code sent to <strong className="text-slate-900">{email}</strong>.
                     </p>
                   </div>
 
                   {/* Dev OTP quick fill helper in dev mode */}
                   {devOtpHint && (
-                    <div className="p-3 bg-slate-100 dark:bg-slate-800/80 border border-blue-500/40 rounded-xl flex items-center justify-between text-xs font-mono">
-                      <span className="text-slate-600 dark:text-slate-400">Dev Code: <strong className="text-blue-600 dark:text-cyan-400 font-bold">{devOtpHint}</strong></span>
+                    <div className="p-3 bg-slate-100 border border-blue-500/40 rounded-xl flex items-center justify-between text-xs font-mono">
+                      <span className="text-slate-600">Dev Code: <strong className="text-blue-600 font-bold">{devOtpHint}</strong></span>
                       <button
                         type="button"
                         onClick={() => {
@@ -1150,8 +1121,8 @@ export default function LoginPage() {
                         style={{ width: '48px', height: '56px' }}
                         className={`text-center font-mono text-xl font-bold rounded-xl border ${
                           errorMsg 
-                            ? 'border-rose-500 bg-rose-50/50 dark:bg-rose-950/30 text-rose-600' 
-                            : 'border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:border-blue-500 dark:focus:border-cyan-400 focus:ring-2 focus:ring-blue-500/20'
+                            ? 'border-rose-500 bg-rose-50/50 text-rose-600' 
+                            : 'border-slate-300 bg-slate-50 text-slate-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20'
                         } outline-none transition-all shadow-inner`}
                         autoFocus={index === 0}
                       />
@@ -1175,21 +1146,21 @@ export default function LoginPage() {
                       <button
                         type="button"
                         onClick={() => { setAuthMode('signup'); setOtp(['', '', '', '', '', '']); setErrorMsg(null); }}
-                        className="font-bold text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-cyan-400 cursor-pointer"
+                        className="font-bold text-slate-500 hover:text-blue-600 cursor-pointer"
                       >
                         Edit Info
                       </button>
 
                       {countdown > 0 ? (
-                        <span className="text-slate-500 dark:text-slate-400 font-medium">
-                          Resend in <strong className="text-slate-900 dark:text-white">0:{countdown < 10 ? `0${countdown}` : countdown}</strong>
+                        <span className="text-slate-500 font-medium">
+                          Resend in <strong className="text-slate-900">0:{countdown < 10 ? `0${countdown}` : countdown}</strong>
                         </span>
                       ) : (
                         <button
                           type="button"
                           onClick={handleResendOtp}
                           disabled={signupSendOtpMutation.isPending}
-                          className="font-bold text-blue-600 dark:text-cyan-400 hover:underline flex items-center space-x-1 cursor-pointer"
+                          className="font-bold text-blue-600 hover:underline flex items-center space-x-1 cursor-pointer"
                         >
                           <RefreshCw className="w-3.5 h-3.5" /><span>Resend Code</span>
                         </button>
@@ -1205,13 +1176,14 @@ export default function LoginPage() {
       </main>
 
       {/* ── Footer ── */}
-      <footer className="relative w-full max-w-6xl mx-auto px-4 sm:px-6 py-4 text-center text-xs text-slate-500 dark:text-slate-500 border-t border-slate-200/60 dark:border-slate-800/60 font-mono z-20">
+      <footer className="relative w-full max-w-6xl mx-auto px-4 sm:px-6 py-4 text-center text-xs text-slate-500 border-t border-slate-200/60 font-mono z-20">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-2">
           <span>&copy; {new Date().getFullYear()} PolySafe AI &middot; Clinical Polypharmacy Intelligence Platform</span>
-          <span className="text-[11px] text-slate-400 dark:text-slate-600">Zero-Trust Protected &middot; HIPAA &amp; ISO-27001 Clinical Guidelines</span>
+          <span className="text-[11px] text-slate-400">Zero-Trust Protected &middot; HIPAA &amp; ISO-27001 Clinical Guidelines</span>
         </div>
       </footer>
 
     </PageTransition>
   );
 }
+

@@ -14,13 +14,16 @@ const router = express.Router();
 
 const { calculateCumulativeBurden } = require('../services/burdenIndex');
 const { generateExplanation } = require('../services/explanationGenerator');
-const { BRAND_ALIASES, resolveDrugCandidates, getRxCuiForDrug } = require('../services/drugAliases');
+const { BRAND_ALIASES, resolveDrugCandidates, getRxCuiForDrug, getDrugPurpose } = require('../services/drugAliases');
+const { INDIAN_DRUGS } = require('../../data/indianDrugs');
 
 // ─── Zod schema ──────────────────────────────────────────────────────────────
 const medicineSchema = z.object({
   name: z.string().trim().min(1, 'Medicine name is required'),
   type: z.enum(['PRESCRIPTION', 'OTC', 'HERBAL']),
   dosage: z.string().trim().optional(),
+  purpose: z.string().trim().optional(),
+  notes: z.string().trim().optional(),
 });
 
 function validate(schema, body, res) {
@@ -109,7 +112,7 @@ router.post('/', auth, requireRole(['PATIENT', 'CAREGIVER']), async (req, res) =
   const data = validate(medicineSchema, req.body, res);
   if (!data) return;
 
-  const { name, type, dosage } = data;
+  const { name, type, dosage, purpose, notes } = data;
   const { userId } = req.user;
 
   // grab io so we can emit after the HTTP response is sent
@@ -163,6 +166,7 @@ router.post('/', auth, requireRole(['PATIENT', 'CAREGIVER']), async (req, res) =
           data: {
             dosage: dosage?.trim() ?? existing.dosage,
             type: type ?? existing.type,
+            purpose: purpose?.trim() ?? existing.purpose,
             harmLevel,
           },
         });
@@ -174,6 +178,7 @@ router.post('/', auth, requireRole(['PATIENT', 'CAREGIVER']), async (req, res) =
             name:             updated.name,
             type:             updated.type,
             dosage:           updated.dosage,
+            purpose:          updated.purpose || null,
             harmLevel:        updated.harmLevel,
             standardizedCode: updated.standardizedCode,
             standardized:     !!updated.standardizedCode,
@@ -211,6 +216,8 @@ router.post('/', auth, requireRole(['PATIENT', 'CAREGIVER']), async (req, res) =
         standardizedCode: standardizedCode ?? null,
         type,
         dosage:           dosage?.trim() ?? (resolved.dosageOptions?.[0] || null),
+        purpose:          purpose?.trim() || null,
+        notes:            notes?.trim() || null,
         harmLevel,
         addedBy:          userId,
         dateAdded:        new Date(),
@@ -225,6 +232,7 @@ router.post('/', auth, requireRole(['PATIENT', 'CAREGIVER']), async (req, res) =
         name:             medicine.name,
         type:             medicine.type,
         dosage:           medicine.dosage,
+        purpose:          medicine.purpose || purpose?.trim() || null,
         harmLevel:        medicine.harmLevel,
         standardizedCode: medicine.standardizedCode,
         standardized:     !!medicine.standardizedCode,
@@ -855,7 +863,14 @@ router.get('/search', auth, async (req, res) => {
 
   // ── 1. Local brand alias dictionary (instant, no network) ─────────────────
   for (const [key, val] of Object.entries(BRAND_ALIASES)) {
-    if (key.includes(qLower) || val.display.toLowerCase().includes(qLower) || val.generic.toLowerCase().includes(qLower)) {
+    const aliasPurpose = val.purpose || getDrugPurpose(val.display, val.generic, val.category);
+    const matches = key.includes(qLower) ||
+      val.display.toLowerCase().includes(qLower) ||
+      val.generic.toLowerCase().includes(qLower) ||
+      (val.category && val.category.toLowerCase().includes(qLower)) ||
+      aliasPurpose.toLowerCase().includes(qLower);
+
+    if (matches) {
       const id = val.display.toLowerCase();
       if (!seen.has(id)) {
         seen.add(id);
@@ -864,6 +879,7 @@ router.get('/search', auth, async (req, res) => {
           generic: val.generic,
           rxcui: val.rxcui,
           dosage: val.dosage,
+          purpose: aliasPurpose,
           category: val.category || null,
           safetyTip: val.safetyTip || null,
           dosageOptions: val.dosageOptions || [],
@@ -875,7 +891,40 @@ router.get('/search', auth, async (req, res) => {
     }
   }
 
-  // ── 2. Local DDInter database matches ────────────────────────────────────
+  // ── 2. Comprehensive Indian Formulary Dictionary matches ───────────────────
+  if (Array.isArray(INDIAN_DRUGS) && suggestions.length < 12) {
+    for (const drug of INDIAN_DRUGS) {
+      if (suggestions.length >= 12) break;
+      const bLower = (drug.brandName || '').toLowerCase();
+      const salts = Array.isArray(drug.genericSalts) ? drug.genericSalts.join(' + ') : (drug.genericSalts || '');
+      const saltsLower = salts.toLowerCase();
+      const cLower = (drug.class || '').toLowerCase();
+      const purpose = getDrugPurpose(drug.brandName, salts, drug.class);
+      const pLower = purpose.toLowerCase();
+
+      if (bLower.includes(qLower) || saltsLower.includes(qLower) || pLower.includes(qLower) || cLower.includes(qLower)) {
+        const id = drug.brandName.toLowerCase();
+        if (!seen.has(id)) {
+          seen.add(id);
+          suggestions.push({
+            name: drug.brandName,
+            generic: salts,
+            rxcui: null,
+            dosage: drug.dosageOptions?.[0] || null,
+            purpose,
+            category: drug.class || 'Indian Formulary',
+            safetyTip: drug.safetyTip || 'Take as advised by your physician.',
+            dosageOptions: drug.dosageOptions || [],
+            commonFrequency: 'once',
+            foodInstruction: drug.foodInstruction || 'after_food',
+            source: 'indian-formulary',
+          });
+        }
+      }
+    }
+  }
+
+  // ── 3. Local DDInter database matches ────────────────────────────────────
   try {
     const dbMatches = await prisma.drugInteractionReference.findMany({
       where: {
@@ -899,6 +948,7 @@ router.get('/search', auth, async (req, res) => {
               generic: drugName,
               rxcui: null,
               dosage: null,
+              purpose: getDrugPurpose(drugName),
               category: 'Clinical Database',
               safetyTip: 'Refer to physician instructions for individualized dosing.',
               dosageOptions: [],
@@ -914,7 +964,7 @@ router.get('/search', auth, async (req, res) => {
     console.warn('[search] DDInter lookup error:', dbErr.message);
   }
 
-  // ── 3. RxNorm Suggest API (live network — only if we need more results) ──
+  // ── 4. RxNorm Suggest API (live network — only if we need more results) ──
   if (suggestions.length < 8 && !isDemoMode()) {
     try {
       const rxUrl = `https://rxnav.nlm.nih.gov/REST/spellingsuggestions.json?name=${encodeURIComponent(query)}`;
@@ -930,6 +980,7 @@ router.get('/search', auth, async (req, res) => {
             generic: sug,
             rxcui: null,
             dosage: null,
+            purpose: getDrugPurpose(sug),
             category: 'RxNorm Drug Entry',
             safetyTip: 'Standardized formulary entry.',
             dosageOptions: [],
@@ -961,6 +1012,7 @@ router.get('/search', auth, async (req, res) => {
                 generic: displayName,
                 rxcui: c.rxcui,
                 dosage: null,
+                purpose: getDrugPurpose(displayName),
                 category: 'RxNorm Verified',
                 safetyTip: 'Standardized formulary entry with RxCUI code.',
                 dosageOptions: [],
@@ -977,7 +1029,7 @@ router.get('/search', auth, async (req, res) => {
     }
   }
 
-  // ── 4. AI Drug Resolver Fallback: If we still have few results, call the
+  // ── 5. AI Drug Resolver Fallback: If we still have few results, call the
   //    AI resolver directly on the typed query for any medicine in the world ──
   if (suggestions.length < 4 && !isDemoMode()) {
     try {
@@ -991,6 +1043,7 @@ router.get('/search', auth, async (req, res) => {
             generic:         aiResult.standardGeneric || aiResult.brandName,
             rxcui:           aiResult.primaryRxCui || null,
             dosage:          aiResult.dosage || 'As prescribed',
+            purpose:         getDrugPurpose(aiResult.brandName, aiResult.standardGeneric, aiResult.category),
             category:        aiResult.category || 'Prescription Medicine',
             safetyTip:       aiResult.safetyTip || 'Take as directed by your physician.',
             dosageOptions:   aiResult.dosageOptions || [],

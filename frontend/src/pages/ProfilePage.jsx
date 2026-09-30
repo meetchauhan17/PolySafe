@@ -14,9 +14,10 @@ import axios from 'axios';
 import {
   ArrowLeft, User, Edit3, Lock, Mail, Activity, AlertCircle, Loader2, Info,
   CheckCircle2, ShieldCheck, HeartHandshake, Stethoscope, Phone, Building2,
-  FileBadge, Bell, Users, Shield, Save, X
+  FileBadge, Bell, Users, Shield, Save, X, Zap
 } from 'lucide-react';
 import Card from '../components/Card';
+import BackButton from '../components/BackButton';
 import { notify } from '../utils/toast';
 import { useAuth } from '../context/AuthContext';
 import PolySafeInput from '../components/PolySafeInput';
@@ -178,42 +179,61 @@ export default function ProfilePage() {
   const cfg = roleConfigs[currentRole] || roleConfigs.PATIENT;
   const RoleIcon = cfg.icon;
 
-  return (
-    <div className="min-h-[88vh] bg-[var(--chassis)] pb-12">
-      <div className="max-w-2xl mx-auto px-4 py-8 space-y-6">
+  const backLabel = currentRole === 'DOCTOR' ? 'Back to Dashboard' : currentRole === 'CAREGIVER' ? 'Back to Portal' : 'Back to Home';
 
-        {/* ── Page Header ─────────────────────────────────────────────── */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <button
-              onClick={() => navigate(getBackPath())}
-              className="btn-secondary p-2.5 rounded-2xl cursor-pointer"
-              title="Go back"
-            >
-              <ArrowLeft className="w-4 h-4" />
-            </button>
-            <div>
+  return (
+    <div className="min-h-[88vh] pb-12">
+      <div className="max-w-3xl mx-auto px-4 py-8 space-y-6">
+
+        {/* ── Modern Hero Header matching LoginPage aesthetic ── */}
+        <div className="relative overflow-hidden rounded-3xl p-6 md:p-8 bg-gradient-to-br from-white/95 via-blue-50/40 to-indigo-50/30 border border-slate-200/80 shadow-[0_12px_40px_-8px_rgba(0,0,0,0.06)] backdrop-blur-xl">
+          {/* Top luminous accent bar */}
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-500" />
+
+          <div className="relative z-10 space-y-4">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <BackButton to={getBackPath()} label={backLabel} />
+
               <div className="flex items-center gap-2">
-                <h1 className="text-xl font-bold text-[var(--text-primary)] font-display">
-                  {cfg.title}
-                </h1>
-                <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-full border border-current ${cfg.accentBg}`}>
-                  {cfg.badge}
-                </span>
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-blue-500/10 text-blue-800 border border-blue-500/20">
+                  <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
+                  <span>Account & Clinical Vault</span>
+                  <span className="text-blue-400">·</span>
+                  <span className="font-mono text-[11px] text-blue-600">{cfg.badge}</span>
+                </div>
+                <button
+                  onClick={() => {
+                    setEditing(!editing);
+                    setErrorMsg(null);
+                  }}
+                  className="btn-primary py-2 px-4 text-xs font-mono font-bold uppercase tracking-wider flex items-center gap-2 shadow-sm shadow-cyan-900/20 cursor-pointer"
+                >
+                  <Edit3 className="w-4 h-4" />
+                  <span>{editing ? 'Cancel Editing' : 'Edit Profile'}</span>
+                </button>
               </div>
-              <p className="text-xs text-[var(--text-muted)] font-mono mt-0.5">{cfg.subtitle}</p>
+            </div>
+
+            <div className="space-y-2">
+              <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight font-display">
+                {cfg.title.split(' ')[0]} <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-500 bg-clip-text text-transparent">{cfg.title.split(' ').slice(1).join(' ')}</span>
+              </h1>
+              <p className="text-sm text-slate-600 max-w-xl leading-relaxed">
+                {cfg.subtitle}
+              </p>
+
+              <div className="flex flex-wrap items-center gap-2 pt-1">
+                <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white/80 border border-slate-200/80 shadow-xs text-xs font-medium text-slate-700">
+                  <ShieldCheck className="w-3.5 h-3.5 text-blue-600" />
+                  <span>256-Bit Encrypted Vault</span>
+                </div>
+                <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white/80 border border-slate-200/80 shadow-xs text-xs font-medium text-slate-700">
+                  <Activity className="w-3.5 h-3.5 text-indigo-600" />
+                  <span>Real-Time Audit</span>
+                </div>
+              </div>
             </div>
           </div>
-
-          {!editing && (
-            <button
-              onClick={() => setEditing(true)}
-              className="btn-primary py-2 px-3.5 text-xs font-mono font-bold flex items-center gap-1.5 cursor-pointer"
-            >
-              <Edit3 className="w-3.5 h-3.5" />
-              <span>Edit Profile</span>
-            </button>
-          )}
         </div>
 
         {/* ── Global Error Banner ───────────────────────────────────────── */}

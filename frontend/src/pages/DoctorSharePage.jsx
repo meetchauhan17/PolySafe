@@ -15,6 +15,7 @@ import {
  Stethoscope, ShieldCheck, AlertCircle, Loader2, Info, Users, Lock,
 } from 'lucide-react';
 import Card from '../components/Card';
+import BackButton from '../components/BackButton';
 import { Skeleton } from '../components/Skeletons';
 import { notify } from '../utils/toast';
 import { useAuth } from '../context/AuthContext';
@@ -151,21 +152,16 @@ export default function DoctorSharePage() {
  <div className="min-h-[88vh] bg-[var(--chassis)] pb-16">
  <div className="max-w-lg mx-auto px-4 py-8 space-y-6">
 
- {/* Header */}
- <div className="flex items-center space-x-3">
- <button
- onClick={() => navigate('/home')}
- className="btn-secondary p-2.5 rounded-2xl"
- >
- <ArrowLeft className="w-4 h-4" />
- </button>
- <div className="flex-1">
- <h1 className="text-2xl font-bold text-[var(--text-primary)]" >
- Share with Your Doctor
- </h1>
- <p className="text-xs text-[var(--text-muted)]">Give your doctor read-only access to your medications and risk flags</p>
- </div>
- </div>
+        {/* Header */}
+        <div className="flex items-center gap-3.5">
+          <BackButton to="/home" label="Back to Home" />
+          <div className="flex-1 min-w-0">
+            <h1 className="text-xl md:text-2xl font-bold text-[var(--text-primary)] font-display tracking-tight">
+              Share with Your Doctor
+            </h1>
+            <p className="text-xs text-[var(--text-muted)] mt-0.5">Give your doctor read-only access to your medications and risk flags</p>
+          </div>
+        </div>
 
  {/* Explainer notice */}
  <div className="flex items-start space-x-3 p-3.5 bg-[var(--accent-primary)]/10 border border-[var(--accent-primary)]/20 rounded-xl text-xs text-[var(--accent-primary)]">

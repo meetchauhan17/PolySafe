@@ -17,9 +17,10 @@ import {
   ArrowLeft, Stethoscope, Heart, Trash2, Loader2, AlertCircle,
   CheckCircle2, Clock, XCircle, Plus, QrCode, Phone, Mail,
   ShieldCheck, Info, ChevronRight, Copy, Check, PenLine,
-  KeyRound, RefreshCw, Lock
+  KeyRound, RefreshCw, Lock, Activity, Zap, Shield
 } from 'lucide-react';
 import Card from '../components/Card';
+import BackButton from '../components/BackButton';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { EmptyDoctorsIllustration, EmptyCaregiversIllustration } from '../components/EmptyIllustrations';
 import { Skeleton } from '../components/Skeletons';
@@ -84,23 +85,23 @@ const addCaregiver = (phone) =>
 const STATUS_CFG = {
   PENDING: {
     label: 'Awaiting Claim',
-    cls: 'bg-amber-500/15 text-amber-900 dark:text-amber-300 border-amber-500/30',
-    icon: <Clock className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400 animate-pulse" />
+    cls: 'bg-amber-500/15 text-amber-900  border-amber-500/30',
+    icon: <Clock className="w-3.5 h-3.5 text-amber-600  animate-pulse" />
   },
   CLAIMED: {
     label: 'Pending Your Approval',
-    cls: 'bg-teal-500/15 text-teal-900 dark:text-teal-300 border-teal-500/40 animate-pulse',
-    icon: <Stethoscope className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
+    cls: 'bg-teal-500/15 text-teal-900  border-teal-500/40 animate-pulse',
+    icon: <Stethoscope className="w-3.5 h-3.5 text-teal-600 " />
   },
   APPROVED: {
     label: 'Active & Verified',
-    cls: 'bg-emerald-500/15 text-emerald-900 dark:text-emerald-300 border-emerald-500/30',
-    icon: <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+    cls: 'bg-emerald-500/15 text-emerald-900  border-emerald-500/30',
+    icon: <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 " />
   },
   REVOKED: {
     label: 'Access Revoked',
-    cls: 'bg-rose-500/15 text-rose-900 dark:text-rose-300 border-rose-500/30',
-    icon: <XCircle className="w-3.5 h-3.5 text-rose-600 dark:text-rose-400" />
+    cls: 'bg-rose-500/15 text-rose-900  border-rose-500/30',
+    icon: <XCircle className="w-3.5 h-3.5 text-rose-600 " />
   },
 };
 
@@ -145,12 +146,12 @@ function ConnectionRow({ conn, onRevoke, revoking, onApprove, approving, customL
     <div
       className={`rounded-3xl p-5 sm:p-6 space-y-4 transition-all duration-200 border ${
         isClaimedPending
-          ? 'bg-teal-50/20 dark:bg-teal-950/15 border-teal-500/50 shadow-[0_6px_24px_rgba(13,148,136,0.12),-2px_-2px_12px_rgba(255,255,255,0.9)]'
+          ? 'bg-teal-50/20  border-teal-500/50 shadow-[0_6px_24px_rgba(13,148,136,0.12),-2px_-2px_12px_rgba(255,255,255,0.9)]'
           : isPending
           ? 'bg-[var(--chassis)] border-amber-400/50 shadow-[0_6px_24px_rgba(245,158,11,0.08),-2px_-2px_12px_rgba(255,255,255,0.9)]'
           : isRevoked
-          ? 'bg-[var(--chassis)]/60 opacity-60 border-[var(--chassis-dark)]'
-          : 'bg-[var(--chassis)] border-[rgba(255,255,255,0.7)] dark:border-white/10 shadow-[0_6px_24px_rgba(0,0,0,0.05),-2px_-2px_12px_rgba(255,255,255,0.9)] hover:shadow-[0_10px_32px_rgba(0,0,0,0.08)]'
+          ? 'bg-slate-100 opacity-60 border-slate-300'
+          : 'bg-[var(--brand-surface)] border-slate-200/80 shadow-[0_6px_24px_rgba(0,0,0,0.04)] hover:shadow-[0_10px_32px_rgba(0,0,0,0.07)]'
       }`}
     >
       {/* ── Top Row: Avatar + Title/Note + Status Pill ── */}
@@ -215,7 +216,7 @@ function ConnectionRow({ conn, onRevoke, revoking, onApprove, approving, customL
                     type="button"
                     onClick={() => setIsEditing(true)}
                     title="Edit custom note or label"
-                    className="p-1 text-[var(--text-muted)] hover:text-[var(--accent-primary)] rounded-lg hover:bg-black/5 dark:hover:bg-white/5 transition-colors cursor-pointer"
+                    className="p-1 text-[var(--text-muted)] hover:text-[var(--accent-primary)] rounded-lg hover:bg-black/5  transition-colors cursor-pointer"
                   >
                     <PenLine className="w-3.5 h-3.5" />
                   </button>
@@ -253,7 +254,7 @@ function ConnectionRow({ conn, onRevoke, revoking, onApprove, approving, customL
 
       {/* ── Case A: Doctor HAS CLAIMED this code → Instant Approve Banner ── */}
       {isClaimedPending ? (
-        <div className="p-4 rounded-2xl bg-teal-500/10 dark:bg-teal-950/30 border border-teal-500/40 shadow-xs space-y-3 animate-fadeIn">
+        <div className="p-4 rounded-2xl bg-teal-500/10  border border-teal-500/40 shadow-xs space-y-3 animate-fadeIn">
           <div className="flex items-center gap-2.5">
             <div className="p-2 bg-teal-500 text-white rounded-xl shadow-xs flex-shrink-0">
               <Stethoscope className="w-4 h-4" />
@@ -293,13 +294,13 @@ function ConnectionRow({ conn, onRevoke, revoking, onApprove, approving, customL
         /* ── Case B: Code is NOT yet claimed → Show 6-Digit PIN Capsule ── */
         <div className="p-4 rounded-2xl bg-gradient-to-r from-amber-500/10 via-amber-500/5 to-teal-500/10 border border-amber-400/40 shadow-xs space-y-3">
           <div className="flex items-center justify-between gap-2 flex-wrap">
-            <div className="flex items-center gap-2 text-xs font-extrabold text-amber-900 dark:text-amber-200">
-              <KeyRound className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+            <div className="flex items-center gap-2 text-xs font-extrabold text-amber-900 ">
+              <KeyRound className="w-4 h-4 text-amber-600 " />
               <span>{isDoctor ? 'Doctor 6-Digit Access PIN' : 'Caregiver 6-Digit Access PIN'}</span>
             </div>
 
             {conn.expiresAt && (
-              <span className="text-[11px] font-mono text-[var(--text-muted)] font-bold bg-white/70 dark:bg-black/40 px-2.5 py-0.5 rounded-full border border-black/5 dark:border-white/10">
+              <span className="text-[11px] font-mono text-[var(--text-muted)] font-bold bg-slate-50 px-2.5 py-0.5 rounded-full border border-slate-200/70">
                 ⏳ Expires: {new Date(conn.expiresAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
               </span>
             )}
@@ -311,7 +312,7 @@ function ConnectionRow({ conn, onRevoke, revoking, onApprove, approving, customL
               {conn.shareCode.split('').map((digit, idx) => (
                 <span
                   key={idx}
-                  className="w-8 h-10 sm:w-10 sm:h-12 rounded-xl bg-[var(--chassis-panel)] border border-[rgba(255,255,255,0.8)] dark:border-white/15 shadow-sm flex items-center justify-center font-mono font-black text-base sm:text-xl text-[var(--accent-primary)] transition-transform hover:scale-105"
+                  className="w-8 h-10 sm:w-10 sm:h-12 rounded-xl bg-[var(--chassis-panel)] border border-[rgba(255,255,255,0.8)]  shadow-sm flex items-center justify-center font-mono font-black text-base sm:text-xl text-[var(--accent-primary)] transition-transform hover:scale-105"
                 >
                   {digit}
                 </span>
@@ -331,7 +332,7 @@ function ConnectionRow({ conn, onRevoke, revoking, onApprove, approving, customL
 
               <Link
                 to="/share-with-doctor"
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-[var(--chassis)] hover:bg-[var(--chassis-dark)] text-[var(--text-primary)] border border-[rgba(255,255,255,0.7)] dark:border-white/10 shadow-xs transition-all active:scale-95"
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-[var(--chassis)] hover:bg-[var(--chassis-dark)] text-[var(--text-primary)] border border-[rgba(255,255,255,0.7)]  shadow-xs transition-all active:scale-95"
               >
                 <QrCode className="w-3.5 h-3.5 text-[var(--accent-primary)]" />
                 <span>Show QR</span>
@@ -342,7 +343,7 @@ function ConnectionRow({ conn, onRevoke, revoking, onApprove, approving, customL
       ) : null}
 
       {/* ── Footer Row: Security Metadata + Cancel / Revoke Action ── */}
-      <div className="pt-2 border-t border-[rgba(255,255,255,0.4)] dark:border-white/10 flex items-center justify-between gap-3">
+      <div className="pt-2 border-t border-[rgba(255,255,255,0.4)]  flex items-center justify-between gap-3">
         <div className="flex items-center gap-1.5 text-[11px] font-mono text-[var(--text-muted)]">
           <Lock className="w-3 h-3 text-[var(--accent-primary)]" />
           <span>{isPending ? 'Single-use physician authorization' : 'HIPAA compliant read-only link'}</span>
@@ -499,7 +500,7 @@ function AddCaregiverPanel({ onSuccess }) {
       className="space-y-4"
     >
       {/* Method Selection Tabs */}
-      <div className="flex rounded-xl bg-[var(--chassis)] p-1 border border-[rgba(255,255,255,0.4)] dark:border-white/5 gap-1">
+      <div className="flex rounded-xl bg-[var(--chassis)] p-1 border border-[rgba(255,255,255,0.4)]  gap-1">
         <button
           type="button"
           onClick={() => { setInviteMethod('PHONE'); setError(''); }}
@@ -541,7 +542,7 @@ function AddCaregiverPanel({ onSuccess }) {
       </div>
 
       {error && (
-        <div className="flex items-center gap-2 p-3 bg-rose-50 dark:bg-rose-950/20 border border-rose-300 dark:border-rose-800 rounded-xl text-xs text-rose-700 dark:text-rose-300">
+        <div className="flex items-center gap-2 p-3 bg-rose-50  border border-rose-300  rounded-xl text-xs text-rose-700 ">
           <AlertCircle className="w-3.5 h-3.5 text-rose-500 flex-shrink-0" />
           <span>{error}</span>
         </div>
@@ -549,13 +550,13 @@ function AddCaregiverPanel({ onSuccess }) {
 
       {/* ── Case 1: Post-invite Card (WhatsApp / Copy) ─────────────────────── */}
       {invitedData ? (
-        <div className="p-4 sm:p-5 rounded-2xl bg-emerald-50/50 dark:bg-emerald-950/20 border border-emerald-500/30 space-y-3.5 animate-fadeIn">
-          <div className="flex items-center gap-2 text-emerald-800 dark:text-emerald-300 font-bold text-sm">
-            <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+        <div className="p-4 sm:p-5 rounded-2xl bg-emerald-50/50  border border-emerald-500/30 space-y-3.5 animate-fadeIn">
+          <div className="flex items-center gap-2 text-emerald-800  font-bold text-sm">
+            <CheckCircle2 className="w-4 h-4 text-emerald-600 " />
             <span>Invite Created for {invitedData.name ? `${invitedData.name} (${invitedData.relation})` : (invitedData.phone || invitedData.email)}</span>
           </div>
 
-          <div className="p-3 rounded-xl bg-[var(--chassis)] border border-[rgba(255,255,255,0.4)] dark:border-white/5 space-y-1.5">
+          <div className="p-3 rounded-xl bg-[var(--chassis)] border border-[rgba(255,255,255,0.4)]  space-y-1.5">
             <p className="text-[10px] font-mono uppercase tracking-wider text-[var(--text-muted)] font-bold">
               Ready-to-send Invite Message:
             </p>
@@ -630,10 +631,10 @@ function AddCaregiverPanel({ onSuccess }) {
           </div>
 
           {generatedPinData ? (
-            <div className="p-4 sm:p-5 rounded-2xl bg-amber-50/50 dark:bg-amber-950/20 border border-amber-400/40 space-y-4 animate-fadeIn">
+            <div className="p-4 sm:p-5 rounded-2xl bg-amber-50/50  border border-amber-400/40 space-y-4 animate-fadeIn">
               <div className="flex items-center justify-between gap-2 flex-wrap">
-                <span className="text-xs font-bold text-amber-900 dark:text-amber-300 flex items-center gap-1.5">
-                  <KeyRound className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+                <span className="text-xs font-bold text-amber-900  flex items-center gap-1.5">
+                  <KeyRound className="w-4 h-4 text-amber-600 " />
                   Caregiver Access PIN & QR (Valid 24 Hours)
                 </span>
                 <span className="text-[10px] font-mono text-[var(--text-muted)]">
@@ -642,10 +643,10 @@ function AddCaregiverPanel({ onSuccess }) {
               </div>
 
               {/* QR Code and 6-Digit PIN Side-by-Side Layout */}
-              <div className="flex flex-col sm:flex-row items-center gap-4 bg-[var(--chassis)] p-4 rounded-xl border border-[rgba(255,255,255,0.4)] dark:border-white/5 shadow-xs">
+              <div className="flex flex-col sm:flex-row items-center gap-4 bg-[var(--chassis)] p-4 rounded-xl border border-[rgba(255,255,255,0.4)]  shadow-xs">
                 {/* QR Code Image */}
                 {generatedPinData.qrCode && (
-                  <div className="p-2 bg-white rounded-xl shadow-xs border border-teal-500/30 flex-shrink-0">
+                  <div className="p-2 bg-slate-50 rounded-xl shadow-xs border border-teal-500/30 flex-shrink-0">
                     <img
                       src={generatedPinData.qrCode}
                       alt="Caregiver Quick Scan QR"
@@ -664,7 +665,7 @@ function AddCaregiverPanel({ onSuccess }) {
                     {generatedPinData.shareCode.split('').map((digit, idx) => (
                       <span
                         key={idx}
-                        className="w-8 h-10 sm:w-9 sm:h-11 rounded-xl bg-[var(--chassis-panel)] border border-[rgba(255,255,255,0.6)] dark:border-white/10 shadow-xs flex items-center justify-center font-mono font-extrabold text-base sm:text-lg text-[var(--accent-primary)]"
+                        className="w-8 h-10 sm:w-9 sm:h-11 rounded-xl bg-[var(--chassis-panel)] border border-[rgba(255,255,255,0.6)]  shadow-xs flex items-center justify-center font-mono font-extrabold text-base sm:text-lg text-[var(--accent-primary)]"
                       >
                         {digit}
                       </span>
@@ -792,7 +793,7 @@ function AddCaregiverPanel({ onSuccess }) {
                   className={`px-3 py-1 rounded-full text-xs font-semibold transition-all cursor-pointer ${
                     relation === opt
                       ? 'bg-[var(--accent-primary)] text-white shadow-xs scale-102 font-bold'
-                      : 'bg-[var(--chassis)] text-[var(--text-muted)] hover:text-[var(--text-primary)] border border-[rgba(255,255,255,0.4)] dark:border-white/5'
+                      : 'bg-[var(--chassis)] text-[var(--text-muted)] hover:text-[var(--text-primary)] border border-[rgba(255,255,255,0.4)] '
                   }`}
                 >
                   {opt}
@@ -823,8 +824,8 @@ function AddCaregiverPanel({ onSuccess }) {
       )}
 
       {/* Privacy reassurance note */}
-      <div className="p-3 rounded-xl bg-[var(--chassis)] border border-[rgba(255,255,255,0.4)] dark:border-white/5 flex items-start gap-2">
-        <ShieldCheck className="w-4 h-4 text-emerald-600 dark:text-emerald-400 flex-shrink-0 mt-0.5" />
+      <div className="p-3 rounded-xl bg-[var(--chassis)] border border-[rgba(255,255,255,0.4)]  flex items-start gap-2">
+        <ShieldCheck className="w-4 h-4 text-emerald-600  flex-shrink-0 mt-0.5" />
         <p className="text-[11px] text-[var(--text-muted)] leading-relaxed">
           <strong>Privacy Safeguard:</strong> Caregivers only see adherence compliance status (Safe / Caution / Critical) and today's schedule reminder times. No sensitive symptoms or medical notes are exposed.
         </p>
@@ -901,24 +902,45 @@ export default function ConnectedPeoplePage() {
   };
 
   return (
-    <div className="min-h-[88vh] bg-[var(--chassis)] pb-16">
-      <div className="max-w-2xl mx-auto px-4 py-8 space-y-6">
+    <div className="min-h-[88vh] pb-16">
+      <div className="max-w-3xl mx-auto px-4 py-8 space-y-6">
 
-        {/* Header */}
-        <div className="flex items-center space-x-3">
-          <button
-            onClick={() => navigate('/home')}
-            className="btn-secondary p-2.5 rounded-2xl cursor-pointer"
-          >
-            <ArrowLeft className="w-4 h-4" />
-          </button>
-          <div className="flex-1">
-            <h1 className="text-2xl font-bold text-[var(--text-primary)] font-display">
-              Connected People
-            </h1>
-            <p className="text-xs text-[var(--text-muted)]">
-              Manage clinical physician access codes, family caregivers, and sharing permissions
-            </p>
+        {/* ── Modern Hero Header matching LoginPage aesthetic ── */}
+        <div className="relative overflow-hidden rounded-3xl p-6 md:p-8 bg-gradient-to-br from-white/95 via-blue-50/40 to-indigo-50/30 border border-slate-200/80 shadow-[0_12px_40px_-8px_rgba(0,0,0,0.06)] backdrop-blur-xl">
+          {/* Top luminous accent bar */}
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-500" />
+
+          <div className="relative z-10 space-y-4">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <BackButton to="/home" label="Back to Home" />
+
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-blue-500/10 text-blue-800 border border-blue-500/20">
+                <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
+                <span>Consent & Security Hub</span>
+                <span className="text-blue-400">·</span>
+                <span className="font-mono text-[11px] text-blue-600">Active Authorization</span>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight font-display">
+                Connected <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-500 bg-clip-text text-transparent">Care Network</span>
+              </h1>
+              <p className="text-sm text-slate-600 max-w-xl leading-relaxed">
+                Manage clinical physician access codes, authorized family caregivers, and verified clinical sharing permissions.
+              </p>
+
+              <div className="flex flex-wrap items-center gap-2 pt-1">
+                <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white/80 border border-slate-200/80 shadow-xs text-xs font-medium text-slate-700">
+                  <ShieldCheck className="w-3.5 h-3.5 text-blue-600" />
+                  <span>Granular Consent</span>
+                </div>
+                <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white/80 border border-slate-200/80 shadow-xs text-xs font-medium text-slate-700">
+                  <Activity className="w-3.5 h-3.5 text-indigo-600" />
+                  <span>Real-time Audit Trail</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -935,8 +957,8 @@ export default function ConnectedPeoplePage() {
           </span>
 
           {pendingCount > 0 && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-bold bg-amber-500/10 text-amber-800 dark:text-amber-300 border border-amber-500/30 shadow-xs">
-              <Clock className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-bold bg-amber-500/10 text-amber-800  border border-amber-500/30 shadow-xs">
+              <Clock className="w-3.5 h-3.5 text-amber-600 " />
               <span>{pendingCount} Pending Invite{pendingCount !== 1 ? 's' : ''}</span>
             </span>
           )}

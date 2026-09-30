@@ -119,6 +119,7 @@ model Medicine {
   removedAt        DateTime?    // Soft-delete timestamp: set when medicine is discontinued
 
   // ── Extended Clinical Metadata (editable by patient) ──────────────────────
+  purpose          String?      // Primary indication / purpose of medicine (e.g. Headache, Fever, Diarrhea, Diabetes)
   frequency        String?      // e.g. "Once daily", "Twice daily", "As needed"
   foodInstruction  String?      // e.g. "with_food", "before_food", "after_food", "empty_stomach"
   prescribedBy     String?      // Name of prescribing physician or "Self"

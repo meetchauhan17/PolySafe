@@ -31,24 +31,24 @@ export default function Card({
   let variantClasses = '';
   let ledColorClass = '';
   let ledGlowClass = '';
+  let topAccentGradient = '';
 
   if (normalizedVariant === 'safe') {
-    variantClasses = 'ps-card--safe border border-[var(--led-safe)]/40 bg-[var(--brand-surface)]';
+    variantClasses = 'ps-card--safe border-emerald-300/80 bg-slate-50/95 hover:border-emerald-400';
     ledColorClass = 'bg-[var(--led-safe)]';
     ledGlowClass = 'shadow-[0_0_8px_2px_var(--led-safe-glow)] animate-[led-pulse_2s_ease-in-out_infinite]';
+    topAccentGradient = 'from-emerald-400 via-teal-400 to-cyan-500';
   } else if (normalizedVariant === 'caution') {
-    variantClasses = 'ps-card--caution border border-[var(--led-caution)]/40 bg-[var(--brand-surface)]';
+    variantClasses = 'ps-card--caution border-amber-300/80 bg-slate-50/95 hover:border-amber-400';
     ledColorClass = 'bg-[var(--led-caution)]';
     ledGlowClass = 'shadow-[0_0_8px_2px_var(--led-caution-glow)] animate-[led-pulse_2s_ease-in-out_infinite]';
+    topAccentGradient = 'from-amber-400 via-orange-400 to-yellow-500';
   } else if (normalizedVariant === 'critical') {
-    variantClasses = 'ps-card--critical border border-[var(--led-critical)]/45 bg-[var(--brand-surface)]';
+    variantClasses = 'ps-card--critical border-rose-300/90 bg-slate-50/95 hover:border-rose-400';
     ledColorClass = 'bg-[var(--led-critical)]';
     ledGlowClass = 'shadow-[0_0_8px_2px_var(--led-critical-glow)] animate-[led-pulse_1.2s_ease-in-out_infinite]';
+    topAccentGradient = 'from-rose-500 via-red-500 to-orange-500';
   }
-
-  const baseShadow = elevated
-    ? 'shadow-[var(--shadow-floating)]'
-    : 'shadow-[var(--shadow-card)]';
 
   return (
     <div
@@ -68,13 +68,20 @@ export default function Card({
       style={{
         ...style,
       }}
-      className={`relative bg-[var(--brand-surface)] text-[var(--text-primary)] rounded-2xl p-5 sm:p-6 transition-all duration-200 ease-out flex flex-col border border-[rgba(255,255,255,0.7)] dark:border-white/5 ${baseShadow} hover:-translate-y-0.5 hover:shadow-[var(--shadow-card-hover)] ${
+      className={`group relative bg-slate-50/95 backdrop-blur-xl text-slate-900 rounded-3xl p-5 sm:p-6 transition-all duration-300 ease-out flex flex-col border border-slate-200 shadow-[0_10px_30px_-5px_rgba(0,0,0,0.04)] hover:shadow-[0_16px_36px_-6px_rgba(15,23,42,0.08)] hover:-translate-y-0.5 ${
         onClick
-          ? 'cursor-pointer active:translate-y-0.5 active:shadow-[var(--shadow-pressed)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]'
+          ? 'cursor-pointer active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500'
           : ''
       } ${variantClasses} ${className}`}
       {...props}
     >
+      {/* Top Accent Gradient Line for variant cards */}
+      {topAccentGradient && (
+        <div
+          className={`absolute top-0 left-6 right-6 h-1 bg-gradient-to-r ${topAccentGradient} rounded-b-full opacity-80 group-hover:opacity-100 transition-opacity`}
+        />
+      )}
+
       {/* Pulsing LED on Status Variant Cards */}
       {isVariant && (
         <div className="absolute top-4 right-4 flex items-center gap-1.5 z-10 pointer-events-none">
@@ -88,18 +95,18 @@ export default function Card({
           <div className="flex items-center gap-3 min-w-0">
             {icon && (
               <div
-                className="p-2.5 rounded-xl flex-shrink-0 bg-[var(--chassis)] text-[var(--accent-primary)] shadow-[var(--shadow-sm)] border border-[var(--chassis-dark)]/40"
+                className="w-10 h-10 rounded-2xl bg-gradient-to-br from-blue-500/10 to-indigo-500/15 text-blue-600 border border-blue-500/25 flex items-center justify-center shadow-xs flex-shrink-0"
               >
                 {icon}
               </div>
             )}
             {title && (
               <div className="min-w-0">
-                <h3 className="text-base sm:text-lg font-bold tracking-tight leading-snug text-[var(--text-primary)] font-display">
+                <h3 className="text-base sm:text-lg font-bold tracking-tight leading-snug text-slate-900 font-display">
                   {title}
                 </h3>
                 {subtitle && (
-                  <p className="text-xs mt-0.5 leading-normal text-[var(--text-muted)]">
+                  <p className="text-xs mt-0.5 leading-normal text-slate-600">
                     {subtitle}
                   </p>
                 )}

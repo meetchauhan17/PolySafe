@@ -1,86 +1,88 @@
 /**
- * PolySafe Industrial Skeuomorphic Design System — v5.0
- * Medical Cyan (#0891b2) + Slate Blue (#2d6a9f) on Blue-Grey Chassis (#eef2f7)
+ * PolySafe Design System — v6.0
+ * Lavender Periwinkle × Indigo-Violet
+ * Background: soft lavender-periwinkle gradient (#e8eaf6 → #dde1f5)
+ * Primary: Indigo (#6366f1) · Secondary: Violet (#7c3aed)
  */
 
 :root {
-  /* ── CHASSIS ── */
-  --chassis:       #eef2f7;
-  --chassis-dark:  #dde4ee;
-  --chassis-panel: #f7f9fc;
-  --chassis-light: #f7f9fc;
-  --panel:         #f7f9fc;
+  /* ── CHASSIS & SURFACES — Soft Lavender-Periwinkle ── */
+  --chassis:       #e8eaf6;        /* Page canvas — matches screenshot */
+  --chassis-dark:  #d4d8ee;        /* Divider / border */
+  --chassis-panel: #f0f1fa;        /* Inner panel surface */
+  --chassis-light: #f7f8ff;        /* Card surface — near-white with violet tint */
+  --panel:         #f0f1fa;
 
   /* ── TEXT ── */
-  --text-primary:   #0f1923;
-  --text-secondary: #3d5068;
-  --text-muted:     #6b7f96;
+  --text-primary:   #1e1b4b;       /* Indigo 950 — authoritative, warm dark */
+  --text-secondary: #3730a3;       /* Indigo 800 — subtitle & secondary text */
+  --text-muted:     #6366f1;       /* Indigo 500 — muted details */
   --text-inverse:   #ffffff;
 
-  /* ── PRIMARY ACCENT — Medical Cyan ── */
-  --accent-primary:       #0891b2;
-  --accent-primary-dark:  #0670a0;
-  --accent-primary-light: #e0f7fa;
-  --accent-primary-glow:  rgba(8, 145, 178, 0.35);
+  /* ── PRIMARY ACCENT — Indigo ── */
+  --accent-primary:       #6366f1;   /* Indigo 500 */
+  --accent-primary-dark:  #4f46e5;   /* Indigo 600 */
+  --accent-primary-light: #e0e7ff;   /* Indigo 100 */
+  --accent-primary-glow:  rgba(99, 102, 241, 0.28);
 
-  /* ── SECONDARY ACCENT — Slate Blue ── */
-  --accent-secondary:      #2d6a9f;
-  --accent-secondary-dark: #1e4f7a;
-  --accent-secondary-light:#dbeafe;
-  --accent-secondary-glow: rgba(45, 106, 159, 0.35);
+  /* ── SECONDARY ACCENT — Violet ── */
+  --accent-secondary:      #7c3aed;  /* Violet 600 */
+  --accent-secondary-dark: #6d28d9;  /* Violet 700 */
+  --accent-secondary-light:#ede9fe;  /* Violet 100 */
+  --accent-secondary-glow: rgba(124, 58, 237, 0.25);
 
   /* ── ROLE IDENTITY ── */
-  --role-patient:   #0891b2;
-  --role-patient-dark: #0670a0;
-  --role-patient-glow: rgba(8, 145, 178, 0.35);
+  --role-patient:      #6366f1;      /* Indigo — patient */
+  --role-patient-dark: #4f46e5;
+  --role-patient-glow: rgba(99, 102, 241, 0.28);
 
-  --role-doctor:    #2d6a9f;
-  --role-doctor-dark: #1e4f7a;
-  --role-doctor-glow: rgba(45, 106, 159, 0.35);
+  --role-doctor:       #7c3aed;      /* Violet — doctor */
+  --role-doctor-dark:  #6d28d9;
+  --role-doctor-glow:  rgba(124, 58, 237, 0.25);
 
-  --role-caregiver: #2d8a6e;
-  --role-caregiver-dark: #1f6b55;
-  --role-caregiver-glow: rgba(45, 138, 110, 0.35);
+  --role-caregiver:    #0891b2;      /* Teal — caregiver (contrast color) */
+  --role-caregiver-dark: #0670a0;
+  --role-caregiver-glow: rgba(8, 145, 178, 0.25);
 
-  /* ── CLINICAL LED INDICATORS ── */
+  /* ── CLINICAL LED INDICATORS (kept distinct for safety clarity) ── */
   --led-safe:          #16a34a;
-  --led-safe-glow:     rgba(22, 163, 74, 0.5);
-  --led-caution:       #c07a0a;
-  --led-caution-glow:  rgba(192, 122, 10, 0.5);
+  --led-safe-glow:     rgba(22, 163, 74, 0.45);
+  --led-caution:       #d97706;
+  --led-caution-glow:  rgba(217, 119, 6, 0.45);
   --led-critical:      #dc2626;
-  --led-critical-glow: rgba(220, 38, 38, 0.5);
-  --led-online:        #0891b2;
-  --led-online-glow:   rgba(8, 145, 178, 0.5);
-  --led-offline:       #6b7f96;
-  --led-offline-glow:  rgba(107, 127, 150, 0.4);
+  --led-critical-glow: rgba(220, 38, 38, 0.45);
+  --led-online:        #6366f1;      /* Indigo online indicator */
+  --led-online-glow:   rgba(99, 102, 241, 0.45);
+  --led-offline:       #a5b4fc;      /* Light indigo offline */
+  --led-offline-glow:  rgba(165, 180, 252, 0.35);
 
-  /* ── SHADOW COLOURS (calibrated for subtle blue-grey chassis depth) ── */
-  --shadow-light: rgba(255, 255, 255, 0.85);
-  --shadow-dark:  rgba(150, 168, 190, 0.35);
+  /* ── SHADOW COLOURS ── */
+  --shadow-light: rgba(255, 255, 255, 0.90);
+  --shadow-dark:  rgba(49, 46, 129, 0.08);  /* indigo-tinted shadow */
 
-  /* ── CALIBRATED CLEAN CLINICAL SHADOW SYSTEM (Crisp, Non-bleeding) ── */
-  --shadow-card:          0 2px 8px -2px rgba(15, 25, 35, 0.08), 0 1px 3px 0 rgba(15, 25, 35, 0.04);
-  --shadow-card-hover:    0 6px 16px -4px rgba(15, 25, 35, 0.12), 0 2px 6px -1px rgba(15, 25, 35, 0.06);
-  --shadow-floating:      0 12px 24px -6px rgba(15, 25, 35, 0.14), 0 4px 10px -2px rgba(15, 25, 35, 0.06);
-  --shadow-pressed:       inset 0 2px 4px 0 rgba(15, 25, 35, 0.08);
-  --shadow-recessed:      inset 0 1px 3px 0 rgba(15, 25, 35, 0.06);
-  --shadow-recessed-deep: inset 0 2px 6px 0 rgba(15, 25, 35, 0.10);
-  --shadow-sm:            0 1px 3px 0 rgba(15, 25, 35, 0.06), 0 1px 2px -1px rgba(15, 25, 35, 0.04);
-  --shadow-accent-primary: 0 4px 12px -2px rgba(8, 145, 178, 0.3);
-  --shadow-accent-pressed: inset 0 2px 4px rgba(6, 112, 160, 0.35);
-  --shadow-accent-teal:    0 4px 12px -2px rgba(45, 106, 159, 0.3);
-  --shadow-accent-teal-pressed: inset 0 2px 4px rgba(30, 79, 122, 0.35);
+  /* ── SHADOW SYSTEM ── */
+  --shadow-card:          0 1px 3px 0 rgba(99,102,241,0.06), 0 1px 2px -1px rgba(49,46,129,0.05), 0 0 0 1px rgba(196,201,239,0.90);
+  --shadow-card-hover:    0 6px 18px -3px rgba(99,102,241,0.14), 0 2px 6px -2px rgba(49,46,129,0.08), 0 0 0 1px rgba(165,180,252,0.80);
+  --shadow-floating:      0 12px 32px -6px rgba(99,102,241,0.18), 0 4px 12px -3px rgba(49,46,129,0.10), 0 0 0 1px rgba(196,201,239,0.90);
+  --shadow-pressed:       inset 0 1px 3px 0 rgba(49, 46, 129, 0.10);
+  --shadow-recessed:      inset 0 1px 2px 0 rgba(49, 46, 129, 0.08);
+  --shadow-recessed-deep: inset 0 2px 5px 0 rgba(49, 46, 129, 0.12);
+  --shadow-sm:            0 1px 2px 0 rgba(99,102,241,0.07), 0 0 0 1px rgba(196,201,239,0.85);
+  --shadow-accent-primary: 0 4px 14px -2px rgba(99, 102, 241, 0.35);
+  --shadow-accent-pressed: inset 0 2px 4px rgba(79, 70, 229, 0.30);
+  --shadow-accent-teal:    0 4px 14px -2px rgba(124, 58, 237, 0.30);
+  --shadow-accent-teal-pressed: inset 0 2px 4px rgba(109, 40, 217, 0.28);
 
-  /* ── BRAND SUB-SURFACES & BORDERS (Backward Compat) ── */
-  --brand-surface:        #ffffff;
-  --brand-paper:          var(--chassis-panel);
-  --brand-clay:           var(--chassis);
-  --brand-sub-surface:    var(--chassis-dark);
-  --brand-surface-subtle: var(--chassis-dark);
-  --brand-card:           #ffffff;
-  --brand-border:         transparent;
-  --brand-border-visible: var(--chassis-dark);
-  --brand-border-subtle:  var(--chassis-dark);
+  /* ── BRAND SUB-SURFACES & BORDERS ── */
+  --brand-surface:        #f7f8ff;
+  --brand-paper:          #f0f1fa;
+  --brand-clay:           #e8eaf6;
+  --brand-sub-surface:    #eef0f9;
+  --brand-surface-subtle: #f0f1fa;
+  --brand-card:           #f7f8ff;
+  --brand-border:         #d4d8ee;
+  --brand-border-visible: #c4c9e8;
+  --brand-border-subtle:  #dce0f4;
   --brand-text:           var(--text-primary);
   --brand-muted:          var(--text-muted);
   --brand-subtle:         var(--text-secondary);
@@ -88,7 +90,7 @@
   --brand-primary-hover:  var(--accent-primary-dark);
   --brand-primary-active: var(--accent-primary-dark);
   --brand-primary-light:  var(--accent-primary-light);
-  --brand-primary-muted:  rgba(8, 145, 178, 0.12);
+  --brand-primary-muted:  rgba(99, 102, 241, 0.12);
 
   /* ── BORDER RADIUS ── */
   --radius-sm:   4px;
@@ -99,7 +101,7 @@
   --radius-full: 9999px;
 
   /* ── TYPOGRAPHY ── */
-  --font-display: 'Inter', sans-serif;
+  --font-display: 'Outfit', 'Inter', sans-serif;
   --font-body:    'Inter', sans-serif;
   --font-mono:    'JetBrains Mono', 'Roboto Mono', monospace;
 
@@ -113,19 +115,19 @@
   --status-safe:          var(--led-safe);
   --status-safe-bg:       #dcfce7;
   --status-safe-border:   var(--led-safe);
-  --status-safe-text:     #1b5e20;
+  --status-safe-text:     #14532d;
   --status-caution:       var(--led-caution);
-  --status-caution-bg:    #fef9c3;
+  --status-caution-bg:    #fef3c7;
   --status-caution-border: var(--led-caution);
   --status-caution-text:  #78350f;
   --status-danger:        var(--led-critical);
   --status-danger-bg:     #fee2e2;
   --status-danger-border: var(--led-critical);
   --status-danger-text:   #7f1d1d;
-  --role-doctor-bg:       var(--accent-secondary-light);
-  --role-doctor-border:   rgba(45, 106, 159, 0.35);
-  --role-caregiver-bg:    #e0f2fe;
-  --role-caregiver-border: rgba(45, 138, 110, 0.35);
+  --role-doctor-bg:       #ede9fe;
+  --role-doctor-border:   rgba(124, 58, 237, 0.30);
+  --role-caregiver-bg:    #cffafe;
+  --role-caregiver-border: rgba(8, 145, 178, 0.30);
   --font-heading:         var(--font-display);
   --radius-card:          var(--radius-2xl);
   --radius-interactive:   var(--radius-2xl);
@@ -138,107 +140,166 @@
 }
 
 /* ══════════════════════════════════════════════════════════════════════════
-   DARK MODE
+   LIGHT MODE TOKENS — Lavender Periwinkle palette
    ══════════════════════════════════════════════════════════════════════════ */
-[data-theme="dark"],
-@media (prefers-color-scheme: dark) {
-  :root {
-    /* ── CHASSIS ── */
-    --chassis:       #1a2233;
-    --chassis-dark:  #141b29;
-    --chassis-panel: #1f2d42;
-    --chassis-light: #1f2d42;
-    --panel:         #1f2d42;
-    --brand-surface: #1e293b;
-    --brand-card:    #1e293b;
-
-    /* ── TEXT ── */
-    --text-primary:   #e8edf5;
-    --text-secondary: #9baec4;
-    --text-muted:     #5e7899;
-    --text-inverse:   #0f1923;
-
-    /* ── ACCENTS ── */
-    --accent-primary:       #22b8d8;
-    --accent-primary-dark:  #0891b2;
-    --accent-primary-light: rgba(34, 184, 216, 0.15);
-    --accent-primary-glow:  rgba(34, 184, 216, 0.4);
-
-    --accent-secondary:      #4a8fc4;
-    --accent-secondary-dark: #2d6a9f;
-    --accent-secondary-light:#1e293b;
-    --accent-secondary-glow: rgba(74, 143, 196, 0.4);
-
-    /* ── ROLE IDENTITY ── */
-    --role-patient:   #22b8d8;
-    --role-doctor:    #4a8fc4;
-    --role-caregiver: #34c28a;
-
-    /* ── LED INDICATORS ── */
-    --led-safe:          #22c55e;
-    --led-safe-glow:     rgba(34, 197, 94, 0.55);
-    --led-caution:       #f59e0b;
-    --led-caution-glow:  rgba(245, 158, 11, 0.55);
-    --led-critical:      #ef4444;
-    --led-critical-glow: rgba(239, 68, 68, 0.55);
-    --led-online:        #22b8d8;
-    --led-online-glow:   rgba(34, 184, 216, 0.55);
-    --led-offline:       #5e7899;
-    --led-offline-glow:  rgba(94, 120, 153, 0.4);
-
-    /* ── SHADOW COLOURS ── */
-    --shadow-light: rgba(255, 255, 255, 0.06);
-    --shadow-dark:  rgba(0, 0, 0, 0.45);
-  }
-}
-
-/* Explicit light override when user forces light mode via toggle */
 [data-theme="light"] {
-  /* ── CHASSIS ── */
-  --chassis:       #eef2f7;
-  --chassis-dark:  #dde4ee;
-  --chassis-panel: #f7f9fc;
-  --chassis-light: #f7f9fc;
-  --panel:         #f7f9fc;
-  --brand-surface: #ffffff;
-  --brand-card:    #ffffff;
+  --chassis:       #e8eaf6;
+  --chassis-dark:  #d4d8ee;
+  --chassis-panel: #f0f1fa;
+  --chassis-light: #f7f8ff;
+  --panel:         #f0f1fa;
+  --brand-surface: #f7f8ff;
+  --brand-card:    #f7f8ff;
 
-  /* ── TEXT ── */
-  --text-primary:   #0f1923;
-  --text-secondary: #3d5068;
-  --text-muted:     #6b7f96;
+  --text-primary:   #1e1b4b;
+  --text-secondary: #3730a3;
+  --text-muted:     #6366f1;
   --text-inverse:   #ffffff;
 
-  /* ── PRIMARY ACCENT — Medical Cyan ── */
-  --accent-primary:       #0891b2;
-  --accent-primary-dark:  #0670a0;
-  --accent-primary-light: #e0f7fa;
-  --accent-primary-glow:  rgba(8, 145, 178, 0.35);
+  --accent-primary:       #6366f1;
+  --accent-primary-dark:  #4f46e5;
+  --accent-primary-light: #e0e7ff;
+  --accent-primary-glow:  rgba(99, 102, 241, 0.28);
 
-  /* ── SECONDARY ACCENT — Slate Blue ── */
-  --accent-secondary:      #2d6a9f;
-  --accent-secondary-dark: #1e4f7a;
-  --accent-secondary-light:#dbeafe;
-  --accent-secondary-glow: rgba(45, 106, 159, 0.35);
+  --accent-secondary:      #7c3aed;
+  --accent-secondary-dark: #6d28d9;
+  --accent-secondary-light:#ede9fe;
+  --accent-secondary-glow: rgba(124, 58, 237, 0.25);
+
+  --role-patient:      #6366f1;
+  --role-doctor:       #7c3aed;
+  --role-caregiver:    #0891b2;
+
+  --led-safe:          #16a34a;
+  --led-safe-glow:     rgba(22, 163, 74, 0.45);
+  --led-caution:       #d97706;
+  --led-caution-glow:  rgba(217, 119, 6, 0.45);
+  --led-critical:      #dc2626;
+  --led-critical-glow: rgba(220, 38, 38, 0.45);
+  --led-online:        #6366f1;
+  --led-online-glow:   rgba(99, 102, 241, 0.45);
+  --led-offline:       #a5b4fc;
+  --led-offline-glow:  rgba(165, 180, 252, 0.35);
+
+  --shadow-light: rgba(255, 255, 255, 0.90);
+  --shadow-dark:  rgba(49, 46, 129, 0.08);
+  --brand-border:         #d4d8ee;
+  --brand-border-visible: #c4c9e8;
+  --brand-border-subtle:  #dce0f4;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════════
+   DARK MODE TOKENS
+   Applied via [data-theme="dark"] on <html> or <body>.
+   ══════════════════════════════════════════════════════════════════════════ */
+[data-theme="dark"] {
+  /* ── CHASSIS (Midnight Blue-Slate) ── */
+  --chassis:       #0f172a;
+  --chassis-dark:  #1e293b;
+  --chassis-panel: #1e293b;
+  --chassis-light: #263045;
+  --panel:         #1e293b;
+  --brand-surface: #1a2540;
+  --brand-card:    #1a2540;
+  --brand-paper:   #1e293b;
+  --brand-clay:    #0f172a;
+  --brand-sub-surface: #1e293b;
+  --brand-surface-subtle: #1e293b;
+
+  /* ── TEXT ── */
+  --text-primary:   #f1f5f9;
+  --text-secondary: #94a3b8;
+  --text-muted:     #64748b;
+  --text-inverse:   #0f172a;
+
+  /* ── PRIMARY ACCENT — Medical Cyan (brighter for dark) ── */
+  --accent-primary:       #22d3ee;
+  --accent-primary-dark:  #0891b2;
+  --accent-primary-light: #0c4a6e;
+  --accent-primary-glow:  rgba(34, 211, 238, 0.32);
+
+  /* ── SECONDARY ACCENT — Blue ── */
+  --accent-secondary:      #60a5fa;
+  --accent-secondary-dark: #3b82f6;
+  --accent-secondary-light:#1e3a5f;
+  --accent-secondary-glow: rgba(96, 165, 250, 0.32);
 
   /* ── ROLE IDENTITY ── */
-  --role-patient:   #0891b2;
-  --role-doctor:    #2d6a9f;
-  --role-caregiver: #2d8a6e;
+  --role-patient:      #22d3ee;
+  --role-patient-dark: #0891b2;
+  --role-patient-glow: rgba(34, 211, 238, 0.32);
+
+  --role-doctor:       #60a5fa;
+  --role-doctor-dark:  #3b82f6;
+  --role-doctor-glow:  rgba(96, 165, 250, 0.32);
+
+  --role-caregiver:      #34d399;
+  --role-caregiver-dark: #10b981;
+  --role-caregiver-glow: rgba(52, 211, 153, 0.32);
 
   /* ── CLINICAL LED INDICATORS ── */
-  --led-safe:          #16a34a;
-  --led-safe-glow:     rgba(22, 163, 74, 0.5);
-  --led-caution:       #c07a0a;
-  --led-caution-glow:  rgba(192, 122, 10, 0.5);
-  --led-critical:      #dc2626;
-  --led-critical-glow: rgba(220, 38, 38, 0.5);
-  --led-online:        #0891b2;
-  --led-online-glow:   rgba(8, 145, 178, 0.5);
-  --led-offline:       #6b7f96;
-  --led-offline-glow:  rgba(107, 127, 150, 0.4);
+  --led-safe:          #22c55e;
+  --led-safe-glow:     rgba(34, 197, 94, 0.60);
+  --led-caution:       #f59e0b;
+  --led-caution-glow:  rgba(245, 158, 11, 0.60);
+  --led-critical:      #f87171;
+  --led-critical-glow: rgba(248, 113, 113, 0.60);
+  --led-online:        #22d3ee;
+  --led-online-glow:   rgba(34, 211, 238, 0.55);
+  --led-offline:       #475569;
+  --led-offline-glow:  rgba(71, 85, 105, 0.35);
 
   /* ── SHADOW COLOURS ── */
-  --shadow-light: rgba(255, 255, 255, 0.75);
-  --shadow-dark:  rgba(170, 185, 205, 0.6);
+  --shadow-light: rgba(255, 255, 255, 0.06);
+  --shadow-dark:  rgba(0, 0, 0, 0.45);
+  --shadow-card:           0 1px 3px 0 rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.05);
+  --shadow-card-hover:     0 6px 20px -3px rgba(0,0,0,0.50), 0 0 0 1px rgba(255,255,255,0.08);
+  --shadow-floating:       0 16px 48px -8px rgba(0,0,0,0.60), 0 0 0 1px rgba(255,255,255,0.07);
+  --shadow-pressed:        inset 0 2px 4px 0 rgba(0,0,0,0.55);
+  --shadow-recessed:       inset 0 1px 3px 0 rgba(0,0,0,0.45);
+  --shadow-recessed-deep:  inset 0 2px 6px 0 rgba(0,0,0,0.55);
+  --shadow-sm:             0 1px 2px 0 rgba(0,0,0,0.30), 0 0 0 1px rgba(255,255,255,0.05);
+  --shadow-accent-primary: 0 4px 14px -2px rgba(34, 211, 238, 0.45);
+  --shadow-accent-pressed: inset 0 2px 5px rgba(0,0,0,0.45);
+  --shadow-accent-teal:    0 4px 14px -2px rgba(96, 165, 250, 0.40);
+  --shadow-accent-teal-pressed: inset 0 2px 5px rgba(0,0,0,0.45);
+
+  /* ── BRAND BORDERS ── */
+  --brand-border:         rgba(255,255,255,0.09);
+  --brand-border-visible: rgba(255,255,255,0.13);
+  --brand-border-subtle:  rgba(255,255,255,0.06);
+  --brand-primary:        var(--accent-primary);
+  --brand-primary-hover:  var(--accent-primary-dark);
+  --brand-primary-active: var(--accent-primary-dark);
+  --brand-primary-light:  var(--accent-primary-light);
+  --brand-primary-muted:  rgba(34, 211, 238, 0.14);
+  --brand-text:           var(--text-primary);
+  --brand-muted:          var(--text-muted);
+  --brand-subtle:         var(--text-secondary);
+
+  /* ── STATUS BACKGROUNDS ── */
+  --status-safe:          var(--led-safe);
+  --status-safe-bg:       rgba(34, 197, 94, 0.12);
+  --status-safe-border:   var(--led-safe);
+  --status-safe-text:     #86efac;
+  --status-caution:       var(--led-caution);
+  --status-caution-bg:    rgba(245, 158, 11, 0.12);
+  --status-caution-border: var(--led-caution);
+  --status-caution-text:  #fcd34d;
+  --status-danger:        var(--led-critical);
+  --status-danger-bg:     rgba(248, 113, 113, 0.12);
+  --status-danger-border: var(--led-critical);
+  --status-danger-text:   #fca5a5;
+  --role-doctor-bg:       rgba(96, 165, 250, 0.12);
+  --role-doctor-border:   rgba(96, 165, 250, 0.35);
+  --role-caregiver-bg:    rgba(52, 211, 153, 0.10);
+  --role-caregiver-border: rgba(52, 211, 153, 0.35);
+
+  /* ── RADIUS (unchanged) ── */
+  --radius-card:        var(--radius-2xl);
+  --radius-interactive: var(--radius-2xl);
+  --radius-button:      var(--radius-lg);
+  --radius-input:       var(--radius-md);
+  --radius-inner:       var(--radius-md);
 }

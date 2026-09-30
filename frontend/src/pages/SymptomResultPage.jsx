@@ -13,6 +13,7 @@ import {
  ChevronRight,
 } from 'lucide-react';
 import Card from '../components/Card';
+import BackButton from '../components/BackButton';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 function formatDate(dateStr) {
@@ -227,21 +228,16 @@ export default function SymptomResultPage() {
  <div className="max-w-2xl mx-auto px-4 py-8 space-y-5">
 
  {/* ── Back nav ───────────────────────────────────────────────────────── */}
- <div className="flex items-center space-x-3">
- <button
- onClick={() => navigate('/log-symptom')}
- className="btn-secondary p-2.5 rounded-2xl"
- >
- <ArrowLeft className="w-4 h-4" />
- </button>
- <div>
- <h1 className="text-xl font-bold text-[var(--text-primary)]" >
- Symptom Analysis Result
- </h1>
- <p className="text-[11px] text-[var(--text-muted)]">
- "{description.length > 60 ? description.slice(0, 60) + '…' : description}"
- </p>
- </div>
+ <div className="flex items-center gap-3.5">
+   <BackButton to="/log-symptom" label="Back to Form" />
+   <div className="min-w-0">
+     <h1 className="text-xl md:text-2xl font-bold text-[var(--text-primary)] font-display tracking-tight">
+       Symptom Analysis Result
+     </h1>
+     <p className="text-xs text-[var(--text-muted)] mt-0.5">
+       "{description.length > 60 ? description.slice(0, 60) + '…' : description}"
+     </p>
+   </div>
  </div>
 
  {/* ── Result card ───────────────────────────────────────────────────── */}
@@ -260,13 +256,7 @@ export default function SymptomResultPage() {
  <HeartPulse className="w-4 h-4" />
  <span>Log Another Symptom</span>
  </button>
- <Link
- to="/home"
- className="btn-secondary py-3 flex items-center justify-center gap-2 text-sm"
- >
- <ArrowLeft className="w-4 h-4" />
- <span>Back to Dashboard</span>
- </Link>
+ <BackButton to="/home" label="Back to Dashboard" className="w-full py-3 justify-center text-sm" />
  </div>
 
  </div>

@@ -15,8 +15,12 @@ import {
   Loader2,
   AlertCircle,
   Info,
+  ShieldAlert,
+  Zap,
+  Shield,
 } from 'lucide-react';
 import Card from '../components/Card';
+import BackButton from '../components/BackButton';
 import { motion, useReducedMotion } from 'framer-motion';
 import { RiskAnalysisSkeleton } from '../components/Skeletons';
 import { useAuth } from '../context/AuthContext';
@@ -275,24 +279,24 @@ function TypeBadge({ type }) {
 function DrugCard({ med, score }) {
   if (!med) return null;
   return (
-    <div className="flex flex-col space-y-2.5 p-4 bg-[var(--chassis)] shadow-[var(--shadow-sm)] rounded-2xl min-w-0">
+    <div className="flex flex-col space-y-2.5 p-4 bg-white border border-slate-200/80 shadow-xs hover:border-slate-300 transition-all rounded-2xl min-w-0">
       <div className="flex items-start space-x-3.5">
-        <div className="icon-well w-10 h-10 flex-shrink-0">
-          <Pill className="w-4 h-4 text-[var(--accent-primary)]" />
+        <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-blue-500/10 to-indigo-500/15 text-blue-600 border border-blue-500/25 flex items-center justify-center flex-shrink-0 shadow-2xs">
+          <Pill className="w-4 h-4 text-blue-600" />
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between gap-2 flex-wrap">
-            <p className="text-sm sm:text-base font-bold text-[var(--text-primary)] truncate">{med.name}</p>
+            <p className="text-sm sm:text-base font-bold text-slate-900 font-display truncate">{med.name}</p>
             <div className="flex items-center gap-1.5 flex-wrap">
               <DrugHarmBadge category={med.category} name={med.name} />
               <TypeBadge type={med.type} />
             </div>
           </div>
-          {med.dosage && <p className="text-[11px] text-[var(--text-muted)] font-mono mt-0.5">{med.dosage}</p>}
+          {med.dosage && <p className="text-[11px] text-slate-500 font-mono mt-0.5">{med.dosage}</p>}
           {score != null && (
-            <p className="text-[10px] text-[var(--text-muted)] mt-1 font-mono">
+            <p className="text-[10px] text-slate-500 mt-1 font-mono">
               ACB burden score:{' '}
-              <span className={`font-bold ${score >= 3 ? 'text-[var(--led-critical)]' : score >= 1 ? 'text-[var(--led-caution)]' : 'text-[var(--accent-primary)]'}`}>
+              <span className={`font-bold ${score >= 3 ? 'text-rose-600' : score >= 1 ? 'text-amber-600' : 'text-blue-600'}`}>
                 {score}
               </span>
             </p>
@@ -344,173 +348,180 @@ export default function RiskAnalysisPage() {
  <p className="text-sm text-[var(--text-muted)]">
  {error?.response?.data?.error || 'Could not load details for this interaction.'}
  </p>
- <button onClick={() => navigate('/home')} className="btn-primary px-6 py-2.5 text-sm mx-auto">
- <ArrowLeft className="w-4 h-4" />
- <span>Back to Home</span>
- </button>
+ <BackButton to="/home" label="Back to Home" className="mx-auto" />
  </div>
  </div>
  );
  }
 
- const cfg = SEVERITY_CONFIG[flag.severity] ?? SEVERITY_CONFIG.Unknown;
- const burdenCfg = BURDEN_LEVEL[cumulativeBurden?.level] ?? BURDEN_LEVEL.Normal;
- const burdenScore = cumulativeBurden?.totalScore ?? 0;
- const burdenPct = burdenBarPct(burdenScore);
+  const cfg = SEVERITY_CONFIG[flag.severity] ?? SEVERITY_CONFIG.Unknown;
+  const burdenCfg = BURDEN_LEVEL[cumulativeBurden?.level] ?? BURDEN_LEVEL.Normal;
+  const burdenScore = cumulativeBurden?.totalScore ?? 0;
+  const burdenPct = burdenBarPct(burdenScore);
 
- return (
- <div className="bg-[var(--chassis)] min-h-[88vh] pb-24">
- <div className="max-w-2xl mx-auto px-4 py-8 space-y-6">
+  return (
+    <div className="min-h-[88vh] pb-24">
+      <div className="max-w-2xl mx-auto px-4 py-8 space-y-6">
 
- {/* ── Top navigation ─────────────────────────────────────────────────── */}
- <div className="flex items-center justify-between">
- <button
- onClick={() => navigate('/home')}
- className="flex items-center space-x-1.5 text-xs font-bold text-[var(--text-muted)] hover:text-[var(--accent-primary)] transition-colors"
- >
- <ArrowLeft className="w-4 h-4" />
- <span>Back to Safety Dashboard</span>
- </button>
+        {/* ── Top navigation ─────────────────────────────────────────────────── */}
+        <div className="flex items-center justify-between">
+          <BackButton to="/home" label="Back to Dashboard" />
 
- <span className="text-xs text-[var(--text-muted)] font-semibold">
- {formatDate(flag.dateFlagged)}
- </span>
- </div>
+          <span className="text-xs text-slate-500 font-mono font-semibold">
+            {formatDate(flag.dateFlagged)}
+          </span>
+        </div>
 
- {/* ── Red/Amber header card (SAFETY CARVE-OUT) ───────────────────────── */}
- <div
- className="p-6 rounded-[32px] border-2 shadow-[var(--shadow-card)]"
- style={{ backgroundColor: cfg.headerBg, borderColor: cfg.headerBorder }}
- >
- {/* Severity pill */}
- <div className="flex items-center gap-2 mb-4">
- <span
- className="inline-flex items-center gap-1.5 text-[11px] font-extrabold px-3.5 py-1 rounded-full shadow-xs"
- style={{ backgroundColor: cfg.pillBg, color: cfg.pillText }}
- >
- {cfg.icon}
- <span>{cfg.label} RISK</span>
- </span>
- </div>
+        {/* ── Hero Status Pill & Title ── */}
+        <div className="space-y-2">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/90 backdrop-blur-md border border-slate-200 shadow-2xs">
+            <ShieldAlert className="w-3.5 h-3.5 text-rose-600" />
+            <span className="text-[11px] font-bold tracking-wider uppercase text-slate-700 font-mono">
+              Pharmacological Risk Analysis
+            </span>
+          </div>
 
- {/* Headline — Fraunces font, large */}
- <h2 className="text-2xl sm:text-3xl font-bold leading-tight text-[var(--text-primary)]" >
- {flag.medicineA?.name} + {flag.medicineB?.name}
- </h2>
- <p className="text-sm text-[#4A4F4B] mt-2 leading-relaxed">
- {flag.plainExplanation?.split('(This is an informational')[0].trim() || 'An interaction has been detected between these two medicines.'}
- </p>
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 font-display tracking-tight">
+            Drug-Drug <span className="bg-gradient-to-r from-rose-600 via-amber-600 to-orange-500 bg-clip-text text-transparent">Risk Telemetry</span>
+          </h1>
+        </div>
 
- {/* Drug chips */}
- <div className="flex items-center gap-2.5 mt-4 flex-wrap">
- <span className="flex items-center gap-1.5 bg-[var(--chassis)] shadow-[var(--shadow-card)] px-3.5 py-1.5 rounded-2xl text-xs font-bold text-[var(--text-primary)]">
- <Pill className="w-3.5 h-3.5 text-[var(--accent-primary)]" />
- {flag.medicineA?.name}
- </span>
- <span className="text-lg text-[#4A4F4B] font-bold">+</span>
- <span className="flex items-center gap-1.5 bg-[var(--chassis)] shadow-[var(--shadow-card)] px-3.5 py-1.5 rounded-2xl text-xs font-bold text-[var(--text-primary)]">
- <Pill className="w-3.5 h-3.5 text-[var(--accent-primary)]" />
- {flag.medicineB?.name}
- </span>
- </div>
- </div>
+        {/* ── Red/Amber header card (SAFETY CARVE-OUT) ───────────────────────── */}
+        <div
+          className="group relative bg-white/95 backdrop-blur-xl rounded-3xl p-6 sm:p-7 border border-slate-200 shadow-[0_10px_30px_-5px_rgba(0,0,0,0.05)] overflow-hidden"
+        >
+          {/* Glowing Top Accent Line */}
+          <div className="absolute top-0 left-6 right-6 h-1 bg-gradient-to-r from-rose-500 via-amber-500 to-orange-500 rounded-b-full opacity-80" />
 
- {/* ── Medicine details ────────────────────────────────────────────────── */}
- <Card
- title="Medicines Involved"
- subtitle="Pair evaluated by the safety engine"
- icon={<Pill className="w-4 h-4 text-[var(--accent-primary)]" />}
- className="space-y-3"
- >
- <DrugCard med={flag.medicineA} score={scoreFor(flag.medicineA?.id)} />
- <DrugCard med={flag.medicineB} score={scoreFor(flag.medicineB?.id)} />
- </Card>
+          {/* Severity pill */}
+          <div className="flex items-center gap-2 mb-4">
+            <span
+              className="inline-flex items-center gap-1.5 text-[11px] font-extrabold px-3.5 py-1 rounded-full shadow-xs"
+              style={{ backgroundColor: cfg.pillBg, color: cfg.pillText }}
+            >
+              {cfg.icon}
+              <span>{cfg.label} RISK</span>
+            </span>
+          </div>
 
- {/* ── Clinical explanation (For the Doctor) ──────────────────────────── */}
- <Card
- title="For the Doctor"
- subtitle="Pharmacological mechanism & clinical recommendations"
- icon={<Stethoscope className="w-4 h-4 text-[var(--accent-secondary)]" />}
- badge={
-    flag.generatedBy === 'timeout' ? (
-      <span className="flex items-center gap-1 text-[10px] font-bold text-[var(--led-caution)] bg-amber-500/10 border border-amber-500/30 px-2.5 py-0.5 rounded-full shadow-xs">
-        <Loader2 className="w-3 h-3 animate-spin text-[var(--led-caution)]" />
-        Generating detailed explanation…
-      </span>
-    ) : flag.generatedBy === 'demo-mock' ? (
-      <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[var(--accent-primary)] bg-[var(--accent-primary)]/10 border border-[var(--accent-primary)]/25 px-2.5 py-0.5 rounded-full shadow-xs">
-        DEMO
-      </span>
-    ) : null
-  }
- className="space-y-3"
- >
- <div className="p-4 bg-[var(--chassis)] shadow-[var(--shadow-recessed)] rounded-2xl">
- {flag.generatedBy === 'timeout' ? (
- <div className="space-y-2">
- <p className="text-sm text-[var(--text-primary)] leading-relaxed font-medium">
- {flag.clinicalExplanation || `Interaction identified between ${flag.medicineA?.name} and ${flag.medicineB?.name} (${flag.severity}).`}
- </p>
- <p className="text-[11px] text-[var(--led-caution)] italic">
- Full AI-generated clinical summary is being generated — refresh in a few seconds.
- </p>
- </div>
- ) : (
- <p className="text-sm text-[var(--text-primary)] leading-relaxed font-medium">
- {flag.clinicalExplanation || 'Clinical explanation not available.'}
- </p>
- )}
- </div>
+          {/* Headline */}
+          <h2 className="text-2xl sm:text-3xl font-bold leading-tight text-slate-900 font-display">
+            {flag.medicineA?.name} + {flag.medicineB?.name}
+          </h2>
+          <p className="text-sm text-slate-600 mt-2 leading-relaxed">
+            {flag.plainExplanation?.split('(This is an informational')[0].trim() || 'An interaction has been detected between these two medicines.'}
+          </p>
 
- {flag.patient?.conditions?.length > 0 && (
- <div className="flex flex-wrap gap-2 pt-1">
- {flag.patient.conditions.map((c) => (
- <span key={c} className="text-[10px] px-3 py-1 bg-[var(--chassis)] shadow-[var(--shadow-card)] rounded-xl text-[var(--text-muted)] font-semibold">
- {c}
- </span>
- ))}
- </div>
- )}
- </Card>
+          {/* Drug chips */}
+          <div className="flex items-center gap-2.5 mt-4 flex-wrap">
+            <span className="flex items-center gap-2 bg-slate-50 border border-slate-200/80 shadow-2xs px-3.5 py-1.5 rounded-2xl text-xs font-bold text-slate-900">
+              <Pill className="w-3.5 h-3.5 text-blue-600" />
+              {flag.medicineA?.name}
+            </span>
+            <span className="text-lg text-slate-400 font-bold">+</span>
+            <span className="flex items-center gap-2 bg-slate-50 border border-slate-200/80 shadow-2xs px-3.5 py-1.5 rounded-2xl text-xs font-bold text-slate-900">
+              <Pill className="w-3.5 h-3.5 text-blue-600" />
+              {flag.medicineB?.name}
+            </span>
+          </div>
+        </div>
 
- {/* ── Plain explanation (For You) ─────────────────────────────────────── */}
- <Card
- title="For You"
- subtitle="Simple explanation of what this means for your daily routine"
- icon={<User className="w-4 h-4 text-[var(--accent-primary)]" />}
- badge={
- flag.generatedBy === 'timeout' ? (
- <span className="flex items-center gap-1 text-[10px] font-semibold text-amber-700 italic">
- <Clock className="w-3 h-3" />
- Generating detailed explanation…
- </span>
- ) : null
- }
- className="space-y-3"
- >
- {flag.generatedBy === 'timeout' ? (
- <div className="space-y-2">
- <p className="text-[15px] text-[var(--text-primary)] leading-relaxed">
- {flag.plainExplanation?.split('(This is an informational')[0].trim()
- || `An interaction was detected between ${flag.medicineA?.name} and ${flag.medicineB?.name}. Severity: ${flag.severity}.`}
- </p>
- <p className="text-[12px] text-[var(--led-caution)] bg-amber-50 border border-amber-200 rounded-2xl px-3.5 py-2">
- A personalised explanation is being generated for you. Refresh this page in a few seconds to see the full detail.
- </p>
- </div>
- ) : (
- <p className="text-[15px] text-[var(--text-primary)] leading-relaxed">
- {flag.plainExplanation?.split('(This is an informational')[0].trim() || 'Plain explanation not available.'}
- </p>
- )}
+        {/* ── Medicine details ────────────────────────────────────────────────── */}
+        <Card
+          title="Medicines Involved"
+          subtitle="Pair evaluated by the safety engine"
+          icon={<Pill className="w-4 h-4 text-blue-600" />}
+          className="space-y-3"
+        >
+          <DrugCard med={flag.medicineA} score={scoreFor(flag.medicineA?.id)} />
+          <DrugCard med={flag.medicineB} score={scoreFor(flag.medicineB?.id)} />
+        </Card>
 
- <div className="flex items-start space-x-2.5 p-3.5 bg-[var(--chassis)] shadow-[var(--shadow-card)] rounded-2xl">
- <ShieldCheck className="w-4 h-4 text-[var(--text-muted)] flex-shrink-0 mt-0.5" />
- <p className="text-[11px] text-[var(--text-muted)] italic">
- This is an informational safety alert, not a medical diagnosis. Always consult your doctor before changing medicines.
- </p>
- </div>
- </Card>
+        {/* ── Clinical explanation (For the Doctor) ──────────────────────────── */}
+        <Card
+          title="For the Doctor"
+          subtitle="Pharmacological mechanism & clinical recommendations"
+          icon={<Stethoscope className="w-4 h-4 text-teal-600" />}
+          badge={
+            flag.generatedBy === 'timeout' ? (
+              <span className="flex items-center gap-1 text-[10px] font-bold text-amber-700 bg-amber-500/10 border border-amber-500/30 px-2.5 py-0.5 rounded-full shadow-xs">
+                <Loader2 className="w-3 h-3 animate-spin text-amber-600" />
+                Generating detailed explanation…
+              </span>
+            ) : flag.generatedBy === 'demo-mock' ? (
+              <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-blue-600 bg-blue-50 border border-blue-200 px-2.5 py-0.5 rounded-full shadow-xs">
+                DEMO
+              </span>
+            ) : null
+          }
+          className="space-y-3"
+        >
+          <div className="p-4 bg-white border border-slate-200/80 shadow-xs rounded-2xl">
+            {flag.generatedBy === 'timeout' ? (
+              <div className="space-y-2">
+                <p className="text-sm text-slate-900 leading-relaxed font-medium">
+                  {flag.clinicalExplanation || `Interaction identified between ${flag.medicineA?.name} and ${flag.medicineB?.name} (${flag.severity}).`}
+                </p>
+                <p className="text-[11px] text-amber-600 italic">
+                  Full AI-generated clinical summary is being generated — refresh in a few seconds.
+                </p>
+              </div>
+            ) : (
+              <p className="text-sm text-slate-900 leading-relaxed font-medium">
+                {flag.clinicalExplanation || 'Clinical explanation not available.'}
+              </p>
+            )}
+          </div>
+
+          {flag.patient?.conditions?.length > 0 && (
+            <div className="flex flex-wrap gap-2 pt-1">
+              {flag.patient.conditions.map((c) => (
+                <span key={c} className="text-[10px] px-3 py-1 bg-slate-100 border border-slate-200 rounded-xl text-slate-600 font-semibold">
+                  {c}
+                </span>
+              ))}
+            </div>
+          )}
+        </Card>
+
+        {/* ── Plain explanation (For You) ─────────────────────────────────────── */}
+        <Card
+          title="For You"
+          subtitle="Simple explanation of what this means for your daily routine"
+          icon={<User className="w-4 h-4 text-blue-600" />}
+          badge={
+            flag.generatedBy === 'timeout' ? (
+              <span className="flex items-center gap-1 text-[10px] font-semibold text-amber-700 italic">
+                <Clock className="w-3 h-3" />
+                Generating detailed explanation…
+              </span>
+            ) : null
+          }
+          className="space-y-3"
+        >
+          {flag.generatedBy === 'timeout' ? (
+            <div className="space-y-2">
+              <p className="text-[15px] text-slate-900 leading-relaxed">
+                {flag.plainExplanation?.split('(This is an informational')[0].trim()
+                  || `An interaction was detected between ${flag.medicineA?.name} and ${flag.medicineB?.name}. Severity: ${flag.severity}.`}
+              </p>
+              <p className="text-[12px] text-amber-700 bg-amber-50 border border-amber-200 rounded-2xl px-3.5 py-2">
+                A personalised explanation is being generated for you. Refresh this page in a few seconds to see the full detail.
+              </p>
+            </div>
+          ) : (
+            <p className="text-[15px] text-slate-900 leading-relaxed">
+              {flag.plainExplanation?.split('(This is an informational')[0].trim() || 'Plain explanation not available.'}
+            </p>
+          )}
+
+          <div className="flex items-start space-x-2.5 p-3.5 bg-slate-50 border border-slate-200/80 rounded-2xl">
+            <ShieldCheck className="w-4 h-4 text-slate-400 flex-shrink-0 mt-0.5" />
+            <p className="text-[11px] text-slate-500 italic">
+              This is an informational safety alert, not a medical diagnosis. Always consult your doctor before changing medicines.
+            </p>
+          </div>
+        </Card>
 
  {/* ── Cumulative Burden Meter (SAFETY CARVE-OUT) ───────────────────────── */}
  <Card
@@ -582,17 +593,14 @@ export default function RiskAnalysisPage() {
  </div>
  </Card>
 
- {/* ── Footer actions ──────────────────────────────────────────────────── */}
- <div className="flex flex-col gap-2.5 pt-2">
- <Link to="/home" className="btn-primary py-3.5 flex items-center justify-center gap-2">
- <ArrowLeft className="w-4 h-4" />
- <span>Back to Dashboard</span>
- </Link>
- <Link to="/add-medicine" className="btn-secondary py-3 flex items-center justify-center gap-2 text-sm">
- <Pill className="w-4 h-4" />
- <span>Manage My Medicines</span>
- </Link>
- </div>
+        {/* ── Footer actions ──────────────────────────────────────────────────── */}
+        <div className="flex flex-col gap-2.5 pt-2">
+          <BackButton to="/home" label="Back to Dashboard" className="w-full py-3.5 justify-center text-sm" />
+          <Link to="/add-medicine" className="btn-secondary py-3 flex items-center justify-center gap-2 text-sm">
+            <Pill className="w-4 h-4" />
+            <span>Manage My Medicines</span>
+          </Link>
+        </div>
 
  </div>
  </div>

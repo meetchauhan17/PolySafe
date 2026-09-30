@@ -12,7 +12,7 @@ import {
   FileText, Activity, Brain, ArrowDownCircle, Printer,
   Sparkles, Check, AlertTriangle,
   CalendarDays, Layers, Heart, FlaskConical,
-  ArrowLeftRight, Send, MessageSquare, BarChart2,
+  ArrowLeftRight, Send, MessageSquare, BarChart2, Zap,
 } from 'lucide-react';
 import Card from '../components/Card';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
@@ -149,7 +149,7 @@ function DoctorSafetyCheckModal({ isOpen, onClose, patientId, patientAge, onPres
 				initial={{ opacity: 0, scale: 0.95, y: 10 }}
 				animate={{ opacity: 1, scale: 1, y: 0 }}
 				exit={{ opacity: 0, scale: 0.95, y: 10 }}
-				className="w-full max-w-2xl bg-[var(--brand-surface)] border border-white/80 dark:border-white/10 shadow-2xl rounded-2xl p-6 sm:p-8 space-y-6 max-h-[86vh] my-auto overflow-y-auto"
+				className="w-full max-w-2xl bg-[var(--brand-surface)] border border-white/80 shadow-2xl rounded-2xl p-6 sm:p-8 space-y-6 max-h-[86vh] my-auto overflow-y-auto"
 			>
 				{/* Header */}
 				<div className="flex items-start justify-between gap-4 border-b border-[var(--brand-border-subtle)] pb-4">
@@ -177,7 +177,7 @@ function DoctorSafetyCheckModal({ isOpen, onClose, patientId, patientAge, onPres
 
 				{/* Clear Framing Notice */}
 				<div className="flex items-start gap-2.5 p-3.5 bg-teal-500/10 border border-teal-500/25 rounded-xl text-xs text-[var(--text-primary)] leading-relaxed">
-					<Info className="w-4 h-4 text-teal-600 dark:text-teal-400 flex-shrink-0 mt-0.5" />
+					<Info className="w-4 h-4 text-teal-600 flex-shrink-0 mt-0.5" />
 					<p>
 						<strong className="text-[var(--role-doctor)]">Clinical Simulator:</strong> Cross-checks the proposed drug against the patient's active medicines for direct DDInter flags and WHO/NCI tiered polypharmacy score changes before issuing a prescription.
 					</p>
@@ -268,7 +268,7 @@ function DoctorSafetyCheckModal({ isOpen, onClose, patientId, patientAge, onPres
 
 				{/* Error message */}
 				{err && (
-					<div className="flex items-center gap-2.5 p-3.5 bg-rose-500/10 border border-rose-500/20 rounded-xl text-xs text-rose-700 dark:text-rose-400">
+					<div className="flex items-center gap-2.5 p-3.5 bg-rose-500/10 border border-rose-500/20 rounded-xl text-xs text-rose-700">
 						<AlertCircle className="w-4 h-4 text-rose-500 flex-shrink-0" />
 						<span>{err}</span>
 					</div>
@@ -285,10 +285,10 @@ function DoctorSafetyCheckModal({ isOpen, onClose, patientId, patientAge, onPres
 						<div
 							className={`p-4 rounded-xl border flex items-center justify-between gap-4 ${
 								result.decision === 'CRITICAL'
-									? 'bg-rose-500/10 border-rose-500/25 text-rose-900 dark:text-rose-300'
+									? 'bg-rose-500/10 border-rose-500/25 text-rose-900'
 									: result.decision === 'CAUTION'
-									? 'bg-amber-500/10 border-amber-500/25 text-amber-900 dark:text-amber-300'
-									: 'bg-teal-500/10 border-teal-500/25 text-teal-900 dark:text-teal-300'
+									? 'bg-amber-500/10 border-amber-500/25 text-amber-900'
+									: 'bg-teal-500/10 border-teal-500/25 text-teal-900'
 							}`}
 						>
 							<div className="flex items-center gap-3">
@@ -374,7 +374,7 @@ function DoctorSafetyCheckModal({ isOpen, onClose, patientId, patientAge, onPres
 						{/* Interaction Flags List */}
 						{result.flags && result.flags.length > 0 && (
 							<div className="space-y-2">
-								<p className="text-xs font-bold uppercase tracking-wider text-rose-700 dark:text-rose-400 flex items-center gap-1.5">
+								<p className="text-xs font-bold uppercase tracking-wider text-rose-700 flex items-center gap-1.5">
 									<AlertOctagon className="w-3.5 h-3.5" />
 									<span>{result.flags.length} Interaction Flag{result.flags.length !== 1 ? 's' : ''} Detected</span>
 								</p>
@@ -391,8 +391,8 @@ function DoctorSafetyCheckModal({ isOpen, onClose, patientId, patientAge, onPres
 												<span
 													className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
 														flag.severity === 'Major' || flag.severity === 'Contraindicated'
-															? 'bg-rose-500/10 text-rose-700 dark:text-rose-400 border-rose-500/20'
-															: 'bg-amber-500/10 text-amber-800 dark:text-amber-300 border-amber-500/20'
+															? 'bg-rose-500/10 text-rose-700 border-rose-500/20'
+															: 'bg-amber-500/10 text-amber-800 border-amber-500/20'
 													}`}
 												>
 													{flag.severity}
@@ -469,7 +469,7 @@ function DrugSubstituteModal({ isOpen, onClose, patientId, medicines, onSuccess 
 				initial={{ opacity: 0, scale: 0.96, y: 10 }}
 				animate={{ opacity: 1, scale: 1, y: 0 }}
 				exit={{ opacity: 0, scale: 0.96, y: 10 }}
-				className="w-full max-w-lg bg-[var(--brand-surface)] border border-white/80 dark:border-white/10 shadow-2xl rounded-2xl p-6 sm:p-7 space-y-5 max-h-[86vh] my-auto overflow-y-auto"
+				className="w-full max-w-lg bg-[var(--brand-surface)] border border-white/80 shadow-2xl rounded-2xl p-6 sm:p-7 space-y-5 max-h-[86vh] my-auto overflow-y-auto"
 			>
 				<div className="flex items-center justify-between border-b border-[var(--brand-border-subtle)] pb-4">
 					<div className="flex items-center gap-2.5">
@@ -490,7 +490,7 @@ function DrugSubstituteModal({ isOpen, onClose, patientId, medicines, onSuccess 
 				</div>
 
 				{err && (
-					<div className="flex items-center gap-2 p-3 bg-rose-500/10 border border-rose-500/20 rounded-xl text-xs text-rose-700 dark:text-rose-400">
+					<div className="flex items-center gap-2 p-3 bg-rose-500/10 border border-rose-500/20 rounded-xl text-xs text-rose-700">
 						<AlertCircle className="w-4 h-4 flex-shrink-0" />
 						<span>{err}</span>
 					</div>
@@ -686,25 +686,25 @@ function OrganToxicityPanel({ patientId, medicines }) {
     {
       key: 'renal',
       label: 'Renal Toxicity',
-      icon: <FlaskConical className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />,
+      icon: <FlaskConical className="w-4 h-4 text-cyan-600" />,
       description: 'Nephrotoxic drug burden (NSAIDs, loop diuretics, aminoglycosides)',
     },
     {
       key: 'hepatic',
       label: 'Hepatic Toxicity',
-      icon: <Activity className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />,
+      icon: <Activity className="w-4 h-4 text-emerald-600" />,
       description: 'Hepatotoxic drug burden (statins, methotrexate, acetaminophen)',
     },
     {
       key: 'cardiovascular',
       label: 'Cardiovascular Risk',
-      icon: <Heart className="w-4 h-4 text-rose-600 dark:text-rose-400" />,
+      icon: <Heart className="w-4 h-4 text-rose-600" />,
       description: 'QT-prolonging / proarrhythmic drug burden & electrolyte shifting',
     },
     {
       key: 'cnsCognitive',
       label: 'CNS / Cognitive Burden',
-      icon: <Brain className="w-4 h-4 text-purple-600 dark:text-purple-400" />,
+      icon: <Brain className="w-4 h-4 text-purple-600" />,
       description: 'Anticholinergic Cognitive Burden & central sedation score',
     },
   ];
@@ -760,10 +760,10 @@ function OrganToxicityPanel({ patientId, medicines }) {
             const isHigh = level === 'High' || level === 'Critical';
 
             const badgeClasses = isHigh
-              ? 'bg-rose-500/10 text-rose-700 dark:text-rose-400 border-rose-500/20'
+              ? 'bg-rose-500/10 text-rose-700 border-rose-500/20'
               : isMod
-              ? 'bg-amber-500/10 text-amber-800 dark:text-amber-300 border-amber-500/20'
-              : 'bg-teal-500/10 text-teal-800 dark:text-teal-300 border-teal-500/20';
+              ? 'bg-amber-500/10 text-amber-800 border-amber-500/20'
+              : 'bg-teal-500/10 text-teal-800 border-teal-500/20';
 
             const barGradient = isHigh
               ? 'from-rose-500 to-red-600'
@@ -836,7 +836,7 @@ function OrganToxicityPanel({ patientId, medicines }) {
               <div>
                 <div className="flex items-center gap-2">
                   <h4 className="text-xs font-bold text-[var(--text-primary)] font-display">Anticholinergic Cognitive Burden (ACB Scale)</h4>
-                  <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-teal-500/10 text-teal-800 dark:text-teal-300 border border-teal-500/20 shadow-2xs">
+                  <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-teal-500/10 text-teal-800 border border-teal-500/20 shadow-2xs">
                     {data.anticholinergicBurden.level || 'Normal'}
                   </span>
                 </div>
@@ -880,7 +880,7 @@ function ClinicalConsultationReportModal({ isOpen, onClose, patientId }) {
 				initial={{ opacity: 0, scale: 0.95 }}
 				animate={{ opacity: 1, scale: 1 }}
 				exit={{ opacity: 0, scale: 0.95 }}
-				className="w-full max-w-4xl bg-[var(--brand-surface)] border border-white/80 dark:border-white/10 shadow-2xl rounded-2xl p-6 sm:p-8 space-y-6 max-h-[86vh] my-auto overflow-y-auto print:max-h-none print:p-0 print:border-none print:shadow-none"
+				className="w-full max-w-4xl bg-[var(--brand-surface)] border border-white/80 shadow-2xl rounded-2xl p-6 sm:p-8 space-y-6 max-h-[86vh] my-auto overflow-y-auto print:max-h-none print:p-0 print:border-none print:shadow-none"
 			>
 				{/* Modal Top Bar (Hidden in Print) */}
 				<div className="flex items-center justify-between gap-4 print:hidden border-b border-[var(--brand-border-subtle)] pb-4">
@@ -928,7 +928,7 @@ function ClinicalConsultationReportModal({ isOpen, onClose, patientId }) {
 							</div>
 							<div className="text-right text-xs text-[var(--text-muted)]">
 								<p className="font-bold text-[var(--text-primary)]">Date: {new Date(data.generatedAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
-								<p className="mt-0.5">Status: <strong className="text-teal-700 dark:text-teal-400">Verified Clinical Record</strong></p>
+								<p className="mt-0.5">Status: <strong className="text-teal-700">Verified Clinical Record</strong></p>
 							</div>
 						</div>
 
@@ -992,12 +992,12 @@ function ClinicalConsultationReportModal({ isOpen, onClose, patientId }) {
 
 						{/* Drug Interactions Matrix */}
 						<div className="space-y-2.5">
-							<h4 className="text-xs font-bold uppercase tracking-wider text-rose-700 dark:text-rose-400 flex items-center gap-2 font-display">
+							<h4 className="text-xs font-bold uppercase tracking-wider text-rose-700 flex items-center gap-2 font-display">
 								<AlertOctagon className="w-4 h-4" />
 								<span>2. DDInter Drug Interaction Risk Matrix ({data.flags?.length || 0} Flags)</span>
 							</h4>
 							{data.flags?.length === 0 ? (
-								<p className="text-xs text-teal-800 dark:text-teal-300 p-3.5 bg-teal-500/10 rounded-xl border border-teal-500/20 font-medium">
+								<p className="text-xs text-teal-800 p-3.5 bg-teal-500/10 rounded-xl border border-teal-500/20 font-medium">
 									No severe or contraindicated drug-drug interactions detected across active medicines.
 								</p>
 							) : (
@@ -1005,12 +1005,12 @@ function ClinicalConsultationReportModal({ isOpen, onClose, patientId }) {
 									{data.flags?.map((f, i) => (
 										<div key={i} className="p-3.5 bg-rose-500/10 border border-rose-500/20 rounded-xl text-xs space-y-1.5">
 											<div className="flex items-center justify-between">
-												<strong className="text-rose-950 dark:text-rose-200 font-bold">{f.drugA} ↔ {f.drugB}</strong>
-												<span className="px-2.5 py-0.5 text-[10px] font-bold rounded-full bg-rose-500/20 text-rose-900 dark:text-rose-300 border border-rose-500/30">
+												<strong className="text-rose-950 font-bold">{f.drugA} ↔ {f.drugB}</strong>
+												<span className="px-2.5 py-0.5 text-[10px] font-bold rounded-full bg-rose-500/20 text-rose-900 border border-rose-500/30">
 													{f.severity}
 												</span>
 											</div>
-											<p className="text-rose-800 dark:text-rose-300 text-[11px] leading-relaxed">{f.explanation}</p>
+											<p className="text-rose-800 text-[11px] leading-relaxed">{f.explanation}</p>
 										</div>
 									))}
 								</div>
@@ -1024,7 +1024,7 @@ function ClinicalConsultationReportModal({ isOpen, onClose, patientId }) {
 									<Brain className="w-4 h-4 text-purple-600" />
 									<span>3. Cumulative Anticholinergic & Sedative Cognitive Burden</span>
 								</h4>
-								<span className="text-xs font-bold px-3 py-1 rounded-xl bg-teal-500/10 text-teal-800 dark:text-teal-300 border border-teal-500/20 shadow-2xs">
+								<span className="text-xs font-bold px-3 py-1 rounded-xl bg-teal-500/10 text-teal-800 border border-teal-500/20 shadow-2xs">
 									ACB Score: {data.anticholinergicBurden?.totalScore || 0} ({data.anticholinergicBurden?.level || 'Normal'})
 								</span>
 							</div>
@@ -1036,19 +1036,19 @@ function ClinicalConsultationReportModal({ isOpen, onClose, patientId }) {
 						{/* Deprescribing & Optimization Recommendations */}
 						{data.deprescribingCandidates?.length > 0 && (
 							<div className="p-4.5 bg-amber-500/10 border border-amber-500/20 rounded-2xl space-y-3">
-								<h4 className="text-xs font-bold uppercase tracking-wider text-amber-900 dark:text-amber-300 flex items-center gap-2 font-display">
+								<h4 className="text-xs font-bold uppercase tracking-wider text-amber-900 flex items-center gap-2 font-display">
 									<Sparkles className="w-4 h-4 text-amber-600" />
 									<span>4. Clinical Deprescribing & Optimization Recommendations</span>
 								</h4>
 								<div className="space-y-2">
 									{data.deprescribingCandidates.map((c, i) => (
 										<div key={i} className="p-3.5 bg-[var(--brand-surface)] border border-amber-500/30 rounded-xl text-xs space-y-1.5 shadow-2xs">
-											<div className="flex items-center justify-between font-bold text-amber-950 dark:text-amber-200">
+											<div className="flex items-center justify-between font-bold text-amber-950">
 												<span>{c.name} ({c.dosage || 'Active'})</span>
 												<DrugHarmBadge harmLevel={c.harmLevel} size="sm" />
 											</div>
-											<p className="text-amber-900 dark:text-amber-300 text-[11px]"><strong>Clinical Rationale:</strong> {c.reason}</p>
-											<p className="text-teal-900 dark:text-teal-300 text-[11px]"><strong>Recommendation:</strong> {c.recommendation}</p>
+											<p className="text-amber-900 text-[11px]"><strong>Clinical Rationale:</strong> {c.reason}</p>
+											<p className="text-teal-900 text-[11px]"><strong>Recommendation:</strong> {c.recommendation}</p>
 										</div>
 									))}
 								</div>
@@ -1320,7 +1320,7 @@ function PatientView({ patientId }) {
 								<h2 className="text-lg font-bold text-[var(--text-primary)] font-display">
 									{patient.name || patient.patientName || (patient.age ? `Patient (Age ${patient.age})` : 'Patient Record')}
 								</h2>
-								<span className="inline-flex items-center gap-1 text-[10px] font-mono font-bold text-[#0f766e] dark:text-[#2dd4bf] bg-teal-500/10 border border-teal-500/30 px-2.5 py-0.5 rounded-full shadow-2xs">
+								<span className="inline-flex items-center gap-1 text-[10px] font-mono font-bold text-[#0f766e] bg-teal-500/10 border border-teal-500/30 px-2.5 py-0.5 rounded-full shadow-2xs">
 									<Shield className="w-3 h-3" />
 									CONSENT APPROVED
 								</span>
@@ -1358,10 +1358,10 @@ function PatientView({ patientId }) {
 							</span>
 						)}
 						{patient.allergies?.length > 0 && (
-							<span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-rose-500/10 border border-rose-500/25 text-xs text-rose-700 dark:text-rose-400 font-medium shadow-2xs">
+							<span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-rose-500/10 border border-rose-500/25 text-xs text-rose-700 font-medium shadow-2xs">
 								<AlertTriangle className="w-3.5 h-3.5 text-rose-500 flex-shrink-0" />
 								<span>Allergies:</span>
-								<strong className="font-bold text-rose-800 dark:text-rose-300">{patient.allergies.join(', ')}</strong>
+								<strong className="font-bold text-rose-800">{patient.allergies.join(', ')}</strong>
 							</span>
 						)}
 					</div>
@@ -1594,19 +1594,19 @@ function PatientView({ patientId }) {
 														hideScrews={true}
 														className={`flex-1 space-y-3 transition-all ${
 															isDiscontinued
-																? '!bg-[#f8f6f0] dark:!bg-white/[0.03] opacity-75 !border-[var(--chassis-dark,#D5CEBF)]'
+																? '!bg-[#f8f6f0] opacity-75 !border-[var(--chassis-dark,#D5CEBF)]'
 																: isFlagged
-																? '!bg-[#fef2f2] dark:!bg-rose-950/20 !border-rose-400/50 dark:!border-rose-500/40 shadow-[0_2px_14px_rgba(225,29,72,0.08)]'
+																? '!bg-[#fef2f2] !border-rose-400/50 shadow-[0_2px_14px_rgba(225,29,72,0.08)]'
 																: 'bg-[var(--chassis)] border-[rgba(255,255,255,0.4)] hover:shadow-[var(--shadow-card)]'
 														}`}
 													>
-														<div className="flex items-center justify-between gap-2 flex-wrap pb-1 border-b border-[rgba(255,255,255,0.25)] dark:border-white/5">
+														<div className="flex items-center justify-between gap-2 flex-wrap pb-1 border-b border-[rgba(255,255,255,0.25)]">
 															<span
 																className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold uppercase tracking-wider ${
 																	isDiscontinued
 																		? 'bg-[var(--chassis-dark,#E0DACE)]/60 text-[var(--text-muted,#5C6B64)] border border-[var(--chassis-dark,#D5CEBF)]'
 																		: isFlagged
-																		? 'bg-white/80 dark:bg-black/30 text-[var(--accent-primary,#2B6E5E)] border border-rose-300/40 shadow-xs'
+																		? 'bg-white/80 text-[var(--accent-primary,#2B6E5E)] border border-rose-300/40 shadow-xs'
 																		: 'bg-[#2B6E5E]/10 text-[#2B6E5E] border border-[#2B6E5E]/25 shadow-xs'
 																}`}
 															>
@@ -1879,7 +1879,7 @@ function ConnectionsList({ onSelect, selectedId }) {
                 className={`p-3 rounded-2xl cursor-pointer transition-all border ${
                   isSelected
                     ? 'bg-[var(--brand-surface)] border-[var(--role-doctor)] shadow-[var(--shadow-sm)] ring-2 ring-[var(--role-doctor)]/20'
-                    : 'bg-[var(--brand-surface)]/70 hover:bg-[var(--brand-surface)] border-[rgba(255,255,255,0.6)] dark:border-white/5 hover:border-[var(--role-doctor)]/30 hover:shadow-[var(--shadow-xs)]'
+                    : 'bg-[var(--brand-surface)]/70 hover:bg-[var(--brand-surface)] border-[rgba(255,255,255,0.6)] hover:border-[var(--role-doctor)]/30 hover:shadow-[var(--shadow-xs)]'
                 }`}
               >
                 <div className="flex items-center gap-3">
@@ -1909,105 +1909,146 @@ function ConnectionsList({ onSelect, selectedId }) {
 
 // ─── 8. Main Doctor Dashboard Page ─────────────────────────────────────────────
 export default function DoctorDashboardPage() {
- const queryClient = useQueryClient();
- const shouldReduceMotion = useReducedMotion();
+  const queryClient = useQueryClient();
+  const shouldReduceMotion = useReducedMotion();
 
- const [step, setStep] = useState('list'); // 'list' | 'claim' | 'claimed' | 'viewing'
- const [selectedPatient, setSelectedPatient] = useState(null); // { patientId, connectionId }
+  const [step, setStep] = useState('list'); // 'list' | 'claim' | 'claimed' | 'viewing'
+  const [selectedPatient, setSelectedPatient] = useState(null); // { patientId, connectionId }
 
- const handleClaimSuccess = () => {
- setStep('claimed');
- queryClient.invalidateQueries(['doctor-connections']);
- };
+  const handleClaimSuccess = () => {
+    setStep('claimed');
+    queryClient.invalidateQueries(['doctor-connections']);
+  };
 
- const handleSelectPatient = (patientId, connectionId) => {
- setSelectedPatient({ patientId, connectionId });
- setStep('viewing');
- };
+  const handleSelectPatient = (patientId, connectionId) => {
+    setSelectedPatient({ patientId, connectionId });
+    setStep('viewing');
+  };
 
- return (
- <div className="py-6 px-4 md:px-6 max-w-7xl mx-auto space-y-6">
- {/* ── Step: Claim Code Modal/Panel ── */}
- {step === 'claim' && (
- <div className="max-w-xl mx-auto space-y-4">
- <div className="flex items-center justify-between">
- <h2 className="text-xl font-bold text-[#1C2B27]" style={{ fontFamily: "'Fraunces', serif" }}>
- Link Patient Record
- </h2>
- <button
- onClick={() => setStep('list')}
- className="btn-secondary py-1.5 px-3 text-xs"
- >
- Cancel
- </button>
- </div>
- <ClaimPanel onSuccess={handleClaimSuccess} />
- </div>
- )}
+  return (
+    <div className="py-6 px-4 md:px-6 max-w-7xl mx-auto space-y-6">
+      {/* ── Modern Hero Header matching LoginPage aesthetic ── */}
+      <div className="relative overflow-hidden rounded-3xl p-6 md:p-8 bg-gradient-to-br from-white/90 via-teal-50/40 to-emerald-50/30 border border-teal-200/60 shadow-[0_12px_40px_-8px_rgba(13,148,136,0.08)] backdrop-blur-xl">
+        {/* Top luminous accent bar */}
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-teal-500 via-emerald-500 to-cyan-500" />
 
- {/* ── Step: Code claimed, waiting for patient approval ── */}
- {step === 'claimed' && (
- <Card className="max-w-md mx-auto text-center space-y-5 p-8">
- <div className="w-16 h-16 rounded-full bg-amber-50 border-2 border-amber-200 flex items-center justify-center mx-auto">
- <Clock className="w-8 h-8 text-[#E0824B]" />
- </div>
- <div>
- <h2 className="text-xl font-bold text-[#1C2B27]" style={{ fontFamily: "'Fraunces', serif" }}>
- Waiting for Patient Approval
- </h2>
- <p className="text-sm text-[#5C6B64] mt-2 leading-relaxed">
- Your connection request has been sent. The patient will receive an approval prompt in their PolySafe app. Once approved, their record will appear in your clinical list.
- </p>
- </div>
- <div className="flex items-center justify-center gap-2">
- {[0, 1, 2].map((i) => (
- <div
- key={i}
- className="w-2.5 h-2.5 rounded-full bg-[#2B6E5E]"
- style={{ animation: `pulse-dot 1.4s ease-in-out ${i * 0.16}s infinite` }}
- />
- ))}
- </div>
- <button
- onClick={() => { setStep('list'); queryClient.invalidateQueries(['doctor-connections']); }}
- className="btn-primary w-full py-3"
- >
- <Users className="w-4 h-4" />
- <span>View Connected Patients</span>
- </button>
- </Card>
- )}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 relative z-10">
+          <div className="space-y-2">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-teal-500/10 text-teal-800 border border-teal-500/20">
+              <span className="w-2 h-2 rounded-full bg-teal-500 animate-pulse" />
+              <span>Physician Clinical Workstation</span>
+              <span className="text-teal-400">·</span>
+              <span className="font-mono text-[11px] text-teal-600">Consent Engine Active</span>
+            </div>
+            <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight font-display">
+              Clinical <span className="bg-gradient-to-r from-teal-600 via-emerald-600 to-cyan-600 bg-clip-text text-transparent">Prescriber Hub</span>
+            </h1>
+            <p className="text-sm text-slate-600 max-w-2xl leading-relaxed">
+              Real-time cross-prescribing cascade analysis, drug-drug interaction surveillance, and instant patient directive transmission.
+            </p>
+          </div>
 
- {/* ── Step: Patient list + viewer (Side-by-Side Unified Grid Layout) ── */}
- {(step === 'list' || step === 'viewing') && (
- <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-6 items-start">
- {/* Sidebar: Approved Patients Card (Sticky on desktop) */}
- <div className="lg:sticky lg:top-[88px] space-y-4">
- <Card
- title="Clinical Patients"
- subtitle="Consent-approved records"
- icon={<Users className="w-4 h-4 text-[#2B6E5E]" />}
- className="p-5"
- >
- <div className="space-y-4">
- {/* Pinned "+ Enter Code" Button */}
- <button
- onClick={() => setStep('claim')}
- className="btn-primary w-full py-2.5 text-xs flex items-center justify-center gap-2"
- >
- <Plus className="w-4 h-4" />
- <span>Enter Patient Code</span>
- </button>
+          <div className="flex flex-wrap items-center gap-2">
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/80 border border-slate-200/80 shadow-xs text-xs font-medium text-slate-700">
+              <Shield className="w-3.5 h-3.5 text-teal-600" />
+              <span>End-to-End Consent</span>
+            </div>
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/80 border border-slate-200/80 shadow-xs text-xs font-medium text-slate-700">
+              <Activity className="w-3.5 h-3.5 text-emerald-600" />
+              <span>FHIR Audit Log</span>
+            </div>
+            <button
+              onClick={() => setStep('claim')}
+              className="btn-primary py-2 px-4 text-xs font-mono font-bold uppercase tracking-wider flex items-center gap-2 shadow-sm shadow-teal-900/20"
+            >
+              <Plus className="w-4 h-4" />
+              <span>Connect Patient Code</span>
+            </button>
+          </div>
+        </div>
+      </div>
 
- <div className="border-t border-[var(--brand-border-subtle)] pt-3">
- <ConnectionsList
- onSelect={handleSelectPatient}
- selectedId={selectedPatient?.connectionId}
- />
- </div>
- </div>
- </Card>
- </div>
+      {/* ── Step: Claim Code Modal/Panel ── */}
+      {step === 'claim' && (
+        <div className="max-w-xl mx-auto space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl font-bold text-[#1C2B27]" style={{ fontFamily: "'Fraunces', serif" }}>
+              Link Patient Record
+            </h2>
+            <button
+              onClick={() => setStep('list')}
+              className="btn-secondary py-1.5 px-3 text-xs"
+            >
+              Cancel
+            </button>
+          </div>
+          <ClaimPanel onSuccess={handleClaimSuccess} />
+        </div>
+      )}
+
+      {/* ── Step: Code claimed, waiting for patient approval ── */}
+      {step === 'claimed' && (
+        <Card className="max-w-md mx-auto text-center space-y-5 p-8">
+          <div className="w-16 h-16 rounded-full bg-amber-50 border-2 border-amber-200 flex items-center justify-center mx-auto">
+            <Clock className="w-8 h-8 text-[#E0824B]" />
+          </div>
+          <div>
+            <h2 className="text-xl font-bold text-[#1C2B27]" style={{ fontFamily: "'Fraunces', serif" }}>
+              Waiting for Patient Approval
+            </h2>
+            <p className="text-sm text-[#5C6B64] mt-2 leading-relaxed">
+              Your connection request has been sent. The patient will receive an approval prompt in their PolySafe app. Once approved, their record will appear in your clinical list.
+            </p>
+          </div>
+          <div className="flex items-center justify-center gap-2">
+            {[0, 1, 2].map((i) => (
+              <div
+                key={i}
+                className="w-2.5 h-2.5 rounded-full bg-[#2B6E5E]"
+                style={{ animation: `pulse-dot 1.4s ease-in-out ${i * 0.16}s infinite` }}
+              />
+            ))}
+          </div>
+          <button
+            onClick={() => { setStep('list'); queryClient.invalidateQueries(['doctor-connections']); }}
+            className="btn-primary w-full py-3"
+          >
+            <Users className="w-4 h-4" />
+            <span>View Connected Patients</span>
+          </button>
+        </Card>
+      )}
+
+      {/* ── Step: Patient list + viewer (Side-by-Side Unified Grid Layout) ── */}
+      {(step === 'list' || step === 'viewing') && (
+        <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-6 items-start">
+          {/* Sidebar: Approved Patients Card (Sticky on desktop) */}
+          <div className="lg:sticky lg:top-[88px] space-y-4">
+            <Card
+              title="Clinical Patients"
+              subtitle="Consent-approved records"
+              icon={<Users className="w-4 h-4 text-[#2B6E5E]" />}
+              className="p-5"
+            >
+              <div className="space-y-4">
+                {/* Pinned "+ Enter Code" Button */}
+                <button
+                  onClick={() => setStep('claim')}
+                  className="btn-primary w-full py-2.5 text-xs flex items-center justify-center gap-2"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Enter Patient Code</span>
+                </button>
+
+                <div className="border-t border-[var(--brand-border-subtle)] pt-3">
+                  <ConnectionsList
+                    onSelect={handleSelectPatient}
+                    selectedId={selectedPatient?.connectionId}
+                  />
+                </div>
+              </div>
+            </Card>
+          </div>
 
  {/* Main: Animated Patient Details or Clean Empty State */}
  <div className="min-w-0">
@@ -2053,3 +2094,4 @@ export default function DoctorDashboardPage() {
  </div>
  );
 }
+

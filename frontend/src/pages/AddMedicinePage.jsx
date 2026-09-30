@@ -10,7 +10,7 @@ import {
  Activity, AlertOctagon, Search, HelpCircle, Clock, User, CalendarDays,
  Sun, Sunset, Moon, Coffee, QrCode, FlaskConical, Layers, SwitchCamera,
  CheckSquare, Square, Sparkles, Building2, Calendar,
- Tag, ShieldAlert, Package,
+ Tag, ShieldAlert, Package, Zap, Shield, HeartPulse, Thermometer, Wind, Check,
 } from 'lucide-react';
 import Card from '../components/Card';
 import { notify } from '../utils/toast';
@@ -31,6 +31,171 @@ const DOSAGE_FORMS = [
  { value: 'drops', label: 'Eye / Ear Drops', icon: '' },
  { value: 'inhaler', label: 'Inhaler / Respules', icon: '' },
 ];
+
+// ─── Common Drug Indications / Purposes ──────────────────────────────────────
+const COMMON_DRUG_PURPOSES = {
+  dolo: 'Fever, Headache & Body Pain',
+  calpol: 'Fever & Mild to Moderate Pain',
+  crocin: 'Fever, Body Ache & Headache',
+  paracetamol: 'Fever, Headache & Pain Relief',
+  combiflam: 'Severe Headache, Muscle & Body Pain',
+  naxdom: 'Migraine, Severe Headache & Joint Inflammation',
+  voveran: 'Severe Joint Pain, Swelling & Arthritis',
+  brufen: 'Inflammation, Muscle Pain & Dental Ache',
+  ibuprofen: 'Pain Relief, Anti-inflammatory',
+  diclofenac: 'Joint Pain, Sprain & Arthritis',
+  naproxen: 'Migraine, Arthritis & Musculoskeletal Pain',
+  loperamide: 'Diarrhea & Loose Motions',
+  ors: 'Dehydration & Diarrhea Recovery',
+  electral: 'Dehydration & Electrolyte Imbalance',
+  'norflox-tz': 'Bacterial Diarrhea, Amoebiasis & Stomach Infection',
+  norflox: 'Urinary Tract Infection & Bacterial Diarrhea',
+  ofloxacin: 'Bacterial Diarrhea & Respiratory Infection',
+  pan: 'Acidity, Gas & Acid Reflux (GERD)',
+  'pan-d': 'Acidity, Gas, Acid Reflux & Nausea',
+  pantoprazole: 'Acid Reflux, Heartburn & Peptic Ulcer',
+  omeprazole: 'Heartburn, Gastric Ulcer & Hyperacidity',
+  omez: 'Acid Reflux & Stomach Ulcers',
+  rabeprazole: 'GERD, Acidity & Gastric Irritation',
+  rabicip: 'Acid Reflux & Hyperacidity',
+  digene: 'Instant Relief from Acidity, Gas & Heartburn',
+  gelusil: 'Instant Relief from Acidity & Heartburn',
+  metformin: 'Type 2 Diabetes & Blood Sugar Control',
+  glycomet: 'Type 2 Diabetes & Blood Sugar Regulation',
+  glimepiride: 'Type 2 Diabetes, Insulin Stimulation',
+  januvia: 'Type 2 Diabetes Mellitus',
+  telma: 'High Blood Pressure (Hypertension) & Heart Protection',
+  telmisartan: 'High Blood Pressure & Cardiovascular Risk Reduction',
+  amlodipine: 'High Blood Pressure & Angina (Chest Pain)',
+  stamlo: 'High Blood Pressure (Hypertension)',
+  losartan: 'High Blood Pressure & Kidney Protection',
+  ecosprin: 'Blood Thinner, Heart Attack & Stroke Prevention',
+  aspirin: 'Blood Thinner & Cardiovascular Protection',
+  clopidogrel: 'Blood Thinner & Clot Prevention',
+  atorvastatin: 'High Cholesterol & Heart Disease Prevention',
+  atorva: 'Cholesterol Lowering & Lipid Control',
+  rosuvastatin: 'High Cholesterol & Arterial Plaque Reduction',
+  cheston: 'Common Cold, Runny Nose, Sneezing & Fever',
+  sinarest: 'Cold, Sinus Congestion, Headache & Fever',
+  ascoril: 'Cough, Chest Congestion & Phlegm Relief',
+  alex: 'Dry Cough & Throat Irritation',
+  benadryl: 'Cough Relief & Throat Soothing',
+  cetirizine: 'Allergy, Sneezing, Runny Nose & Itching',
+  allegra: 'Seasonal Allergies, Allergic Rhinitis & Hives',
+  fexofenadine: 'Non-Drowsy Allergy Relief',
+  levocetirizine: 'Allergy, Watery Eyes & Skin Rash',
+  augmentin: 'Bacterial Infections (Ear, Throat, Chest, Skin)',
+  amoxicillin: 'Bacterial Infection Treatment',
+  azithromycin: 'Throat, Lung & Bacterial Infections',
+  azithral: 'Bacterial Throat, Chest & Ear Infections',
+  ciprofloxacin: 'Bacterial Infections & UTI',
+  ondansetron: 'Nausea, Vomiting & Motion Sickness',
+  vomikind: 'Nausea & Vomiting Control',
+  shelcal: 'Calcium & Vitamin D3 Deficiency, Bone Strength',
+  becosules: 'Mouth Ulcers, Vitamin B-Complex & C Supplement',
+  neurobion: 'Nerve Health, Neuropathy & Vitamin B12 Deficiency',
+  supradyn: 'Daily Multivitamin, Energy & Immunity',
+  evion: 'Vitamin E Deficiency, Muscle Cramps & Skin Health',
+  ashwagandha: 'Stress Relief, Vitality & Immunity',
+  liv52: 'Liver Health, Protection & Appetite',
+};
+
+// ─── Symptom / Condition Quick-Recommendation Formulary ───────────────────────
+const CONDITION_ICONS = {
+  'Headache': Zap,
+  'Diarrhea': ShieldAlert,
+  'Fever': Thermometer,
+  'Acidity / Gas': Shield,
+  'Body Pain': Activity,
+  'Diabetes': FlaskConical,
+  'Blood Pressure': HeartPulse,
+  'Cough / Cold': Wind,
+  'Allergy': ShieldCheck,
+  'Vitamins / Immunity': Sparkles,
+};
+
+const CONDITION_MED_RECOMMENDATIONS = {
+  'Headache': [
+    { name: 'Dolo 650', dosage: '650mg', frequency: 'thrice', generic: 'Paracetamol', purpose: 'Fever, Headache & Body Pain' },
+    { name: 'Combiflam', dosage: '400mg', frequency: 'twice', generic: 'Ibuprofen + Paracetamol', purpose: 'Severe Headache, Muscle & Body Pain' },
+    { name: 'Naxdom 500', dosage: '500mg', frequency: 'twice', generic: 'Naproxen + Domperidone', purpose: 'Migraine, Severe Headache & Joint Inflammation' },
+  ],
+  'Diarrhea': [
+    { name: 'Loperamide 2mg', dosage: '2mg', frequency: 'asneeded', generic: 'Loperamide', purpose: 'Diarrhea & Loose Motions' },
+    { name: 'ORS Electral', dosage: '1 sachet', frequency: 'asneeded', generic: 'Oral Rehydration Salts', purpose: 'Dehydration & Diarrhea Recovery' },
+    { name: 'Norflox-TZ', dosage: '1 tablet', frequency: 'twice', generic: 'Norfloxacin + Tinidazole', purpose: 'Bacterial Diarrhea, Amoebiasis & Stomach Infection' },
+  ],
+  'Fever': [
+    { name: 'Dolo 650', dosage: '650mg', frequency: 'thrice', generic: 'Paracetamol', purpose: 'Fever, Headache & Body Pain' },
+    { name: 'Calpol 500', dosage: '500mg', frequency: 'thrice', generic: 'Paracetamol', purpose: 'Fever & Mild to Moderate Pain' },
+    { name: 'Crocin 650', dosage: '650mg', frequency: 'thrice', generic: 'Paracetamol', purpose: 'Fever, Body Ache & Headache' },
+  ],
+  'Acidity / Gas': [
+    { name: 'Pan-D', dosage: '40mg+30mg', frequency: 'once', generic: 'Pantoprazole + Domperidone', purpose: 'Acidity, Gas, Acid Reflux & Nausea' },
+    { name: 'Omeprazole 20mg', dosage: '20mg', frequency: 'once', generic: 'Omeprazole', purpose: 'Heartburn, Gastric Ulcer & Hyperacidity' },
+    { name: 'Digene', dosage: '2 tablets', frequency: 'thrice', generic: 'Antacid & Antigas', purpose: 'Instant Relief from Acidity, Gas & Heartburn' },
+  ],
+  'Body Pain': [
+    { name: 'Combiflam', dosage: '400mg', frequency: 'twice', generic: 'Ibuprofen + Paracetamol', purpose: 'Severe Headache, Muscle & Body Pain' },
+    { name: 'Voveran 50', dosage: '50mg', frequency: 'twice', generic: 'Diclofenac', purpose: 'Severe Joint Pain, Swelling & Arthritis' },
+    { name: 'Dolo 650', dosage: '650mg', frequency: 'thrice', generic: 'Paracetamol', purpose: 'Fever, Headache & Body Pain' },
+  ],
+  'Diabetes': [
+    { name: 'Metformin 500mg', dosage: '500mg', frequency: 'twice', generic: 'Metformin', purpose: 'Type 2 Diabetes & Blood Sugar Control' },
+    { name: 'Glycomet 500', dosage: '500mg', frequency: 'twice', generic: 'Metformin', purpose: 'Type 2 Diabetes & Blood Sugar Regulation' },
+    { name: 'Glimepiride 1mg', dosage: '1mg', frequency: 'once', generic: 'Glimepiride', purpose: 'Type 2 Diabetes, Insulin Stimulation' },
+  ],
+  'Blood Pressure': [
+    { name: 'Telma 40', dosage: '40mg', frequency: 'once', generic: 'Telmisartan', purpose: 'High Blood Pressure (Hypertension) & Heart Protection' },
+    { name: 'Amlodipine 5mg', dosage: '5mg', frequency: 'once', generic: 'Amlodipine', purpose: 'High Blood Pressure & Angina (Chest Pain)' },
+    { name: 'Losartan 50mg', dosage: '50mg', frequency: 'once', generic: 'Losartan', purpose: 'High Blood Pressure & Kidney Protection' },
+  ],
+  'Cough / Cold': [
+    { name: 'Cheston Cold', dosage: '1 tablet', frequency: 'twice', generic: 'Cetirizine + Paracetamol + Phenylephrine', purpose: 'Common Cold, Runny Nose, Sneezing & Fever' },
+    { name: 'Sinarest', dosage: '1 tablet', frequency: 'twice', generic: 'Paracetamol + Phenylephrine', purpose: 'Cold, Sinus Congestion, Headache & Fever' },
+    { name: 'Ascoril-D', dosage: '10ml', frequency: 'thrice', generic: 'Dextromethorphan + Chlorpheniramine', purpose: 'Cough, Chest Congestion & Phlegm Relief' },
+  ],
+  'Allergy': [
+    { name: 'Cetirizine 10mg', dosage: '10mg', frequency: 'once', generic: 'Cetirizine', purpose: 'Allergy, Sneezing, Runny Nose & Itching' },
+    { name: 'Allegra 120', dosage: '120mg', frequency: 'once', generic: 'Fexofenadine', purpose: 'Seasonal Allergies, Allergic Rhinitis & Hives' },
+    { name: 'Levocetirizine 5mg', dosage: '5mg', frequency: 'once', generic: 'Levocetirizine', purpose: 'Allergy, Watery Eyes & Skin Rash' },
+  ],
+  'Vitamins / Immunity': [
+    { name: 'Shelcal 500', dosage: '500mg', frequency: 'once', generic: 'Calcium + Vitamin D3', purpose: 'Calcium & Vitamin D3 Deficiency, Bone Strength' },
+    { name: 'Becosules', dosage: '1 capsule', frequency: 'once', generic: 'Vitamin B-Complex + C', purpose: 'Mouth Ulcers, Vitamin B-Complex & C Supplement' },
+    { name: 'Neurobion Forte', dosage: '1 tablet', frequency: 'once', generic: 'Vitamin B12 + B-Complex', purpose: 'Nerve Health, Neuropathy & Vitamin B12 Deficiency' },
+  ],
+};
+
+function getPurposeGuidance(purposeStr) {
+  if (!purposeStr) return null;
+  const p = purposeStr.toLowerCase();
+  if (p.includes('diarrh') || p.includes('loose') || p.includes('electral') || p.includes('ors')) {
+    return 'Maintain continuous hydration with oral rehydration solution (ORS). Seek urgent care if blood appears in stool or diarrhea persists over 48 hours.';
+  }
+  if (p.includes('headache') || p.includes('fever') || p.includes('pain') || p.includes('migraine') || p.includes('arthritis')) {
+    return 'Take strictly after food with a full glass of water. Do not exceed recommended daily dose to protect gastric lining and kidneys.';
+  }
+  if (p.includes('acid') || p.includes('gerd') || p.includes('heartburn') || p.includes('gas')) {
+    return 'Take 30-45 minutes before breakfast on an empty stomach for maximum acid suppression throughout the day.';
+  }
+  if (p.includes('blood pressure') || p.includes('hypertension') || p.includes('heart')) {
+    return 'Take at consistent daily times. Monitor resting blood pressure regularly and do not discontinue abruptly.';
+  }
+  if (p.includes('diabetes') || p.includes('sugar') || p.includes('glucose')) {
+    return 'Take with or immediately after meals to reduce GI disturbance. Keep fast-acting glucose available for unexpected hypoglycemia.';
+  }
+  if (p.includes('allergy') || p.includes('sneezing') || p.includes('hives')) {
+    return 'May cause mild drowsiness in sensitive individuals; avoid alcohol or heavy machinery after evening dose.';
+  }
+  if (p.includes('cold') || p.includes('cough') || p.includes('sinus')) {
+    return 'Drink warm liquids. If cough persists beyond 7 days or is accompanied by high fever, consult your doctor.';
+  }
+  if (p.includes('vitamin') || p.includes('calcium') || p.includes('supplement')) {
+    return 'Take with or after main meal. Drink plenty of water throughout the day for optimal micronutrient absorption.';
+  }
+  return 'Take as directed by your physician or pharmacist. Keep consistent daily dosing.';
+}
 
 // ─── Medicine type options ────────────────────────────────────────────────────
 const MEDICINE_TYPES = [
@@ -797,6 +962,8 @@ export default function AddMedicinePage() {
  const [frequency, setFrequency] = useState('once');
  const [timings, setTimings] = useState([]);
  const [prescriber, setPrescriber] = useState('');
+ const [purpose, setPurpose] = useState('');
+ const [selectedCondition, setSelectedCondition] = useState(null);
  const [notes, setNotes] = useState('');
  const [isScanFilled, setIsScanFilled] = useState(false);
  const [selectedDrugInfo, setSelectedDrugInfo] = useState(null); // { name, generic, rxcui, dosage, source }
@@ -2420,9 +2587,239 @@ export default function AddMedicinePage() {
  />
  </div>
  </div>
- </div>
 
- {/* ════════════════════════════════════════════════════════════════════
+            {/* ── CLINICAL INDICATION & PURPOSE HUB (FULL WIDTH) ── */}
+            <div className="p-5 sm:p-6 rounded-2xl bg-slate-50/70 dark:bg-slate-900/40 border border-slate-200/80 dark:border-slate-800 space-y-4 shadow-xs">
+              {/* Clean Structured Header */}
+              <div className="flex items-center justify-between gap-3 border-b border-slate-200/70 dark:border-slate-800/80 pb-3">
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="w-10 h-10 rounded-xl bg-[var(--accent-primary)]/12 text-[var(--accent-primary)] flex items-center justify-center flex-shrink-0 shadow-xs">
+                    <Activity className="w-5 h-5" />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <h4 className="text-sm font-bold text-[var(--text-primary)]">
+                        Clinical Indication & Purpose
+                      </h4>
+                      <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] border border-[var(--accent-primary)]/20">
+                        Clinical Guidance
+                      </span>
+                    </div>
+                    <p className="text-xs text-[var(--text-muted)] mt-0.5">
+                      Select common symptoms below or type diagnosis to auto-fill safety protocols
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex-shrink-0">
+                  {purpose.trim() ? (
+                    <span className="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/25 shadow-xs whitespace-nowrap">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                      <span>Auto-Filled</span>
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1 text-[11px] font-medium px-2.5 py-1 rounded-full bg-white dark:bg-slate-800 text-[var(--text-muted)] border border-slate-200 dark:border-slate-700 shadow-xs whitespace-nowrap">
+                      <Sparkles className="w-3.5 h-3.5 text-[var(--accent-primary)]" />
+                      <span>Select or type</span>
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              {/* Active Indication Banner (when purpose is set) */}
+              {purpose.trim() && (
+                <div className="p-3.5 bg-white dark:bg-slate-900 border border-[var(--accent-primary)]/30 rounded-xl space-y-2 shadow-xs animate-fadeIn">
+                  <div className="flex items-center justify-between flex-wrap gap-2">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-[var(--text-muted)] font-mono">
+                        Active Reason:
+                      </span>
+                      <span className="text-xs sm:text-sm font-extrabold text-[var(--accent-primary)] bg-[var(--accent-primary)]/10 px-3 py-1 rounded-lg border border-[var(--accent-primary)]/25 flex items-center gap-1.5">
+                        <ShieldCheck className="w-4 h-4 text-[var(--accent-primary)]" />
+                        {purpose}
+                      </span>
+                      {selectedCondition && selectedCondition !== purpose && (
+                        <span className="text-[11px] text-[var(--text-muted)] font-medium">
+                          (Symptom: {selectedCondition})
+                        </span>
+                      )}
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setPurpose('');
+                        setSelectedCondition(null);
+                      }}
+                      className="text-xs font-bold text-[var(--text-muted)] hover:text-rose-600 hover:underline cursor-pointer flex items-center gap-1 px-2.5 py-1 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                      <span>Clear</span>
+                    </button>
+                  </div>
+
+                  {getPurposeGuidance(purpose) && (
+                    <div className="flex items-start gap-2 pt-2 border-t border-slate-100 dark:border-slate-800 text-xs text-[var(--text-primary)]">
+                      <Info className="w-4 h-4 text-[var(--accent-primary)] flex-shrink-0 mt-0.5" />
+                      <div className="leading-relaxed">
+                        <strong className="text-[var(--accent-primary)] font-bold">Clinical Care Note: </strong>
+                        <span className="text-[var(--text-muted)]">{getPurposeGuidance(purpose)}</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Quick Select Common Condition Pills (Fluid Flex Wrap with NO Ellipsis Truncation) */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between flex-wrap gap-1">
+                  <span className="text-xs font-bold text-[var(--text-primary)] uppercase tracking-wider flex items-center gap-1.5">
+                    <Tag className="w-3.5 h-3.5 text-[var(--accent-primary)]" />
+                    Common Symptoms & Reasons
+                  </span>
+                  <span className="text-[11px] text-[var(--text-muted)]">
+                    Tap to view proven first-line medicines
+                  </span>
+                </div>
+
+                <div className="flex flex-wrap gap-2 pt-1">
+                  {Object.keys(CONDITION_MED_RECOMMENDATIONS).map((condName) => {
+                    const isSelected = selectedCondition === condName || (purpose && purpose.toLowerCase().includes(condName.toLowerCase()));
+                    const IconComp = CONDITION_ICONS[condName] || Activity;
+                    return (
+                      <button
+                        key={condName}
+                        type="button"
+                        onClick={() => {
+                          if (selectedCondition === condName) {
+                            setSelectedCondition(null);
+                          } else {
+                            setSelectedCondition(condName);
+                            if (!purpose.trim()) {
+                              const defaultRec = CONDITION_MED_RECOMMENDATIONS[condName]?.[0]?.purpose || condName;
+                              setPurpose(defaultRec);
+                            }
+                          }
+                        }}
+                        className={`group inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all duration-150 cursor-pointer border active:scale-95 ${
+                          isSelected
+                            ? 'bg-[var(--accent-primary)] text-white shadow-sm border-[var(--accent-primary)] ring-2 ring-[var(--accent-primary)]/25'
+                            : 'bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 hover:text-[var(--accent-primary)] border-slate-200 dark:border-slate-700 hover:border-[var(--accent-primary)]/50 shadow-2xs'
+                        }`}
+                      >
+                        <div className={`p-1 rounded-lg transition-colors flex-shrink-0 ${
+                          isSelected ? 'bg-white/20 text-white' : 'bg-slate-100 dark:bg-slate-700 group-hover:bg-[var(--accent-primary)]/10 text-[var(--accent-primary)]'
+                        }`}>
+                          <IconComp className="w-3.5 h-3.5" />
+                        </div>
+                        <span className="whitespace-nowrap font-medium">{condName}</span>
+                        {isSelected && <Check className="w-3 h-3 text-white ml-0.5" />}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* 1-Click Proven Medicines for Selected Condition */}
+                {selectedCondition && CONDITION_MED_RECOMMENDATIONS[selectedCondition]?.length > 0 && (
+                  <div className="p-4 bg-white dark:bg-slate-800/80 rounded-2xl border border-[var(--accent-primary)]/25 space-y-3 animate-fadeIn mt-2 shadow-xs">
+                    <div className="flex items-center justify-between flex-wrap gap-2">
+                      <div className="flex items-center gap-2">
+                        <Pill className="w-4 h-4 text-[var(--accent-primary)]" />
+                        <span className="text-xs font-extrabold uppercase tracking-wider text-[var(--text-primary)]">
+                          Proven First-Line Medicines for {selectedCondition}
+                        </span>
+                      </div>
+                      <span className="text-[11px] text-[var(--text-muted)]">
+                        1-Tap auto-fills dosage & schedule
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                      {CONDITION_MED_RECOMMENDATIONS[selectedCondition].map((rec) => {
+                        const isThisLoaded = name.toLowerCase().trim() === rec.name.toLowerCase().trim();
+                        return (
+                          <div
+                            key={rec.name}
+                            onClick={() => {
+                              setName(rec.name);
+                              if (rec.generic) setGenericName(rec.generic);
+                              if (rec.dosage) setDosage(rec.dosage);
+                              if (rec.frequency) setFrequency(rec.frequency);
+                              if (rec.purpose) setPurpose(rec.purpose);
+                              notify.success('Medicine Auto-Filled', `Auto-filled ${rec.name} (${rec.dosage}) for ${selectedCondition}.`);
+                            }}
+                            className={`p-3.5 rounded-xl border transition-all cursor-pointer space-y-2 flex flex-col justify-between group ${
+                              isThisLoaded
+                                ? 'bg-[var(--accent-primary)]/12 border-[var(--accent-primary)] ring-2 ring-[var(--accent-primary)]/30 shadow-xs'
+                                : 'bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 hover:border-[var(--accent-primary)] hover:shadow-xs'
+                            }`}
+                          >
+                            <div className="flex items-center justify-between gap-1.5">
+                              <span className="font-bold text-xs sm:text-sm text-[var(--text-primary)] group-hover:text-[var(--accent-primary)] transition-colors">
+                                {rec.name}
+                              </span>
+                              <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-[var(--accent-primary)]/15 text-[var(--accent-primary)] border border-[var(--accent-primary)]/20 font-mono">
+                                {rec.dosage}
+                              </span>
+                            </div>
+                            <p className="text-[11px] text-[var(--text-muted)] line-clamp-1 italic">
+                              {rec.generic}
+                            </p>
+                            <div className="flex items-center justify-between pt-1.5 border-t border-slate-200/60 dark:border-slate-800 text-[10px]">
+                              <span className="text-[var(--text-muted)] capitalize">{rec.frequency}</span>
+                              <span className={`font-bold flex items-center gap-1 ${isThisLoaded ? 'text-emerald-600 dark:text-emerald-400' : 'text-[var(--accent-primary)]'}`}>
+                                {isThisLoaded ? (
+                                  <><Check className="w-3 h-3" /> Loaded</>
+                                ) : (
+                                  <>Auto-Fill <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" /></>
+                                )}
+                              </span>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Input for custom purpose / search */}
+              <div className="space-y-1.5 pt-2 border-t border-slate-200/70 dark:border-slate-800/80">
+                <div className="flex items-center justify-between">
+                  <label className="block text-xs font-bold text-[var(--text-primary)] uppercase tracking-wider">
+                    Or Type Custom Reason / Indication
+                  </label>
+                  <span className="text-[11px] text-[var(--text-muted)]">
+                    e.g. Migraine, GERD, Post-op pain
+                  </span>
+                </div>
+                <div className="relative">
+                  <PolySafeInput
+                    type="text"
+                    value={purpose}
+                    onChange={(e) => setPurpose(e.target.value)}
+                    placeholder="Type primary indication or diagnosis..."
+                    leftIcon={<Activity className="w-4 h-4 text-[var(--accent-primary)]" />}
+                    className="text-xs font-medium pr-8 bg-white dark:bg-slate-800"
+                  />
+                  {purpose && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setPurpose('');
+                        setSelectedCondition(null);
+                      }}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 p-1 cursor-pointer"
+                      title="Clear"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+
+  {/* ════════════════════════════════════════════════════════════════════
  SECTION 2: PACKAGING & MANUFACTURER DETAILS (STRIP / BOX)
  ════════════════════════════════════════════════════════════════════ */}
  <div className="space-y-4 pt-2">
@@ -2662,7 +3059,140 @@ export default function AddMedicinePage() {
  </div>
  )}
 
- {/* Submit Button */}
+ {/* ── Widget 2: Live Regimen Dose & Purpose Preview Widget ── */}
+        {name.trim() && (
+          <div className="p-4 sm:p-5 rounded-2xl bg-[var(--chassis)] border-2 border-[var(--accent-primary)]/30 space-y-3.5 shadow-[var(--shadow-card)] animate-fadeIn">
+            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[var(--accent-primary)]/15 pb-2.5">
+              <div className="flex items-center gap-2">
+                <div className="p-1.5 rounded-lg bg-[var(--accent-primary)]/15 text-[var(--accent-primary)]">
+                  <Activity className="w-4 h-4" />
+                </div>
+                <div>
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-[var(--text-primary)]">
+                    Live Regimen & Clinical Purpose Summary
+                  </h4>
+                  <p className="text-[11px] text-[var(--text-muted)]">
+                    Auto-verified schedule preview before adding to your medication profile
+                  </p>
+                </div>
+              </div>
+              <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-700 border border-emerald-500/25">
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                Ready to Add
+              </span>
+            </div>
+
+            {/* Medicine Name & Indication Bar */}
+            <div className="p-3.5 rounded-xl bg-[var(--chassis-dark)]/50 border border-[rgba(255,255,255,0.06)] space-y-2">
+              <div className="flex flex-wrap items-baseline justify-between gap-2">
+                <div className="flex items-center gap-2">
+                  <Pill className="w-4 h-4 text-[var(--accent-primary)]" />
+                  <span className="text-base font-extrabold text-[var(--text-primary)]">
+                    {name}
+                  </span>
+                  {dosage && (
+                    <span className="text-xs font-bold px-2 py-0.5 rounded-md bg-[var(--accent-primary)]/15 text-[var(--accent-primary)] border border-[var(--accent-primary)]/20">
+                      {dosage}
+                    </span>
+                  )}
+                  <span className="text-[11px] font-semibold px-2 py-0.5 rounded-md bg-gray-100 text-gray-700 uppercase">
+                    {form}
+                  </span>
+                </div>
+                {genericName && (
+                  <span className="text-xs text-[var(--text-muted)] italic">
+                    Generic: {genericName}
+                  </span>
+                )}
+              </div>
+
+              {/* Purpose & Clinical Indication Badge */}
+              <div className="flex flex-wrap items-center gap-2 pt-1">
+                <span className="text-[11px] font-bold uppercase tracking-wide text-[var(--text-muted)]">
+                  Clinical Indication:
+                </span>
+                {purpose ? (
+                  <span className="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1 rounded-full bg-[var(--accent-primary)]/15 text-[var(--accent-primary)] border border-[var(--accent-primary)]/30">
+                    <ShieldCheck className="w-3.5 h-3.5 text-[var(--accent-primary)]" />
+                    <span>For: {purpose}</span>
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200">
+                    <AlertCircle className="w-3.5 h-3.5 text-amber-600" />
+                    <span>No purpose specified (Optional, but recommended)</span>
+                  </span>
+                )}
+              </div>
+
+              {/* Clinical Guidance Tip if Purpose Known */}
+              {purpose && getPurposeGuidance(purpose) && (
+                <div className="p-2.5 rounded-lg bg-[var(--chassis)] border border-[var(--accent-primary)]/20 flex items-start gap-2 text-[11px] text-[var(--text-muted)]">
+                  <Info className="w-3.5 h-3.5 text-[var(--accent-primary)] flex-shrink-0 mt-0.5" />
+                  <span>
+                    <strong className="text-[var(--text-primary)]">Usage Note: </strong>
+                    {getPurposeGuidance(purpose)}
+                  </span>
+                </div>
+              )}
+            </div>
+
+            {/* Dose Frequency & Timing Schedule Strip */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs">
+              <div className="p-2.5 rounded-xl bg-[var(--chassis)] border border-[rgba(255,255,255,0.06)] space-y-1">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)] flex items-center gap-1">
+                  <Clock className="w-3 h-3 text-[var(--accent-primary)]" />
+                  Frequency
+                </span>
+                <p className="font-bold text-[var(--text-primary)] capitalize">
+                  {frequency === 'once' ? 'Once Daily' :
+                   frequency === 'twice' ? 'Twice Daily (12h apart)' :
+                   frequency === 'thrice' ? 'Thrice Daily (8h apart)' :
+                   frequency === 'four' ? '4 Times Daily (6h apart)' :
+                   frequency === 'sos' ? 'SOS / As Needed' : frequency}
+                </p>
+              </div>
+
+              <div className="p-2.5 rounded-xl bg-[var(--chassis)] border border-[rgba(255,255,255,0.06)] space-y-1">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)] flex items-center gap-1">
+                  <Sun className="w-3 h-3 text-[var(--accent-primary)]" />
+                  Active Timing Slots
+                </span>
+                <div className="flex flex-wrap gap-1">
+                  {timings.length > 0 ? (
+                    timings.map((t) => (
+                      <span
+                        key={t}
+                        className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-[var(--accent-primary)]/15 text-[var(--accent-primary)] capitalize"
+                      >
+                        {t}
+                      </span>
+                    ))
+                  ) : (
+                    <span className="text-[10px] text-[var(--text-muted)]">Flexible timing</span>
+                  )}
+                </div>
+              </div>
+
+              <div className="p-2.5 rounded-xl bg-[var(--chassis)] border border-[rgba(255,255,255,0.06)] space-y-1">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)] flex items-center gap-1">
+                  <CalendarDays className="w-3 h-3 text-[var(--accent-primary)]" />
+                  Meal Instruction
+                </span>
+                <p className="font-bold text-[var(--text-primary)]">
+                  {notes === 'after_food' ? 'Take after food' :
+                   notes === 'before_food' ? 'Take before food' :
+                   notes === 'with_food' ? 'Take with meal' :
+                   notes === 'empty_stomach' ? 'Take on empty stomach' :
+                   notes === 'with_water' ? 'Take with full glass water' :
+                   notes === 'avoid_dairy' ? 'Avoid dairy / milk' :
+                   notes || 'Standard timing'}
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Submit Button */}
  <button
  type="submit"
  disabled={addMutation.isPending || !name.trim()}

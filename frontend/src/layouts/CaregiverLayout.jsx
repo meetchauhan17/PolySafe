@@ -13,41 +13,45 @@ export default function CaregiverLayout() {
   const isDashboard = location.pathname === '/caregiver-view';
 
   return (
-    <div className="min-h-screen bg-[var(--chassis)] text-[var(--text-primary)] flex flex-col font-sans selection:bg-[var(--role-caregiver)] selection:text-white">
+    <div className="relative min-h-screen bg-[#dce4ee] text-slate-900 flex flex-col font-sans selection:bg-emerald-600 selection:text-white overflow-x-hidden">
+      {/* ── Background Precision Dot Matrix ── */}
+      <div className="fixed inset-0 bg-[radial-gradient(#94a3b8_1px,transparent_1px)] [background-size:24px_24px] opacity-25 pointer-events-none z-0" />
+
+      {/* ── Atmospheric Ambient Lighting Orbs ── */}
+      <div className="fixed -top-36 left-1/2 -translate-x-1/2 w-[850px] h-[450px] bg-gradient-to-b from-emerald-600/12 via-teal-500/8 to-transparent rounded-full blur-3xl pointer-events-none z-0" />
+      <div className="fixed top-1/4 -left-48 w-[450px] h-[450px] bg-teal-500/8 rounded-full blur-3xl pointer-events-none z-0" />
+      <div className="fixed bottom-10 -right-48 w-[450px] h-[450px] bg-blue-600/8 rounded-full blur-3xl pointer-events-none z-0" />
+
       {/* ─── Top Bar ─── */}
-      <header className="sticky top-0 z-40 bg-[var(--chassis)] border-b border-[rgba(255,255,255,0.4)] px-4 sm:px-6 py-3 shadow-[var(--shadow-card)]">
-        <div className="max-w-4xl mx-auto flex items-center justify-between gap-3">
-          <Link to="/caregiver-view" className="flex items-center gap-2.5 group">
-            <div
-              className="p-2.5 bg-[var(--chassis)] text-[var(--role-caregiver)] rounded-2xl shadow-[var(--shadow-sm)] group-hover:scale-105 transition-transform"
-            >
+      <header className="sticky top-0 z-40 bg-slate-50/90 backdrop-blur-md border-b border-slate-200/80 px-4 sm:px-6 py-3.5 shadow-[0_1px_3px_rgba(0,0,0,0.04)] relative">
+        <div className="max-w-5xl mx-auto flex items-center justify-between gap-3">
+          <Link to="/caregiver-view" className="flex items-center gap-3 group">
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-emerald-600 via-teal-600 to-cyan-500 p-0.5 shadow-lg shadow-emerald-500/20 flex items-center justify-center text-white group-hover:scale-105 transition-transform">
               <Heart className="w-5 h-5" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span
-                  className="text-xl font-extrabold tracking-tight text-[var(--text-primary)] font-display drop-shadow-[0_1px_0_rgba(255,255,255,0.8)]"
-                >
-                  PolySafe
+                <span className="text-xl font-extrabold tracking-tight text-slate-900 font-display">
+                  Poly<span className="bg-gradient-to-r from-emerald-600 to-teal-500 bg-clip-text text-transparent">Safe</span>
                 </span>
-                <span className="text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded-md bg-[var(--chassis)] text-[var(--role-caregiver)] shadow-[var(--shadow-recessed)]">
-                  Caregiver
+                <span className="text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-700 border border-emerald-500/20 shadow-2xs">
+                  Family Proxy
                 </span>
               </div>
-              <span className="text-[10px] font-mono text-[var(--text-muted)] font-bold uppercase tracking-wider hidden sm:inline">
+              <span className="text-[10px] font-mono text-slate-500 font-semibold uppercase tracking-wider hidden sm:inline">
                 Family & Care Companion
               </span>
             </div>
           </Link>
 
           {/* Navigation Items (Hub + Profile) */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 p-1 bg-white/80 border border-slate-200 shadow-2xs rounded-2xl">
             <Link
               to="/caregiver-view"
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-mono font-bold transition-all ${
+              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all ${
                 isDashboard
-                  ? 'bg-[var(--role-caregiver)] text-white shadow-xs'
-                  : 'bg-[var(--chassis)] text-[var(--text-muted)] hover:text-[var(--text-primary)] shadow-[var(--shadow-sm)]'
+                  ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold shadow-sm'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/80'
               }`}
             >
               <ShieldCheck className="w-3.5 h-3.5" />
@@ -56,10 +60,10 @@ export default function CaregiverLayout() {
 
             <Link
               to="/profile"
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-mono font-bold transition-all ${
+              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all ${
                 isProfile
-                  ? 'bg-[var(--role-caregiver)] text-white shadow-xs'
-                  : 'bg-[var(--chassis)] text-[var(--text-muted)] hover:text-[var(--text-primary)] shadow-[var(--shadow-sm)]'
+                  ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold shadow-sm'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/80'
               }`}
             >
               <User className="w-3.5 h-3.5" />
@@ -70,7 +74,7 @@ export default function CaregiverLayout() {
           <div className="flex items-center gap-2">
             <Link
               to="/profile"
-              className="hidden sm:inline-block text-xs font-mono font-bold text-[var(--text-primary)] px-2 py-1 rounded-lg hover:bg-[var(--chassis-dark)] transition-colors"
+              className="hidden sm:inline-block text-xs font-mono font-bold text-slate-800 px-3 py-1.5 rounded-xl hover:bg-white/60 border border-transparent hover:border-slate-200 transition-colors"
               title="View Caregiver Profile"
             >
               {user?.name || user?.email || 'Caregiver'}
@@ -81,16 +85,16 @@ export default function CaregiverLayout() {
       </header>
 
       {/* ─── Content ─── */}
-      <main className="flex-1 max-w-4xl mx-auto w-full px-4 py-6">
+      <main className="relative z-10 flex-1 max-w-5xl mx-auto w-full px-4 py-6">
         <PageTransition key={location.pathname}>
           <Outlet />
         </PageTransition>
       </main>
 
       {/* ─── Footer ─── */}
-      <footer className="bg-[var(--chassis)] border-t border-[rgba(255,255,255,0.4)] py-4 text-center text-xs font-mono text-[var(--text-muted)] shadow-[var(--shadow-card)]">
-        <div className="max-w-4xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-1">
-          <span className="font-bold text-[var(--role-caregiver)]">CAREGIVER PRIVACY FILTER ACTIVE</span>
+      <footer className="relative z-10 bg-slate-50/90 border-t border-slate-200 py-4 text-center text-xs font-mono text-slate-500 shadow-xs">
+        <div className="max-w-5xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-1">
+          <span className="font-bold text-emerald-700">CAREGIVER PRIVACY FILTER ACTIVE</span>
           <span>Dosage reminders only · Clinical history protected</span>
         </div>
       </footer>

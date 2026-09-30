@@ -13,6 +13,7 @@ import {
  Info,
 } from 'lucide-react';
 import Card from '../components/Card';
+import BackButton from '../components/BackButton';
 import { notify } from '../utils/toast';
 import { useAuth } from '../context/AuthContext';
 import { Lock } from 'lucide-react';
@@ -94,23 +95,18 @@ export default function LogSymptomPage() {
  <div className="min-h-[88vh] bg-[var(--chassis)] pb-12">
  <div className="max-w-2xl mx-auto px-4 py-8 space-y-5">
 
- {/* ── Page header ──────────────────────────────────────────────────── */}
- <div className="flex items-center space-x-3">
- <button
- onClick={() => navigate('/home')}
- className="btn-secondary p-2.5 rounded-2xl"
- >
- <ArrowLeft className="w-4 h-4" />
- </button>
- <div>
- <h1 className="text-xl font-bold text-[var(--text-primary)]" >
- Log a Symptom
- </h1>
- <p className="text-[11px] text-[var(--text-muted)]">
- PolySafe checks if it could be a side effect of your medicines — a "prescribing cascade."
- </p>
- </div>
- </div>
+        {/* ── Page header ──────────────────────────────────────────────────── */}
+        <div className="flex items-center gap-3.5">
+          <BackButton to="/home" label="Back to Home" />
+          <div className="min-w-0">
+            <h1 className="text-xl md:text-2xl font-bold text-[var(--text-primary)] font-display tracking-tight">
+              Log a Symptom
+            </h1>
+            <p className="text-xs text-[var(--text-muted)] mt-0.5">
+              PolySafe checks if it could be a side effect of your medicines — a "prescribing cascade."
+            </p>
+          </div>
+        </div>
 
   {/* ── Info card ────────────────────────────────────────────────────── */}
   <div className="flex items-start space-x-3 p-3.5 bg-[var(--accent-primary)]/8 border border-[var(--accent-primary)]/20 rounded-xl text-xs text-[var(--accent-primary)]">

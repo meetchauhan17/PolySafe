@@ -1,12 +1,13 @@
 import React from 'react';
 
 /**
- * Skeleton atomic block with industrial chassis shimmer.
+ * Skeleton atomic block with moving shimmer sweep.
+ * Uses .ps-shimmer (defined in index.css) which adapts to light/dark mode.
  */
 export function Skeleton({ className = '', rounded = 'rounded-lg' }) {
   return (
     <div
-      className={`bg-[var(--chassis-dark)] shadow-[var(--shadow-recessed)] animate-pulse ${rounded} ${className}`}
+      className={`ps-shimmer ${rounded} ${className}`}
       aria-hidden="true"
     />
   );

@@ -43,6 +43,9 @@ import {
  Dumbbell,
  TestTube2,
  PenLine,
+ ChevronRight,
+ Shield,
+ Zap,
 } from 'lucide-react';
 import { patientApi } from '../api/auth';
 import Card from '../components/Card';
@@ -358,59 +361,90 @@ export default function HomePage() {
 
  if (isError && token) {
  return (
- <div className="min-h-[80vh] flex items-center justify-center bg-[var(--chassis)] px-4">
- <div className="polysafe-card p-8 max-w-md w-full text-center space-y-4">
- <AlertCircle className="w-12 h-12 text-rose-500 mx-auto" />
- <h2 className="text-xl font-bold text-[var(--text-primary)]">Couldn't load your data</h2>
- <p className="text-sm text-[var(--text-muted)]">
- {error?.response?.data?.error || 'Something went wrong. Please try again.'}
- </p>
- <button onClick={() => refetch()} className="btn-primary px-6 py-2.5 text-sm mx-auto">
- <RefreshCw className="w-4 h-4" />
- <span>Retry</span>
- </button>
- </div>
- </div>
- );
+      <div className="min-h-[80vh] flex items-center justify-center bg-[#dce4ee] px-4">
+        <div className="bg-white/95 rounded-3xl p-8 max-w-md w-full text-center space-y-4 border border-slate-200 shadow-md">
+          <AlertCircle className="w-12 h-12 text-rose-500 mx-auto" />
+          <h2 className="text-xl font-bold text-slate-900 font-display">Couldn't load your data</h2>
+          <p className="text-sm text-slate-600">
+            {error?.response?.data?.error || 'Something went wrong. Please try again.'}
+          </p>
+          <button onClick={() => refetch()} className="btn-primary px-6 py-2.5 text-sm mx-auto">
+            <RefreshCw className="w-4 h-4" />
+            <span>Retry</span>
+          </button>
+        </div>
+      </div>
+    );
  }
 
- const medicines = data?.medicines ?? [];
- const schedule = data?.schedule ?? [];
- const flags = data?.flags ?? [];
- const status = data?.status ?? 'SAFE';
- const isEmpty = medicines.length === 0;
+  const medicines = data?.medicines ?? [];
+  const schedule = data?.schedule ?? [];
+  const flags = data?.flags ?? [];
+  const status = data?.status ?? 'SAFE';
+  const isEmpty = medicines.length === 0;
+
+  const regimenRisk = data?.regimenRisk;
+  const highestHarmLevel = regimenRisk?.level ?? (medicines.length > 0 ? Math.max(...medicines.map((m) => m.harmLevel || 1)) : 1);
+  const highestRiskDrug = regimenRisk?.highestRiskDrug || (medicines.length > 0 ? medicines.reduce((prev, curr) => ((curr.harmLevel || 1) > (prev?.harmLevel || 1) ? curr : prev), medicines[0]) : null);
+  const highestRiskDrugName = highestRiskDrug?.name || 'high-risk medication';
 
  const todayLabel = new Date().toLocaleDateString('en-IN', {
- weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
+   weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
  });
 
  return (
- <div className="bg-[var(--chassis)] min-h-[88vh] pb-28 md:pb-12">
- <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 space-y-6">
+    <div className="min-h-[88vh] pb-28 md:pb-12">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 space-y-6">
 
- {/* ── Demo mode banner ─────────────────────────────────────────────── */}
- {isDemo && (
- <div className="flex items-start space-x-3 p-3.5 bg-[var(--accent-primary)]/10 border border-[var(--accent-primary)]/20 rounded-2xl text-xs text-[var(--accent-primary)] shadow-sm">
- <FlaskConical className="w-4 h-4 flex-shrink-0 mt-0.5" />
- <p>
- <strong>Demo Mode</strong> — this is a sample data preview. <Link to="/login" className="underline font-bold">Sign in</Link> to see your real medication summary.
- </p>
- </div>
- )}
+        {/* ── Demo mode banner ─────────────────────────────────────────────── */}
+        {isDemo && (
+          <div className="flex items-start space-x-3 p-3.5 bg-blue-500/10 border border-blue-500/25 rounded-2xl text-xs text-blue-800 shadow-2xs">
+            <FlaskConical className="w-4 h-4 flex-shrink-0 mt-0.5 text-blue-600" />
+            <p>
+              <strong>Demo Mode</strong> — this is a sample data preview. <Link to="/login" className="underline font-bold text-blue-700">Sign in</Link> to see your real medication summary.
+            </p>
+          </div>
+        )}
 
         {/* ── Page Header ──────────────────────────────────────────────────── */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-[var(--text-primary)] font-display tracking-tight">My Safety Dashboard</h1>
-            <p className="text-xs text-[var(--text-muted)] mt-0.5 font-mono">{todayLabel}</p>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="space-y-2">
+            {/* Top Pill Status matching LoginPage */}
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/90 backdrop-blur-md border border-slate-200 shadow-2xs">
+              <Zap className="w-3.5 h-3.5 text-blue-600" />
+              <span className="text-[11px] font-bold tracking-wider uppercase text-slate-700 font-mono">
+                Continuous Clinical Safety Architecture
+              </span>
+            </div>
+
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 font-display tracking-tight">
+              My Safety <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-500 bg-clip-text text-transparent">Dashboard</span>
+            </h1>
+
+            {/* Trust Metrics Chips */}
+            <div className="flex flex-wrap items-center gap-2 pt-0.5">
+              <span className="inline-flex items-center gap-1.5 bg-white/85 backdrop-blur-xs px-3 py-1 rounded-full border border-slate-200 text-[11px] font-semibold text-slate-700 shadow-2xs">
+                <Shield className="w-3.5 h-3.5 text-blue-600" />
+                222K+ Interaction Rules
+              </span>
+              <span className="inline-flex items-center gap-1.5 bg-white/85 backdrop-blur-xs px-3 py-1 rounded-full border border-slate-200 text-[11px] font-semibold text-slate-700 shadow-2xs">
+                <Activity className="w-3.5 h-3.5 text-emerald-600" />
+                Real-Time ACB Radar
+              </span>
+              <span className="inline-flex items-center gap-1.5 bg-white/85 backdrop-blur-xs px-3 py-1 rounded-full border border-slate-200 text-[11px] font-semibold text-slate-600 shadow-2xs font-mono">
+                <Clock className="w-3.5 h-3.5 text-slate-400" />
+                {todayLabel}
+              </span>
+            </div>
           </div>
-          <div className="flex items-center gap-2">
+
+          <div className="flex items-center gap-2.5 flex-shrink-0 self-start sm:self-center">
             <Link
               to="/add-medicine"
-              className="btn-primary py-2 px-3 sm:px-4 text-xs flex items-center gap-1.5 shadow-[var(--shadow-sm)] hover:shadow-[var(--shadow-card)]"
+              className="btn-primary py-2 px-4 text-xs font-mono font-bold uppercase tracking-wider flex items-center gap-2 shadow-sm shadow-cyan-900/20"
             >
-              <Plus className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Add Medicine</span>
+              <Plus className="w-4 h-4" />
+              <span>Add Medicine</span>
             </Link>
             <button
               onClick={() => refetch()}
@@ -443,74 +477,170 @@ export default function HomePage() {
               <span>Add Your First Medicine</span>
             </Link>
           </Card>
- ) : (
- <>
- {/* ═══════════════════════════════════════════════════════════════
- PHYSICIAN DIRECTIVES BANNER (live doctor updates)
- ═══════════════════════════════════════════════════════════════ */}
- {!isDemo && data?.patientId && (
- <PhysicianDirectivesBanner patientId={data.patientId} token={token} />
- )}
-
- {/* ═══════════════════════════════════════════════════════════════
- POLYPHARMACY RISK OVERVIEW (Harm Level Dashboard)
- ═══════════════════════════════════════════════════════════════ */}
- <PolypharmacyHarmDashboard
- medicines={medicines}
- flags={flags}
- regimenRisk={data?.regimenRisk}
- />
-
-                 {/* ═══════════════════════════════════════════════════════════════
-           STATUS CARD — SAFE or CAUTION
-           ═══════════════════════════════════════════════════════════════ */}
-        {status === 'SAFE' ? (
-          <Card
-            variant="safe"
-            hideScrews={true}
-            className="!flex-row items-center gap-4 p-4 sm:p-5 shadow-xs"
-          >
-            <div className="p-2 rounded-xl bg-emerald-500/10 shadow-xs border border-emerald-500/20 flex-shrink-0">
-              <LedIndicator status="safe" size="md" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className="text-base sm:text-lg font-extrabold text-[var(--text-primary)] font-display">
-                  No Harmful Interactions Detected
-                </span>
-                <span className="text-[10px] font-mono font-bold bg-[var(--led-safe)] text-white px-2.5 py-0.5 rounded-full shadow-xs">
-                  SAFE
-                </span>
-              </div>
-              <p className="text-xs font-mono text-[var(--text-muted)] mt-0.5 leading-snug">
-                All {medicines.length} active medicine{medicines.length !== 1 ? 's' : ''} in your regimen are verified safe against DDInter clinical benchmarks.
-              </p>
-            </div>
-          </Card>
         ) : (
-          <Card
-            variant="caution"
-            hideScrews={true}
-            className="!flex-row items-center gap-4 p-4 sm:p-5 shadow-xs"
-          >
-            <div className="p-2 rounded-xl bg-amber-500/10 shadow-xs border border-amber-500/20 flex-shrink-0">
-              <LedIndicator status="caution" size="md" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className="text-base sm:text-lg font-extrabold text-[var(--text-primary)] font-display">
-                  {flags.length} Interaction Flag{flags.length !== 1 ? 's' : ''} Active
-                </span>
-                <span className="text-[10px] font-mono font-bold bg-[var(--led-caution)] text-white px-2.5 py-0.5 rounded-full shadow-xs">
-                  CAUTION
-                </span>
-              </div>
-              <p className="text-xs font-mono text-[var(--text-muted)] mt-0.5 leading-snug">
-                Potential pharmacological interactions detected in active regimen. Review interaction telemetry below and consult your doctor.
-              </p>
-            </div>
-          </Card>
-        )}
+          <>
+            {/* ═══════════════════════════════════════════════════════════════
+               PHYSICIAN DIRECTIVES BANNER (live doctor updates)
+               ═══════════════════════════════════════════════════════════════ */}
+            {!isDemo && data?.patientId && (
+              <PhysicianDirectivesBanner patientId={data.patientId} token={token} />
+            )}
+
+            {/* ═══════════════════════════════════════════════════════════════
+               POLYPHARMACY RISK OVERVIEW (Harm Level Dashboard)
+               ═══════════════════════════════════════════════════════════════ */}
+            <PolypharmacyHarmDashboard
+              medicines={medicines}
+              flags={flags}
+              regimenRisk={data?.regimenRisk}
+            />
+
+            {/* ═══════════════════════════════════════════════════════════════
+               STATUS CARD — CLINICAL HARMONY (Pairwise Interactions + Regimen Risk)
+               ═══════════════════════════════════════════════════════════════ */}
+            {(() => {
+              const hasMajorFlags = flags.some((f) =>
+                ['MAJOR', 'CONTRAINDICATED'].includes((f.severity || '').toUpperCase())
+              );
+
+              // Case 1: Major or Contraindicated Pairwise Interaction Flags Active
+              if (flags.length > 0 && hasMajorFlags) {
+                return (
+                  <Card
+                    variant="critical"
+                    hideScrews={true}
+                    className="!flex-row items-center gap-4 p-4 sm:p-5 shadow-xs"
+                  >
+                    <div className="p-2 rounded-xl bg-rose-500/10 shadow-xs border border-rose-500/20 flex-shrink-0">
+                      <LedIndicator status="critical" size="md" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="text-base sm:text-lg font-extrabold text-[var(--text-primary)] font-display">
+                          {flags.length} Severe Interaction Flag{flags.length !== 1 ? 's' : ''} Active
+                        </span>
+                        <span className="text-[10px] font-mono font-bold bg-rose-600 text-white px-2.5 py-0.5 rounded-full shadow-xs">
+                          CRITICAL RISK
+                        </span>
+                      </div>
+                      <p className="text-xs font-mono text-[var(--text-muted)] mt-0.5 leading-snug">
+                        Major or contraindicated pharmacological interactions detected. Immediate physician review and clinical evaluation advised.
+                      </p>
+                    </div>
+                  </Card>
+                );
+              }
+
+              // Case 2: Moderate or Minor Pairwise Interaction Flags Active
+              if (flags.length > 0) {
+                return (
+                  <Card
+                    variant="caution"
+                    hideScrews={true}
+                    className="!flex-row items-center gap-4 p-4 sm:p-5 shadow-xs"
+                  >
+                    <div className="p-2 rounded-xl bg-amber-500/10 shadow-xs border border-amber-500/20 flex-shrink-0">
+                      <LedIndicator status="caution" size="md" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="text-base sm:text-lg font-extrabold text-[var(--text-primary)] font-display">
+                          {flags.length} Interaction Flag{flags.length !== 1 ? 's' : ''} Active
+                        </span>
+                        <span className="text-[10px] font-mono font-bold bg-[var(--led-caution)] text-white px-2.5 py-0.5 rounded-full shadow-xs">
+                          CAUTION
+                        </span>
+                      </div>
+                      <p className="text-xs font-mono text-[var(--text-muted)] mt-0.5 leading-snug">
+                        Potential pharmacological interactions detected in active regimen. Review interaction telemetry below and consult your doctor.
+                      </p>
+                    </div>
+                  </Card>
+                );
+              }
+
+              // Case 3: Zero Interaction Flags, BUT Regimen contains an L5 Critical Risk Drug (e.g. TFCT-NIB 5 mg)
+              if (highestHarmLevel === 5) {
+                return (
+                  <Card
+                    variant="critical"
+                    hideScrews={true}
+                    className="!flex-row items-center gap-4 p-4 sm:p-5 shadow-xs"
+                  >
+                    <div className="p-2 rounded-xl bg-rose-500/10 shadow-xs border border-rose-500/20 flex-shrink-0">
+                      <LedIndicator status="critical" size="md" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="text-base sm:text-lg font-extrabold text-[var(--text-primary)] font-display">
+                          No Interaction Flags · High-Alert Medication Active
+                        </span>
+                        <span className="text-[10px] font-mono font-bold bg-rose-600 text-white px-2.5 py-0.5 rounded-full shadow-xs">
+                          L5 CRITICAL MONITORING
+                        </span>
+                      </div>
+                      <p className="text-xs font-mono text-[var(--text-muted)] mt-0.5 leading-snug">
+                        No pairwise drug-drug interactions detected between active medicines. However, <strong className="text-rose-700 font-bold">{highestRiskDrugName}</strong> is an L5 Critical Risk agent (narrow therapeutic index) requiring specialized clinical monitoring.
+                      </p>
+                    </div>
+                  </Card>
+                );
+              }
+
+              // Case 4: Zero Interaction Flags, BUT Regimen contains an L4 High Risk Drug
+              if (highestHarmLevel === 4) {
+                return (
+                  <Card
+                    variant="caution"
+                    hideScrews={true}
+                    className="!flex-row items-center gap-4 p-4 sm:p-5 shadow-xs"
+                  >
+                    <div className="p-2 rounded-xl bg-amber-500/10 shadow-xs border border-amber-500/20 flex-shrink-0">
+                      <LedIndicator status="caution" size="md" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="text-base sm:text-lg font-extrabold text-[var(--text-primary)] font-display">
+                          No Interaction Flags · High-Alert Drug in Regimen
+                        </span>
+                        <span className="text-[10px] font-mono font-bold bg-[var(--led-caution)] text-white px-2.5 py-0.5 rounded-full shadow-xs">
+                          L4 MONITORING
+                        </span>
+                      </div>
+                      <p className="text-xs font-mono text-[var(--text-muted)] mt-0.5 leading-snug">
+                        No pairwise drug-drug interactions detected between active medicines. However, <strong className="text-amber-700 font-bold">{highestRiskDrugName}</strong> is an L4 High Risk medication requiring standard clinical surveillance.
+                      </p>
+                    </div>
+                  </Card>
+                );
+              }
+
+              // Case 5: Zero Interaction Flags AND all active medicines are L1–L3 (Low/Mild/Moderate baseline toxicity)
+              return (
+                <Card
+                  variant="safe"
+                  hideScrews={true}
+                  className="!flex-row items-center gap-4 p-4 sm:p-5 shadow-xs"
+                >
+                  <div className="p-2 rounded-xl bg-emerald-500/10 shadow-xs border border-emerald-500/20 flex-shrink-0">
+                    <LedIndicator status="safe" size="md" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="text-base sm:text-lg font-extrabold text-[var(--text-primary)] font-display">
+                        No Harmful Interactions Detected
+                      </span>
+                      <span className="text-[10px] font-mono font-bold bg-[var(--led-safe)] text-white px-2.5 py-0.5 rounded-full shadow-xs">
+                        SAFE
+                      </span>
+                    </div>
+                    <p className="text-xs font-mono text-[var(--text-muted)] mt-0.5 leading-snug">
+                      All {medicines.length} active medicine{medicines.length !== 1 ? 's' : ''} in your regimen are verified safe against DDInter clinical benchmarks.
+                    </p>
+                  </div>
+                </Card>
+              );
+            })()}
 
         {/* ═══════════════════════════════════════════════════════════════
            TODAY'S SCHEDULE
@@ -526,7 +656,7 @@ export default function HomePage() {
                 className={`text-[11px] font-bold px-2.5 py-1 rounded-lg border flex items-center space-x-1.5 transition-all duration-180 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--chassis)] active:scale-95 active:opacity-80 ${
                   remindersEnabled
                     ? 'bg-[var(--accent-primary)] text-white border-[var(--accent-primary)]'
-                    : 'bg-[var(--chassis)] text-[var(--accent-primary)] border-[var(--accent-primary)]/20 hover:bg-[var(--accent-primary)] hover:text-white'
+                    : 'bg-slate-50 text-[var(--accent-primary)] border-slate-200 hover:bg-[var(--accent-primary)] hover:text-white'
                 }`}
               >
                 {remindersEnabled ? (
@@ -541,7 +671,7 @@ export default function HomePage() {
                   </>
                 )}
               </button>
-              <span className="text-[11px] font-bold text-[var(--text-muted)] bg-[var(--chassis-dark)] px-2.5 py-1 rounded-lg">
+              <span className="text-[11px] font-bold text-slate-600 bg-slate-100 border border-slate-200 px-2.5 py-1 rounded-lg">
                 {schedule.length} dose{schedule.length !== 1 ? 's' : ''}
               </span>
             </div>
@@ -562,22 +692,22 @@ export default function HomePage() {
                     animate={{ opacity: 1, y: 0 }}
                     exit={shouldReduceMotion ? undefined : { opacity: 0, scale: 0.95 }}
                     transition={{ duration: 0.2 }}
-                    className="flex items-center space-x-3.5 p-3.5 rounded-2xl bg-[var(--chassis)] shadow-[var(--shadow-sm)] border border-[rgba(255,255,255,0.4)] transition-all"
+                    className="flex items-center space-x-3.5 p-3.5 rounded-2xl bg-slate-50 border border-slate-200/70 shadow-xs hover:border-slate-300 hover:bg-white hover:shadow-sm transition-all"
                   >
                     {/* Time bubble */}
                     <div className="flex-shrink-0 w-16 text-center">
-                      <span className="text-[11px] font-bold text-[var(--accent-primary)] bg-[var(--accent-primary)]/10 border border-[var(--accent-primary)]/20 px-2 py-1 rounded-xl block leading-snug font-mono shadow-xs">
+                      <span className="text-[11px] font-bold text-[var(--accent-primary)] bg-cyan-50 border border-cyan-200/80 px-2.5 py-1 rounded-xl block leading-snug font-mono shadow-xs">
                         {item.time}
                       </span>
                     </div>
 
                     {/* Divider dot */}
-                    <div className="w-1.5 h-1.5 rounded-full bg-[var(--chassis-dark)] flex-shrink-0" />
+                    <div className="w-1.5 h-1.5 rounded-full bg-slate-300 flex-shrink-0" />
 
                     {/* Medicine info */}
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-bold text-[var(--text-primary)] truncate">{item.name}</p>
-                      <p className="text-[11px] text-[var(--text-muted)] font-mono">{item.dosage}</p>
+                      <p className="text-xs text-slate-600 font-mono mt-0.5 leading-relaxed">{item.dosage}</p>
                     </div>
 
                     <MedicineTypeBadge type={item.type} />
@@ -587,10 +717,10 @@ export default function HomePage() {
                       type="button"
                       onClick={() => handleToggleDoseReminder(doseKey, item.name, item.time)}
                       title={isDoseReminded ? 'Reminder active - click to mute' : 'Click to set dose reminder'}
-                      className={`p-2 rounded-xl text-xs transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--chassis)] active:scale-95 active:opacity-80 border border-[rgba(255,255,255,0.3)] ${
+                      className={`p-2 rounded-xl text-xs transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--chassis)] active:scale-95 active:opacity-80 border ${
                         isDoseReminded
                           ? 'bg-[var(--accent-primary)] text-white shadow-sm border-transparent'
-                          : 'bg-[var(--chassis)] text-[var(--text-muted)] shadow-[var(--shadow-sm)] hover:text-[var(--accent-primary)]'
+                          : 'bg-slate-50 text-slate-500 border-slate-200/80 shadow-xs hover:text-[var(--accent-primary)] hover:bg-slate-100'
                       }`}
                     >
                       {isDoseReminded ? (
@@ -613,7 +743,7 @@ export default function HomePage() {
           title="Active Medicines"
           icon={<Pill className="w-4 h-4 text-[var(--accent-primary)]" />}
           badge={
-            <span className="text-[11px] font-bold text-[var(--text-muted)] bg-[var(--chassis)] shadow-[var(--shadow-sm)] border border-[rgba(255,255,255,0.3)] px-2.5 py-1 rounded-xl">
+            <span className="text-[11px] font-bold text-slate-600 bg-slate-100 border border-slate-200 px-2.5 py-1 rounded-xl">
               {medicines.length} total
             </span>
           }
@@ -629,7 +759,7 @@ export default function HomePage() {
                   animate={{ opacity: 1, scale: 1 }}
                   exit={shouldReduceMotion ? undefined : { opacity: 0, scale: 0.95 }}
                   transition={{ duration: 0.2 }}
-                  className="p-4 sm:p-5 rounded-2xl bg-[var(--chassis)] shadow-[var(--shadow-sm)] border border-[rgba(255,255,255,0.4)] space-y-3 flex flex-col justify-between"
+                  className="p-4 sm:p-5 rounded-2xl bg-slate-50 border border-slate-200/70 shadow-xs hover:border-slate-300 hover:bg-white hover:shadow-sm space-y-3 flex flex-col justify-between transition-all"
                 >
                   <div className="space-y-2">
                     <div className="flex items-start justify-between gap-1 flex-wrap">
@@ -638,7 +768,7 @@ export default function HomePage() {
                           {med.name}
                         </p>
                         {med.generic && med.generic.toLowerCase() !== med.name.toLowerCase() && (
-                          <p className="text-[10px] text-[var(--text-muted)] truncate">
+                          <p className="text-[11px] text-slate-500 truncate">
                             {med.generic}
                           </p>
                         )}
@@ -650,25 +780,25 @@ export default function HomePage() {
                     </div>
 
                     {med.dosage && (
-                      <p className="text-[11px] text-[var(--text-muted)] font-mono">{med.dosage}</p>
+                      <p className="text-xs text-slate-600 font-mono mt-0.5">{med.dosage}</p>
                     )}
 
                     {/* Interactive Drug Harm & Side Effects Panel */}
                     <DrugHarmPanel medicine={med} flags={flags} className="mt-1" />
 
                     {med.safetyTip && (
-                      <p className="text-[10px] text-[var(--text-muted)] bg-[var(--brand-sub-surface)] shadow-[var(--shadow-sm)] p-2.5 rounded-xl border border-[var(--chassis-dark)] leading-tight">
+                      <p className="text-xs text-slate-600 bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 leading-tight">
                         {med.safetyTip}
                       </p>
                     )}
 
-                    <p className="text-[10px] text-[var(--text-muted)]/70">
+                    <p className="text-[10px] text-slate-400">
                       Added {new Date(med.dateAdded).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}
                     </p>
                   </div>
 
                   {/* Edit & Discontinue Action Bar */}
-                  <div className="flex items-center justify-end gap-2 pt-2 border-t border-[var(--chassis-dark)]">
+                  <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
                     <button
                       type="button"
                       onClick={() => {
@@ -678,7 +808,7 @@ export default function HomePage() {
                         }
                         setEditingMed(med);
                       }}
-                      className="inline-flex items-center gap-1 px-3 py-1.5 text-[11px] font-bold text-[var(--accent-primary)] bg-[var(--chassis)] border border-[rgba(255,255,255,0.3)] shadow-[var(--shadow-sm)] hover:bg-[var(--accent-primary)]/10 rounded-xl transition-all cursor-pointer"
+                      className="inline-flex items-center gap-1 px-3 py-1.5 text-[11px] font-bold text-[var(--accent-primary)] bg-slate-50 border border-slate-200/80 shadow-xs hover:bg-[var(--accent-primary)]/10 rounded-xl transition-all cursor-pointer"
                       title="Edit dosage or type"
                     >
                       <Pencil className="w-3 h-3" />
@@ -693,7 +823,7 @@ export default function HomePage() {
                         }
                         setDiscontinuingMed(med);
                       }}
-                      className="inline-flex items-center gap-1 px-3 py-1.5 text-[11px] font-bold text-[var(--led-critical)] bg-[var(--chassis)] border border-[rgba(255,255,255,0.3)] shadow-[var(--shadow-sm)] hover:bg-rose-50 rounded-xl transition-all cursor-pointer"
+                      className="inline-flex items-center gap-1 px-3 py-1.5 text-[11px] font-bold text-[var(--led-critical)] bg-slate-50 border border-slate-200/80 shadow-xs hover:bg-rose-50 rounded-xl transition-all cursor-pointer"
                       title="Discontinue medicine"
                     >
                       <Trash2 className="w-3 h-3" />
@@ -747,7 +877,7 @@ export default function HomePage() {
 											{/* Flag header */}
 											<div className="flex items-start justify-between gap-3">
 												<div className="flex items-start space-x-3">
-													<div className="p-2 rounded-xl bg-white/80 dark:bg-black/20 shadow-xs border border-black/5 mt-0.5 flex-shrink-0">
+													<div className="p-2 rounded-xl bg-slate-100 shadow-xs border border-slate-200/60 mt-0.5 flex-shrink-0">
 														{styles.icon}
 													</div>
 													<div>
@@ -771,7 +901,7 @@ export default function HomePage() {
 											</div>
 
 											{/* Plain explanation */}
-											<div className="bg-white/70 dark:bg-black/20 backdrop-blur-xs rounded-2xl p-3.5 border border-black/5 dark:border-white/10 shadow-xs">
+											<div className="bg-slate-50 rounded-2xl p-3.5 border border-slate-200/60 shadow-xs">
 												<p className="text-xs font-medium text-[var(--text-primary)] leading-relaxed">
 													{flag.plainExplanation}
 												</p>
@@ -781,7 +911,7 @@ export default function HomePage() {
 											<div className="pt-1">
 												<Link
 													to={`/risk/${flag.id}`}
-													className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-full bg-[var(--chassis)] hover:bg-[var(--chassis-dark)] dark:bg-black/30 dark:hover:bg-black/50 border border-[rgba(255,255,255,0.6)] dark:border-white/10 shadow-[var(--shadow-sm)] hover:shadow-[var(--shadow-card)] transition-all cursor-pointer group active:scale-[0.99]"
+													className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-full bg-slate-50 hover:bg-white border border-slate-200/70 shadow-xs hover:shadow-sm transition-all cursor-pointer group active:scale-[0.99]"
 												>
 													<div className="flex items-center gap-2">
 														<LedIndicator status={styles.ledStatus || 'critical'} size="sm" />

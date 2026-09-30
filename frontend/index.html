@@ -16,8 +16,8 @@
     /> 
     <script>
       (function() {
-        var theme = localStorage.getItem('polysafe-theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-        document.documentElement.setAttribute('data-theme', theme);
+        document.documentElement.setAttribute('data-theme', 'light');
+        try { localStorage.setItem('polysafe-theme', 'light'); } catch(e) {}
       })();
     </script>
   </head>

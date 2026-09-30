@@ -18,8 +18,12 @@ import {
   Loader2,
   ChevronRight,
   FlaskConical,
+  Zap,
+  Shield,
+  Activity,
 } from 'lucide-react';
 import Card from '../components/Card';
+import BackButton from '../components/BackButton';
 import LedIndicator from '../components/LedIndicator';
 import { DrugHarmBadge } from '../components/DrugHarmLevel';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
@@ -197,41 +201,68 @@ export default function TimelinePage() {
  const flaggedCount = medicines.filter((m) => m.flagged).length;
  const herbalCount = medicines.filter((m) => m.type === 'HERBAL').length;
 
- return (
- <div className="min-h-[88vh] bg-[var(--chassis)] pb-16">
- <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 space-y-6">
+  return (
+    <div className="min-h-[88vh] pb-16">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 space-y-6">
 
- {/* ── Header ───────────────────────────────────────────────────────── */}
- <div className="flex items-center space-x-3">
- <button
- onClick={() => navigate('/home')}
- className="btn-secondary p-2.5 rounded-2xl"
- >
- <ArrowLeft className="w-4 h-4" />
- </button>
- <div className="flex-1">
- <h1 className="text-2xl font-bold text-[var(--text-primary)]" >
- Medication Timeline
- </h1>
- <p className="text-xs text-[var(--text-muted)]">
- {isGuest ? 'Sample interactive prescription and cascade timeline' : 'Complete chronological prescription and supplement history'}
- </p>
- </div>
- <Link
- to="/add-medicine"
- onClick={(e) => {
- if (isGuest) {
- e.preventDefault();
- openGuestLockModal('add medications');
- }
- }}
- className="btn-primary flex items-center gap-1.5 text-xs font-bold px-3.5 py-2.5 relative"
- >
- <Plus className="w-4 h-4" />
- <span>Add Medicine</span>
- {isGuest && <Lock className="w-3 h-3 text-[var(--chassis)] ml-0.5" />}
- </Link>
- </div>
+        {/* ── Modern Hero Header matching LoginPage aesthetic ── */}
+        <div className="relative overflow-hidden rounded-3xl p-6 md:p-8 bg-gradient-to-br from-white/95 via-blue-50/40 to-indigo-50/30 border border-slate-200/80 shadow-[0_12px_40px_-8px_rgba(0,0,0,0.06)] backdrop-blur-xl">
+          {/* Top luminous accent bar */}
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-500" />
+
+          <div className="relative z-10 space-y-4">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <BackButton to="/home" label="Back to Home" />
+
+              <div className="flex items-center gap-2">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-blue-500/10 text-blue-800 border border-blue-500/20">
+                  <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
+                  <span>Pharmacotherapy History</span>
+                  <span className="text-blue-400">·</span>
+                  <span className="font-mono text-[11px] text-blue-600">Chronological Audit</span>
+                </div>
+                <Link
+                  to="/add-medicine"
+                  onClick={(e) => {
+                    if (isGuest) {
+                      e.preventDefault();
+                      openGuestLockModal('add medications');
+                    }
+                  }}
+                  className="btn-primary py-2 px-4 text-xs font-mono font-bold uppercase tracking-wider flex items-center gap-2 shadow-sm shadow-cyan-900/20"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Add Medicine</span>
+                  {isGuest && <Lock className="w-3 h-3 text-white/70 ml-0.5" />}
+                </Link>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight font-display">
+                Medication <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-500 bg-clip-text text-transparent">Timeline</span>
+              </h1>
+              <p className="text-sm text-slate-600 max-w-xl leading-relaxed">
+                {isGuest ? 'Sample interactive prescription, OTC, and supplement sequence with cascade detection.' : 'Complete chronological prescription and supplement history with active interaction surveillance.'}
+              </p>
+
+              <div className="flex flex-wrap items-center gap-2 pt-1">
+                <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white/80 border border-slate-200/80 shadow-xs text-xs font-medium text-slate-700">
+                  <Shield className="w-3.5 h-3.5 text-blue-600" />
+                  <span>Clinical Audit Trail</span>
+                </div>
+                <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white/80 border border-slate-200/80 shadow-xs text-xs font-medium text-slate-700">
+                  <Zap className="w-3.5 h-3.5 text-indigo-500" />
+                  <span>Cascade Detection</span>
+                </div>
+                <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white/80 border border-slate-200/80 shadow-xs text-xs font-medium text-slate-700">
+                  <Activity className="w-3.5 h-3.5 text-teal-600" />
+                  <span>Cross-Doctor Sync</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
 
  {/* ── Stats Summary Bar ──────────────────────────────────────────────── */}
  {!isLoading && !isError && medicines.length > 0 && (
@@ -258,11 +289,11 @@ export default function TimelinePage() {
  {!isLoading && medicines.length > 0 && (
  <div className="flex items-center gap-6 px-1">
  <span className="flex items-center gap-2 text-xs text-[var(--text-muted)] font-semibold">
- <span className="w-3.5 h-3.5 rounded-full bg-[var(--chassis)] border-[3px] border-[var(--accent-primary)]" />
+ <span className="w-3.5 h-3.5 rounded-full bg-white border-[3px] border-[var(--accent-primary)] shadow-xs" />
  Safe / Normal Entry
  </span>
  <span className="flex items-center gap-2 text-xs text-[var(--text-muted)] font-semibold">
- <span className="w-3.5 h-3.5 rounded-full bg-[var(--chassis)] border-[3px] border-[var(--led-critical)]" />
+ <span className="w-3.5 h-3.5 rounded-full bg-white border-[3px] border-[var(--led-critical)] shadow-xs" />
  Interaction Flagged
  </span>
  </div>
@@ -343,19 +374,19 @@ export default function TimelinePage() {
  hideScrews={true}
  className={`flex-1 space-y-3 transition-all ${
  isDiscontinued
- ? '!bg-[#f8f6f0] dark:!bg-white/[0.03] opacity-75 !border-[var(--chassis-dark)]'
+ ? '!bg-slate-100 opacity-75 !border-slate-300'
  : isFlagged
- ? '!bg-[#fef2f2] dark:!bg-rose-950/20 !border-rose-400/50 dark:!border-rose-500/40 shadow-[0_2px_14px_rgba(225,29,72,0.08)]'
- : 'bg-[var(--chassis)] border-[rgba(255,255,255,0.4)] hover:shadow-[var(--shadow-card)]'
+ ? '!bg-[#fef2f2] !border-rose-400/50 shadow-[0_2px_14px_rgba(225,29,72,0.08)]'
+ : 'bg-[var(--brand-surface)] border-slate-200/70 hover:shadow-[var(--shadow-card)]'
  }`}
  >
- <div className="flex items-center justify-between gap-2 flex-wrap pb-1 border-b border-[rgba(255,255,255,0.25)] dark:border-white/5">
+ <div className="flex items-center justify-between gap-2 flex-wrap pb-1 border-b border-slate-200/60">
  <span
  className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold uppercase tracking-wider ${
  isDiscontinued
  ? 'bg-[var(--chassis-dark)]/60 text-[var(--text-muted)] border border-[var(--chassis-dark)]'
  : isFlagged
- ? 'bg-white/80 dark:bg-black/30 text-[var(--accent-primary)] border border-rose-300/40 shadow-xs'
+ ? 'bg-slate-50 text-[var(--accent-primary)] border border-rose-300/40 shadow-xs'
  : 'bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] border border-[var(--accent-primary)]/25 shadow-xs'
  }`}
  >
@@ -402,17 +433,17 @@ export default function TimelinePage() {
  ) : (
  <div className="flex items-center gap-2 flex-wrap text-[11px] text-[var(--text-muted)] font-mono">
  {details.strength && (
- <span className={`px-2 py-0.5 rounded-md border shadow-xs ${isFlagged ? 'bg-white/90 dark:bg-black/40 border-rose-200/60' : 'bg-[var(--chassis)] border-[rgba(255,255,255,0.4)]'}`}>
+ <span className={`px-2 py-0.5 rounded-md border shadow-xs ${isFlagged ? 'bg-slate-50 border-rose-200/60' : 'bg-slate-100 border-slate-200/60'}`}>
  {details.strength}
  </span>
  )}
  {details.form && (
- <span className={`px-2 py-0.5 rounded-md border shadow-xs ${isFlagged ? 'bg-white/90 dark:bg-black/40 border-rose-200/60' : 'bg-[var(--chassis)] border-[rgba(255,255,255,0.4)]'}`}>
+ <span className={`px-2 py-0.5 rounded-md border shadow-xs ${isFlagged ? 'bg-slate-50 border-rose-200/60' : 'bg-slate-100 border-slate-200/60'}`}>
  {details.form}
  </span>
  )}
  {details.frequency && (
- <span className={`px-2 py-0.5 rounded-md border shadow-xs ${isFlagged ? 'bg-white/90 dark:bg-black/40 border-rose-200/60' : 'bg-[var(--chassis)] border-[rgba(255,255,255,0.4)]'}`}>
+ <span className={`px-2 py-0.5 rounded-md border shadow-xs ${isFlagged ? 'bg-slate-50 border-rose-200/60' : 'bg-slate-100 border-slate-200/60'}`}>
  {details.frequency}
  </span>
  )}
@@ -433,7 +464,7 @@ export default function TimelinePage() {
                               <Link
                                 key={f.flagId}
                                 to={`/risk/${f.flagId}`}
-                                className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white dark:bg-black/50 hover:bg-rose-50 dark:hover:bg-rose-950/40 border border-rose-400/60 shadow-[var(--shadow-sm)] hover:shadow-[var(--shadow-card)] transition-all cursor-pointer group active:scale-[0.99]"
+                                className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-50 hover:bg-rose-50 border border-rose-400/60 shadow-[var(--shadow-sm)] hover:shadow-[var(--shadow-card)] transition-all cursor-pointer group active:scale-[0.99]"
                               >
                                 <LedIndicator status="critical" size="sm" />
                                 <span className="text-xs font-mono font-bold text-[var(--led-critical)]">
@@ -448,7 +479,7 @@ export default function TimelinePage() {
                         {/* Standardized code badge if present */}
                         {med.standardizedCode && (
                           <div className="pt-0.5 flex items-center">
-                            <span className={`inline-flex items-center gap-1.5 text-[10px] font-medium px-2.5 py-0.5 rounded-full border shadow-xs text-[var(--text-muted)] ${isFlagged ? 'bg-white/80 dark:bg-black/30 border-rose-200/60' : 'bg-[var(--chassis)] border-[rgba(255,255,255,0.4)]'}`}>
+                            <span className={`inline-flex items-center gap-1.5 text-[10px] font-medium px-2.5 py-0.5 rounded-full border shadow-xs text-[var(--text-muted)] ${isFlagged ? 'bg-slate-50 border-rose-200/60' : 'bg-slate-100 border-slate-200/60'}`}>
                               <ShieldCheck className="w-3.5 h-3.5 text-[var(--accent-primary)] flex-shrink-0" />
                               <span>RxNorm CUI:</span>
                               <span className="font-mono font-bold text-[var(--text-primary)] tracking-wide">{med.standardizedCode}</span>

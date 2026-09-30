@@ -15,6 +15,8 @@ import {
  Loader2,
  Sparkles,
  BarChart3,
+ Zap,
+ Shield,
 } from 'lucide-react';
 import {
  ResponsiveContainer,
@@ -31,6 +33,7 @@ import {
  ReferenceLine,
 } from 'recharts';
 import Card from '../components/Card';
+import BackButton from '../components/BackButton';
 import { motion, useReducedMotion } from 'framer-motion';
 import { EmptyTrendsIllustration } from '../components/EmptyIllustrations';
 import { InsightsSkeleton } from '../components/Skeletons';
@@ -145,9 +148,9 @@ export default function InsightsPage() {
 
  if (isLoading) {
  return (
- <div className="min-h-[88vh] bg-[var(--chassis)] pb-16">
- <InsightsSkeleton />
- </div>
+ <div className="min-h-[88vh] pb-16">
+      <InsightsSkeleton />
+    </div>
  );
  }
 
@@ -165,31 +168,51 @@ export default function InsightsPage() {
  const currentScore = summary.currentBurdenScore ?? (hasBurdenData ? rawBurdenHistory[rawBurdenHistory.length - 1]?.cumulativeScore : 2);
  const currentLevel = summary.currentBurdenLevel ?? (currentScore >= 3 ? 'Critical' : currentScore >= 1 ? 'Moderate' : 'Normal');
 
- return (
- <div className="min-h-[88vh] bg-[var(--chassis)] pb-16">
- <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 space-y-6">
- {/* ─── Header ─── */}
- <div className="flex items-center space-x-3">
- <button
- onClick={() => navigate('/home')}
- className="btn-secondary p-2.5 rounded-2xl"
- >
- <ArrowLeft className="w-4 h-4" />
- </button>
- <div className="flex-1">
- <div className="flex items-center gap-2">
- <h1 className="text-2xl font-bold text-[var(--text-primary)]" >
- Safety Insights & Trends
- </h1>
- <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-md bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] border border-[var(--accent-primary)]/20">
- Analytics
- </span>
- </div>
- <p className="text-xs text-[var(--text-muted)]">
- Longitudinal tracking of drug interactions, burden trajectory, and prescribing cascades
- </p>
- </div>
- </div>
+  return (
+    <div className="min-h-[88vh] pb-16">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 space-y-6">
+        {/* ── Modern Hero Header matching LoginPage aesthetic ── */}
+        <div className="relative overflow-hidden rounded-3xl p-6 md:p-8 bg-gradient-to-br from-white/95 via-blue-50/40 to-indigo-50/30 border border-slate-200/80 shadow-[0_12px_40px_-8px_rgba(0,0,0,0.06)] backdrop-blur-xl">
+          {/* Top luminous accent bar */}
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-500" />
+
+          <div className="relative z-10 space-y-4">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <BackButton to="/home" label="Back to Home" />
+
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-blue-500/10 text-blue-800 border border-blue-500/20">
+                <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
+                <span>Pharmacovigilance Analytics</span>
+                <span className="text-blue-400">·</span>
+                <span className="font-mono text-[11px] text-blue-600">Longitudinal Surveillance</span>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight font-display">
+                Safety Insights & <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-500 bg-clip-text text-transparent">Trends</span>
+              </h1>
+              <p className="text-sm text-slate-600 max-w-xl leading-relaxed">
+                Longitudinal trajectory of drug-drug interactions, anticholinergic burden accumulation, and prescribing cascade detection.
+              </p>
+
+              <div className="flex flex-wrap items-center gap-2 pt-1">
+                <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white/80 border border-slate-200/80 shadow-xs text-xs font-medium text-slate-700">
+                  <ShieldCheck className="w-3.5 h-3.5 text-blue-600" />
+                  <span>WHO NCI Standard</span>
+                </div>
+                <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white/80 border border-slate-200/80 shadow-xs text-xs font-medium text-slate-700">
+                  <Zap className="w-3.5 h-3.5 text-indigo-500" />
+                  <span>Burden Load Curve</span>
+                </div>
+                <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white/80 border border-slate-200/80 shadow-xs text-xs font-medium text-slate-700">
+                  <Activity className="w-3.5 h-3.5 text-teal-600" />
+                  <span>Cascades Flagged</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
 
  {/* ─── Metric Summary Cards ─── */}
  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">

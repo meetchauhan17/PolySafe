@@ -17,6 +17,7 @@
 const express = require('express');
 const prisma  = require('../lib/prisma');
 const { auth } = require('../middleware/auth');
+const { calculateRegimenRisk } = require('../services/regimenRisk');
 
 const router = express.Router();
 
@@ -86,11 +87,15 @@ router.get('/patient-summary/:patientId', auth, async (req, res) => {
 
     const { medicines, interactionFlags } = patient;
 
-    // 3. Derive status
+    // 3. Derive status (integrates pairwise interaction flags + WHO/NCI regimen risk)
+    const regimenRisk = await calculateRegimenRisk(patientId);
+    const hasCriticalHarm = regimenRisk?.level === 5;
+    const hasHighHarm = regimenRisk?.level === 4;
+
     const hasCritical = interactionFlags.some((f) =>
       ['Contraindicated', 'Major'].includes(f.severity)
-    );
-    const hasCaution  = interactionFlags.length > 0;
+    ) || hasCriticalHarm;
+    const hasCaution  = interactionFlags.length > 0 || hasHighHarm;
     const status      = hasCritical ? 'CRITICAL' : hasCaution ? 'CAUTION' : 'SAFE';
 
     // 4. Build today's schedule — GENERIC labels only, no medicine names
