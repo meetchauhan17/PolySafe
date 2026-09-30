@@ -205,21 +205,21 @@ export default function TimelinePage() {
     <div className="min-h-[88vh] pb-16">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 space-y-6">
 
-        {/* ── Modern Hero Header matching LoginPage aesthetic ── */}
-        <div className="relative overflow-hidden rounded-3xl p-6 md:p-8 bg-gradient-to-br from-white/95 via-blue-50/40 to-indigo-50/30 border border-slate-200/80 shadow-[0_12px_40px_-8px_rgba(0,0,0,0.06)] backdrop-blur-xl">
+        {/* ── Modern Hero Header matching design system tokens ── */}
+        <div className="relative overflow-hidden rounded-3xl p-6 md:p-8 bg-[var(--brand-surface)]/95 border border-[var(--brand-border)] shadow-[var(--shadow-card)] backdrop-blur-xl">
           {/* Top luminous accent bar */}
-          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-500" />
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[var(--accent-primary)] via-indigo-600 to-[var(--accent-secondary)]" />
 
           <div className="relative z-10 space-y-4">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <BackButton to="/home" label="Back to Home" />
 
               <div className="flex items-center gap-2">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-blue-500/10 text-blue-800 border border-blue-500/20">
-                  <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] border border-[var(--accent-primary)]/20">
+                  <span className="w-2 h-2 rounded-full bg-[var(--accent-primary)] animate-pulse" />
                   <span>Pharmacotherapy History</span>
-                  <span className="text-blue-400">·</span>
-                  <span className="font-mono text-[11px] text-blue-600">Chronological Audit</span>
+                  <span className="text-[var(--accent-primary)]/60">·</span>
+                  <span className="font-mono text-[11px] text-[var(--accent-primary)]">Chronological Audit</span>
                 </div>
                 <Link
                   to="/add-medicine"
@@ -229,7 +229,7 @@ export default function TimelinePage() {
                       openGuestLockModal('add medications');
                     }
                   }}
-                  className="btn-primary py-2 px-4 text-xs font-mono font-bold uppercase tracking-wider flex items-center gap-2 shadow-sm shadow-cyan-900/20"
+                  className="btn-primary py-2 px-4 text-xs font-mono font-bold uppercase tracking-wider flex items-center gap-2 shadow-md"
                 >
                   <Plus className="w-4 h-4" />
                   <span>Add Medicine</span>
@@ -239,24 +239,24 @@ export default function TimelinePage() {
             </div>
 
             <div className="space-y-2">
-              <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight font-display">
-                Medication <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-500 bg-clip-text text-transparent">Timeline</span>
+              <h1 className="text-2xl md:text-3xl font-extrabold text-[var(--text-primary)] tracking-tight font-display">
+                Medication <span className="bg-gradient-to-r from-[var(--accent-primary)] via-indigo-600 to-[var(--accent-secondary)] bg-clip-text text-transparent">Timeline</span>
               </h1>
-              <p className="text-sm text-slate-600 max-w-xl leading-relaxed">
+              <p className="text-sm text-[var(--text-secondary)] max-w-xl leading-relaxed">
                 {isGuest ? 'Sample interactive prescription, OTC, and supplement sequence with cascade detection.' : 'Complete chronological prescription and supplement history with active interaction surveillance.'}
               </p>
 
               <div className="flex flex-wrap items-center gap-2 pt-1">
-                <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white/80 border border-slate-200/80 shadow-xs text-xs font-medium text-slate-700">
-                  <Shield className="w-3.5 h-3.5 text-blue-600" />
+                <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-[var(--chassis)] border border-[var(--brand-border)] shadow-xs text-xs font-medium text-[var(--text-secondary)]">
+                  <Shield className="w-3.5 h-3.5 text-[var(--accent-primary)]" />
                   <span>Clinical Audit Trail</span>
                 </div>
-                <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white/80 border border-slate-200/80 shadow-xs text-xs font-medium text-slate-700">
-                  <Zap className="w-3.5 h-3.5 text-indigo-500" />
+                <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-[var(--chassis)] border border-[var(--brand-border)] shadow-xs text-xs font-medium text-[var(--text-secondary)]">
+                  <Zap className="w-3.5 h-3.5 text-[var(--accent-secondary)]" />
                   <span>Cascade Detection</span>
                 </div>
-                <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white/80 border border-slate-200/80 shadow-xs text-xs font-medium text-slate-700">
-                  <Activity className="w-3.5 h-3.5 text-teal-600" />
+                <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-[var(--chassis)] border border-[var(--brand-border)] shadow-xs text-xs font-medium text-[var(--text-secondary)]">
+                  <Activity className="w-3.5 h-3.5 text-[var(--role-caregiver)]" />
                   <span>Cross-Doctor Sync</span>
                 </div>
               </div>
@@ -374,19 +374,19 @@ export default function TimelinePage() {
  hideScrews={true}
  className={`flex-1 space-y-3 transition-all ${
  isDiscontinued
- ? '!bg-slate-100 opacity-75 !border-slate-300'
+ ? '!bg-[var(--chassis)] opacity-75 !border-[var(--brand-border)]'
  : isFlagged
  ? '!bg-[#fef2f2] !border-rose-400/50 shadow-[0_2px_14px_rgba(225,29,72,0.08)]'
- : 'bg-[var(--brand-surface)] border-slate-200/70 hover:shadow-[var(--shadow-card)]'
+ : 'bg-[var(--brand-surface)] border-[var(--brand-border)] hover:shadow-[var(--shadow-card)]'
  }`}
  >
- <div className="flex items-center justify-between gap-2 flex-wrap pb-1 border-b border-slate-200/60">
+ <div className="flex items-center justify-between gap-2 flex-wrap pb-1 border-b border-[var(--brand-border)]">
  <span
  className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold uppercase tracking-wider ${
  isDiscontinued
  ? 'bg-[var(--chassis-dark)]/60 text-[var(--text-muted)] border border-[var(--chassis-dark)]'
  : isFlagged
- ? 'bg-slate-50 text-[var(--accent-primary)] border border-rose-300/40 shadow-xs'
+ ? 'bg-[var(--brand-surface)] text-[var(--accent-primary)] border border-rose-300/40 shadow-xs'
  : 'bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] border border-[var(--accent-primary)]/25 shadow-xs'
  }`}
  >
@@ -433,17 +433,17 @@ export default function TimelinePage() {
  ) : (
  <div className="flex items-center gap-2 flex-wrap text-[11px] text-[var(--text-muted)] font-mono">
  {details.strength && (
- <span className={`px-2 py-0.5 rounded-md border shadow-xs ${isFlagged ? 'bg-slate-50 border-rose-200/60' : 'bg-slate-100 border-slate-200/60'}`}>
+ <span className={`px-2 py-0.5 rounded-md border shadow-xs ${isFlagged ? 'bg-[var(--brand-surface)] border-rose-200/60' : 'bg-[var(--chassis)] border-[var(--brand-border)]'}`}>
  {details.strength}
  </span>
  )}
  {details.form && (
- <span className={`px-2 py-0.5 rounded-md border shadow-xs ${isFlagged ? 'bg-slate-50 border-rose-200/60' : 'bg-slate-100 border-slate-200/60'}`}>
+ <span className={`px-2 py-0.5 rounded-md border shadow-xs ${isFlagged ? 'bg-[var(--brand-surface)] border-rose-200/60' : 'bg-[var(--chassis)] border-[var(--brand-border)]'}`}>
  {details.form}
  </span>
  )}
  {details.frequency && (
- <span className={`px-2 py-0.5 rounded-md border shadow-xs ${isFlagged ? 'bg-slate-50 border-rose-200/60' : 'bg-slate-100 border-slate-200/60'}`}>
+ <span className={`px-2 py-0.5 rounded-md border shadow-xs ${isFlagged ? 'bg-[var(--brand-surface)] border-rose-200/60' : 'bg-[var(--chassis)] border-[var(--brand-border)]'}`}>
  {details.frequency}
  </span>
  )}
@@ -464,7 +464,7 @@ export default function TimelinePage() {
                               <Link
                                 key={f.flagId}
                                 to={`/risk/${f.flagId}`}
-                                className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-50 hover:bg-rose-50 border border-rose-400/60 shadow-[var(--shadow-sm)] hover:shadow-[var(--shadow-card)] transition-all cursor-pointer group active:scale-[0.99]"
+                                className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[var(--brand-surface)] hover:bg-rose-50/50 border border-rose-400/60 shadow-[var(--shadow-sm)] hover:shadow-[var(--shadow-card)] transition-all cursor-pointer group active:scale-[0.99]"
                               >
                                 <LedIndicator status="critical" size="sm" />
                                 <span className="text-xs font-mono font-bold text-[var(--led-critical)]">
@@ -479,7 +479,7 @@ export default function TimelinePage() {
                         {/* Standardized code badge if present */}
                         {med.standardizedCode && (
                           <div className="pt-0.5 flex items-center">
-                            <span className={`inline-flex items-center gap-1.5 text-[10px] font-medium px-2.5 py-0.5 rounded-full border shadow-xs text-[var(--text-muted)] ${isFlagged ? 'bg-slate-50 border-rose-200/60' : 'bg-slate-100 border-slate-200/60'}`}>
+                            <span className={`inline-flex items-center gap-1.5 text-[10px] font-medium px-2.5 py-0.5 rounded-full border shadow-xs text-[var(--text-muted)] ${isFlagged ? 'bg-[var(--brand-surface)] border-rose-200/60' : 'bg-[var(--chassis)] border-[var(--brand-border)]'}`}>
                               <ShieldCheck className="w-3.5 h-3.5 text-[var(--accent-primary)] flex-shrink-0" />
                               <span>RxNorm CUI:</span>
                               <span className="font-mono font-bold text-[var(--text-primary)] tracking-wide">{med.standardizedCode}</span>

@@ -34,17 +34,17 @@ export default function Card({
   let topAccentGradient = '';
 
   if (normalizedVariant === 'safe') {
-    variantClasses = 'ps-card--safe border-emerald-300/80 bg-slate-50/95 hover:border-emerald-400';
+    variantClasses = 'ps-card--safe border-emerald-500/40 hover:border-emerald-500/70';
     ledColorClass = 'bg-[var(--led-safe)]';
     ledGlowClass = 'shadow-[0_0_8px_2px_var(--led-safe-glow)] animate-[led-pulse_2s_ease-in-out_infinite]';
     topAccentGradient = 'from-emerald-400 via-teal-400 to-cyan-500';
   } else if (normalizedVariant === 'caution') {
-    variantClasses = 'ps-card--caution border-amber-300/80 bg-slate-50/95 hover:border-amber-400';
+    variantClasses = 'ps-card--caution border-amber-500/40 hover:border-amber-500/70';
     ledColorClass = 'bg-[var(--led-caution)]';
     ledGlowClass = 'shadow-[0_0_8px_2px_var(--led-caution-glow)] animate-[led-pulse_2s_ease-in-out_infinite]';
     topAccentGradient = 'from-amber-400 via-orange-400 to-yellow-500';
   } else if (normalizedVariant === 'critical') {
-    variantClasses = 'ps-card--critical border-rose-300/90 bg-slate-50/95 hover:border-rose-400';
+    variantClasses = 'ps-card--critical border-rose-500/50 hover:border-rose-500/80';
     ledColorClass = 'bg-[var(--led-critical)]';
     ledGlowClass = 'shadow-[0_0_8px_2px_var(--led-critical-glow)] animate-[led-pulse_1.2s_ease-in-out_infinite]';
     topAccentGradient = 'from-rose-500 via-red-500 to-orange-500';
@@ -68,9 +68,9 @@ export default function Card({
       style={{
         ...style,
       }}
-      className={`group relative bg-slate-50/95 backdrop-blur-xl text-slate-900 rounded-3xl p-5 sm:p-6 transition-all duration-300 ease-out flex flex-col border border-slate-200 shadow-[0_10px_30px_-5px_rgba(0,0,0,0.04)] hover:shadow-[0_16px_36px_-6px_rgba(15,23,42,0.08)] hover:-translate-y-0.5 ${
+      className={`group relative bg-[var(--brand-surface)]/95 backdrop-blur-xl text-[var(--text-primary)] rounded-3xl p-5 sm:p-6 transition-all duration-300 ease-out flex flex-col border border-[var(--brand-border)] shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-card-hover)] hover:-translate-y-0.5 ${
         onClick
-          ? 'cursor-pointer active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500'
+          ? 'cursor-pointer active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]'
           : ''
       } ${variantClasses} ${className}`}
       {...props}
@@ -95,18 +95,18 @@ export default function Card({
           <div className="flex items-center gap-3 min-w-0">
             {icon && (
               <div
-                className="w-10 h-10 rounded-2xl bg-gradient-to-br from-blue-500/10 to-indigo-500/15 text-blue-600 border border-blue-500/25 flex items-center justify-center shadow-xs flex-shrink-0"
+                className="w-10 h-10 rounded-2xl bg-gradient-to-br from-[var(--accent-primary)]/10 to-[var(--accent-secondary)]/15 text-[var(--accent-primary)] border border-[var(--accent-primary)]/20 flex items-center justify-center shadow-xs flex-shrink-0"
               >
                 {icon}
               </div>
             )}
             {title && (
               <div className="min-w-0">
-                <h3 className="text-base sm:text-lg font-bold tracking-tight leading-snug text-slate-900 font-display">
+                <h3 className="text-base sm:text-lg font-bold tracking-tight leading-snug text-[var(--text-primary)] font-display">
                   {title}
                 </h3>
                 {subtitle && (
-                  <p className="text-xs mt-0.5 leading-normal text-slate-600">
+                  <p className="text-xs mt-0.5 leading-normal text-[var(--text-secondary)]">
                     {subtitle}
                   </p>
                 )}

@@ -150,8 +150,8 @@ function ConnectionRow({ conn, onRevoke, revoking, onApprove, approving, customL
           : isPending
           ? 'bg-[var(--chassis)] border-amber-400/50 shadow-[0_6px_24px_rgba(245,158,11,0.08),-2px_-2px_12px_rgba(255,255,255,0.9)]'
           : isRevoked
-          ? 'bg-slate-100 opacity-60 border-slate-300'
-          : 'bg-[var(--brand-surface)] border-slate-200/80 shadow-[0_6px_24px_rgba(0,0,0,0.04)] hover:shadow-[0_10px_32px_rgba(0,0,0,0.07)]'
+          ? '!bg-[var(--chassis)] opacity-60 !border-[var(--brand-border)]'
+          : 'bg-[var(--brand-surface)] border-[var(--brand-border)] shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-elevated)]'
       }`}
     >
       {/* ── Top Row: Avatar + Title/Note + Status Pill ── */}
@@ -300,7 +300,7 @@ function ConnectionRow({ conn, onRevoke, revoking, onApprove, approving, customL
             </div>
 
             {conn.expiresAt && (
-              <span className="text-[11px] font-mono text-[var(--text-muted)] font-bold bg-slate-50 px-2.5 py-0.5 rounded-full border border-slate-200/70">
+              <span className="text-[11px] font-mono text-[var(--text-muted)] font-bold bg-[var(--chassis)] px-2.5 py-0.5 rounded-full border border-[var(--brand-border)]">
                 ⏳ Expires: {new Date(conn.expiresAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
               </span>
             )}
@@ -646,7 +646,7 @@ function AddCaregiverPanel({ onSuccess }) {
               <div className="flex flex-col sm:flex-row items-center gap-4 bg-[var(--chassis)] p-4 rounded-xl border border-[rgba(255,255,255,0.4)]  shadow-xs">
                 {/* QR Code Image */}
                 {generatedPinData.qrCode && (
-                  <div className="p-2 bg-slate-50 rounded-xl shadow-xs border border-teal-500/30 flex-shrink-0">
+                  <div className="p-2 bg-[var(--chassis)] rounded-xl shadow-xs border border-teal-500/30 flex-shrink-0">
                     <img
                       src={generatedPinData.qrCode}
                       alt="Caregiver Quick Scan QR"
@@ -905,38 +905,38 @@ export default function ConnectedPeoplePage() {
     <div className="min-h-[88vh] pb-16">
       <div className="max-w-3xl mx-auto px-4 py-8 space-y-6">
 
-        {/* ── Modern Hero Header matching LoginPage aesthetic ── */}
-        <div className="relative overflow-hidden rounded-3xl p-6 md:p-8 bg-gradient-to-br from-white/95 via-blue-50/40 to-indigo-50/30 border border-slate-200/80 shadow-[0_12px_40px_-8px_rgba(0,0,0,0.06)] backdrop-blur-xl">
+        {/* ── Modern Hero Header matching design system tokens ── */}
+        <div className="relative overflow-hidden rounded-3xl p-6 md:p-8 bg-[var(--brand-surface)]/95 border border-[var(--brand-border)] shadow-[var(--shadow-card)] backdrop-blur-xl">
           {/* Top luminous accent bar */}
-          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-500" />
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[var(--accent-primary)] via-indigo-600 to-[var(--accent-secondary)]" />
 
           <div className="relative z-10 space-y-4">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <BackButton to="/home" label="Back to Home" />
 
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-blue-500/10 text-blue-800 border border-blue-500/20">
-                <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] border border-[var(--accent-primary)]/20">
+                <span className="w-2 h-2 rounded-full bg-[var(--accent-primary)] animate-pulse" />
                 <span>Consent & Security Hub</span>
-                <span className="text-blue-400">·</span>
-                <span className="font-mono text-[11px] text-blue-600">Active Authorization</span>
+                <span className="text-[var(--accent-primary)]/60">·</span>
+                <span className="font-mono text-[11px] text-[var(--accent-primary)]">Active Authorization</span>
               </div>
             </div>
 
             <div className="space-y-2">
-              <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight font-display">
-                Connected <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-500 bg-clip-text text-transparent">Care Network</span>
+              <h1 className="text-2xl md:text-3xl font-extrabold text-[var(--text-primary)] tracking-tight font-display">
+                Connected <span className="bg-gradient-to-r from-[var(--accent-primary)] via-indigo-600 to-[var(--accent-secondary)] bg-clip-text text-transparent">Care Network</span>
               </h1>
-              <p className="text-sm text-slate-600 max-w-xl leading-relaxed">
+              <p className="text-sm text-[var(--text-secondary)] max-w-xl leading-relaxed">
                 Manage clinical physician access codes, authorized family caregivers, and verified clinical sharing permissions.
               </p>
 
               <div className="flex flex-wrap items-center gap-2 pt-1">
-                <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white/80 border border-slate-200/80 shadow-xs text-xs font-medium text-slate-700">
-                  <ShieldCheck className="w-3.5 h-3.5 text-blue-600" />
+                <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-[var(--chassis)] border border-[var(--brand-border)] shadow-xs text-xs font-medium text-[var(--text-secondary)]">
+                  <ShieldCheck className="w-3.5 h-3.5 text-[var(--accent-primary)]" />
                   <span>Granular Consent</span>
                 </div>
-                <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white/80 border border-slate-200/80 shadow-xs text-xs font-medium text-slate-700">
-                  <Activity className="w-3.5 h-3.5 text-indigo-600" />
+                <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-[var(--chassis)] border border-[var(--brand-border)] shadow-xs text-xs font-medium text-[var(--text-secondary)]">
+                  <Activity className="w-3.5 h-3.5 text-[var(--accent-secondary)]" />
                   <span>Real-time Audit Trail</span>
                 </div>
               </div>

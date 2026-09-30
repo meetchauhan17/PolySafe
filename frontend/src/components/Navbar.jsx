@@ -184,7 +184,7 @@ export default function Navbar() {
           {/* Mobile hamburger menu toggle */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden p-2 rounded-xl bg-slate-50 border border-slate-200 text-slate-700 shadow-xs active:scale-95 cursor-pointer"
+            className="lg:hidden p-2 rounded-xl bg-[var(--brand-surface)] border border-[var(--brand-border)] text-[var(--text-primary)] shadow-xs active:scale-95 cursor-pointer hover:bg-[var(--chassis)] transition-colors"
             aria-label="Toggle navigation menu"
           >
             {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}

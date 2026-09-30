@@ -8,8 +8,7 @@ import { ArrowLeft } from 'lucide-react';
  * • Fixed layout with whitespace-nowrap & flex-shrink-0 (no awkward multi-line text wrapping).
  * • Interactive icon tile with micro-animation on hover (group-hover:-translate-x-0.5).
  * • Polished clinical glassmorphism card styling with subtle border and crisp elevation.
- * • Compatible across AddMedicinePage, ConnectedPeoplePage, InsightsPage, TimelinePage, 
- *   ProfilePage, DoctorSharePage, LogSymptomPage, SymptomResultPage, and RiskAnalysisPage.
+ * • Fully styled with theme tokens for seamless light/dark mode and cohesive aesthetic.
  */
 export default function BackButton({
   to = '/home',
@@ -38,13 +37,13 @@ export default function BackButton({
       onClick={handleClick}
       className={`group inline-flex items-center gap-2.5 ${
         isSmall ? 'px-3 py-1.5 rounded-xl' : 'px-3.5 py-2 rounded-2xl'
-      } bg-white/95 hover:bg-white active:scale-[0.98] border border-slate-200/90 hover:border-blue-300 text-slate-700 hover:text-blue-700 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.06)] hover:shadow-[0_4px_14px_-2px_rgba(37,99,235,0.12)] backdrop-blur-md transition-all duration-200 ease-out whitespace-nowrap flex-shrink-0 cursor-pointer select-none ${className}`}
+      } bg-[var(--brand-surface)]/95 hover:bg-[var(--brand-surface)] active:scale-[0.98] border border-[var(--brand-border)] hover:border-[var(--accent-primary)]/40 text-[var(--text-secondary)] hover:text-[var(--accent-primary)] shadow-[var(--shadow-sm)] hover:shadow-[var(--shadow-card)] backdrop-blur-md transition-all duration-200 ease-out whitespace-nowrap flex-shrink-0 cursor-pointer select-none ${className}`}
       title={label}
     >
       <span
         className={`${
           isSmall ? 'w-5 h-5 rounded-lg' : 'w-6 h-6 rounded-xl'
-        } bg-slate-100/90 group-hover:bg-blue-50 border border-slate-200/70 group-hover:border-blue-200/80 flex items-center justify-center text-slate-500 group-hover:text-blue-600 transition-all duration-200 flex-shrink-0`}
+        } bg-[var(--chassis)] group-hover:bg-[var(--accent-primary)]/10 border border-[var(--brand-border)] group-hover:border-[var(--accent-primary)]/30 flex items-center justify-center text-[var(--text-muted)] group-hover:text-[var(--accent-primary)] transition-all duration-200 flex-shrink-0`}
       >
         <ArrowLeft
           className={`${

@@ -410,29 +410,29 @@ export default function HomePage() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="space-y-2">
             {/* Top Pill Status matching LoginPage */}
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/90 backdrop-blur-md border border-slate-200 shadow-2xs">
-              <Zap className="w-3.5 h-3.5 text-blue-600" />
-              <span className="text-[11px] font-bold tracking-wider uppercase text-slate-700 font-mono">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[var(--brand-surface)]/80 backdrop-blur-md border border-[var(--brand-border)] shadow-2xs">
+              <Zap className="w-3.5 h-3.5 text-[var(--accent-primary)]" />
+              <span className="text-[11px] font-bold tracking-wider uppercase text-[var(--text-secondary)] font-mono">
                 Continuous Clinical Safety Architecture
               </span>
             </div>
 
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 font-display tracking-tight">
-              My Safety <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-500 bg-clip-text text-transparent">Dashboard</span>
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-[var(--text-primary)] font-display tracking-tight">
+              My Safety <span className="bg-gradient-to-r from-[var(--accent-primary)] via-indigo-600 to-[var(--accent-secondary)] bg-clip-text text-transparent">Dashboard</span>
             </h1>
 
             {/* Trust Metrics Chips */}
             <div className="flex flex-wrap items-center gap-2 pt-0.5">
-              <span className="inline-flex items-center gap-1.5 bg-white/85 backdrop-blur-xs px-3 py-1 rounded-full border border-slate-200 text-[11px] font-semibold text-slate-700 shadow-2xs">
-                <Shield className="w-3.5 h-3.5 text-blue-600" />
+              <span className="inline-flex items-center gap-1.5 bg-[var(--brand-surface)]/80 backdrop-blur-xs px-3 py-1 rounded-full border border-[var(--brand-border)] text-[11px] font-semibold text-[var(--text-secondary)] shadow-2xs">
+                <Shield className="w-3.5 h-3.5 text-[var(--accent-primary)]" />
                 222K+ Interaction Rules
               </span>
-              <span className="inline-flex items-center gap-1.5 bg-white/85 backdrop-blur-xs px-3 py-1 rounded-full border border-slate-200 text-[11px] font-semibold text-slate-700 shadow-2xs">
-                <Activity className="w-3.5 h-3.5 text-emerald-600" />
+              <span className="inline-flex items-center gap-1.5 bg-[var(--brand-surface)]/80 backdrop-blur-xs px-3 py-1 rounded-full border border-[var(--brand-border)] text-[11px] font-semibold text-[var(--text-secondary)] shadow-2xs">
+                <Activity className="w-3.5 h-3.5 text-[var(--led-safe)]" />
                 Real-Time ACB Radar
               </span>
-              <span className="inline-flex items-center gap-1.5 bg-white/85 backdrop-blur-xs px-3 py-1 rounded-full border border-slate-200 text-[11px] font-semibold text-slate-600 shadow-2xs font-mono">
-                <Clock className="w-3.5 h-3.5 text-slate-400" />
+              <span className="inline-flex items-center gap-1.5 bg-[var(--brand-surface)]/80 backdrop-blur-xs px-3 py-1 rounded-full border border-[var(--brand-border)] text-[11px] font-semibold text-[var(--text-muted)] shadow-2xs font-mono">
+                <Clock className="w-3.5 h-3.5 text-[var(--text-muted)]" />
                 {todayLabel}
               </span>
             </div>
@@ -441,7 +441,7 @@ export default function HomePage() {
           <div className="flex items-center gap-2.5 flex-shrink-0 self-start sm:self-center">
             <Link
               to="/add-medicine"
-              className="btn-primary py-2 px-4 text-xs font-mono font-bold uppercase tracking-wider flex items-center gap-2 shadow-sm shadow-cyan-900/20"
+              className="btn-primary py-2 px-4 text-xs font-mono font-bold uppercase tracking-wider flex items-center gap-2 shadow-md"
             >
               <Plus className="w-4 h-4" />
               <span>Add Medicine</span>
@@ -656,7 +656,7 @@ export default function HomePage() {
                 className={`text-[11px] font-bold px-2.5 py-1 rounded-lg border flex items-center space-x-1.5 transition-all duration-180 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--chassis)] active:scale-95 active:opacity-80 ${
                   remindersEnabled
                     ? 'bg-[var(--accent-primary)] text-white border-[var(--accent-primary)]'
-                    : 'bg-slate-50 text-[var(--accent-primary)] border-slate-200 hover:bg-[var(--accent-primary)] hover:text-white'
+                    : 'bg-[var(--chassis)] text-[var(--accent-primary)] border-[var(--brand-border)] hover:bg-[var(--accent-primary)] hover:text-white'
                 }`}
               >
                 {remindersEnabled ? (
@@ -671,7 +671,7 @@ export default function HomePage() {
                   </>
                 )}
               </button>
-              <span className="text-[11px] font-bold text-slate-600 bg-slate-100 border border-slate-200 px-2.5 py-1 rounded-lg">
+              <span className="text-[11px] font-bold text-[var(--text-secondary)] bg-[var(--chassis-panel)] border border-[var(--brand-border)] px-2.5 py-1 rounded-lg">
                 {schedule.length} dose{schedule.length !== 1 ? 's' : ''}
               </span>
             </div>
@@ -692,22 +692,22 @@ export default function HomePage() {
                     animate={{ opacity: 1, y: 0 }}
                     exit={shouldReduceMotion ? undefined : { opacity: 0, scale: 0.95 }}
                     transition={{ duration: 0.2 }}
-                    className="flex items-center space-x-3.5 p-3.5 rounded-2xl bg-slate-50 border border-slate-200/70 shadow-xs hover:border-slate-300 hover:bg-white hover:shadow-sm transition-all"
+                    className="flex items-center space-x-3.5 p-3.5 rounded-2xl bg-[var(--chassis)] border border-[var(--brand-border)] shadow-xs hover:border-[var(--brand-border-visible)] hover:bg-[var(--brand-surface)] hover:shadow-sm transition-all"
                   >
                     {/* Time bubble */}
                     <div className="flex-shrink-0 w-16 text-center">
-                      <span className="text-[11px] font-bold text-[var(--accent-primary)] bg-cyan-50 border border-cyan-200/80 px-2.5 py-1 rounded-xl block leading-snug font-mono shadow-xs">
+                      <span className="text-[11px] font-bold text-[var(--accent-primary)] bg-[var(--accent-primary)]/10 border border-[var(--accent-primary)]/20 px-2.5 py-1 rounded-xl block leading-snug font-mono shadow-xs">
                         {item.time}
                       </span>
                     </div>
 
                     {/* Divider dot */}
-                    <div className="w-1.5 h-1.5 rounded-full bg-slate-300 flex-shrink-0" />
+                    <div className="w-1.5 h-1.5 rounded-full bg-[var(--brand-border)] flex-shrink-0" />
 
                     {/* Medicine info */}
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-bold text-[var(--text-primary)] truncate">{item.name}</p>
-                      <p className="text-xs text-slate-600 font-mono mt-0.5 leading-relaxed">{item.dosage}</p>
+                      <p className="text-xs text-[var(--text-muted)] font-mono mt-0.5 leading-relaxed">{item.dosage}</p>
                     </div>
 
                     <MedicineTypeBadge type={item.type} />
@@ -720,7 +720,7 @@ export default function HomePage() {
                       className={`p-2 rounded-xl text-xs transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--chassis)] active:scale-95 active:opacity-80 border ${
                         isDoseReminded
                           ? 'bg-[var(--accent-primary)] text-white shadow-sm border-transparent'
-                          : 'bg-slate-50 text-slate-500 border-slate-200/80 shadow-xs hover:text-[var(--accent-primary)] hover:bg-slate-100'
+                          : 'bg-[var(--brand-surface)] text-[var(--text-muted)] border-[var(--brand-border)] shadow-xs hover:text-[var(--accent-primary)] hover:bg-[var(--chassis)]'
                       }`}
                     >
                       {isDoseReminded ? (
@@ -743,7 +743,7 @@ export default function HomePage() {
           title="Active Medicines"
           icon={<Pill className="w-4 h-4 text-[var(--accent-primary)]" />}
           badge={
-            <span className="text-[11px] font-bold text-slate-600 bg-slate-100 border border-slate-200 px-2.5 py-1 rounded-xl">
+            <span className="text-[11px] font-bold text-[var(--text-secondary)] bg-[var(--chassis-panel)] border border-[var(--brand-border)] px-2.5 py-1 rounded-xl">
               {medicines.length} total
             </span>
           }
@@ -759,7 +759,7 @@ export default function HomePage() {
                   animate={{ opacity: 1, scale: 1 }}
                   exit={shouldReduceMotion ? undefined : { opacity: 0, scale: 0.95 }}
                   transition={{ duration: 0.2 }}
-                  className="p-4 sm:p-5 rounded-2xl bg-slate-50 border border-slate-200/70 shadow-xs hover:border-slate-300 hover:bg-white hover:shadow-sm space-y-3 flex flex-col justify-between transition-all"
+                  className="p-4 sm:p-5 rounded-2xl bg-[var(--chassis)] border border-[var(--brand-border)] shadow-xs hover:border-[var(--brand-border-visible)] hover:bg-[var(--brand-surface)] hover:shadow-sm space-y-3 flex flex-col justify-between transition-all"
                 >
                   <div className="space-y-2">
                     <div className="flex items-start justify-between gap-1 flex-wrap">
@@ -768,7 +768,7 @@ export default function HomePage() {
                           {med.name}
                         </p>
                         {med.generic && med.generic.toLowerCase() !== med.name.toLowerCase() && (
-                          <p className="text-[11px] text-slate-500 truncate">
+                          <p className="text-[11px] text-[var(--text-muted)] truncate">
                             {med.generic}
                           </p>
                         )}
@@ -780,25 +780,25 @@ export default function HomePage() {
                     </div>
 
                     {med.dosage && (
-                      <p className="text-xs text-slate-600 font-mono mt-0.5">{med.dosage}</p>
+                      <p className="text-xs text-[var(--text-muted)] font-mono mt-0.5">{med.dosage}</p>
                     )}
 
                     {/* Interactive Drug Harm & Side Effects Panel */}
                     <DrugHarmPanel medicine={med} flags={flags} className="mt-1" />
 
                     {med.safetyTip && (
-                      <p className="text-xs text-slate-600 bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 leading-tight">
+                      <p className="text-xs text-[var(--text-secondary)] bg-[var(--brand-surface)] p-2.5 rounded-xl border border-[var(--brand-border)] leading-tight">
                         {med.safetyTip}
                       </p>
                     )}
 
-                    <p className="text-[10px] text-slate-400">
+                    <p className="text-[10px] text-[var(--text-muted)]">
                       Added {new Date(med.dateAdded).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}
                     </p>
                   </div>
 
                   {/* Edit & Discontinue Action Bar */}
-                  <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
+                  <div className="flex items-center justify-end gap-2 pt-2 border-t border-[var(--brand-border)]">
                     <button
                       type="button"
                       onClick={() => {
@@ -808,7 +808,7 @@ export default function HomePage() {
                         }
                         setEditingMed(med);
                       }}
-                      className="inline-flex items-center gap-1 px-3 py-1.5 text-[11px] font-bold text-[var(--accent-primary)] bg-slate-50 border border-slate-200/80 shadow-xs hover:bg-[var(--accent-primary)]/10 rounded-xl transition-all cursor-pointer"
+                      className="inline-flex items-center gap-1 px-3 py-1.5 text-[11px] font-bold text-[var(--accent-primary)] bg-[var(--brand-surface)] border border-[var(--brand-border)] shadow-xs hover:bg-[var(--accent-primary)]/10 rounded-xl transition-all cursor-pointer"
                       title="Edit dosage or type"
                     >
                       <Pencil className="w-3 h-3" />
@@ -823,7 +823,7 @@ export default function HomePage() {
                         }
                         setDiscontinuingMed(med);
                       }}
-                      className="inline-flex items-center gap-1 px-3 py-1.5 text-[11px] font-bold text-[var(--led-critical)] bg-slate-50 border border-slate-200/80 shadow-xs hover:bg-rose-50 rounded-xl transition-all cursor-pointer"
+                      className="inline-flex items-center gap-1 px-3 py-1.5 text-[11px] font-bold text-[var(--led-critical)] bg-[var(--brand-surface)] border border-[var(--brand-border)] shadow-xs hover:bg-rose-500/10 rounded-xl transition-all cursor-pointer"
                       title="Discontinue medicine"
                     >
                       <Trash2 className="w-3 h-3" />
@@ -877,7 +877,7 @@ export default function HomePage() {
 											{/* Flag header */}
 											<div className="flex items-start justify-between gap-3">
 												<div className="flex items-start space-x-3">
-													<div className="p-2 rounded-xl bg-slate-100 shadow-xs border border-slate-200/60 mt-0.5 flex-shrink-0">
+													<div className="p-2 rounded-xl bg-[var(--chassis)] shadow-xs border border-[var(--brand-border)] mt-0.5 flex-shrink-0">
 														{styles.icon}
 													</div>
 													<div>
@@ -901,7 +901,7 @@ export default function HomePage() {
 											</div>
 
 											{/* Plain explanation */}
-											<div className="bg-slate-50 rounded-2xl p-3.5 border border-slate-200/60 shadow-xs">
+											<div className="bg-[var(--brand-surface)] rounded-2xl p-3.5 border border-[var(--brand-border)] shadow-xs">
 												<p className="text-xs font-medium text-[var(--text-primary)] leading-relaxed">
 													{flag.plainExplanation}
 												</p>
@@ -911,7 +911,7 @@ export default function HomePage() {
 											<div className="pt-1">
 												<Link
 													to={`/risk/${flag.id}`}
-													className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-full bg-slate-50 hover:bg-white border border-slate-200/70 shadow-xs hover:shadow-sm transition-all cursor-pointer group active:scale-[0.99]"
+													className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-full bg-[var(--brand-surface)] hover:bg-[var(--chassis)] border border-[var(--brand-border)] shadow-xs hover:shadow-sm transition-all cursor-pointer group active:scale-[0.99]"
 												>
 													<div className="flex items-center gap-2">
 														<LedIndicator status={styles.ledStatus || 'critical'} size="sm" />

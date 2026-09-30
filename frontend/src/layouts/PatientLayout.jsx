@@ -77,7 +77,7 @@ export default function PatientLayout() {
       {isGuest && (
         <aside
           aria-label="Guest Mode Status"
-          className="bg-slate-900 text-white px-4 py-2 text-xs border-b border-blue-500/40 shadow-sm sticky top-0 z-50 relative"
+          className="bg-slate-900 text-white px-4 py-2 text-xs border-b border-indigo-500/40 shadow-sm sticky top-0 z-50 relative"
         >
           <div className="max-w-6xl mx-auto flex items-center justify-between gap-3 font-mono">
             <div className="flex items-center gap-2 min-w-0">
@@ -102,18 +102,18 @@ export default function PatientLayout() {
 
       {/* ─── Top Bar: Modern Glassmorphic Header ─── */}
       <header
-        className={`sticky ${isGuest ? 'top-[33px]' : 'top-0'} z-40 bg-slate-50/90 backdrop-blur-md px-4 sm:px-6 py-3 border-b border-slate-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.04)] relative`}
+        className={`sticky ${isGuest ? 'top-[33px]' : 'top-0'} z-40 bg-[var(--brand-surface)]/90 backdrop-blur-md px-4 sm:px-6 py-3 border-b border-[var(--brand-border)] shadow-[var(--shadow-sm)] relative`}
       >
         <div className="max-w-6xl mx-auto flex items-center justify-between gap-4">
           <Link to="/home" className="flex items-center gap-3 group flex-shrink-0">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-cyan-500 p-0.5 shadow-lg shadow-blue-500/20 flex items-center justify-center text-white group-hover:scale-105 transition-transform">
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[var(--accent-primary)] via-indigo-600 to-[var(--accent-secondary)] p-0.5 shadow-lg shadow-indigo-500/20 flex items-center justify-center text-white group-hover:scale-105 transition-transform">
               <ShieldCheck className="w-5 h-5" />
             </div>
             <div className="flex flex-col">
-              <span className="text-xl font-extrabold tracking-tight text-slate-900 font-display block leading-tight">
-                Poly<span className="bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">Safe</span>
+              <span className="text-xl font-extrabold tracking-tight text-[var(--text-primary)] font-display block leading-tight">
+                Poly<span className="bg-gradient-to-r from-[var(--accent-primary)] via-indigo-600 to-[var(--accent-secondary)] bg-clip-text text-transparent">Safe</span>
               </span>
-              <span className="text-[10px] block text-slate-500 font-mono uppercase tracking-widest -mt-0.5 font-semibold">
+              <span className="text-[10px] block text-[var(--text-muted)] font-mono uppercase tracking-widest -mt-0.5 font-semibold">
                 {isGuest ? 'Demo Workstation' : 'Patient Console'}
               </span>
             </div>
@@ -130,8 +130,8 @@ export default function PatientLayout() {
                   to={tab.path}
                   className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold uppercase tracking-wider whitespace-nowrap shrink-0 transition-all ${
                     isActive
-                      ? 'bg-white text-blue-600 shadow-xs border border-slate-200/90'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-white/60 border border-transparent'
+                      ? 'bg-[var(--brand-surface)] text-[var(--accent-primary)] shadow-xs border border-[var(--brand-border)]'
+                      : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--chassis)] border border-transparent'
                   }`}
                 >
                   <Icon className="w-3.5 h-3.5 shrink-0" />
@@ -143,7 +143,7 @@ export default function PatientLayout() {
 
           <div className="flex items-center gap-2.5 flex-shrink-0">
             {/* Live Clinical Engine Indicator */}
-            <div className="hidden lg:inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/80 backdrop-blur-md border border-slate-200 text-[11px] font-semibold text-slate-700 shadow-2xs">
+            <div className="hidden lg:inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[var(--brand-surface)] backdrop-blur-md border border-[var(--brand-border)] text-[11px] font-semibold text-[var(--text-secondary)] shadow-2xs">
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75" />
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
@@ -155,12 +155,12 @@ export default function PatientLayout() {
               to="/insights"
               className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono font-bold uppercase rounded-xl transition-all ${
                 location.pathname === '/insights' || location.pathname === '/trends'
-                  ? 'bg-white text-blue-600 shadow-xs border border-slate-200/90'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-white/60 border border-transparent'
+                  ? 'bg-[var(--brand-surface)] text-[var(--accent-primary)] shadow-xs border border-[var(--brand-border)]'
+                  : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--chassis)] border border-transparent'
               }`}
               title="Analytics"
             >
-              <TrendingUp className="w-3.5 h-3.5 text-blue-600" />
+              <TrendingUp className="w-3.5 h-3.5 text-[var(--accent-primary)]" />
               <span className="hidden sm:inline">Analytics</span>
             </Link>
 
@@ -168,12 +168,12 @@ export default function PatientLayout() {
               to="/profile"
               className={`p-2 text-xs font-bold rounded-xl transition-all ${
                 location.pathname === '/profile'
-                  ? 'bg-white text-blue-600 shadow-xs border border-slate-200/90'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-white/60 border border-transparent'
+                  ? 'bg-[var(--brand-surface)] text-[var(--accent-primary)] shadow-xs border border-[var(--brand-border)]'
+                  : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--chassis)] border border-transparent'
               }`}
               title="Profile Settings"
             >
-              <UserCircle className="w-4 h-4 text-blue-600" />
+              <UserCircle className="w-4 h-4 text-[var(--accent-primary)]" />
             </Link>
 
             <SignOutConfirmButton />
@@ -190,7 +190,7 @@ export default function PatientLayout() {
 
       {/* ─── Fixed Bottom Tab Bar (Mobile Only) ─── */}
       <nav
-        className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-slate-50/95 backdrop-blur-md border-t border-slate-200/80 py-2 px-3 shadow-[0_-4px_16px_rgba(15,23,42,0.06)]"
+        className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-[var(--brand-surface)]/95 backdrop-blur-md border-t border-[var(--brand-border)] py-2 px-3 shadow-[var(--shadow-card)]"
         aria-label="Mobile Patient Navigation"
       >
         <div className="max-w-md mx-auto grid grid-cols-5 gap-1.5">
@@ -204,14 +204,14 @@ export default function PatientLayout() {
                 to={tab.path}
                 className={`flex flex-col items-center justify-center py-2 px-1 rounded-2xl transition-all relative ${
                   isActive
-                    ? 'text-blue-600 font-bold bg-white shadow-xs border border-slate-200/80'
-                    : 'text-slate-500 hover:text-slate-900'
+                    ? 'text-[var(--accent-primary)] font-bold bg-[var(--brand-surface)] shadow-xs border border-[var(--brand-border)]'
+                    : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
                 }`}
               >
                 <div className="relative">
                   <Icon className={`w-5 h-5 ${isActive ? 'stroke-[2.5]' : 'stroke-2'}`} />
                   {isActive && (
-                    <span className="absolute -top-1 -right-1 w-1.5 h-1.5 rounded-full bg-blue-600 shadow-[0_0_6px_1px_rgba(37,99,235,0.4)]" />
+                    <span className="absolute -top-1 -right-1 w-1.5 h-1.5 rounded-full bg-[var(--accent-primary)] shadow-[0_0_6px_1px_rgba(99,102,241,0.4)]" />
                   )}
                 </div>
                 <span className="text-[10px] font-mono font-bold mt-1 tracking-tight leading-none uppercase whitespace-nowrap">
@@ -225,4 +225,3 @@ export default function PatientLayout() {
     </div>
   );
 }
-

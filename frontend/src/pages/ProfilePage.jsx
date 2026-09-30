@@ -185,28 +185,28 @@ export default function ProfilePage() {
     <div className="min-h-[88vh] pb-12">
       <div className="max-w-3xl mx-auto px-4 py-8 space-y-6">
 
-        {/* ── Modern Hero Header matching LoginPage aesthetic ── */}
-        <div className="relative overflow-hidden rounded-3xl p-6 md:p-8 bg-gradient-to-br from-white/95 via-blue-50/40 to-indigo-50/30 border border-slate-200/80 shadow-[0_12px_40px_-8px_rgba(0,0,0,0.06)] backdrop-blur-xl">
+        {/* ── Modern Hero Header matching design system tokens ── */}
+        <div className="relative overflow-hidden rounded-3xl p-6 md:p-8 bg-[var(--brand-surface)]/95 border border-[var(--brand-border)] shadow-[var(--shadow-card)] backdrop-blur-xl">
           {/* Top luminous accent bar */}
-          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-500" />
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[var(--accent-primary)] via-indigo-600 to-[var(--accent-secondary)]" />
 
           <div className="relative z-10 space-y-4">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <BackButton to={getBackPath()} label={backLabel} />
 
               <div className="flex items-center gap-2">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-blue-500/10 text-blue-800 border border-blue-500/20">
-                  <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] border border-[var(--accent-primary)]/20">
+                  <span className="w-2 h-2 rounded-full bg-[var(--accent-primary)] animate-pulse" />
                   <span>Account & Clinical Vault</span>
-                  <span className="text-blue-400">·</span>
-                  <span className="font-mono text-[11px] text-blue-600">{cfg.badge}</span>
+                  <span className="text-[var(--accent-primary)]/60">·</span>
+                  <span className="font-mono text-[11px] text-[var(--accent-primary)]">{cfg.badge}</span>
                 </div>
                 <button
                   onClick={() => {
                     setEditing(!editing);
                     setErrorMsg(null);
                   }}
-                  className="btn-primary py-2 px-4 text-xs font-mono font-bold uppercase tracking-wider flex items-center gap-2 shadow-sm shadow-cyan-900/20 cursor-pointer"
+                  className="btn-primary py-2 px-4 text-xs font-mono font-bold uppercase tracking-wider flex items-center gap-2 shadow-sm shadow-indigo-900/20 cursor-pointer"
                 >
                   <Edit3 className="w-4 h-4" />
                   <span>{editing ? 'Cancel Editing' : 'Edit Profile'}</span>
@@ -215,20 +215,20 @@ export default function ProfilePage() {
             </div>
 
             <div className="space-y-2">
-              <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight font-display">
-                {cfg.title.split(' ')[0]} <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-500 bg-clip-text text-transparent">{cfg.title.split(' ').slice(1).join(' ')}</span>
+              <h1 className="text-2xl md:text-3xl font-extrabold text-[var(--text-primary)] tracking-tight font-display">
+                {cfg.title.split(' ')[0]} <span className="bg-gradient-to-r from-[var(--accent-primary)] via-indigo-600 to-[var(--accent-secondary)] bg-clip-text text-transparent">{cfg.title.split(' ').slice(1).join(' ')}</span>
               </h1>
-              <p className="text-sm text-slate-600 max-w-xl leading-relaxed">
+              <p className="text-sm text-[var(--text-secondary)] max-w-xl leading-relaxed">
                 {cfg.subtitle}
               </p>
 
               <div className="flex flex-wrap items-center gap-2 pt-1">
-                <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white/80 border border-slate-200/80 shadow-xs text-xs font-medium text-slate-700">
-                  <ShieldCheck className="w-3.5 h-3.5 text-blue-600" />
+                <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-[var(--chassis)] border border-[var(--brand-border)] shadow-xs text-xs font-medium text-[var(--text-secondary)]">
+                  <ShieldCheck className="w-3.5 h-3.5 text-[var(--accent-primary)]" />
                   <span>256-Bit Encrypted Vault</span>
                 </div>
-                <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white/80 border border-slate-200/80 shadow-xs text-xs font-medium text-slate-700">
-                  <Activity className="w-3.5 h-3.5 text-indigo-600" />
+                <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-[var(--chassis)] border border-[var(--brand-border)] shadow-xs text-xs font-medium text-[var(--text-secondary)]">
+                  <Activity className="w-3.5 h-3.5 text-[var(--accent-secondary)]" />
                   <span>Real-Time Audit</span>
                 </div>
               </div>

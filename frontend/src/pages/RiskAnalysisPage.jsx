@@ -279,22 +279,22 @@ function TypeBadge({ type }) {
 function DrugCard({ med, score }) {
   if (!med) return null;
   return (
-    <div className="flex flex-col space-y-2.5 p-4 bg-white border border-slate-200/80 shadow-xs hover:border-slate-300 transition-all rounded-2xl min-w-0">
+    <div className="flex flex-col space-y-2.5 p-4 bg-[var(--brand-surface)] border border-[var(--brand-border)] shadow-xs hover:border-[var(--accent-primary)]/40 transition-all rounded-2xl min-w-0">
       <div className="flex items-start space-x-3.5">
         <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-blue-500/10 to-indigo-500/15 text-blue-600 border border-blue-500/25 flex items-center justify-center flex-shrink-0 shadow-2xs">
           <Pill className="w-4 h-4 text-blue-600" />
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between gap-2 flex-wrap">
-            <p className="text-sm sm:text-base font-bold text-slate-900 font-display truncate">{med.name}</p>
+            <p className="text-sm sm:text-base font-bold text-[var(--text-primary)] font-display truncate">{med.name}</p>
             <div className="flex items-center gap-1.5 flex-wrap">
               <DrugHarmBadge category={med.category} name={med.name} />
               <TypeBadge type={med.type} />
             </div>
           </div>
-          {med.dosage && <p className="text-[11px] text-slate-500 font-mono mt-0.5">{med.dosage}</p>}
+          {med.dosage && <p className="text-[11px] text-[var(--text-muted)] font-mono mt-0.5">{med.dosage}</p>}
           {score != null && (
-            <p className="text-[10px] text-slate-500 mt-1 font-mono">
+            <p className="text-[10px] text-[var(--text-muted)] mt-1 font-mono">
               ACB burden score:{' '}
               <span className={`font-bold ${score >= 3 ? 'text-rose-600' : score >= 1 ? 'text-amber-600' : 'text-blue-600'}`}>
                 {score}
@@ -367,28 +367,28 @@ export default function RiskAnalysisPage() {
         <div className="flex items-center justify-between">
           <BackButton to="/home" label="Back to Dashboard" />
 
-          <span className="text-xs text-slate-500 font-mono font-semibold">
+          <span className="text-xs text-[var(--text-muted)] font-mono font-semibold">
             {formatDate(flag.dateFlagged)}
           </span>
         </div>
 
         {/* ── Hero Status Pill & Title ── */}
         <div className="space-y-2">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/90 backdrop-blur-md border border-slate-200 shadow-2xs">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[var(--brand-surface)] backdrop-blur-md border border-[var(--brand-border)] shadow-2xs">
             <ShieldAlert className="w-3.5 h-3.5 text-rose-600" />
-            <span className="text-[11px] font-bold tracking-wider uppercase text-slate-700 font-mono">
+            <span className="text-[11px] font-bold tracking-wider uppercase text-[var(--text-secondary)] font-mono">
               Pharmacological Risk Analysis
             </span>
           </div>
 
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 font-display tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-[var(--text-primary)] font-display tracking-tight">
             Drug-Drug <span className="bg-gradient-to-r from-rose-600 via-amber-600 to-orange-500 bg-clip-text text-transparent">Risk Telemetry</span>
           </h1>
         </div>
 
         {/* ── Red/Amber header card (SAFETY CARVE-OUT) ───────────────────────── */}
         <div
-          className="group relative bg-white/95 backdrop-blur-xl rounded-3xl p-6 sm:p-7 border border-slate-200 shadow-[0_10px_30px_-5px_rgba(0,0,0,0.05)] overflow-hidden"
+          className="group relative bg-[var(--brand-surface)]/95 backdrop-blur-xl rounded-3xl p-6 sm:p-7 border border-[var(--brand-border)] shadow-[var(--shadow-card)] overflow-hidden"
         >
           {/* Glowing Top Accent Line */}
           <div className="absolute top-0 left-6 right-6 h-1 bg-gradient-to-r from-rose-500 via-amber-500 to-orange-500 rounded-b-full opacity-80" />
@@ -405,21 +405,21 @@ export default function RiskAnalysisPage() {
           </div>
 
           {/* Headline */}
-          <h2 className="text-2xl sm:text-3xl font-bold leading-tight text-slate-900 font-display">
+          <h2 className="text-2xl sm:text-3xl font-bold leading-tight text-[var(--text-primary)] font-display">
             {flag.medicineA?.name} + {flag.medicineB?.name}
           </h2>
-          <p className="text-sm text-slate-600 mt-2 leading-relaxed">
+          <p className="text-sm text-[var(--text-secondary)] mt-2 leading-relaxed">
             {flag.plainExplanation?.split('(This is an informational')[0].trim() || 'An interaction has been detected between these two medicines.'}
           </p>
 
           {/* Drug chips */}
           <div className="flex items-center gap-2.5 mt-4 flex-wrap">
-            <span className="flex items-center gap-2 bg-slate-50 border border-slate-200/80 shadow-2xs px-3.5 py-1.5 rounded-2xl text-xs font-bold text-slate-900">
+            <span className="flex items-center gap-2 bg-[var(--chassis)] border border-[var(--brand-border)] shadow-2xs px-3.5 py-1.5 rounded-2xl text-xs font-bold text-[var(--text-primary)]">
               <Pill className="w-3.5 h-3.5 text-blue-600" />
               {flag.medicineA?.name}
             </span>
             <span className="text-lg text-slate-400 font-bold">+</span>
-            <span className="flex items-center gap-2 bg-slate-50 border border-slate-200/80 shadow-2xs px-3.5 py-1.5 rounded-2xl text-xs font-bold text-slate-900">
+            <span className="flex items-center gap-2 bg-[var(--chassis)] border border-[var(--brand-border)] shadow-2xs px-3.5 py-1.5 rounded-2xl text-xs font-bold text-[var(--text-primary)]">
               <Pill className="w-3.5 h-3.5 text-blue-600" />
               {flag.medicineB?.name}
             </span>
@@ -456,10 +456,10 @@ export default function RiskAnalysisPage() {
           }
           className="space-y-3"
         >
-          <div className="p-4 bg-white border border-slate-200/80 shadow-xs rounded-2xl">
+          <div className="p-4 bg-[var(--brand-surface)] border border-[var(--brand-border)] shadow-xs rounded-2xl">
             {flag.generatedBy === 'timeout' ? (
               <div className="space-y-2">
-                <p className="text-sm text-slate-900 leading-relaxed font-medium">
+                <p className="text-sm text-[var(--text-primary)] leading-relaxed font-medium">
                   {flag.clinicalExplanation || `Interaction identified between ${flag.medicineA?.name} and ${flag.medicineB?.name} (${flag.severity}).`}
                 </p>
                 <p className="text-[11px] text-amber-600 italic">
@@ -467,7 +467,7 @@ export default function RiskAnalysisPage() {
                 </p>
               </div>
             ) : (
-              <p className="text-sm text-slate-900 leading-relaxed font-medium">
+              <p className="text-sm text-[var(--text-primary)] leading-relaxed font-medium">
                 {flag.clinicalExplanation || 'Clinical explanation not available.'}
               </p>
             )}
@@ -476,7 +476,7 @@ export default function RiskAnalysisPage() {
           {flag.patient?.conditions?.length > 0 && (
             <div className="flex flex-wrap gap-2 pt-1">
               {flag.patient.conditions.map((c) => (
-                <span key={c} className="text-[10px] px-3 py-1 bg-slate-100 border border-slate-200 rounded-xl text-slate-600 font-semibold">
+                <span key={c} className="text-[10px] px-3 py-1 bg-[var(--chassis)] border border-[var(--brand-border)] rounded-xl text-[var(--text-secondary)] font-semibold">
                   {c}
                 </span>
               ))}
@@ -501,7 +501,7 @@ export default function RiskAnalysisPage() {
         >
           {flag.generatedBy === 'timeout' ? (
             <div className="space-y-2">
-              <p className="text-[15px] text-slate-900 leading-relaxed">
+              <p className="text-[15px] text-[var(--text-primary)] leading-relaxed">
                 {flag.plainExplanation?.split('(This is an informational')[0].trim()
                   || `An interaction was detected between ${flag.medicineA?.name} and ${flag.medicineB?.name}. Severity: ${flag.severity}.`}
               </p>
@@ -510,14 +510,14 @@ export default function RiskAnalysisPage() {
               </p>
             </div>
           ) : (
-            <p className="text-[15px] text-slate-900 leading-relaxed">
+            <p className="text-[15px] text-[var(--text-primary)] leading-relaxed">
               {flag.plainExplanation?.split('(This is an informational')[0].trim() || 'Plain explanation not available.'}
             </p>
           )}
 
-          <div className="flex items-start space-x-2.5 p-3.5 bg-slate-50 border border-slate-200/80 rounded-2xl">
+          <div className="flex items-start space-x-2.5 p-3.5 bg-[var(--chassis)] border border-[var(--brand-border)] rounded-2xl">
             <ShieldCheck className="w-4 h-4 text-slate-400 flex-shrink-0 mt-0.5" />
-            <p className="text-[11px] text-slate-500 italic">
+            <p className="text-[11px] text-[var(--text-muted)] italic">
               This is an informational safety alert, not a medical diagnosis. Always consult your doctor before changing medicines.
             </p>
           </div>

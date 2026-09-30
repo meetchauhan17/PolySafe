@@ -2589,9 +2589,9 @@ export default function AddMedicinePage() {
  </div>
 
             {/* ── CLINICAL INDICATION & PURPOSE HUB (FULL WIDTH) ── */}
-            <div className="p-5 sm:p-6 rounded-2xl bg-slate-50/70 dark:bg-slate-900/40 border border-slate-200/80 dark:border-slate-800 space-y-4 shadow-xs">
+            <div className="p-5 sm:p-6 rounded-2xl bg-[var(--brand-surface)] border border-[var(--brand-border)] space-y-4 shadow-xs">
               {/* Clean Structured Header */}
-              <div className="flex items-center justify-between gap-3 border-b border-slate-200/70 dark:border-slate-800/80 pb-3">
+              <div className="flex items-center justify-between gap-3 border-b border-[var(--brand-border)] pb-3">
                 <div className="flex items-center gap-3 min-w-0">
                   <div className="w-10 h-10 rounded-xl bg-[var(--accent-primary)]/12 text-[var(--accent-primary)] flex items-center justify-center flex-shrink-0 shadow-xs">
                     <Activity className="w-5 h-5" />
@@ -2618,7 +2618,7 @@ export default function AddMedicinePage() {
                       <span>Auto-Filled</span>
                     </span>
                   ) : (
-                    <span className="inline-flex items-center gap-1 text-[11px] font-medium px-2.5 py-1 rounded-full bg-white dark:bg-slate-800 text-[var(--text-muted)] border border-slate-200 dark:border-slate-700 shadow-xs whitespace-nowrap">
+                    <span className="inline-flex items-center gap-1 text-[11px] font-medium px-2.5 py-1 rounded-full bg-[var(--chassis)] text-[var(--text-muted)] border border-[var(--brand-border)] shadow-xs whitespace-nowrap">
                       <Sparkles className="w-3.5 h-3.5 text-[var(--accent-primary)]" />
                       <span>Select or type</span>
                     </span>
@@ -2628,7 +2628,7 @@ export default function AddMedicinePage() {
 
               {/* Active Indication Banner (when purpose is set) */}
               {purpose.trim() && (
-                <div className="p-3.5 bg-white dark:bg-slate-900 border border-[var(--accent-primary)]/30 rounded-xl space-y-2 shadow-xs animate-fadeIn">
+                <div className="p-3.5 bg-[var(--brand-surface)] border border-[var(--accent-primary)]/30 rounded-xl space-y-2 shadow-xs animate-fadeIn">
                   <div className="flex items-center justify-between flex-wrap gap-2">
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className="text-[11px] font-bold uppercase tracking-wider text-[var(--text-muted)] font-mono">
@@ -2703,11 +2703,11 @@ export default function AddMedicinePage() {
                         className={`group inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all duration-150 cursor-pointer border active:scale-95 ${
                           isSelected
                             ? 'bg-[var(--accent-primary)] text-white shadow-sm border-[var(--accent-primary)] ring-2 ring-[var(--accent-primary)]/25'
-                            : 'bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 hover:text-[var(--accent-primary)] border-slate-200 dark:border-slate-700 hover:border-[var(--accent-primary)]/50 shadow-2xs'
+                            : 'bg-[var(--brand-surface)] hover:bg-[var(--chassis)] text-[var(--text-secondary)] hover:text-[var(--accent-primary)] border-[var(--brand-border)] hover:border-[var(--accent-primary)]/50 shadow-2xs'
                         }`}
                       >
                         <div className={`p-1 rounded-lg transition-colors flex-shrink-0 ${
-                          isSelected ? 'bg-white/20 text-white' : 'bg-slate-100 dark:bg-slate-700 group-hover:bg-[var(--accent-primary)]/10 text-[var(--accent-primary)]'
+                          isSelected ? 'bg-white/20 text-white' : 'bg-[var(--chassis)] group-hover:bg-[var(--accent-primary)]/10 text-[var(--accent-primary)]'
                         }`}>
                           <IconComp className="w-3.5 h-3.5" />
                         </div>
@@ -2720,7 +2720,7 @@ export default function AddMedicinePage() {
 
                 {/* 1-Click Proven Medicines for Selected Condition */}
                 {selectedCondition && CONDITION_MED_RECOMMENDATIONS[selectedCondition]?.length > 0 && (
-                  <div className="p-4 bg-white dark:bg-slate-800/80 rounded-2xl border border-[var(--accent-primary)]/25 space-y-3 animate-fadeIn mt-2 shadow-xs">
+                  <div className="p-4 bg-[var(--brand-surface)] rounded-2xl border border-[var(--accent-primary)]/25 space-y-3 animate-fadeIn mt-2 shadow-xs">
                     <div className="flex items-center justify-between flex-wrap gap-2">
                       <div className="flex items-center gap-2">
                         <Pill className="w-4 h-4 text-[var(--accent-primary)]" />
@@ -2750,7 +2750,7 @@ export default function AddMedicinePage() {
                             className={`p-3.5 rounded-xl border transition-all cursor-pointer space-y-2 flex flex-col justify-between group ${
                               isThisLoaded
                                 ? 'bg-[var(--accent-primary)]/12 border-[var(--accent-primary)] ring-2 ring-[var(--accent-primary)]/30 shadow-xs'
-                                : 'bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 hover:border-[var(--accent-primary)] hover:shadow-xs'
+                                : 'bg-[var(--chassis)] border-[var(--brand-border)] hover:border-[var(--accent-primary)] hover:shadow-xs'
                             }`}
                           >
                             <div className="flex items-center justify-between gap-1.5">
@@ -2764,7 +2764,7 @@ export default function AddMedicinePage() {
                             <p className="text-[11px] text-[var(--text-muted)] line-clamp-1 italic">
                               {rec.generic}
                             </p>
-                            <div className="flex items-center justify-between pt-1.5 border-t border-slate-200/60 dark:border-slate-800 text-[10px]">
+                            <div className="flex items-center justify-between pt-1.5 border-t border-[var(--brand-border)] text-[10px]">
                               <span className="text-[var(--text-muted)] capitalize">{rec.frequency}</span>
                               <span className={`font-bold flex items-center gap-1 ${isThisLoaded ? 'text-emerald-600 dark:text-emerald-400' : 'text-[var(--accent-primary)]'}`}>
                                 {isThisLoaded ? (
@@ -2783,7 +2783,7 @@ export default function AddMedicinePage() {
               </div>
 
               {/* Input for custom purpose / search */}
-              <div className="space-y-1.5 pt-2 border-t border-slate-200/70 dark:border-slate-800/80">
+              <div className="space-y-1.5 pt-2 border-t border-[var(--brand-border)]">
                 <div className="flex items-center justify-between">
                   <label className="block text-xs font-bold text-[var(--text-primary)] uppercase tracking-wider">
                     Or Type Custom Reason / Indication
@@ -2799,7 +2799,7 @@ export default function AddMedicinePage() {
                     onChange={(e) => setPurpose(e.target.value)}
                     placeholder="Type primary indication or diagnosis..."
                     leftIcon={<Activity className="w-4 h-4 text-[var(--accent-primary)]" />}
-                    className="text-xs font-medium pr-8 bg-white dark:bg-slate-800"
+                    className="text-xs font-medium pr-8 bg-[var(--brand-surface)]"
                   />
                   {purpose && (
                     <button

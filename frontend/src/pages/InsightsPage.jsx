@@ -171,42 +171,42 @@ export default function InsightsPage() {
   return (
     <div className="min-h-[88vh] pb-16">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 space-y-6">
-        {/* ── Modern Hero Header matching LoginPage aesthetic ── */}
-        <div className="relative overflow-hidden rounded-3xl p-6 md:p-8 bg-gradient-to-br from-white/95 via-blue-50/40 to-indigo-50/30 border border-slate-200/80 shadow-[0_12px_40px_-8px_rgba(0,0,0,0.06)] backdrop-blur-xl">
+        {/* ── Modern Hero Header matching design system tokens ── */}
+        <div className="relative overflow-hidden rounded-3xl p-6 md:p-8 bg-[var(--brand-surface)]/95 border border-[var(--brand-border)] shadow-[var(--shadow-card)] backdrop-blur-xl">
           {/* Top luminous accent bar */}
-          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-500" />
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[var(--accent-primary)] via-indigo-600 to-[var(--accent-secondary)]" />
 
           <div className="relative z-10 space-y-4">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <BackButton to="/home" label="Back to Home" />
 
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-blue-500/10 text-blue-800 border border-blue-500/20">
-                <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] border border-[var(--accent-primary)]/20">
+                <span className="w-2 h-2 rounded-full bg-[var(--accent-primary)] animate-pulse" />
                 <span>Pharmacovigilance Analytics</span>
-                <span className="text-blue-400">·</span>
-                <span className="font-mono text-[11px] text-blue-600">Longitudinal Surveillance</span>
+                <span className="text-[var(--accent-primary)]/60">·</span>
+                <span className="font-mono text-[11px] text-[var(--accent-primary)]">Longitudinal Surveillance</span>
               </div>
             </div>
 
             <div className="space-y-2">
-              <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight font-display">
-                Safety Insights & <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-500 bg-clip-text text-transparent">Trends</span>
+              <h1 className="text-2xl md:text-3xl font-extrabold text-[var(--text-primary)] tracking-tight font-display">
+                Safety Insights & <span className="bg-gradient-to-r from-[var(--accent-primary)] via-indigo-600 to-[var(--accent-secondary)] bg-clip-text text-transparent">Trends</span>
               </h1>
-              <p className="text-sm text-slate-600 max-w-xl leading-relaxed">
+              <p className="text-sm text-[var(--text-secondary)] max-w-xl leading-relaxed">
                 Longitudinal trajectory of drug-drug interactions, anticholinergic burden accumulation, and prescribing cascade detection.
               </p>
 
               <div className="flex flex-wrap items-center gap-2 pt-1">
-                <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white/80 border border-slate-200/80 shadow-xs text-xs font-medium text-slate-700">
-                  <ShieldCheck className="w-3.5 h-3.5 text-blue-600" />
+                <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-[var(--chassis)] border border-[var(--brand-border)] shadow-xs text-xs font-medium text-[var(--text-secondary)]">
+                  <ShieldCheck className="w-3.5 h-3.5 text-[var(--accent-primary)]" />
                   <span>WHO NCI Standard</span>
                 </div>
-                <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white/80 border border-slate-200/80 shadow-xs text-xs font-medium text-slate-700">
-                  <Zap className="w-3.5 h-3.5 text-indigo-500" />
+                <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-[var(--chassis)] border border-[var(--brand-border)] shadow-xs text-xs font-medium text-[var(--text-secondary)]">
+                  <Zap className="w-3.5 h-3.5 text-[var(--accent-secondary)]" />
                   <span>Burden Load Curve</span>
                 </div>
-                <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white/80 border border-slate-200/80 shadow-xs text-xs font-medium text-slate-700">
-                  <Activity className="w-3.5 h-3.5 text-teal-600" />
+                <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-[var(--chassis)] border border-[var(--brand-border)] shadow-xs text-xs font-medium text-[var(--text-secondary)]">
+                  <Activity className="w-3.5 h-3.5 text-[var(--role-caregiver)]" />
                   <span>Cascades Flagged</span>
                 </div>
               </div>

@@ -383,9 +383,9 @@ export function PolypharmacyHarmDashboard({ medicines = [], flags = [], regimenR
   return (
     <Card
       title="Polypharmacy Regimen Risk"
-      icon={<Heart className="w-4 h-4 text-blue-600" />}
+      icon={<Heart className="w-4 h-4 text-[var(--accent-primary)]" />}
       badge={
-        <span className="text-[11px] font-mono font-bold text-slate-700 bg-white border border-slate-200 px-2.5 py-1 rounded-full shadow-2xs">
+        <span className="text-[11px] font-mono font-bold text-[var(--text-primary)] bg-[var(--brand-surface)] border border-[var(--brand-border)] px-2.5 py-1 rounded-full shadow-2xs">
           {medicines.length} ACTIVE DRUG{medicines.length !== 1 ? 'S' : ''}
         </span>
       }
@@ -395,53 +395,53 @@ export function PolypharmacyHarmDashboard({ medicines = [], flags = [], regimenR
         {/* 2 Stat Inset Wells */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {/* Average Risk Score */}
-          <div className="p-4 rounded-2xl bg-white border border-slate-200/80 shadow-xs hover:border-slate-300 transition-all space-y-1.5">
+          <div className="p-4 rounded-2xl bg-[var(--chassis)] border border-[var(--brand-border)] shadow-xs hover:border-[var(--brand-border-visible)] transition-all space-y-1.5">
             <div className="flex items-center justify-between">
-              <span className="text-[10px] font-mono font-bold text-slate-500 uppercase tracking-wider">Average Regimen Risk</span>
+              <span className="text-[10px] font-mono font-bold text-[var(--text-muted)] uppercase tracking-wider">Average Regimen Risk</span>
               <LedIndicator status={currentTierCfg.ledStatus} size="sm" />
             </div>
             <div className="flex items-baseline gap-2 flex-wrap">
               <span className="text-xl sm:text-2xl font-black font-mono" style={{ color: currentTierCfg.color }}>
                 {avgRisk.toFixed(1)} / 5.0
               </span>
-              <span className="text-[11px] font-mono font-bold px-2 py-0.5 rounded-full border bg-slate-50 shadow-2xs" style={{ borderColor: currentTierCfg.color, color: currentTierCfg.color }}>
+              <span className="text-[11px] font-mono font-bold px-2 py-0.5 rounded-full border bg-[var(--brand-surface)] shadow-2xs" style={{ borderColor: currentTierCfg.color, color: currentTierCfg.color }}>
                 {currentTierCfg.label}
               </span>
             </div>
-            <p className="text-[11px] text-slate-500 font-mono leading-tight">
+            <p className="text-[11px] text-[var(--text-muted)] font-mono leading-tight">
               WHO/NCI weighted pharmacological harm classification.
             </p>
           </div>
 
           {/* Highest Risk Drug */}
-          <div className="p-4 rounded-2xl bg-white border border-slate-200/80 shadow-xs hover:border-slate-300 transition-all space-y-1.5">
+          <div className="p-4 rounded-2xl bg-[var(--chassis)] border border-[var(--brand-border)] shadow-xs hover:border-[var(--brand-border-visible)] transition-all space-y-1.5">
             <div className="flex items-center justify-between">
-              <span className="text-[10px] font-mono font-bold text-slate-500 uppercase tracking-wider">Peak Risk Agent</span>
+              <span className="text-[10px] font-mono font-bold text-[var(--text-muted)] uppercase tracking-wider">Peak Risk Agent</span>
               <LedIndicator status={highestCfg.ledStatus} size="sm" />
             </div>
             <div className="flex items-baseline gap-2 flex-wrap min-w-0">
-              <span className="text-sm sm:text-base font-bold text-slate-900 font-display truncate min-w-0">
+              <span className="text-sm sm:text-base font-bold text-[var(--text-primary)] font-display truncate min-w-0">
                 {highestDrug.name}
               </span>
               <DrugHarmBadge harmLevel={highestLevel} size="sm" />
             </div>
-            <p className="text-[11px] text-slate-500 font-mono leading-tight">
+            <p className="text-[11px] text-[var(--text-muted)] font-mono leading-tight">
               {highestCfg.tip}
             </p>
           </div>
         </div>
 
         {/* 5-Tier Spectrum Meter with Crisp Embedded Active Indicator */}
-        <div className="space-y-2.5 p-3.5 sm:p-4 rounded-2xl bg-white border border-slate-200/80 shadow-xs">
-        <div className="flex items-center justify-between text-xs font-mono font-bold text-slate-900">
+        <div className="space-y-2.5 p-3.5 sm:p-4 rounded-2xl bg-[var(--chassis)] border border-[var(--brand-border)] shadow-xs">
+        <div className="flex items-center justify-between text-xs font-mono font-bold text-[var(--text-primary)]">
           <div className="flex items-center gap-2">
             <span className="tracking-wider uppercase">WHO/NCI 5-Tier Spectrum</span>
-            <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200 shadow-2xs">
+            <span className="text-[10px] px-2 py-0.5 rounded-full bg-[var(--chassis-panel)] text-[var(--text-secondary)] border border-[var(--brand-border)] shadow-2xs">
               Clinical Scale
             </span>
           </div>
           <span
-            className="px-2.5 py-0.5 rounded-lg border text-xs font-extrabold shadow-2xs bg-slate-50"
+            className="px-2.5 py-0.5 rounded-lg border text-xs font-extrabold shadow-2xs bg-[var(--brand-surface)]"
             style={{
               borderColor: currentTierCfg.color,
               color: currentTierCfg.color,
@@ -452,7 +452,7 @@ export function PolypharmacyHarmDashboard({ medicines = [], flags = [], regimenR
         </div>
 
         {/* 5 Segmented Color Blocks */}
-        <div className="grid grid-cols-5 gap-1.5 p-1 rounded-xl bg-slate-100 border border-slate-200/60">
+        <div className="grid grid-cols-5 gap-1.5 p-1 rounded-xl bg-[var(--chassis-panel)] border border-[var(--brand-border)]">
           {[1, 2, 3, 4, 5].map((lvl, index) => {
             const cfg = HARM_LEVELS[lvl];
             const isCurrent = lvl === currentTierLevel;

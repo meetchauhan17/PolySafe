@@ -1109,8 +1109,8 @@ function DeprescribingAssistantPanel({ patientId, onTaperSuccess }) {
  if (isLoading) {
  return (
  <Card className="p-8 text-center space-y-3">
- <Loader2 className="w-6 h-6 text-[#2B6E5E] animate-spin mx-auto" />
- <p className="text-xs text-[#5C6B64]">Evaluating patient regimen against Beers Criteria & STOPP/START rules…</p>
+ <Loader2 className="w-6 h-6 text-[var(--role-doctor)] animate-spin mx-auto" />
+ <p className="text-xs text-[var(--text-muted)]">Evaluating patient regimen against Beers Criteria & STOPP/START rules…</p>
  </Card>
  );
  }
@@ -1120,22 +1120,22 @@ function DeprescribingAssistantPanel({ patientId, onTaperSuccess }) {
  return (
  <div className="space-y-4">
  {/* Overview Banner */}
- <Card className="p-5 space-y-3 bg-[#EDE8DC] border border-[#D5CEBF]">
+ <Card className="p-5 space-y-3 bg-[var(--chassis)] border border-[var(--brand-border)]">
  <div className="flex items-center justify-between gap-2">
  <div className="flex items-center gap-2.5">
- <div className="p-2.5 rounded-2xl bg-[#2B6E5E]/15 text-[#2B6E5E]">
+ <div className="p-2.5 rounded-2xl bg-[var(--role-doctor)]/15 text-[var(--role-doctor)]">
  <Sparkles className="w-5 h-5" />
  </div>
  <div>
- <h3 className="text-sm font-bold text-[#1C2B27]">Regimen Optimization & Deprescribing Engine</h3>
- <p className="text-xs text-[#5C6B64]">Beers Criteria 2023 · STOPP/START v3 · Anticholinergic Cognitive Burden</p>
+ <h3 className="text-sm font-bold text-[var(--text-primary)]">Regimen Optimization & Deprescribing Engine</h3>
+ <p className="text-xs text-[var(--text-muted)]">Beers Criteria 2023 · STOPP/START v3 · Anticholinergic Cognitive Burden</p>
  </div>
  </div>
- <span className="text-xs font-black px-3 py-1 rounded-xl bg-[#2B6E5E] text-white">
+ <span className="text-xs font-black px-3 py-1 rounded-xl bg-[var(--role-doctor)] text-white">
  {candidates.length} Candidate{candidates.length !== 1 ? 's' : ''} Identified
  </span>
  </div>
- <p className="text-xs text-[#5C6B64] leading-relaxed">
+ <p className="text-xs text-[var(--text-muted)] leading-relaxed">
  PolySafe scans active medications for high-risk geriatric pharmacotherapy, excessive anticholinergic burden, and duplicate therapeutic classes to assist physicians in safe deprescribing and taper protocols.
  </p>
  </Card>
@@ -1158,8 +1158,8 @@ function DeprescribingAssistantPanel({ patientId, onTaperSuccess }) {
  <div className="flex items-start justify-between gap-3 flex-wrap">
  <div>
  <div className="flex items-center gap-2">
- <span className="text-sm font-bold text-[#1C2B27]">{cand.name}</span>
- {cand.dosage && <span className="text-xs text-[#5C6B64]">({cand.dosage})</span>}
+ <span className="text-sm font-bold text-[var(--text-primary)]">{cand.name}</span>
+ {cand.dosage && <span className="text-xs text-[var(--text-muted)]">({cand.dosage})</span>}
  </div>
  <div className="mt-1">
  <DrugHarmBadge harmLevel={cand.harmLevel} size="sm" />
@@ -1210,8 +1210,8 @@ function PatientSymptomsPanel({ patientId }) {
  if (isLoading) {
  return (
  <Card className="p-8 text-center space-y-3">
- <Loader2 className="w-6 h-6 text-[#2B6E5E] animate-spin mx-auto" />
- <p className="text-xs text-[#5C6B64]">Loading patient logged symptoms & cascade correlations…</p>
+ <Loader2 className="w-6 h-6 text-[var(--role-doctor)] animate-spin mx-auto" />
+ <p className="text-xs text-[var(--text-muted)]">Loading patient logged symptoms & cascade correlations…</p>
  </Card>
  );
  }
@@ -1220,12 +1220,12 @@ function PatientSymptomsPanel({ patientId }) {
 
  return (
  <div className="space-y-4">
- <Card className="p-4 bg-[#EDE8DC] border border-[#D5CEBF]">
+ <Card className="p-4 bg-[var(--chassis)] border border-[var(--brand-border)]">
  <div className="flex items-center gap-2.5">
  <Activity className="w-5 h-5 text-rose-600" />
  <div>
- <h3 className="text-sm font-bold text-[#1C2B27]">Patient Logged Symptoms & Prescribing Cascades</h3>
- <p className="text-xs text-[#5C6B64]">Real-time patient telemetry cross-referenced with medication initiation dates</p>
+ <h3 className="text-sm font-bold text-[var(--text-primary)]">Patient Logged Symptoms & Prescribing Cascades</h3>
+ <p className="text-xs text-[var(--text-muted)]">Real-time patient telemetry cross-referenced with medication initiation dates</p>
  </div>
  </div>
  </Card>
@@ -1233,8 +1233,8 @@ function PatientSymptomsPanel({ patientId }) {
  {symptoms.length === 0 ? (
  <Card className="p-8 text-center space-y-2">
  <CheckCircle2 className="w-8 h-8 text-emerald-600 mx-auto" />
- <p className="text-sm font-bold text-[#1C2B27]">No Patient Symptoms Logged</p>
- <p className="text-xs text-[#5C6B64]">The patient has not logged any adverse events or discomfort reports.</p>
+ <p className="text-sm font-bold text-[var(--text-primary)]">No Patient Symptoms Logged</p>
+ <p className="text-xs text-[var(--text-muted)]">The patient has not logged any adverse events or discomfort reports.</p>
  </Card>
  ) : (
  <div className="space-y-2.5">
@@ -1242,9 +1242,9 @@ function PatientSymptomsPanel({ patientId }) {
  <Card key={idx} className="p-3.5 flex items-start justify-between gap-3">
  <div className="space-y-1">
  <div className="flex items-center gap-2">
- <span className="text-xs font-bold text-[#1C2B27]">{s.description}</span>
+ <span className="text-xs font-bold text-[var(--text-primary)]">{s.description}</span>
  {s.bodyPart && (
- <span className="px-2 py-0.5 rounded-full bg-[#DED7C6] text-[10px] font-semibold text-[#5C6B64]">
+ <span className="px-2 py-0.5 rounded-full bg-[var(--chassis-panel)] text-[10px] font-semibold text-[var(--text-muted)]">
  {s.bodyPart}
  </span>
  )}
@@ -1256,7 +1256,7 @@ function PatientSymptomsPanel({ patientId }) {
  </span>
  )}
  </div>
- <p className="text-[11px] text-[#5C6B64]">
+ <p className="text-[11px] text-[var(--text-muted)]">
  Logged on {fmt(s.date)}
  </p>
  </div>
@@ -1519,11 +1519,11 @@ function PatientView({ patientId }) {
  </span>
  <span className="text-xs text-[#9CA3AF]">{fmt(f.dateFlagged)}</span>
  </div>
- <p className="text-sm font-bold text-[#1C2B27]">
+ <p className="text-sm font-bold text-[var(--text-primary)]">
  {f.medicineA?.name} ↔ {f.medicineB?.name}
  </p>
  {f.clinicalExplanation && (
- <p className="text-xs text-[#5C6B64] leading-relaxed">{f.clinicalExplanation}</p>
+ <p className="text-xs text-[var(--text-muted)] leading-relaxed">{f.clinicalExplanation}</p>
  )}
  </Card>
  );
@@ -1533,15 +1533,15 @@ function PatientView({ patientId }) {
 
  {/* Medication Timeline */}
 					<div className="space-y-3">
-						<h3 className="text-xs font-extrabold uppercase tracking-wider text-[#1C2B27]">
+						<h3 className="text-xs font-extrabold uppercase tracking-wider text-[var(--text-primary)]">
 							Medication History & Timeline ({activeMeds.length} Active{discontinuedMeds.length > 0 ? `, ${discontinuedMeds.length} Discontinued` : ''})
 						</h3>
 
 						{medicines.length === 0 ? (
 							<Card className="p-8 text-center space-y-3">
 								<EmptyMedicinesIllustration className="w-28 h-28 mx-auto" />
-								<p className="text-sm font-bold text-[#1C2B27]">No medicines on record</p>
-								<p className="text-xs text-[#5C6B64] max-w-xs mx-auto">
+								<p className="text-sm font-bold text-[var(--text-primary)] font-display">No medicines on record</p>
+								<p className="text-xs text-[var(--text-muted)] max-w-xs mx-auto">
 									This patient has not logged any prescription, OTC, or herbal medicines yet.
 								</p>
 							</Card>
@@ -1549,7 +1549,7 @@ function PatientView({ patientId }) {
 							<div className="relative pl-2 py-2">
 								<motion.div
 									className="absolute left-[19px] top-4 bottom-6 w-[3px] z-0 rounded-full origin-top"
-									style={{ backgroundColor: '#2B6E5E' }}
+									style={{ backgroundColor: 'var(--role-doctor)' }}
 									initial={shouldReduceMotion ? { scaleY: 1 } : { scaleY: 0 }}
 									animate={{ scaleY: 1 }}
 									transition={{ duration: shouldReduceMotion ? 0 : 0.45, ease: 'easeOut' }}
@@ -1560,10 +1560,10 @@ function PatientView({ patientId }) {
 											const isDiscontinued = !!med.discontinued || !!med.removedAt;
 											const isFlagged = !isDiscontinued && med.flagged && med.flags?.length > 0;
 											const typeIcon = med.type === 'HERBAL'
-												? <Leaf className="w-3.5 h-3.5 text-[#2B6E5E]" />
+												? <Leaf className="w-3.5 h-3.5 text-[var(--accent-primary)]" />
 												: med.type === 'OTC'
-												? <ShoppingBag className="w-3.5 h-3.5 text-[#8A6D3B]" />
-												: <Pill className="w-3.5 h-3.5 text-[#1B4B66]" />;
+												? <ShoppingBag className="w-3.5 h-3.5 text-[var(--role-caregiver)]" />
+												: <Pill className="w-3.5 h-3.5 text-[var(--role-doctor)]" />;
 
 											return (
 												<motion.div
@@ -1581,9 +1581,9 @@ function PatientView({ patientId }) {
 												>
 													{/* Dot */}
 													<div
-														className="w-10 h-10 rounded-full bg-[var(--chassis)] shadow-[inset_2px_2px_4px_rgba(191,180,155,0.5),inset_-2px_-2px_4px_rgba(255,255,255,0.6)] border-[3px] flex items-center justify-center flex-shrink-0"
+														className="w-10 h-10 rounded-full bg-[var(--chassis)] shadow-xs border-[3px] flex items-center justify-center flex-shrink-0"
 														style={{
-															borderColor: isDiscontinued ? '#9CA3AF' : isFlagged ? '#B23D25' : '#2B6E5E',
+															borderColor: isDiscontinued ? 'var(--brand-border)' : isFlagged ? 'var(--led-critical)' : 'var(--role-doctor)',
 														}}
 													>
 														{typeIcon}
@@ -1594,23 +1594,23 @@ function PatientView({ patientId }) {
 														hideScrews={true}
 														className={`flex-1 space-y-3 transition-all ${
 															isDiscontinued
-																? '!bg-[#f8f6f0] opacity-75 !border-[var(--chassis-dark,#D5CEBF)]'
+																? '!bg-[var(--brand-surface)]/70 opacity-75 !border-[var(--brand-border)]'
 																: isFlagged
 																? '!bg-[#fef2f2] !border-rose-400/50 shadow-[0_2px_14px_rgba(225,29,72,0.08)]'
-																: 'bg-[var(--chassis)] border-[rgba(255,255,255,0.4)] hover:shadow-[var(--shadow-card)]'
+																: 'bg-[var(--brand-surface)] border-[var(--brand-border)] hover:shadow-[var(--shadow-card)]'
 														}`}
 													>
-														<div className="flex items-center justify-between gap-2 flex-wrap pb-1 border-b border-[rgba(255,255,255,0.25)]">
+														<div className="flex items-center justify-between gap-2 flex-wrap pb-1 border-b border-[var(--brand-border)]">
 															<span
 																className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold uppercase tracking-wider ${
 																	isDiscontinued
-																		? 'bg-[var(--chassis-dark,#E0DACE)]/60 text-[var(--text-muted,#5C6B64)] border border-[var(--chassis-dark,#D5CEBF)]'
+																		? 'bg-[var(--chassis)] text-[var(--text-muted)] border border-[var(--brand-border)]'
 																		: isFlagged
-																		? 'bg-white/80 text-[var(--accent-primary,#2B6E5E)] border border-rose-300/40 shadow-xs'
-																		: 'bg-[#2B6E5E]/10 text-[#2B6E5E] border border-[#2B6E5E]/25 shadow-xs'
+																		? 'bg-[var(--brand-surface)] text-[var(--role-doctor)] border border-rose-300/40 shadow-xs'
+																		: 'bg-[var(--role-doctor)]/10 text-[var(--role-doctor)] border border-[var(--role-doctor)]/25 shadow-xs'
 																}`}
 															>
-																<span className={`w-1.5 h-1.5 rounded-full ${isDiscontinued ? 'bg-[#9CA3AF]' : 'bg-[#2B6E5E]'}`} />
+																<span className={`w-1.5 h-1.5 rounded-full ${isDiscontinued ? 'bg-[var(--text-muted)]' : 'bg-[var(--role-doctor)]'}`} />
 																{med.addedByUser?.role === 'DOCTOR' ? 'Prescribed by Physician' : 'Self-logged'} · {med.type}
 															</span>
 
@@ -1620,8 +1620,8 @@ function PatientView({ patientId }) {
 																		Discontinued {med.removedAt ? `on ${fmt(med.removedAt)}` : ''}
 																	</span>
 																)}
-																<span className="inline-flex items-center gap-1 text-xs text-[var(--text-muted,#5C6B64)] font-medium">
-																	<CalendarDays className="w-3.5 h-3.5 text-[#9CA3AF]" />
+																<span className="inline-flex items-center gap-1 text-xs text-[var(--text-muted)] font-medium">
+																	<CalendarDays className="w-3.5 h-3.5 text-[var(--text-muted)]" />
 																	Started {fmt(med.dateAdded)}
 																</span>
 															</div>
@@ -1629,7 +1629,7 @@ function PatientView({ patientId }) {
 
 														<div className="flex items-center justify-between gap-2 flex-wrap">
 															<div className="flex items-center gap-2.5 flex-wrap">
-																<h4 className={`text-base font-bold font-display ${isDiscontinued ? 'text-[#5C6B64] line-through' : 'text-[#1C2B27]'}`}>
+																<h4 className={`text-base font-bold font-display ${isDiscontinued ? 'text-[var(--text-muted)] line-through' : 'text-[var(--text-primary)]'}`}>
 																	{med.name}
 																</h4>
 																<DrugHarmBadge harmLevel={med.harmLevel} size="sm" />
@@ -1642,7 +1642,7 @@ function PatientView({ patientId }) {
 														</div>
 
 														{med.dosage && (
-															<p className="text-xs text-[var(--text-muted,#5C6B64)] font-mono">
+															<p className="text-xs text-[var(--text-muted)] font-mono">
 																Dose: {med.dosage}
 															</p>
 														)}
@@ -1736,14 +1736,14 @@ function ClaimPanel({ onSuccess }) {
  <Card className="max-w-md mx-auto space-y-6 p-6 sm:p-8">
  {/* Icon header */}
  <div className="flex flex-col items-center gap-3 text-center">
- <div className="w-16 h-16 rounded-full bg-[#E4F2E9] border-2 border-[#2B6E5E]/30 flex items-center justify-center">
- <Stethoscope className="w-8 h-8 text-[#2B6E5E]" />
+ <div className="w-16 h-16 rounded-full bg-[var(--brand-surface)] border-2 border-[var(--role-doctor)]/30 flex items-center justify-center">
+ <Stethoscope className="w-8 h-8 text-[var(--role-doctor)]" />
  </div>
  <div>
- <h2 className="text-xl font-bold text-[#1C2B27]" style={{ fontFamily: "'Fraunces', serif" }}>
+ <h2 className="text-xl font-bold text-[var(--text-primary)]" style={{ fontFamily: "var(--font-display)" }}>
  Enter Patient Access PIN
  </h2>
- <p className="text-xs text-[#5C6B64] mt-1">
+ <p className="text-xs text-[var(--text-muted)] mt-1">
  Ask your patient to open PolySafe to "Share with Doctor" and provide their 6-digit access code.
  </p>
  </div>
@@ -1760,7 +1760,7 @@ function ClaimPanel({ onSuccess }) {
  {/* Code input */}
  <form onSubmit={handleSubmit} className="space-y-4">
  <div className="space-y-2">
- <label className="block text-xs font-extrabold uppercase tracking-widest text-[#5C6B64]">
+ <label className="block text-xs font-extrabold uppercase tracking-widest text-[var(--text-muted)]">
  Patient 6-digit PIN
  </label>
  <input
@@ -1792,9 +1792,9 @@ function ClaimPanel({ onSuccess }) {
  </form>
 
  {/* Info */}
- <div className="flex items-start gap-2 p-3.5 bg-[#EDE8DC] border border-[var(--brand-border-subtle)] rounded-2xl">
- <Info className="w-4 h-4 text-[#5C6B64] flex-shrink-0 mt-0.5" />
- <p className="text-[11px] text-[#5C6B64] leading-relaxed">
+ <div className="flex items-start gap-2 p-3.5 bg-[var(--chassis)] border border-[var(--brand-border-subtle)] rounded-2xl">
+ <Info className="w-4 h-4 text-[var(--text-muted)] flex-shrink-0 mt-0.5" />
+ <p className="text-[11px] text-[var(--text-muted)] leading-relaxed">
  Once entered, the patient will receive a secure prompt to approve access. You will gain clinical access to their active medication timeline, interaction matrix, and prescribing tools.
  </p>
  </div>
@@ -1940,20 +1940,20 @@ export default function DoctorDashboardPage() {
               <span className="text-teal-400">·</span>
               <span className="font-mono text-[11px] text-teal-600">Consent Engine Active</span>
             </div>
-            <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight font-display">
+            <h1 className="text-2xl md:text-3xl font-extrabold text-[var(--text-primary)] tracking-tight font-display">
               Clinical <span className="bg-gradient-to-r from-teal-600 via-emerald-600 to-cyan-600 bg-clip-text text-transparent">Prescriber Hub</span>
             </h1>
-            <p className="text-sm text-slate-600 max-w-2xl leading-relaxed">
+            <p className="text-sm text-[var(--text-secondary)] max-w-2xl leading-relaxed">
               Real-time cross-prescribing cascade analysis, drug-drug interaction surveillance, and instant patient directive transmission.
             </p>
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/80 border border-slate-200/80 shadow-xs text-xs font-medium text-slate-700">
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[var(--chassis)] border border-[var(--brand-border)] shadow-xs text-xs font-medium text-[var(--text-secondary)]">
               <Shield className="w-3.5 h-3.5 text-teal-600" />
               <span>End-to-End Consent</span>
             </div>
-            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/80 border border-slate-200/80 shadow-xs text-xs font-medium text-slate-700">
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[var(--chassis)] border border-[var(--brand-border)] shadow-xs text-xs font-medium text-[var(--text-secondary)]">
               <Activity className="w-3.5 h-3.5 text-emerald-600" />
               <span>FHIR Audit Log</span>
             </div>
@@ -1972,7 +1972,7 @@ export default function DoctorDashboardPage() {
       {step === 'claim' && (
         <div className="max-w-xl mx-auto space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-xl font-bold text-[#1C2B27]" style={{ fontFamily: "'Fraunces', serif" }}>
+            <h2 className="text-xl font-bold text-[var(--text-primary)]" style={{ fontFamily: "var(--font-display)" }}>
               Link Patient Record
             </h2>
             <button
@@ -1990,13 +1990,13 @@ export default function DoctorDashboardPage() {
       {step === 'claimed' && (
         <Card className="max-w-md mx-auto text-center space-y-5 p-8">
           <div className="w-16 h-16 rounded-full bg-amber-50 border-2 border-amber-200 flex items-center justify-center mx-auto">
-            <Clock className="w-8 h-8 text-[#E0824B]" />
+            <Clock className="w-8 h-8 text-[var(--led-caution)]" />
           </div>
           <div>
-            <h2 className="text-xl font-bold text-[#1C2B27]" style={{ fontFamily: "'Fraunces', serif" }}>
+            <h2 className="text-xl font-bold text-[var(--text-primary)]" style={{ fontFamily: "var(--font-display)" }}>
               Waiting for Patient Approval
             </h2>
-            <p className="text-sm text-[#5C6B64] mt-2 leading-relaxed">
+            <p className="text-sm text-[var(--text-muted)] mt-2 leading-relaxed">
               Your connection request has been sent. The patient will receive an approval prompt in their PolySafe app. Once approved, their record will appear in your clinical list.
             </p>
           </div>
@@ -2004,7 +2004,7 @@ export default function DoctorDashboardPage() {
             {[0, 1, 2].map((i) => (
               <div
                 key={i}
-                className="w-2.5 h-2.5 rounded-full bg-[#2B6E5E]"
+                className="w-2.5 h-2.5 rounded-full bg-[var(--role-doctor)]"
                 style={{ animation: `pulse-dot 1.4s ease-in-out ${i * 0.16}s infinite` }}
               />
             ))}
@@ -2027,7 +2027,7 @@ export default function DoctorDashboardPage() {
             <Card
               title="Clinical Patients"
               subtitle="Consent-approved records"
-              icon={<Users className="w-4 h-4 text-[#2B6E5E]" />}
+              icon={<Users className="w-4 h-4 text-[var(--role-doctor)]" />}
               className="p-5"
             >
               <div className="space-y-4">
@@ -2075,12 +2075,12 @@ export default function DoctorDashboardPage() {
  <EmptyDoctorPatientIllustration className="w-36 h-36 mx-auto mb-1" />
  <div>
  <h3
- className="text-xl font-bold text-[#1C2B27]"
- style={{ fontFamily: "'Fraunces', serif" }}
+ className="text-xl font-bold text-[var(--text-primary)]"
+ style={{ fontFamily: "var(--font-display)" }}
  >
  Select a Patient Record
  </h3>
- <p className="text-sm text-[#5C6B64] mt-1.5 max-w-sm mx-auto leading-relaxed">
+ <p className="text-sm text-[var(--text-muted)] mt-1.5 max-w-sm mx-auto leading-relaxed">
  Choose an approved patient from the left panel to review their complete medication timeline, active pharmacology risk flags, and cross-prescribing cascade insights.
  </p>
  </div>
