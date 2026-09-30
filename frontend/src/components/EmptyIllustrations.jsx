@@ -4,7 +4,7 @@ import React from 'react';
  * EmptyIllustrations.jsx
  *
  * Hand-crafted, cohesive line-art SVG illustrations for PolySafe empty states.
- * Brand palette: Deep Teal (var(--accent-primary)), Warm Terracotta (#E0824B), Warm Parchment/Sand (#EDE9DF, #F5EFE6), Charcoal (var(--text-primary)).
+ * Brand palette: Deep Teal (var(--accent-primary)), Warm Terracotta (var(--accent-primary)), Warm Parchment/Sand (var(--chassis-dark), var(--brand-surface)), Charcoal (var(--text-primary)).
  * Style: 1.75px-2px stroke, round caps/joins, subtle translucent fills, unified visual language.
  */
 
@@ -24,7 +24,7 @@ export function EmptyMedicinesIllustration({ className = 'w-36 h-36 mx-auto' }) 
  {/* Pill Bottle */}
  <g transform="translate(42, 38)">
  {/* Bottle Cap */}
- <rect x="18" y="4" width="28" height="10" rx="3" fill="#EDE9DF" stroke="var(--accent-primary)" strokeWidth="2" strokeLinejoin="round" />
+ <rect x="18" y="4" width="28" height="10" rx="3" fill="var(--chassis-dark)" stroke="var(--accent-primary)" strokeWidth="2" strokeLinejoin="round" />
  <line x1="24" y1="4" x2="24" y2="14" stroke="var(--accent-primary)" strokeWidth="1.5" strokeLinecap="round" opacity="0.4" />
  <line x1="32" y1="4" x2="32" y2="14" stroke="var(--accent-primary)" strokeWidth="1.5" strokeLinecap="round" opacity="0.4" />
  <line x1="40" y1="4" x2="40" y2="14" stroke="var(--accent-primary)" strokeWidth="1.5" strokeLinecap="round" opacity="0.4" />
@@ -35,7 +35,7 @@ export function EmptyMedicinesIllustration({ className = 'w-36 h-36 mx-auto' }) 
  {/* Bottle Body */}
  <rect x="10" y="18" width="44" height="64" rx="8" fill="#FFFFFF" stroke="var(--accent-primary)" strokeWidth="2" strokeLinejoin="round" />
  {/* Bottle Label Area */}
- <rect x="14" y="28" width="36" height="38" rx="4" fill="#FBF8F2" stroke="#E7E1D3" strokeWidth="1.5" />
+ <rect x="14" y="28" width="36" height="38" rx="4" fill="var(--brand-surface)" stroke="var(--brand-border)" strokeWidth="1.5" />
  {/* Rx Symbol */}
  <path d="M22 36H28C30.2 36 32 37.8 32 40C32 42.2 30.2 44 28 44H22V36ZM22 44L32 54M28 47L34 43" stroke="var(--accent-primary)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
  {/* Dosage lines */}
@@ -44,9 +44,9 @@ export function EmptyMedicinesIllustration({ className = 'w-36 h-36 mx-auto' }) 
 
  {/* Floating Capsule 1 (Left Tilt) */}
  <g transform="translate(94, 76) rotate(35)">
- <rect x="0" y="0" width="16" height="32" rx="8" fill="#FFFFFF" stroke="#E0824B" strokeWidth="2" strokeLinejoin="round" />
- <path d="M0 8C0 3.58 3.58 0 8 0C12.42 0 16 3.58 16 8V16H0V8Z" fill="#E0824B" fillOpacity="0.2" stroke="#E0824B" strokeWidth="2" strokeLinejoin="round" />
- <line x1="0" y1="16" x2="16" y2="16" stroke="#E0824B" strokeWidth="2" />
+ <rect x="0" y="0" width="16" height="32" rx="8" fill="#FFFFFF" stroke="var(--accent-primary)" strokeWidth="2" strokeLinejoin="round" />
+ <path d="M0 8C0 3.58 3.58 0 8 0C12.42 0 16 3.58 16 8V16H0V8Z" fill="var(--accent-primary)" fillOpacity="0.2" stroke="var(--accent-primary)" strokeWidth="2" strokeLinejoin="round" />
+ <line x1="0" y1="16" x2="16" y2="16" stroke="var(--accent-primary)" strokeWidth="2" />
  </g>
 
  {/* Floating Capsule 2 (Bottom Round Tablet) */}
@@ -59,7 +59,7 @@ export function EmptyMedicinesIllustration({ className = 'w-36 h-36 mx-auto' }) 
  <path d="M112 44C118 56 124 68 132 80" stroke="var(--accent-primary)" strokeWidth="1.75" strokeLinecap="round" />
 
  {/* Sparkles */}
- <path d="M34 46L36 40L38 46L44 48L38 50L36 56L34 50L28 48L34 46Z" fill="#E0824B" fillOpacity="0.4" />
+ <path d="M34 46L36 40L38 46L44 48L38 50L36 56L34 50L28 48L34 46Z" fill="var(--accent-primary)" fillOpacity="0.4" />
  <path d="M128 104L129.5 99.5L134 98L129.5 96.5L128 92L126.5 96.5L122 98L126.5 99.5L128 104Z" fill="var(--accent-primary)" fillOpacity="0.4" />
  </svg>
  );
@@ -77,24 +77,24 @@ export function EmptyTimelineIllustration({ className = 'w-36 h-36 mx-auto' }) {
  {/* Ambient background circle */}
  <circle cx="80" cy="80" r="64" fill="var(--chassis)" fillOpacity="0.4" />
 
- {/* The Central Continuous Timeline Cord (#E0824B) */}
- <line x1="50" y1="20" x2="50" y2="140" stroke="#E0824B" strokeWidth="2.5" strokeDasharray="4 4" strokeLinecap="round" />
+ {/* The Central Continuous Timeline Cord (var(--accent-primary)) */}
+ <line x1="50" y1="20" x2="50" y2="140" stroke="var(--accent-primary)" strokeWidth="2.5" strokeDasharray="4 4" strokeLinecap="round" />
 
  {/* Node 1: Top Prescription Node */}
  <circle cx="50" cy="42" r="9" fill="#FFFFFF" stroke="var(--accent-primary)" strokeWidth="2.5" />
  <circle cx="50" cy="42" r="3.5" fill="var(--accent-primary)" />
  <g transform="translate(68, 28)">
- <rect x="0" y="0" width="62" height="28" rx="6" fill="#FFFFFF" stroke="#E7E1D3" strokeWidth="1.5" />
+ <rect x="0" y="0" width="62" height="28" rx="6" fill="#FFFFFF" stroke="var(--brand-border)" strokeWidth="1.5" />
  <line x1="8" y1="10" x2="38" y2="10" stroke="var(--accent-primary)" strokeWidth="2" strokeLinecap="round" />
  <line x1="8" y1="18" x2="52" y2="18" stroke="var(--text-muted)" strokeWidth="1.5" strokeLinecap="round" opacity="0.5" />
  </g>
 
  {/* Node 2: Middle Flag / Warning Node */}
- <circle cx="50" cy="82" r="9" fill="#FFFFFF" stroke="#E0824B" strokeWidth="2.5" />
- <path d="M50 78V83M50 86V87" stroke="#E0824B" strokeWidth="2" strokeLinecap="round" />
+ <circle cx="50" cy="82" r="9" fill="#FFFFFF" stroke="var(--accent-primary)" strokeWidth="2.5" />
+ <path d="M50 78V83M50 86V87" stroke="var(--accent-primary)" strokeWidth="2" strokeLinecap="round" />
  <g transform="translate(68, 68)">
- <rect x="0" y="0" width="56" height="28" rx="6" fill="#FFFFFF" stroke="#E0824B" strokeWidth="1.5" strokeOpacity="0.4" />
- <line x1="8" y1="10" x2="32" y2="10" stroke="#E0824B" strokeWidth="2" strokeLinecap="round" />
+ <rect x="0" y="0" width="56" height="28" rx="6" fill="#FFFFFF" stroke="var(--accent-primary)" strokeWidth="1.5" strokeOpacity="0.4" />
+ <line x1="8" y1="10" x2="32" y2="10" stroke="var(--accent-primary)" strokeWidth="2" strokeLinecap="round" />
  <line x1="8" y1="18" x2="46" y2="18" stroke="var(--text-muted)" strokeWidth="1.5" strokeLinecap="round" opacity="0.5" />
  </g>
 
@@ -102,14 +102,14 @@ export function EmptyTimelineIllustration({ className = 'w-36 h-36 mx-auto' }) {
  <circle cx="50" cy="122" r="9" fill="#FFFFFF" stroke="var(--led-safe)" strokeWidth="2.5" />
  <path d="M47 122L49.5 124.5L53.5 119.5" stroke="var(--led-safe)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
  <g transform="translate(68, 108)">
- <rect x="0" y="0" width="58" height="28" rx="6" fill="#FFFFFF" stroke="#E7E1D3" strokeWidth="1.5" />
+ <rect x="0" y="0" width="58" height="28" rx="6" fill="#FFFFFF" stroke="var(--brand-border)" strokeWidth="1.5" />
  <line x1="8" y1="10" x2="34" y2="10" stroke="var(--accent-primary)" strokeWidth="2" strokeLinecap="round" />
  <line x1="8" y1="18" x2="48" y2="18" stroke="var(--text-muted)" strokeWidth="1.5" strokeLinecap="round" opacity="0.5" />
  </g>
 
  {/* Clock Icon Accent */}
- <circle cx="26" cy="42" r="10" fill="#FFFFFF" stroke="#E0824B" strokeWidth="1.75" />
- <path d="M26 38V42L28.5 44.5" stroke="#E0824B" strokeWidth="1.5" strokeLinecap="round" />
+ <circle cx="26" cy="42" r="10" fill="#FFFFFF" stroke="var(--accent-primary)" strokeWidth="1.75" />
+ <path d="M26 38V42L28.5 44.5" stroke="var(--accent-primary)" strokeWidth="1.5" strokeLinecap="round" />
  </svg>
  );
 }
@@ -163,7 +163,7 @@ export function EmptyDoctorsIllustration({ className = 'w-36 h-36 mx-auto' }) {
  <rect x="3" y="3" width="5" height="5" fill="var(--accent-primary)" />
  <rect x="14" y="3" width="5" height="5" fill="var(--accent-primary)" />
  <rect x="3" y="14" width="5" height="5" fill="var(--accent-primary)" />
- <rect x="14" y="14" width="4" height="4" fill="#E0824B" />
+ <rect x="14" y="14" width="4" height="4" fill="var(--accent-primary)" />
  </g>
  </svg>
  );
@@ -217,7 +217,7 @@ export function EmptyCaregiversIllustration({ className = 'w-36 h-36 mx-auto' })
  />
 
  {/* Protective Sparkles */}
- <path d="M42 46L44 40L46 46L52 48L46 50L44 56L42 50L36 48L42 46Z" fill="#E0824B" fillOpacity="0.45" />
+ <path d="M42 46L44 40L46 46L52 48L46 50L44 56L42 50L36 48L42 46Z" fill="var(--accent-primary)" fillOpacity="0.45" />
  <path d="M116 42L117.5 37.5L122 36L117.5 34.5L116 30L114.5 34.5L110 36L114.5 37.5L116 42Z" fill="var(--role-caregiver)" fillOpacity="0.45" />
  </svg>
  );
@@ -238,7 +238,7 @@ export function EmptyDoctorPatientIllustration({ className = 'w-36 h-36 mx-auto'
  {/* Clinical Clipboard */}
  <g transform="translate(42, 28)">
  {/* Clip top */}
- <rect x="26" y="0" width="24" height="10" rx="3" fill="#EDE9DF" stroke="var(--accent-secondary)" strokeWidth="2" strokeLinejoin="round" />
+ <rect x="26" y="0" width="24" height="10" rx="3" fill="var(--chassis-dark)" stroke="var(--accent-secondary)" strokeWidth="2" strokeLinejoin="round" />
  <circle cx="38" cy="5" r="2" fill="var(--accent-secondary)" />
 
  {/* Board Body */}
@@ -252,7 +252,7 @@ export function EmptyDoctorPatientIllustration({ className = 'w-36 h-36 mx-auto'
  {/* Heartbeat EKG Pulse Wave */}
  <path
  d="M16 60H26L30 52L36 68L42 56L46 62L50 60H60"
- stroke="#E0824B"
+ stroke="var(--accent-primary)"
  strokeWidth="2"
  strokeLinecap="round"
  strokeLinejoin="round"
@@ -285,7 +285,7 @@ export function EmptyDoctorListIllustration({ className = 'w-24 h-24 mx-auto' })
  className={className}
  aria-hidden="true"
  >
- <circle cx="60" cy="60" r="48" fill="#FBF8F2" stroke="#E7E1D3" strokeWidth="1.5" strokeDasharray="3 3" />
+ <circle cx="60" cy="60" r="48" fill="var(--brand-surface)" stroke="var(--brand-border)" strokeWidth="1.5" strokeDasharray="3 3" />
  {/* Patient Avatar Silhouette with Shield */}
  <circle cx="60" cy="46" r="12" fill="#FFFFFF" stroke="var(--accent-primary)" strokeWidth="2" />
  <path
@@ -296,11 +296,11 @@ export function EmptyDoctorListIllustration({ className = 'w-24 h-24 mx-auto' })
  />
  {/* Keycode Badge */}
  <g transform="translate(42, 82)">
- <rect x="0" y="0" width="36" height="16" rx="4" fill="#FFFFFF" stroke="#E0824B" strokeWidth="1.5" />
- <circle cx="9" cy="8" r="1.5" fill="#E0824B" />
- <circle cx="15" cy="8" r="1.5" fill="#E0824B" />
- <circle cx="21" cy="8" r="1.5" fill="#E0824B" />
- <circle cx="27" cy="8" r="1.5" fill="#E0824B" />
+ <rect x="0" y="0" width="36" height="16" rx="4" fill="#FFFFFF" stroke="var(--accent-primary)" strokeWidth="1.5" />
+ <circle cx="9" cy="8" r="1.5" fill="var(--accent-primary)" />
+ <circle cx="15" cy="8" r="1.5" fill="var(--accent-primary)" />
+ <circle cx="21" cy="8" r="1.5" fill="var(--accent-primary)" />
+ <circle cx="27" cy="8" r="1.5" fill="var(--accent-primary)" />
  </g>
  </svg>
  );
@@ -315,15 +315,15 @@ export function EmptyScheduleIllustration({ className = 'w-32 h-32 mx-auto' }) {
  className={className}
  aria-hidden="true"
  >
- <circle cx="70" cy="70" r="54" fill="var(--chassis)" stroke="#E7E1D3" strokeWidth="1.5" />
+ <circle cx="70" cy="70" r="54" fill="var(--chassis)" stroke="var(--brand-border)" strokeWidth="1.5" />
  {/* Clock Face */}
  <circle cx="70" cy="66" r="32" fill="#FFFFFF" stroke="var(--accent-primary)" strokeWidth="2" />
  <path d="M70 46V66L82 74" stroke="var(--accent-primary)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
  <circle cx="70" cy="66" r="3" fill="var(--accent-primary)" />
 
  {/* Sunrise Horizon Arc */}
- <path d="M40 106C52 98 88 98 100 106" stroke="#E0824B" strokeWidth="2" strokeLinecap="round" />
- <path d="M70 94V88M54 98L50 94M86 98L90 94" stroke="#E0824B" strokeWidth="1.5" strokeLinecap="round" opacity="0.6" />
+ <path d="M40 106C52 98 88 98 100 106" stroke="var(--accent-primary)" strokeWidth="2" strokeLinecap="round" />
+ <path d="M70 94V88M54 98L50 94M86 98L90 94" stroke="var(--accent-primary)" strokeWidth="1.5" strokeLinecap="round" opacity="0.6" />
  </svg>
  );
 }
@@ -354,7 +354,7 @@ export function EmptyTrendsIllustration({ className = 'w-36 h-36 mx-auto' }) {
  <path
  d="M20 78 Q 38 64 54 48 T 88 34"
  fill="none"
- stroke="#E0824B"
+ stroke="var(--accent-primary)"
  strokeWidth="2.5"
  strokeLinecap="round"
  />
@@ -362,13 +362,13 @@ export function EmptyTrendsIllustration({ className = 'w-36 h-36 mx-auto' }) {
  {/* Shaded Area Under Curve */}
  <path
  d="M20 78 Q 38 64 54 48 T 88 34 V 88 H 20 Z"
- fill="#E0824B"
+ fill="var(--accent-primary)"
  fillOpacity="0.1"
  />
 
  {/* Data Point Nodes */}
- <circle cx="20" cy="78" r="4.5" fill="#FFFFFF" stroke="#E0824B" strokeWidth="2" />
- <circle cx="54" cy="48" r="4.5" fill="#FFFFFF" stroke="#E0824B" strokeWidth="2" />
+ <circle cx="20" cy="78" r="4.5" fill="#FFFFFF" stroke="var(--accent-primary)" strokeWidth="2" />
+ <circle cx="54" cy="48" r="4.5" fill="#FFFFFF" stroke="var(--accent-primary)" strokeWidth="2" />
  <circle cx="88" cy="34" r="5" fill="#FFFFFF" stroke="var(--accent-primary)" strokeWidth="2.5" />
  <circle cx="88" cy="34" r="2" fill="var(--accent-primary)" />
  </g>
@@ -381,7 +381,7 @@ export function EmptyTrendsIllustration({ className = 'w-36 h-36 mx-auto' }) {
  </g>
 
  {/* Sparkles */}
- <path d="M42 26L43.5 21.5L48 20L43.5 18.5L42 14L40.5 18.5L36 20L40.5 21.5L42 26Z" fill="#E0824B" fillOpacity="0.5" />
+ <path d="M42 26L43.5 21.5L48 20L43.5 18.5L42 14L40.5 18.5L36 20L40.5 21.5L42 26Z" fill="var(--accent-primary)" fillOpacity="0.5" />
  </svg>
  );
 }

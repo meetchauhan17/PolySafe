@@ -331,7 +331,7 @@ export default function TimelinePage() {
  </Card>
  )}
 
- {/* ── Timeline Display with Vertical #E0824B Line ───────────────────── */}
+ {/* ── Timeline Display with Vertical Timeline Line ───────────────────── */}
  {!isLoading && !isError && medicines.length > 0 && (
  <div className="relative pl-2 py-2">
  <motion.div

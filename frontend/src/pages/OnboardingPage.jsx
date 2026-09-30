@@ -57,26 +57,26 @@ const CONDITION_OPTIONS = [
 
 // Color map for the chips
 const CHIP_STYLES = {
- amber: {
- base: 'border-[var(--led-caution)]/30 text-[var(--text-primary)] bg-[var(--chassis)]/60',
- active: 'border-[var(--led-caution)] bg-[var(--chassis)] ring-2 ring-[var(--led-caution)]/30 ring-offset-1',
- },
- blue: {
- base: 'border-[var(--accent-secondary)]/30 text-[var(--accent-secondary)] bg-[#E9F1F5]/60',
- active: 'border-[var(--accent-secondary)] bg-[#E9F1F5] ring-2 ring-[var(--accent-secondary)]/30 ring-offset-1',
- },
- orange: {
- base: 'border-[#E0824B]/30 text-[#7A3E14] bg-[#FDF3EB]/60',
- active: 'border-[#E0824B] bg-[#FDF3EB] ring-2 ring-[#E0824B]/30 ring-offset-1',
- },
- rose: {
- base: 'border-[var(--led-critical)]/30 text-[#7A1A0A] bg-[var(--chassis)]/60',
- active: 'border-[var(--led-critical)] bg-[var(--chassis)] ring-2 ring-[var(--led-critical)]/30 ring-offset-1',
- },
- teal: {
-  base: 'border-[var(--accent-primary)]/30 text-[var(--text-primary)] bg-[var(--accent-primary)]/10',
-  active: 'border-[var(--accent-primary)] bg-[var(--accent-primary)]/20 ring-2 ring-[var(--accent-primary)]/30 ring-offset-1',
- },
+  amber: {
+    base: 'border-amber-400/30 text-[var(--text-primary)] bg-[var(--brand-surface)] hover:border-amber-400/60',
+    active: 'border-amber-500 bg-amber-500/10 text-amber-700 dark:text-amber-300 ring-2 ring-amber-500/30 ring-offset-1',
+  },
+  blue: {
+    base: 'border-[var(--accent-secondary)]/30 text-[var(--text-primary)] bg-[var(--brand-surface)] hover:border-[var(--accent-secondary)]/60',
+    active: 'border-[var(--accent-secondary)] bg-[var(--accent-secondary)]/10 text-[var(--accent-secondary)] ring-2 ring-[var(--accent-secondary)]/30 ring-offset-1',
+  },
+  orange: {
+    base: 'border-orange-400/30 text-[var(--text-primary)] bg-[var(--brand-surface)] hover:border-orange-400/60',
+    active: 'border-orange-500 bg-orange-500/10 text-orange-700 dark:text-orange-300 ring-2 ring-orange-500/30 ring-offset-1',
+  },
+  rose: {
+    base: 'border-[var(--led-critical)]/30 text-[var(--text-primary)] bg-[var(--brand-surface)] hover:border-[var(--led-critical)]/60',
+    active: 'border-[var(--led-critical)] bg-rose-500/10 text-[var(--led-critical)] ring-2 ring-[var(--led-critical)]/30 ring-offset-1',
+  },
+  teal: {
+    base: 'border-[var(--role-caregiver)]/30 text-[var(--text-primary)] bg-[var(--brand-surface)] hover:border-[var(--role-caregiver)]/60',
+    active: 'border-[var(--role-caregiver)] bg-[var(--role-caregiver)]/10 text-[var(--role-caregiver)] ring-2 ring-[var(--role-caregiver)]/30 ring-offset-1',
+  },
 };
 
 export default function OnboardingPage() {
@@ -168,20 +168,27 @@ export default function OnboardingPage() {
  <PageTransition className="min-h-[88vh] bg-[var(--chassis)] flex items-start justify-center px-4 py-10 md:py-16">
  <div className="max-w-2xl w-full space-y-6">
 
- {/* ── Header ─────────────────────────────────────────────────────────── */}
- <div className="text-center space-y-2">
- <div className="icon-well w-14 h-14 mx-auto mb-1">
- <ShieldCheck className="w-7 h-7 text-[var(--accent-primary)]" />
- </div>
- <h1 className="text-3xl md:text-4xl text-[var(--text-primary)] font-bold tracking-tight" >
- Set Up Your PolySafe Profile
- </h1>
- <p className="text-sm text-[var(--text-muted)] max-w-md mx-auto leading-relaxed">
- This helps PolySafe tailor interaction checks to your physiology —
- kidney impairment, for example, changes how dozens of drugs are
- metabolised and cleared.
- </p>
- </div>
+        {/* ── Modern Hero Header matching design system tokens ── */}
+        <div className="relative overflow-hidden rounded-3xl p-6 md:p-8 bg-[var(--brand-surface)]/95 border border-[var(--brand-border)] shadow-[var(--shadow-card)] backdrop-blur-xl text-center space-y-4">
+          {/* Top luminous accent bar */}
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[var(--accent-primary)] via-indigo-600 to-[var(--accent-secondary)]" />
+
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] border border-[var(--accent-primary)]/20 mx-auto">
+            <span className="w-2 h-2 rounded-full bg-[var(--accent-primary)] animate-pulse" />
+            <span>Clinical Onboarding</span>
+            <span className="text-[var(--accent-primary)]/60">·</span>
+            <span className="font-mono text-[11px] text-[var(--accent-primary)]">Physiological Baseline</span>
+          </div>
+
+          <div className="space-y-2 max-w-xl mx-auto">
+            <h1 className="text-2xl md:text-3xl font-extrabold text-[var(--text-primary)] tracking-tight font-display">
+              Set Up Your <span className="bg-gradient-to-r from-[var(--accent-primary)] via-indigo-600 to-[var(--accent-secondary)] bg-clip-text text-transparent">PolySafe Profile</span>
+            </h1>
+            <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
+              This baseline tailors interaction checks to your physiology — kidney or hepatic factors alter how scores and dosages are monitored.
+            </p>
+          </div>
+        </div>
 
  {/* ── "Only Age Required" Banner ─────────────────────────────────────── */}
  <div className="flex items-start space-x-3 p-3.5 bg-[var(--accent-primary)]/10 border border-[var(--accent-primary)]/20 rounded-2xl text-xs text-[var(--accent-primary)] shadow-sm">

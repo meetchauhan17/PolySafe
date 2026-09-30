@@ -45,7 +45,7 @@ function CascadeMatchCard({ match, description }) {
  </div>
  </div>
 
- <p className="text-sm text-[#4A4F4B] leading-relaxed">
+ <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
  You started{' '}
  <strong className="text-[var(--text-primary)]">{match.medicineName}</strong>{' '}
  on{' '}
@@ -102,7 +102,7 @@ function CascadeMatchCard({ match, description }) {
  icon={<HelpCircle className="w-4 h-4 text-[var(--text-muted)]" />}
  className="space-y-3"
  >
- <p className="text-sm text-[#4A4F4B] leading-relaxed">
+ <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
  {match.cascadeDescription}
  </p>
  </Card>
@@ -179,7 +179,7 @@ function NoCascadeCard({ description }) {
  icon={<Info className="w-4 h-4 text-[var(--text-muted)]" />}
  className="space-y-3"
  >
- <p className="text-sm text-[#4A4F4B] leading-relaxed">
+ <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
  PolySafe only flags interactions documented in established clinical literature. The absence of a match doesn't mean your medicines aren't connected to this symptom — it means we don't have enough data to flag it automatically. 
  Your pharmacist or doctor will be better placed to evaluate it.
  </p>
@@ -192,7 +192,7 @@ function NoCascadeCard({ description }) {
  className="space-y-3"
  >
  <div className="p-4 bg-[var(--chassis)] border border-[var(--brand-border-subtle)] rounded-xl">
- <p className="text-sm text-[#4A4F4B] leading-relaxed italic">
+ <p className="text-sm text-[var(--text-secondary)] leading-relaxed italic">
  "I've been experiencing {description}. Could any of my current medicines be contributing to this, even if it seems unrelated?"
  </p>
  </div>
@@ -227,18 +227,33 @@ export default function SymptomResultPage() {
  <div className="min-h-[88vh] bg-[var(--chassis)] pb-12">
  <div className="max-w-2xl mx-auto px-4 py-8 space-y-5">
 
- {/* ── Back nav ───────────────────────────────────────────────────────── */}
- <div className="flex items-center gap-3.5">
-   <BackButton to="/log-symptom" label="Back to Form" />
-   <div className="min-w-0">
-     <h1 className="text-xl md:text-2xl font-bold text-[var(--text-primary)] font-display tracking-tight">
-       Symptom Analysis Result
-     </h1>
-     <p className="text-xs text-[var(--text-muted)] mt-0.5">
-       "{description.length > 60 ? description.slice(0, 60) + '…' : description}"
-     </p>
-   </div>
- </div>
+        {/* ── Modern Hero Header matching design system tokens ── */}
+        <div className="relative overflow-hidden rounded-3xl p-6 md:p-8 bg-[var(--brand-surface)]/95 border border-[var(--brand-border)] shadow-[var(--shadow-card)] backdrop-blur-xl">
+          {/* Top luminous accent bar */}
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500 via-[var(--accent-primary)] to-[var(--accent-secondary)]" />
+
+          <div className="relative z-10 space-y-4">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <BackButton to="/log-symptom" label="Back to Form" />
+
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] border border-[var(--accent-primary)]/20">
+                <span className="w-2 h-2 rounded-full bg-[var(--accent-primary)] animate-pulse" />
+                <span>Cascade Analysis Report</span>
+                <span className="text-[var(--accent-primary)]/60">·</span>
+                <span className="font-mono text-[11px] text-[var(--accent-primary)]">Clinical Match</span>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <h1 className="text-2xl md:text-3xl font-extrabold text-[var(--text-primary)] tracking-tight font-display">
+                Symptom <span className="bg-gradient-to-r from-emerald-600 via-[var(--accent-primary)] to-[var(--accent-secondary)] bg-clip-text text-transparent">Telemetry Result</span>
+              </h1>
+              <p className="text-sm text-[var(--text-secondary)] max-w-xl leading-relaxed font-mono">
+                Analysis for: "{description.length > 70 ? description.slice(0, 70) + '…' : description}"
+              </p>
+            </div>
+          </div>
+        </div>
 
  {/* ── Result card ───────────────────────────────────────────────────── */}
  {result.cascadeDetected && result.match ? (

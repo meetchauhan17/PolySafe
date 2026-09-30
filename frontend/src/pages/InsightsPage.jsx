@@ -377,7 +377,7 @@ export default function InsightsPage() {
  <Card
  title="Cumulative Burden Trajectory"
  subtitle="Anticholinergic Cognitive Burden (ACB) progression across prescription additions"
- icon={<Activity className="w-4 h-4 text-[#E0824B]" />}
+ icon={<Activity className="w-4 h-4 text-[var(--accent-primary)]" />}
  className="space-y-4"
  >
  {burdenChartData.length < 2 ? (
@@ -428,9 +428,9 @@ export default function InsightsPage() {
  <Line
  type="monotone"
  dataKey="cumulativeScore"
- stroke="#E0824B"
+ stroke="#6366f1"
  strokeWidth={3}
- dot={{ fill: '#FFFFFF', stroke: '#E0824B', strokeWidth: 2.5, r: 5 }}
+ dot={{ fill: '#FFFFFF', stroke: '#6366f1', strokeWidth: 2.5, r: 5 }}
  activeDot={{ fill: 'var(--accent-primary)', stroke: '#FFFFFF', strokeWidth: 2, r: 7 }}
  isAnimationActive={!shouldReduceMotion}
  animationDuration={800}

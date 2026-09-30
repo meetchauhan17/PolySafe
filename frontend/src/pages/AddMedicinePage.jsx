@@ -1980,7 +1980,7 @@ export default function AddMedicinePage() {
  {scanResult.fallbackCandidates?.length > 0 && !scanResult.drug_name && !scanResult.candidate && (
  <div className="p-3 bg-[var(--chassis)] shadow-[var(--shadow-card)] rounded-xl space-y-2">
  <div className="flex items-center space-x-1.5 text-xs font-bold text-[var(--text-muted)]">
- <HelpCircle className="w-3.5 h-3.5 text-[#E0824B]" />
+ <HelpCircle className="w-3.5 h-3.5 text-[var(--accent-primary)]" />
  <span>Couldn't confidently identify — did you mean:</span>
  </div>
  <div className="flex flex-wrap gap-1.5">
@@ -2027,7 +2027,7 @@ export default function AddMedicinePage() {
  <Card
  title="Identify a Loose Pill"
  subtitle="Look up stamped imprint codes on unlabeled tablets"
- icon={<Search className="w-4 h-4 text-[#E0824B]" />}
+ icon={<Search className="w-4 h-4 text-[var(--accent-primary)]" />}
  badge={
  <button
  type="button"
@@ -2232,7 +2232,7 @@ export default function AddMedicinePage() {
  {scanState === 'confirm' && scanResult?.fallbackCandidates?.length > 0 && !scanResult?.candidate && (
  <div className="p-3.5 bg-[var(--chassis)] shadow-[var(--shadow-card)] rounded-2xl space-y-2 border border-[var(--chassis-dark)]/50">
  <div className="flex items-center space-x-1.5 text-xs font-bold text-[var(--text-muted)]">
- <HelpCircle className="w-3.5 h-3.5 text-[#E0824B]" />
+ <HelpCircle className="w-3.5 h-3.5 text-[var(--accent-primary)]" />
  <span>Couldn't confidently identify — did you mean:</span>
  </div>
  <div className="flex flex-wrap gap-2">
