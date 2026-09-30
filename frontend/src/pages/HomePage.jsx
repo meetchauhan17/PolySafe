@@ -361,11 +361,11 @@ export default function HomePage() {
 
  if (isError && token) {
  return (
-      <div className="min-h-[80vh] flex items-center justify-center bg-[#dce4ee] px-4">
-        <div className="bg-white/95 rounded-3xl p-8 max-w-md w-full text-center space-y-4 border border-slate-200 shadow-md">
-          <AlertCircle className="w-12 h-12 text-rose-500 mx-auto" />
-          <h2 className="text-xl font-bold text-slate-900 font-display">Couldn't load your data</h2>
-          <p className="text-sm text-slate-600">
+    <div className="min-h-[80vh] flex items-center justify-center bg-[var(--chassis)] px-4">
+        <div className="bg-[var(--brand-surface)] rounded-3xl p-8 max-w-md w-full text-center space-y-4 border border-[var(--brand-border)] shadow-[var(--shadow-floating)]">
+          <AlertCircle className="w-12 h-12 text-[var(--led-critical)] mx-auto" />
+          <h2 className="text-xl font-bold text-[var(--text-primary)] font-display">Couldn't load your data</h2>
+          <p className="text-sm text-[var(--text-muted)]">
             {error?.response?.data?.error || 'Something went wrong. Please try again.'}
           </p>
           <button onClick={() => refetch()} className="btn-primary px-6 py-2.5 text-sm mx-auto">

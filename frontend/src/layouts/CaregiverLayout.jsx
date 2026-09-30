@@ -13,9 +13,9 @@ export default function CaregiverLayout() {
   const isDashboard = location.pathname === '/caregiver-view';
 
   return (
-    <div className="relative min-h-screen bg-[#dce4ee] text-slate-900 flex flex-col font-sans selection:bg-emerald-600 selection:text-white overflow-x-hidden">
+    <div className="relative min-h-screen bg-[var(--chassis)] text-[var(--text-primary)] flex flex-col font-sans selection:bg-teal-500 selection:text-white overflow-x-hidden">
       {/* ── Background Precision Dot Matrix ── */}
-      <div className="fixed inset-0 bg-[radial-gradient(#94a3b8_1px,transparent_1px)] [background-size:24px_24px] opacity-25 pointer-events-none z-0" />
+      <div className="fixed inset-0 bg-[radial-gradient(#c7d2fe_1px,transparent_1px)] [background-size:24px_24px] opacity-25 pointer-events-none z-0" />
 
       {/* ── Atmospheric Ambient Lighting Orbs ── */}
       <div className="fixed -top-36 left-1/2 -translate-x-1/2 w-[850px] h-[450px] bg-gradient-to-b from-emerald-600/12 via-teal-500/8 to-transparent rounded-full blur-3xl pointer-events-none z-0" />
@@ -101,3 +101,4 @@ export default function CaregiverLayout() {
     </div>
   );
 }
+
