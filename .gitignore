@@ -53,3 +53,6 @@ build_submission.js
 *.csv.gz
 *.tsv.gz
 TWOSIDES.csv/
+
+# Local-only reference documents
+POLYSAFE_PPT_DATA.md
