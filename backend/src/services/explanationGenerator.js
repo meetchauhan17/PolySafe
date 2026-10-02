@@ -24,7 +24,57 @@
 'use strict';
 
 const axios = require('axios');
+const { GoogleGenerativeAI } = require('@google/generative-ai');
 const { isDemoMode, getMockGroqExplanation } = require('../lib/demo');
+
+/**
+ * Secondary LLM explanation engine via Google Gemini Flash
+ */
+async function tryGeminiExplanation({ drugA, drugB, severity, burdenScore, burdenLevel, patientAge, patientConditions }) {
+  const geminiKey = process.env.GEMINI_API_KEY || (process.env.GEMINI_API_KEYS ? process.env.GEMINI_API_KEYS.split(/[,;\s]+/)[0] : '');
+  if (!geminiKey || geminiKey === 'your_gemini_api_key_here') return null;
+
+  try {
+    const genAI = new GoogleGenerativeAI(geminiKey);
+    const model = genAI.getGenerativeModel({ model: 'gemini-3.5-flash' });
+    const conditionsText = Array.isArray(patientConditions) && patientConditions.length > 0 ? patientConditions.join(', ') : 'None';
+    const prompt = `You are a clinical pharmacologist and patient safety communication specialist.
+Generate two concise, accurate explanations for this Drug-Drug Interaction:
+- Drug A: ${drugA}
+- Drug B: ${drugB}
+- Interaction Severity: ${severity}
+- Cumulative Burden: Score ${burdenScore ?? 0} (${burdenLevel ?? 'Normal'})
+- Patient Age: ${patientAge ?? 'Not specified'}
+- Conditions: ${conditionsText}
+
+STRICT GUARDRAILS:
+1. ONLY explain the verified severity level (${severity}) and burden score (${burdenScore}).
+2. NEVER invent unverified adverse effects.
+3. "clinical": 1-sentence formal pharmacological summary for a physician or pharmacist.
+4. "plain": Plain-language explanation for patients ending strictly with: "(This is an informational safety alert, not a medical diagnosis.)"
+
+Return ONLY valid JSON matching this schema:
+{
+  "clinical": "Formal 1-sentence pharmacological summary for clinicians",
+  "plain": "Patient-friendly explanation concluding with (This is an informational safety alert, not a medical diagnosis.)"
+}`;
+
+    const res = await model.generateContent(prompt);
+    const text = res.response.text().replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/```$/i, '').trim();
+    const parsed = JSON.parse(text);
+    if (parsed.clinical && parsed.plain) {
+      console.log(`[explanationGenerator] Successfully generated clinical explanation via Gemini Flash for ${drugA} + ${drugB}`);
+      return {
+        clinical: parsed.clinical.trim(),
+        plain: parsed.plain.trim(),
+        generatedBy: 'gemini',
+      };
+    }
+  } catch (err) {
+    console.warn('[explanationGenerator] Gemini fallback failed:', err.message);
+  }
+  return null;
+}
 
 /**
  * Fallback static explanation builder when Groq is unavailable, times out, or has demo key.
@@ -79,8 +129,10 @@ async function generateExplanation({
 
   const apiKey = process.env.GROQ_API_KEY;
 
-  // If no API key or mock/demo key, return structured fallback immediately
+  // If no API key or mock/demo key, attempt Gemini Flash before static fallback
   if (!apiKey || apiKey === 'gsk_demo_key' || apiKey.startsWith('gsk_demo')) {
+    const geminiExp = await tryGeminiExplanation({ drugA, drugB, severity, burdenScore, burdenLevel, patientAge, patientConditions });
+    if (geminiExp) return geminiExp;
     return buildFallbackExplanation({ drugA, drugB, severity, burdenScore, burdenLevel });
   }
 
@@ -160,6 +212,10 @@ Respond ONLY with a valid JSON object matching this schema:
         `error ${err.response?.status ?? 'unknown'}: ${err.response?.data?.error?.message || err.message}`
       } — using structured fallback`
     );
+    // Try Gemini Flash before static fallback
+    const geminiExp = await tryGeminiExplanation({ drugA, drugB, severity, burdenScore, burdenLevel, patientAge, patientConditions });
+    if (geminiExp) return geminiExp;
+
     // Graceful fallback — returns immediately so the user is never blocked.
     // generatedBy:'timeout' lets the frontend show "Generating detailed explanation..."
     // rather than a generic loading state.
