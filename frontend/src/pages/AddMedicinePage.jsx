@@ -1692,19 +1692,37 @@ export default function AddMedicinePage() {
 
  <div className="max-w-2xl lg:max-w-3xl mx-auto px-4 sm:px-6 py-8 space-y-6">
 
- {/* Header */}
- <div className="flex items-center space-x-3">
- <button
- onClick={() => navigate('/home')}
- className="p-2.5 rounded-xl border border-[var(--chassis-dark)] bg-[var(--chassis)] shadow-[var(--shadow-card)] text-[var(--text-muted)] hover:text-[var(--accent-primary)] transition-colors"
- >
- <ArrowLeft className="w-4 h-4" />
- </button>
- <div>
- <h1 className="text-2xl font-bold text-[var(--text-primary)]">Add Medicine</h1>
- <p className="text-xs text-[var(--text-muted)]">Prescription, OTC, herbal — all tracked together</p>
- </div>
- </div>
+ {/* ── Modern Hero Header ── */}
+        <div className="ps-hero ps-fade-up">
+          <div className="relative z-10 space-y-4">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <button
+                type="button"
+                onClick={() => navigate('/home')}
+                className="btn-secondary py-2 px-3 text-xs font-mono font-bold flex items-center gap-1.5 cursor-pointer"
+              >
+                <ArrowLeft className="w-3.5 h-3.5" />
+                <span>Back to Dashboard</span>
+              </button>
+
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] border border-[var(--accent-primary)]/20">
+                <span className="w-2 h-2 rounded-full bg-[var(--accent-primary)] animate-pulse" />
+                <span>Multimodal Drug Intake</span>
+                <span className="text-[var(--accent-primary)]/60">·</span>
+                <span className="font-mono text-[11px] text-[var(--accent-primary)]">RxNorm & Indian Formulary</span>
+              </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <h1 className="text-2xl md:text-3xl font-extrabold text-[var(--text-primary)] tracking-tight font-display">
+                Add <span className="ps-glow-text">New Medicine</span>
+              </h1>
+              <p className="text-sm text-[var(--text-secondary)] max-w-xl leading-relaxed">
+                Log prescription drugs, OTC pain relievers, and herbal supplements. PolySafe standardizes all active salts and monitors cumulative risk.
+              </p>
+            </div>
+          </div>
+        </div>
 
  {/* Herbal notice */}
  <div className="flex items-start space-x-3 p-3.5 bg-[var(--accent-primary)]/8 border border-[var(--accent-primary)]/20 rounded-xl text-xs text-[var(--accent-primary)]">
@@ -3196,7 +3214,7 @@ export default function AddMedicinePage() {
  <button
  type="submit"
  disabled={addMutation.isPending || !name.trim()}
- className="btn-primary w-full py-4 text-base shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-card)]"
+ className="btn-primary ps-shine-button w-full py-4 text-base font-bold flex items-center justify-center gap-2 cursor-pointer shadow-lg"
  >
  {addMutation.isPending ? (
  <><Loader2 className="w-5 h-5 animate-spin" /><span>Checking RxNorm & saving...</span></>

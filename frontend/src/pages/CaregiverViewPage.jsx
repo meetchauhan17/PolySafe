@@ -506,10 +506,7 @@ export default function CaregiverViewPage() {
   return (
     <div className="max-w-3xl mx-auto px-4 py-8 space-y-6">
       {/* ── Modern Hero Header matching LoginPage aesthetic ── */}
-      <div className="relative overflow-hidden rounded-3xl p-6 md:p-8 bg-[var(--brand-surface)]/95 border border-[var(--brand-border)] shadow-[var(--shadow-card)] backdrop-blur-xl">
-        {/* Top luminous accent bar */}
-        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[var(--role-caregiver)] via-[var(--accent-primary)] to-[var(--accent-secondary)]" />
-
+      <div className="ps-hero ps-fade-up" style={{ '--hero-accent': 'var(--role-caregiver)', borderColor: 'rgba(234, 88, 12, 0.25)', background: 'linear-gradient(135deg, rgba(234,88,12,0.10) 0%, rgba(249,115,22,0.06) 50%, rgba(234,88,12,0.04) 100%)' }}>
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 relative z-10">
           <div className="space-y-2">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-[var(--role-caregiver)]/10 text-[var(--role-caregiver)] border border-[var(--role-caregiver)]/20">
@@ -519,7 +516,7 @@ export default function CaregiverViewPage() {
               <span className="font-mono text-[11px] text-[var(--role-caregiver)]">Caregiver Oversight</span>
             </div>
             <h1 className="text-2xl md:text-3xl font-extrabold text-[var(--text-primary)] tracking-tight font-display">
-              Caregiver <span className="bg-gradient-to-r from-[var(--role-caregiver)] via-[var(--accent-primary)] to-[var(--accent-secondary)] bg-clip-text text-transparent">Oversight Hub</span>
+              Caregiver <span className="ps-glow-text" style={{ backgroundImage: 'linear-gradient(135deg, var(--role-caregiver) 0%, #f97316 50%, var(--accent-secondary) 100%)' }}>Oversight Hub</span>
             </h1>
             <p className="text-sm text-[var(--text-secondary)] max-w-xl leading-relaxed">
               Real-time medication schedule tracking, caregiver observation logs, and high-priority clinical interaction surveillance.

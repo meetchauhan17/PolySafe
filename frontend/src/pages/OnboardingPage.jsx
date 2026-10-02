@@ -169,10 +169,7 @@ export default function OnboardingPage() {
  <div className="max-w-2xl w-full space-y-6">
 
         {/* ── Modern Hero Header matching design system tokens ── */}
-        <div className="relative overflow-hidden rounded-3xl p-6 md:p-8 bg-[var(--brand-surface)]/95 border border-[var(--brand-border)] shadow-[var(--shadow-card)] backdrop-blur-xl text-center space-y-4">
-          {/* Top luminous accent bar */}
-          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[var(--accent-primary)] via-indigo-600 to-[var(--accent-secondary)]" />
-
+        <div className="ps-hero ps-fade-up text-center space-y-4">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] border border-[var(--accent-primary)]/20 mx-auto">
             <span className="w-2 h-2 rounded-full bg-[var(--accent-primary)] animate-pulse" />
             <span>Clinical Onboarding</span>
@@ -182,7 +179,7 @@ export default function OnboardingPage() {
 
           <div className="space-y-2 max-w-xl mx-auto">
             <h1 className="text-2xl md:text-3xl font-extrabold text-[var(--text-primary)] tracking-tight font-display">
-              Set Up Your <span className="bg-gradient-to-r from-[var(--accent-primary)] via-indigo-600 to-[var(--accent-secondary)] bg-clip-text text-transparent">PolySafe Profile</span>
+              Set Up Your <span className="ps-glow-text">PolySafe Profile</span>
             </h1>
             <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
               This baseline tailors interaction checks to your physiology — kidney or hepatic factors alter how scores and dosages are monitored.
@@ -360,7 +357,7 @@ export default function OnboardingPage() {
  <button
  type="submit"
  disabled={saveProfileMutation.isPending}
- className="btn-primary flex-1 py-4 text-base"
+ className="btn-primary ps-shine-button flex-1 py-4 text-base font-bold flex items-center justify-center gap-2 cursor-pointer shadow-lg"
  >
  {saveProfileMutation.isPending ? (
  <>

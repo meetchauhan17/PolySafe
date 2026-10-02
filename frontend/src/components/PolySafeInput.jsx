@@ -77,7 +77,9 @@ const PolySafeInput = forwardRef(function PolySafeInput(
         {hasRight && (
           <span className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none z-10 text-[var(--text-muted)] flex items-center justify-center">
             {typeof rightIcon === 'function' ? (
-              <rightIcon className="w-4 h-4" />
+              React.createElement(rightIcon, { className: 'w-4 h-4' })
+            ) : React.isValidElement(rightIcon) ? (
+              rightIcon
             ) : (
               rightIcon
             )}

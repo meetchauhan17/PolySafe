@@ -906,10 +906,7 @@ export default function ConnectedPeoplePage() {
       <div className="max-w-3xl mx-auto px-4 py-8 space-y-6">
 
         {/* ── Modern Hero Header matching design system tokens ── */}
-        <div className="relative overflow-hidden rounded-3xl p-6 md:p-8 bg-[var(--brand-surface)]/95 border border-[var(--brand-border)] shadow-[var(--shadow-card)] backdrop-blur-xl">
-          {/* Top luminous accent bar */}
-          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[var(--accent-primary)] via-indigo-600 to-[var(--accent-secondary)]" />
-
+        <div className="ps-hero ps-fade-up">
           <div className="relative z-10 space-y-4">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <BackButton to="/home" label="Back to Home" />
@@ -924,7 +921,7 @@ export default function ConnectedPeoplePage() {
 
             <div className="space-y-2">
               <h1 className="text-2xl md:text-3xl font-extrabold text-[var(--text-primary)] tracking-tight font-display">
-                Connected <span className="bg-gradient-to-r from-[var(--accent-primary)] via-indigo-600 to-[var(--accent-secondary)] bg-clip-text text-transparent">Care Network</span>
+                Connected <span className="ps-glow-text">Care Network</span>
               </h1>
               <p className="text-sm text-[var(--text-secondary)] max-w-xl leading-relaxed">
                 Manage clinical physician access codes, authorized family caregivers, and verified clinical sharing permissions.

@@ -228,10 +228,7 @@ export default function SymptomResultPage() {
  <div className="max-w-2xl mx-auto px-4 py-8 space-y-5">
 
         {/* ── Modern Hero Header matching design system tokens ── */}
-        <div className="relative overflow-hidden rounded-3xl p-6 md:p-8 bg-[var(--brand-surface)]/95 border border-[var(--brand-border)] shadow-[var(--shadow-card)] backdrop-blur-xl">
-          {/* Top luminous accent bar */}
-          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500 via-[var(--accent-primary)] to-[var(--accent-secondary)]" />
-
+        <div className="ps-hero ps-fade-up" style={{ '--hero-accent': result.cascadeDetected ? 'var(--led-caution)' : '#10b981', borderColor: result.cascadeDetected ? 'rgba(245, 158, 11, 0.25)' : 'rgba(16, 185, 129, 0.25)' }}>
           <div className="relative z-10 space-y-4">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <BackButton to="/log-symptom" label="Back to Form" />
@@ -240,13 +237,13 @@ export default function SymptomResultPage() {
                 <span className="w-2 h-2 rounded-full bg-[var(--accent-primary)] animate-pulse" />
                 <span>Cascade Analysis Report</span>
                 <span className="text-[var(--accent-primary)]/60">·</span>
-                <span className="font-mono text-[11px] text-[var(--accent-primary)]">Clinical Match</span>
+                <span className="font-mono text-[11px] text-[var(--accent-primary)]">{result.cascadeDetected ? 'Cascade Warning' : 'Clear Telemetry'}</span>
               </div>
             </div>
 
             <div className="space-y-2">
               <h1 className="text-2xl md:text-3xl font-extrabold text-[var(--text-primary)] tracking-tight font-display">
-                Symptom <span className="bg-gradient-to-r from-emerald-600 via-[var(--accent-primary)] to-[var(--accent-secondary)] bg-clip-text text-transparent">Telemetry Result</span>
+                Symptom <span className="ps-glow-text">Telemetry Result</span>
               </h1>
               <p className="text-sm text-[var(--text-secondary)] max-w-xl leading-relaxed font-mono">
                 Analysis for: "{description.length > 70 ? description.slice(0, 70) + '…' : description}"

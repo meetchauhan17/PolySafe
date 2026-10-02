@@ -363,66 +363,50 @@ export default function RiskAnalysisPage() {
     <div className="min-h-[88vh] pb-24">
       <div className="max-w-2xl mx-auto px-4 py-8 space-y-6">
 
-        {/* ── Top navigation ─────────────────────────────────────────────────── */}
-        <div className="flex items-center justify-between">
-          <BackButton to="/home" label="Back to Dashboard" />
+        {/* ── Modern Hero Header ── */}
+        <div className="ps-hero ps-fade-up" style={{ '--hero-accent': cfg.headerBorder || 'var(--led-critical)', borderColor: 'rgba(239, 68, 68, 0.25)', background: 'linear-gradient(135deg, rgba(239, 68, 68, 0.08) 0%, rgba(245, 158, 11, 0.05) 50%, rgba(239, 68, 68, 0.03) 100%)' }}>
+          <div className="relative z-10 space-y-4">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <BackButton to="/home" label="Back to Dashboard" />
+              <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-rose-500/10 border border-rose-500/20 text-xs font-semibold text-rose-600">
+                <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
+                <span>Clinical Telemetry</span>
+                <span className="opacity-40">·</span>
+                <span className="font-mono text-[11px]">{formatDate(flag.dateFlagged)}</span>
+              </div>
+            </div>
 
-          <span className="text-xs text-[var(--text-muted)] font-mono font-semibold">
-            {formatDate(flag.dateFlagged)}
-          </span>
-        </div>
+            <div className="space-y-2">
+              <div className="flex items-center gap-2">
+                <span
+                  className="inline-flex items-center gap-1.5 text-[11px] font-extrabold px-3.5 py-1 rounded-full shadow-xs"
+                  style={{ backgroundColor: cfg.pillBg, color: cfg.pillText }}
+                >
+                  {cfg.icon}
+                  <span>{cfg.label} RISK</span>
+                </span>
+              </div>
 
-        {/* ── Hero Status Pill & Title ── */}
-        <div className="space-y-2">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[var(--brand-surface)] backdrop-blur-md border border-[var(--brand-border)] shadow-2xs">
-            <ShieldAlert className="w-3.5 h-3.5 text-rose-600" />
-            <span className="text-[11px] font-bold tracking-wider uppercase text-[var(--text-secondary)] font-mono">
-              Pharmacological Risk Analysis
-            </span>
-          </div>
+              <h1 className="text-2xl sm:text-3xl font-extrabold text-[var(--text-primary)] font-display tracking-tight">
+                {flag.medicineA?.name} + {flag.medicineB?.name}
+              </h1>
+              <p className="text-sm text-[var(--text-secondary)] leading-relaxed max-w-2xl">
+                {flag.plainExplanation?.split('(This is an informational')[0].trim() || 'An interaction has been detected between these two medicines.'}
+              </p>
+            </div>
 
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-[var(--text-primary)] font-display tracking-tight">
-            Drug-Drug <span className="bg-gradient-to-r from-rose-600 via-amber-600 to-orange-500 bg-clip-text text-transparent">Risk Telemetry</span>
-          </h1>
-        </div>
-
-        {/* ── Red/Amber header card (SAFETY CARVE-OUT) ───────────────────────── */}
-        <div
-          className="group relative bg-[var(--brand-surface)]/95 backdrop-blur-xl rounded-3xl p-6 sm:p-7 border border-[var(--brand-border)] shadow-[var(--shadow-card)] overflow-hidden"
-        >
-          {/* Glowing Top Accent Line */}
-          <div className="absolute top-0 left-6 right-6 h-1 bg-gradient-to-r from-rose-500 via-amber-500 to-orange-500 rounded-b-full opacity-80" />
-
-          {/* Severity pill */}
-          <div className="flex items-center gap-2 mb-4">
-            <span
-              className="inline-flex items-center gap-1.5 text-[11px] font-extrabold px-3.5 py-1 rounded-full shadow-xs"
-              style={{ backgroundColor: cfg.pillBg, color: cfg.pillText }}
-            >
-              {cfg.icon}
-              <span>{cfg.label} RISK</span>
-            </span>
-          </div>
-
-          {/* Headline */}
-          <h2 className="text-2xl sm:text-3xl font-bold leading-tight text-[var(--text-primary)] font-display">
-            {flag.medicineA?.name} + {flag.medicineB?.name}
-          </h2>
-          <p className="text-sm text-[var(--text-secondary)] mt-2 leading-relaxed">
-            {flag.plainExplanation?.split('(This is an informational')[0].trim() || 'An interaction has been detected between these two medicines.'}
-          </p>
-
-          {/* Drug chips */}
-          <div className="flex items-center gap-2.5 mt-4 flex-wrap">
-            <span className="flex items-center gap-2 bg-[var(--chassis)] border border-[var(--brand-border)] shadow-2xs px-3.5 py-1.5 rounded-2xl text-xs font-bold text-[var(--text-primary)]">
-              <Pill className="w-3.5 h-3.5 text-blue-600" />
-              {flag.medicineA?.name}
-            </span>
-            <span className="text-lg text-slate-400 font-bold">+</span>
-            <span className="flex items-center gap-2 bg-[var(--chassis)] border border-[var(--brand-border)] shadow-2xs px-3.5 py-1.5 rounded-2xl text-xs font-bold text-[var(--text-primary)]">
-              <Pill className="w-3.5 h-3.5 text-blue-600" />
-              {flag.medicineB?.name}
-            </span>
+            {/* Drug chips */}
+            <div className="flex items-center gap-2.5 pt-1 flex-wrap">
+              <span className="flex items-center gap-2 bg-[var(--chassis)] border border-[var(--brand-border)] shadow-2xs px-3.5 py-1.5 rounded-2xl text-xs font-bold text-[var(--text-primary)]">
+                <Pill className="w-3.5 h-3.5 text-blue-600" />
+                {flag.medicineA?.name}
+              </span>
+              <span className="text-lg text-slate-400 font-bold">+</span>
+              <span className="flex items-center gap-2 bg-[var(--chassis)] border border-[var(--brand-border)] shadow-2xs px-3.5 py-1.5 rounded-2xl text-xs font-bold text-[var(--text-primary)]">
+                <Pill className="w-3.5 h-3.5 text-blue-600" />
+                {flag.medicineB?.name}
+              </span>
+            </div>
           </div>
         </div>
 

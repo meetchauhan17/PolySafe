@@ -11,8 +11,6 @@ export default function GuestLockModal({ isOpen, onClose, featureName = 'this fe
   const { logout } = useAuth() || {};
   const shouldReduceMotion = useReducedMotion();
 
-  if (!isOpen) return null;
-
   const handleSignIn = () => {
     onClose?.();
     logout?.();
@@ -21,15 +19,16 @@ export default function GuestLockModal({ isOpen, onClose, featureName = 'this fe
 
   return (
     <AnimatePresence>
-      <div className="ps-modal-overlay">
-        {/* Backdrop */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          onClick={onClose}
-          className="fixed inset-0 bg-[#1a1f2e]/60"
-        />
+      {isOpen && (
+        <div className="ps-modal-overlay">
+          {/* Backdrop */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={onClose}
+            className="fixed inset-0 bg-[#1a1f2e]/60 backdrop-blur-sm"
+          />
 
         {/* Modal Panel */}
         <motion.div
@@ -99,6 +98,7 @@ export default function GuestLockModal({ isOpen, onClose, featureName = 'this fe
           </div>
         </motion.div>
       </div>
+      )}
     </AnimatePresence>
   );
 }
