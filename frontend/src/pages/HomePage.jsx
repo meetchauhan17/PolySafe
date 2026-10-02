@@ -406,55 +406,69 @@ export default function HomePage() {
           </div>
         )}
 
-        {/* ── Page Header ──────────────────────────────────────────────────── */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="space-y-2">
-            {/* Top Pill Status matching LoginPage */}
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[var(--brand-surface)]/80 backdrop-blur-md border border-[var(--brand-border)] shadow-2xs">
-              <Zap className="w-3.5 h-3.5 text-[var(--accent-primary)]" />
-              <span className="text-[11px] font-bold tracking-wider uppercase text-[var(--text-secondary)] font-mono">
-                Continuous Clinical Safety Architecture
-              </span>
+        {/* ── Page Header — Premium Hero ────────────────────────────────────── */}
+        <div className="ps-hero ps-fade-up">
+          {/* Floating ambient orbs */}
+          <div className="ps-orb ps-orb--primary" style={{ width: 180, height: 180, top: -60, right: -40, opacity: 0.18 }} />
+          <div className="ps-orb ps-orb--secondary" style={{ width: 120, height: 120, bottom: -40, left: 60, opacity: 0.14 }} />
+
+          <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-5">
+            <div className="space-y-3">
+              {/* Status eyebrow pill */}
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[var(--brand-surface)]/80 backdrop-blur-md border border-[var(--accent-primary)]/20 shadow-sm">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--accent-primary)] opacity-60"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-[var(--accent-primary)]"></span>
+                </span>
+                <Zap className="w-3 h-3 text-[var(--accent-primary)]" />
+                <span className="text-[11px] font-bold tracking-widest uppercase text-[var(--accent-primary)] font-mono">
+                  Continuous Clinical Safety
+                </span>
+              </div>
+
+              <div>
+                <h1 className="text-3xl sm:text-4xl font-extrabold font-display tracking-tight text-[var(--text-primary)]">
+                  My Safety{' '}
+                  <span className="ps-glow-text">Dashboard</span>
+                </h1>
+                <p className="text-sm text-[var(--text-muted)] font-mono mt-1">{todayLabel}</p>
+              </div>
+
+              {/* Trust Metric Chips */}
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="inline-flex items-center gap-1.5 bg-[var(--brand-surface)]/90 px-3 py-1.5 rounded-full border border-[var(--brand-border)] text-[11px] font-semibold text-[var(--text-secondary)] shadow-sm">
+                  <Shield className="w-3.5 h-3.5 text-[var(--accent-primary)]" />
+                  222K+ Interaction Rules
+                </span>
+                <span className="inline-flex items-center gap-1.5 bg-[var(--brand-surface)]/90 px-3 py-1.5 rounded-full border border-[var(--brand-border)] text-[11px] font-semibold text-[var(--text-secondary)] shadow-sm">
+                  <Activity className="w-3.5 h-3.5 text-[var(--led-safe)]" />
+                  Real-Time ACB Radar
+                </span>
+                <span className="inline-flex items-center gap-1.5 bg-[var(--brand-surface)]/90 px-3 py-1.5 rounded-full border border-[var(--brand-border)] text-[11px] font-semibold text-[var(--text-secondary)] shadow-sm">
+                  <Zap className="w-3.5 h-3.5 text-[var(--accent-secondary)]" />
+                  DDInter Verified
+                </span>
+              </div>
             </div>
 
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-[var(--text-primary)] font-display tracking-tight">
-              My Safety <span className="bg-gradient-to-r from-[var(--accent-primary)] via-indigo-600 to-[var(--accent-secondary)] bg-clip-text text-transparent">Dashboard</span>
-            </h1>
-
-            {/* Trust Metrics Chips */}
-            <div className="flex flex-wrap items-center gap-2 pt-0.5">
-              <span className="inline-flex items-center gap-1.5 bg-[var(--brand-surface)]/80 backdrop-blur-xs px-3 py-1 rounded-full border border-[var(--brand-border)] text-[11px] font-semibold text-[var(--text-secondary)] shadow-2xs">
-                <Shield className="w-3.5 h-3.5 text-[var(--accent-primary)]" />
-                222K+ Interaction Rules
-              </span>
-              <span className="inline-flex items-center gap-1.5 bg-[var(--brand-surface)]/80 backdrop-blur-xs px-3 py-1 rounded-full border border-[var(--brand-border)] text-[11px] font-semibold text-[var(--text-secondary)] shadow-2xs">
-                <Activity className="w-3.5 h-3.5 text-[var(--led-safe)]" />
-                Real-Time ACB Radar
-              </span>
-              <span className="inline-flex items-center gap-1.5 bg-[var(--brand-surface)]/80 backdrop-blur-xs px-3 py-1 rounded-full border border-[var(--brand-border)] text-[11px] font-semibold text-[var(--text-muted)] shadow-2xs font-mono">
-                <Clock className="w-3.5 h-3.5 text-[var(--text-muted)]" />
-                {todayLabel}
-              </span>
+            <div className="flex items-center gap-2.5 flex-shrink-0 self-start sm:self-center">
+              <Link
+                to="/add-medicine"
+                className="ps-btn-shine btn-primary py-2.5 px-5 text-xs font-mono font-bold uppercase tracking-wider flex items-center gap-2"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Add Medicine</span>
+              </Link>
+              <button
+                onClick={() => refetch()}
+                disabled={isLoading || !token}
+                className="btn-secondary p-2.5 rounded-2xl disabled:opacity-40"
+                title="Refresh Telemetry"
+                aria-label="Refresh Dashboard Data"
+              >
+                <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
+              </button>
             </div>
-          </div>
-
-          <div className="flex items-center gap-2.5 flex-shrink-0 self-start sm:self-center">
-            <Link
-              to="/add-medicine"
-              className="btn-primary py-2 px-4 text-xs font-mono font-bold uppercase tracking-wider flex items-center gap-2 shadow-md"
-            >
-              <Plus className="w-4 h-4" />
-              <span>Add Medicine</span>
-            </Link>
-            <button
-              onClick={() => refetch()}
-              disabled={isLoading || !token}
-              className="btn-secondary p-2.5 rounded-2xl disabled:opacity-40"
-              title="Refresh Telemetry"
-              aria-label="Refresh Dashboard Data"
-            >
-              <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
-            </button>
           </div>
         </div>
  {/* ═══════════════════════════════════════════════════════════════════
@@ -751,15 +765,15 @@ export default function HomePage() {
         >
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <AnimatePresence initial={false}>
-              {medicines.map((med) => (
+              {medicines.map((med, idx) => (
                 <motion.div
                   key={med.id}
                   layout={!shouldReduceMotion}
-                  initial={shouldReduceMotion ? false : { opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
+                  initial={shouldReduceMotion ? false : { opacity: 0, scale: 0.96, y: 8 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
                   exit={shouldReduceMotion ? undefined : { opacity: 0, scale: 0.95 }}
-                  transition={{ duration: 0.2 }}
-                  className="p-4 sm:p-5 rounded-2xl bg-[var(--chassis)] border border-[var(--brand-border)] shadow-xs hover:border-[var(--brand-border-visible)] hover:bg-[var(--brand-surface)] hover:shadow-sm space-y-3 flex flex-col justify-between transition-all"
+                  transition={{ duration: 0.22, delay: idx * 0.04 }}
+                  className="ps-med-card space-y-3 flex flex-col justify-between"
                 >
                   <div className="space-y-2">
                     <div className="flex items-start justify-between gap-1 flex-wrap">
@@ -787,12 +801,12 @@ export default function HomePage() {
                     <DrugHarmPanel medicine={med} flags={flags} className="mt-1" />
 
                     {med.safetyTip && (
-                      <p className="text-xs text-[var(--text-secondary)] bg-[var(--brand-surface)] p-2.5 rounded-xl border border-[var(--brand-border)] leading-tight">
+                      <p className="text-xs text-[var(--text-secondary)] bg-[var(--chassis)] p-2.5 rounded-xl border border-[var(--brand-border)] leading-tight">
                         {med.safetyTip}
                       </p>
                     )}
 
-                    <p className="text-[10px] text-[var(--text-muted)]">
+                    <p className="text-[10px] text-[var(--text-muted)] font-mono">
                       Added {new Date(med.dateAdded).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}
                     </p>
                   </div>
@@ -808,7 +822,7 @@ export default function HomePage() {
                         }
                         setEditingMed(med);
                       }}
-                      className="inline-flex items-center gap-1 px-3 py-1.5 text-[11px] font-bold text-[var(--accent-primary)] bg-[var(--brand-surface)] border border-[var(--brand-border)] shadow-xs hover:bg-[var(--accent-primary)]/10 rounded-xl transition-all cursor-pointer"
+                      className="inline-flex items-center gap-1 px-3 py-1.5 text-[11px] font-bold text-[var(--accent-primary)] bg-[var(--accent-primary)]/10 border border-[var(--accent-primary)]/20 hover:bg-[var(--accent-primary)]/20 rounded-xl transition-all cursor-pointer"
                       title="Edit dosage or type"
                     >
                       <Pencil className="w-3 h-3" />
@@ -932,56 +946,57 @@ export default function HomePage() {
  )}
 
  {/* Quick nav: log symptom + view timeline + insights + connected people + share with doctor */}
- <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-2">
- <Link
- to="/log-symptom"
- onClick={(e) => {
- if (isGuest) {
- e.preventDefault();
- openGuestLockModal('log symptoms');
- }
- }}
- className="btn-secondary py-3 text-xs sm:text-sm justify-center relative"
- >
- <Activity className="w-4 h-4 text-orange-500" />
- <span>Log Symptom</span>
- {isGuest && <Lock className="w-3 h-3 text-[var(--role-caregiver)] ml-1" />}
- </Link>
- <Link
- to="/timeline"
- className="btn-secondary py-3 text-xs sm:text-sm justify-center"
- >
- <Clock className="w-4 h-4 text-[var(--accent-primary)]" />
- <span>Timeline</span>
- </Link>
- <Link
- to="/insights"
- className="btn-secondary py-3 text-xs sm:text-sm justify-center bg-[var(--chassis)]/30 border-[var(--accent-primary)]/30 text-[var(--accent-primary)]"
- >
- <TrendingUp className="w-4 h-4 text-[var(--accent-primary)]" />
- <span>Insights</span>
- </Link>
- <Link
- to="/connected-people"
- className="btn-secondary py-3 text-xs sm:text-sm justify-center"
- >
- <Users className="w-4 h-4 text-[var(--role-caregiver)]" />
- <span>Connected</span>
- </Link>
- <Link
- to="/share-with-doctor"
- onClick={(e) => {
- if (isGuest) {
- e.preventDefault();
- openGuestLockModal('generate clinical share codes');
- }
- }}
- className="btn-secondary py-3 text-xs sm:text-sm justify-center sm:col-span-2 relative"
- >
- <QrCode className="w-4 h-4 text-[var(--accent-secondary)]" />
- <span>Doctor QR Share</span>
- {isGuest && <Lock className="w-3 h-3 text-[var(--role-caregiver)] ml-1" />}
- </Link>
+ <div className="space-y-2">
+   <p className="text-[11px] font-bold uppercase tracking-widest text-[var(--text-muted)] font-mono px-1">Quick Access</p>
+   <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+     <Link
+       to="/log-symptom"
+       onClick={(e) => {
+         if (isGuest) { e.preventDefault(); openGuestLockModal('log symptoms'); }
+       }}
+       className="ps-quick-card relative"
+     >
+       <div className="w-10 h-10 rounded-2xl bg-orange-100 flex items-center justify-center flex-shrink-0">
+         <Activity className="w-5 h-5 text-orange-600" />
+       </div>
+       <span className="text-xs font-bold text-[var(--text-primary)]">Log Symptom</span>
+       {isGuest && <Lock className="w-3 h-3 text-[var(--role-caregiver)] absolute top-2 right-2" />}
+     </Link>
+     <Link to="/timeline" className="ps-quick-card">
+       <div className="w-10 h-10 rounded-2xl bg-[var(--accent-primary)]/10 flex items-center justify-center flex-shrink-0">
+         <Clock className="w-5 h-5 text-[var(--accent-primary)]" />
+       </div>
+       <span className="text-xs font-bold text-[var(--text-primary)]">Timeline</span>
+     </Link>
+     <Link to="/insights" className="ps-quick-card">
+       <div className="w-10 h-10 rounded-2xl bg-violet-100 flex items-center justify-center flex-shrink-0">
+         <TrendingUp className="w-5 h-5 text-violet-600" />
+       </div>
+       <span className="text-xs font-bold text-[var(--text-primary)]">Insights</span>
+     </Link>
+     <Link to="/connected-people" className="ps-quick-card">
+       <div className="w-10 h-10 rounded-2xl bg-[var(--role-caregiver)]/10 flex items-center justify-center flex-shrink-0">
+         <Users className="w-5 h-5 text-[var(--role-caregiver)]" />
+       </div>
+       <span className="text-xs font-bold text-[var(--text-primary)]">Connected</span>
+     </Link>
+     <Link
+       to="/share-with-doctor"
+       onClick={(e) => {
+         if (isGuest) { e.preventDefault(); openGuestLockModal('generate clinical share codes'); }
+       }}
+       className="ps-quick-card sm:col-span-2 relative flex-row sm:justify-start sm:gap-3"
+     >
+       <div className="w-10 h-10 rounded-2xl bg-[var(--accent-secondary)]/10 flex items-center justify-center flex-shrink-0">
+         <QrCode className="w-5 h-5 text-[var(--accent-secondary)]" />
+       </div>
+       <div className="text-left">
+         <span className="text-xs font-bold text-[var(--text-primary)] block">Doctor QR Share</span>
+         <span className="text-[10px] text-[var(--text-muted)] font-mono">Generate clinical share code</span>
+       </div>
+       {isGuest && <Lock className="w-3 h-3 text-[var(--role-caregiver)] absolute top-2 right-2" />}
+     </Link>
+   </div>
  </div>
  </>
  )}

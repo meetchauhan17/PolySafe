@@ -185,10 +185,11 @@ export default function ProfilePage() {
     <div className="min-h-[88vh] pb-12">
       <div className="max-w-3xl mx-auto px-4 py-8 space-y-6">
 
-        {/* ── Modern Hero Header matching design system tokens ── */}
-        <div className="relative overflow-hidden rounded-3xl p-6 md:p-8 bg-[var(--brand-surface)]/95 border border-[var(--brand-border)] shadow-[var(--shadow-card)] backdrop-blur-xl">
-          {/* Top luminous accent bar */}
-          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[var(--accent-primary)] via-indigo-600 to-[var(--accent-secondary)]" />
+        {/* ── Modern Hero Header ── */}
+        <div className="ps-hero ps-fade-up">
+          {/* Ambient orbs */}
+          <div className="ps-orb ps-orb--primary" style={{ width: 160, height: 160, top: -50, right: -30, opacity: 0.16 }} />
+          <div className="ps-orb ps-orb--secondary" style={{ width: 100, height: 100, bottom: -30, left: 40, opacity: 0.12 }} />
 
           <div className="relative z-10 space-y-4">
             <div className="flex flex-wrap items-center justify-between gap-3">
@@ -196,17 +197,18 @@ export default function ProfilePage() {
 
               <div className="flex items-center gap-2">
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] border border-[var(--accent-primary)]/20">
-                  <span className="w-2 h-2 rounded-full bg-[var(--accent-primary)] animate-pulse" />
-                  <span>Account & Clinical Vault</span>
-                  <span className="text-[var(--accent-primary)]/60">·</span>
-                  <span className="font-mono text-[11px] text-[var(--accent-primary)]">{cfg.badge}</span>
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--accent-primary)] opacity-60" />
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-[var(--accent-primary)]" />
+                  </span>
+                  <span className="font-mono text-[11px]">{cfg.badge}</span>
                 </div>
                 <button
                   onClick={() => {
                     setEditing(!editing);
                     setErrorMsg(null);
                   }}
-                  className="btn-primary py-2 px-4 text-xs font-mono font-bold uppercase tracking-wider flex items-center gap-2 shadow-sm shadow-indigo-900/20 cursor-pointer"
+                  className="ps-btn-shine btn-primary py-2 px-4 text-xs font-mono font-bold uppercase tracking-wider flex items-center gap-2 cursor-pointer"
                 >
                   <Edit3 className="w-4 h-4" />
                   <span>{editing ? 'Cancel Editing' : 'Edit Profile'}</span>
@@ -216,20 +218,25 @@ export default function ProfilePage() {
 
             <div className="space-y-2">
               <h1 className="text-2xl md:text-3xl font-extrabold text-[var(--text-primary)] tracking-tight font-display">
-                {cfg.title.split(' ')[0]} <span className="bg-gradient-to-r from-[var(--accent-primary)] via-indigo-600 to-[var(--accent-secondary)] bg-clip-text text-transparent">{cfg.title.split(' ').slice(1).join(' ')}</span>
+                {cfg.title.split(' ')[0]}{' '}
+                <span className="ps-glow-text">{cfg.title.split(' ').slice(1).join(' ')}</span>
               </h1>
               <p className="text-sm text-[var(--text-secondary)] max-w-xl leading-relaxed">
                 {cfg.subtitle}
               </p>
 
               <div className="flex flex-wrap items-center gap-2 pt-1">
-                <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-[var(--chassis)] border border-[var(--brand-border)] shadow-xs text-xs font-medium text-[var(--text-secondary)]">
+                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[var(--brand-surface)]/80 border border-[var(--brand-border)] text-xs font-medium text-[var(--text-secondary)]">
                   <ShieldCheck className="w-3.5 h-3.5 text-[var(--accent-primary)]" />
                   <span>256-Bit Encrypted Vault</span>
                 </div>
-                <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-[var(--chassis)] border border-[var(--brand-border)] shadow-xs text-xs font-medium text-[var(--text-secondary)]">
+                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[var(--brand-surface)]/80 border border-[var(--brand-border)] text-xs font-medium text-[var(--text-secondary)]">
                   <Activity className="w-3.5 h-3.5 text-[var(--accent-secondary)]" />
                   <span>Real-Time Audit</span>
+                </div>
+                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[var(--brand-surface)]/80 border border-[var(--brand-border)] text-xs font-medium text-[var(--text-secondary)]">
+                  <Zap className="w-3.5 h-3.5 text-[var(--led-safe)]" />
+                  <span>HIPAA Compliant</span>
                 </div>
               </div>
             </div>

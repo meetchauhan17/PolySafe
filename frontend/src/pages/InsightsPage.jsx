@@ -171,41 +171,44 @@ export default function InsightsPage() {
   return (
     <div className="min-h-[88vh] pb-16">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 space-y-6">
-        {/* ── Modern Hero Header matching design system tokens ── */}
-        <div className="relative overflow-hidden rounded-3xl p-6 md:p-8 bg-[var(--brand-surface)]/95 border border-[var(--brand-border)] shadow-[var(--shadow-card)] backdrop-blur-xl">
-          {/* Top luminous accent bar */}
-          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[var(--accent-primary)] via-indigo-600 to-[var(--accent-secondary)]" />
+        {/* ── Modern Hero Header ── */}
+        <div className="ps-hero ps-fade-up">
+          {/* Ambient orbs */}
+          <div className="ps-orb ps-orb--primary" style={{ width: 200, height: 200, top: -70, right: -50, opacity: 0.16 }} />
+          <div className="ps-orb ps-orb--secondary" style={{ width: 130, height: 130, bottom: -50, left: 50, opacity: 0.12 }} />
 
           <div className="relative z-10 space-y-4">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <BackButton to="/home" label="Back to Home" />
 
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] border border-[var(--accent-primary)]/20">
-                <span className="w-2 h-2 rounded-full bg-[var(--accent-primary)] animate-pulse" />
-                <span>Pharmacovigilance Analytics</span>
-                <span className="text-[var(--accent-primary)]/60">·</span>
-                <span className="font-mono text-[11px] text-[var(--accent-primary)]">Longitudinal Surveillance</span>
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--accent-primary)] opacity-60" />
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-[var(--accent-primary)]" />
+                </span>
+                <span className="font-mono text-[11px]">Longitudinal Surveillance</span>
               </div>
             </div>
 
             <div className="space-y-2">
               <h1 className="text-2xl md:text-3xl font-extrabold text-[var(--text-primary)] tracking-tight font-display">
-                Safety Insights & <span className="bg-gradient-to-r from-[var(--accent-primary)] via-indigo-600 to-[var(--accent-secondary)] bg-clip-text text-transparent">Trends</span>
+                Safety Insights &{' '}
+                <span className="ps-glow-text">Trends</span>
               </h1>
               <p className="text-sm text-[var(--text-secondary)] max-w-xl leading-relaxed">
                 Longitudinal trajectory of drug-drug interactions, anticholinergic burden accumulation, and prescribing cascade detection.
               </p>
 
               <div className="flex flex-wrap items-center gap-2 pt-1">
-                <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-[var(--chassis)] border border-[var(--brand-border)] shadow-xs text-xs font-medium text-[var(--text-secondary)]">
+                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[var(--brand-surface)]/80 border border-[var(--brand-border)] text-xs font-medium text-[var(--text-secondary)]">
                   <ShieldCheck className="w-3.5 h-3.5 text-[var(--accent-primary)]" />
                   <span>WHO NCI Standard</span>
                 </div>
-                <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-[var(--chassis)] border border-[var(--brand-border)] shadow-xs text-xs font-medium text-[var(--text-secondary)]">
+                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[var(--brand-surface)]/80 border border-[var(--brand-border)] text-xs font-medium text-[var(--text-secondary)]">
                   <Zap className="w-3.5 h-3.5 text-[var(--accent-secondary)]" />
                   <span>Burden Load Curve</span>
                 </div>
-                <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-[var(--chassis)] border border-[var(--brand-border)] shadow-xs text-xs font-medium text-[var(--text-secondary)]">
+                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[var(--brand-surface)]/80 border border-[var(--brand-border)] text-xs font-medium text-[var(--text-secondary)]">
                   <Activity className="w-3.5 h-3.5 text-[var(--role-caregiver)]" />
                   <span>Cascades Flagged</span>
                 </div>
@@ -216,55 +219,61 @@ export default function InsightsPage() {
 
  {/* ─── Metric Summary Cards ─── */}
  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
- <Card className="p-4 flex flex-col justify-between space-y-2">
- <div className="flex items-center justify-between text-[var(--text-muted)]">
- <span className="text-xs font-bold uppercase tracking-wider">Active Regimen</span>
- <Pill className="w-4 h-4 text-[var(--accent-primary)]" />
- </div>
- <div className="flex items-baseline gap-2">
- <span className="text-2xl font-black text-[var(--text-primary)]" >
- {summary.totalMedicines ?? (hasBurdenData ? rawBurdenHistory.length : 4)}
- </span>
- <span className="text-xs text-[var(--text-muted)]">medicines</span>
- </div>
- </Card>
+   <div className="ps-stat-card flex flex-col justify-between space-y-2">
+     <div className="flex items-center justify-between text-[var(--text-muted)]">
+       <span className="text-xs font-bold uppercase tracking-wider">Active Regimen</span>
+       <div className="w-8 h-8 rounded-xl bg-[var(--accent-primary)]/10 flex items-center justify-center">
+         <Pill className="w-4 h-4 text-[var(--accent-primary)]" />
+       </div>
+     </div>
+     <div className="flex items-baseline gap-2">
+       <span className="text-3xl font-black text-[var(--text-primary)]">
+         {summary.totalMedicines ?? (hasBurdenData ? rawBurdenHistory.length : 4)}
+       </span>
+       <span className="text-xs text-[var(--text-muted)]">medicines</span>
+     </div>
+   </div>
 
- <Card className="p-4 flex flex-col justify-between space-y-2">
- <div className="flex items-center justify-between text-[var(--text-muted)]">
- <span className="text-xs font-bold uppercase tracking-wider">ACB Burden Load</span>
- <Activity className="w-4 h-4 text-[var(--led-caution)]" />
- </div>
- <div className="flex items-center justify-between">
- <div className="flex items-baseline gap-1.5">
- <span className="text-2xl font-black text-[var(--text-primary)]" >
- {currentScore}
- </span>
- <span className="text-xs text-[var(--text-muted)]">/ 6+</span>
- </div>
- <span
- className="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full"
- style={{
- backgroundColor: currentLevel === 'Critical' ? 'var(--chassis)' : currentLevel === 'Moderate' ? 'var(--chassis)' : 'var(--chassis)',
- color: currentLevel === 'Critical' ? 'var(--led-critical)' : currentLevel === 'Moderate' ? 'var(--led-caution)' : 'var(--accent-primary)',
- }}
- >
- {currentLevel}
- </span>
- </div>
- </Card>
+   <div className="ps-stat-card flex flex-col justify-between space-y-2">
+     <div className="flex items-center justify-between text-[var(--text-muted)]">
+       <span className="text-xs font-bold uppercase tracking-wider">ACB Burden Load</span>
+       <div className="w-8 h-8 rounded-xl bg-amber-500/10 flex items-center justify-center">
+         <Activity className="w-4 h-4 text-amber-500" />
+       </div>
+     </div>
+     <div className="flex items-center justify-between">
+       <div className="flex items-baseline gap-1.5">
+         <span className="text-3xl font-black text-[var(--text-primary)]">
+           {currentScore}
+         </span>
+         <span className="text-xs text-[var(--text-muted)]">/ 6+</span>
+       </div>
+       <span
+         className="text-[10px] font-extrabold px-2.5 py-1 rounded-full"
+         style={{
+           backgroundColor: currentLevel === 'Critical' ? 'rgba(239,68,68,0.12)' : currentLevel === 'Moderate' ? 'rgba(245,158,11,0.12)' : 'rgba(16,185,129,0.12)',
+           color: currentLevel === 'Critical' ? 'var(--led-critical)' : currentLevel === 'Moderate' ? 'var(--led-caution)' : 'var(--led-safe)',
+         }}
+       >
+         {currentLevel}
+       </span>
+     </div>
+   </div>
 
- <Card className="p-4 flex flex-col justify-between space-y-2">
- <div className="flex items-center justify-between text-[var(--text-muted)]">
- <span className="text-xs font-bold uppercase tracking-wider">Flagged Pairs</span>
- <AlertTriangle className="w-4 h-4 text-[var(--led-critical)]" />
- </div>
- <div className="flex items-baseline gap-2">
- <span className="text-2xl font-black text-[var(--led-critical)]" >
- {summary.totalFlags ?? (hasFlagData ? rawFlagHistory.reduce((acc, f) => acc + f.totalFlags, 0) : 2)}
- </span>
- <span className="text-xs text-[var(--text-muted)]">interactions</span>
- </div>
- </Card>
+   <div className="ps-stat-card flex flex-col justify-between space-y-2">
+     <div className="flex items-center justify-between text-[var(--text-muted)]">
+       <span className="text-xs font-bold uppercase tracking-wider">Flagged Pairs</span>
+       <div className="w-8 h-8 rounded-xl bg-rose-500/10 flex items-center justify-center">
+         <AlertTriangle className="w-4 h-4 text-rose-500" />
+       </div>
+     </div>
+     <div className="flex items-baseline gap-2">
+       <span className="text-3xl font-black text-[var(--led-critical)]">
+         {summary.totalFlags ?? (hasFlagData ? rawFlagHistory.reduce((acc, f) => acc + f.totalFlags, 0) : 2)}
+       </span>
+       <span className="text-xs text-[var(--text-muted)]">interactions</span>
+     </div>
+   </div>
  </div>
 
  {/* ─── Chart 1: Interaction Flags Over Time ─── */}

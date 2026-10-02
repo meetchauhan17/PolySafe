@@ -205,10 +205,11 @@ export default function TimelinePage() {
     <div className="min-h-[88vh] pb-16">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 space-y-6">
 
-        {/* ── Modern Hero Header matching design system tokens ── */}
-        <div className="relative overflow-hidden rounded-3xl p-6 md:p-8 bg-[var(--brand-surface)]/95 border border-[var(--brand-border)] shadow-[var(--shadow-card)] backdrop-blur-xl">
-          {/* Top luminous accent bar */}
-          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[var(--accent-primary)] via-indigo-600 to-[var(--accent-secondary)]" />
+        {/* ── Modern Hero Header ── */}
+        <div className="ps-hero ps-fade-up">
+          {/* Ambient orbs */}
+          <div className="ps-orb ps-orb--primary" style={{ width: 200, height: 200, top: -70, right: -50, opacity: 0.15 }} />
+          <div className="ps-orb ps-orb--secondary" style={{ width: 130, height: 130, bottom: -50, left: 50, opacity: 0.12 }} />
 
           <div className="relative z-10 space-y-4">
             <div className="flex flex-wrap items-center justify-between gap-3">
@@ -216,10 +217,11 @@ export default function TimelinePage() {
 
               <div className="flex items-center gap-2">
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] border border-[var(--accent-primary)]/20">
-                  <span className="w-2 h-2 rounded-full bg-[var(--accent-primary)] animate-pulse" />
-                  <span>Pharmacotherapy History</span>
-                  <span className="text-[var(--accent-primary)]/60">·</span>
-                  <span className="font-mono text-[11px] text-[var(--accent-primary)]">Chronological Audit</span>
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--accent-primary)] opacity-60" />
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-[var(--accent-primary)]" />
+                  </span>
+                  <span className="font-mono text-[11px]">Chronological Audit</span>
                 </div>
                 <Link
                   to="/add-medicine"
@@ -229,7 +231,7 @@ export default function TimelinePage() {
                       openGuestLockModal('add medications');
                     }
                   }}
-                  className="btn-primary py-2 px-4 text-xs font-mono font-bold uppercase tracking-wider flex items-center gap-2 shadow-md"
+                  className="ps-btn-shine btn-primary py-2 px-4 text-xs font-mono font-bold uppercase tracking-wider flex items-center gap-2"
                 >
                   <Plus className="w-4 h-4" />
                   <span>Add Medicine</span>
@@ -240,22 +242,23 @@ export default function TimelinePage() {
 
             <div className="space-y-2">
               <h1 className="text-2xl md:text-3xl font-extrabold text-[var(--text-primary)] tracking-tight font-display">
-                Medication <span className="bg-gradient-to-r from-[var(--accent-primary)] via-indigo-600 to-[var(--accent-secondary)] bg-clip-text text-transparent">Timeline</span>
+                Medication{' '}
+                <span className="ps-glow-text">Timeline</span>
               </h1>
               <p className="text-sm text-[var(--text-secondary)] max-w-xl leading-relaxed">
                 {isGuest ? 'Sample interactive prescription, OTC, and supplement sequence with cascade detection.' : 'Complete chronological prescription and supplement history with active interaction surveillance.'}
               </p>
 
               <div className="flex flex-wrap items-center gap-2 pt-1">
-                <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-[var(--chassis)] border border-[var(--brand-border)] shadow-xs text-xs font-medium text-[var(--text-secondary)]">
+                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[var(--brand-surface)]/80 border border-[var(--brand-border)] text-xs font-medium text-[var(--text-secondary)]">
                   <Shield className="w-3.5 h-3.5 text-[var(--accent-primary)]" />
                   <span>Clinical Audit Trail</span>
                 </div>
-                <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-[var(--chassis)] border border-[var(--brand-border)] shadow-xs text-xs font-medium text-[var(--text-secondary)]">
+                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[var(--brand-surface)]/80 border border-[var(--brand-border)] text-xs font-medium text-[var(--text-secondary)]">
                   <Zap className="w-3.5 h-3.5 text-[var(--accent-secondary)]" />
                   <span>Cascade Detection</span>
                 </div>
-                <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-[var(--chassis)] border border-[var(--brand-border)] shadow-xs text-xs font-medium text-[var(--text-secondary)]">
+                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[var(--brand-surface)]/80 border border-[var(--brand-border)] text-xs font-medium text-[var(--text-secondary)]">
                   <Activity className="w-3.5 h-3.5 text-[var(--role-caregiver)]" />
                   <span>Cross-Doctor Sync</span>
                 </div>
@@ -264,15 +267,15 @@ export default function TimelinePage() {
           </div>
         </div>
 
- {/* ── Stats Summary Bar ──────────────────────────────────────────────── */}
+ {/* ── Stats Summary Bar ── */}
  {!isLoading && !isError && medicines.length > 0 && (
  <div className="grid grid-cols-3 gap-3">
  {[
  { label: 'Total Tracked', value: medicines.length, color: 'var(--accent-primary)' },
- { label: 'Risk Flags', value: flaggedCount, color: flaggedCount > 0 ? 'var(--led-critical)' : 'var(--accent-primary)' },
- { label: 'Herbals & OTC', value: herbalCount, color: 'var(--accent-primary)' },
+ { label: 'Risk Flags', value: flaggedCount, color: flaggedCount > 0 ? 'var(--led-critical)' : 'var(--led-safe)' },
+ { label: 'Herbals & OTC', value: herbalCount, color: 'var(--accent-secondary)' },
  ].map((s) => (
- <Card key={s.label} className="p-3.5 text-center space-y-0.5">
+ <div key={s.label} className="ps-stat-card text-center space-y-0.5 p-3.5">
  <p
  className="text-2xl font-black"
  style={{ color: s.color }}
@@ -280,7 +283,7 @@ export default function TimelinePage() {
  {s.value}
  </p>
  <p className="text-[11px] text-[var(--text-muted)] font-semibold">{s.label}</p>
- </Card>
+ </div>
  ))}
  </div>
  )}

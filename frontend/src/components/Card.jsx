@@ -68,13 +68,20 @@ export default function Card({
       style={{
         ...style,
       }}
-      className={`group relative bg-[var(--brand-surface)]/95 backdrop-blur-xl text-[var(--text-primary)] rounded-3xl p-5 sm:p-6 transition-all duration-300 ease-out flex flex-col border border-[var(--brand-border)] shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-card-hover)] hover:-translate-y-0.5 ${
+      className={`group relative bg-[var(--brand-surface)]/95 backdrop-blur-xl text-[var(--text-primary)] rounded-3xl p-5 sm:p-6 transition-all duration-300 ease-out flex flex-col border border-[var(--brand-border)] shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-card-hover)] hover:-translate-y-1 ${
         onClick
           ? 'cursor-pointer active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]'
           : ''
       } ${variantClasses} ${className}`}
       {...props}
     >
+      {/* Inner gradient glow on hover */}
+      {!isVariant && (
+        <div className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-400 pointer-events-none"
+          style={{ background: 'linear-gradient(135deg, rgba(99,102,241,0.06) 0%, transparent 50%, rgba(124,58,237,0.04) 100%)' }}
+        />
+      )}
+
       {/* Top Accent Gradient Line for variant cards */}
       {topAccentGradient && (
         <div

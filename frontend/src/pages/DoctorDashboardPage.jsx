@@ -1927,21 +1927,25 @@ export default function DoctorDashboardPage() {
 
   return (
     <div className="py-6 px-4 md:px-6 max-w-7xl mx-auto space-y-6">
-      {/* ── Modern Hero Header matching LoginPage aesthetic ── */}
-      <div className="relative overflow-hidden rounded-3xl p-6 md:p-8 bg-gradient-to-br from-white/90 via-teal-50/40 to-emerald-50/30 border border-teal-200/60 shadow-[0_12px_40px_-8px_rgba(13,148,136,0.08)] backdrop-blur-xl">
-        {/* Top luminous accent bar */}
-        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-teal-500 via-emerald-500 to-cyan-500" />
+      {/* ── Modern Hero Header ── */}
+      <div className="ps-hero ps-fade-up" style={{ '--hero-accent': 'var(--role-doctor)', borderColor: 'rgba(13,148,136,0.25)', background: 'linear-gradient(135deg, rgba(13,148,136,0.10) 0%, rgba(5,150,105,0.07) 50%, rgba(13,148,136,0.05) 100%)' }}>
+        {/* Ambient orbs */}
+        <div className="ps-orb" style={{ background: 'var(--role-doctor)', width: 200, height: 200, top: -70, right: -50, opacity: 0.13, filter: 'blur(50px)', position: 'absolute', borderRadius: '50%' }} />
+        <div className="ps-orb" style={{ background: '#0f766e', width: 130, height: 130, bottom: -50, left: 50, opacity: 0.10, filter: 'blur(40px)', position: 'absolute', borderRadius: '50%' }} />
 
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 relative z-10">
-          <div className="space-y-2">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-teal-500/10 text-teal-800 border border-teal-500/20">
-              <span className="w-2 h-2 rounded-full bg-teal-500 animate-pulse" />
-              <span>Physician Clinical Workstation</span>
-              <span className="text-teal-400">·</span>
-              <span className="font-mono text-[11px] text-teal-600">Consent Engine Active</span>
+          <div className="space-y-3">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-teal-500/10 text-teal-800 border border-teal-500/25">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-teal-500 opacity-60" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-teal-500" />
+              </span>
+              <Stethoscope className="w-3 h-3 text-teal-600" />
+              <span className="font-mono">Physician Clinical Workstation</span>
             </div>
             <h1 className="text-2xl md:text-3xl font-extrabold text-[var(--text-primary)] tracking-tight font-display">
-              Clinical <span className="bg-gradient-to-r from-teal-600 via-emerald-600 to-cyan-600 bg-clip-text text-transparent">Prescriber Hub</span>
+              Clinical{' '}
+              <span style={{ background: 'linear-gradient(135deg, #0d9488, #059669, #06b6d4)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Prescriber Hub</span>
             </h1>
             <p className="text-sm text-[var(--text-secondary)] max-w-2xl leading-relaxed">
               Real-time cross-prescribing cascade analysis, drug-drug interaction surveillance, and instant patient directive transmission.
@@ -1949,17 +1953,18 @@ export default function DoctorDashboardPage() {
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[var(--chassis)] border border-[var(--brand-border)] shadow-xs text-xs font-medium text-[var(--text-secondary)]">
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[var(--brand-surface)]/80 border border-[var(--brand-border)] text-xs font-medium text-[var(--text-secondary)]">
               <Shield className="w-3.5 h-3.5 text-teal-600" />
               <span>End-to-End Consent</span>
             </div>
-            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[var(--chassis)] border border-[var(--brand-border)] shadow-xs text-xs font-medium text-[var(--text-secondary)]">
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[var(--brand-surface)]/80 border border-[var(--brand-border)] text-xs font-medium text-[var(--text-secondary)]">
               <Activity className="w-3.5 h-3.5 text-emerald-600" />
               <span>FHIR Audit Log</span>
             </div>
             <button
               onClick={() => setStep('claim')}
-              className="btn-primary py-2 px-4 text-xs font-mono font-bold uppercase tracking-wider flex items-center gap-2 shadow-sm shadow-teal-900/20"
+              className="ps-btn-shine btn-primary py-2 px-4 text-xs font-mono font-bold uppercase tracking-wider flex items-center gap-2"
+              style={{ background: 'linear-gradient(135deg, #0d9488, #059669)', boxShadow: '0 4px 16px -4px rgba(13,148,136,0.35)' }}
             >
               <Plus className="w-4 h-4" />
               <span>Connect Patient Code</span>
