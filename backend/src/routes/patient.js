@@ -188,12 +188,35 @@ router.get('/home-summary', auth, async (req, res) => {
               (f.medicineAId === medB.id && f.medicineBId === medA.id)
           );
           if (!alreadyFlagged) {
-            const match = await lookupInteraction(medA.name, medB.name);
-            if (match.found) {
+            let match = await lookupInteraction(medA.name, medB.name);
+            let herbRef = null;
+
+            if (!match.found && (medA.type === 'HERBAL' || medB.type === 'HERBAL')) {
+              const herbMed = medA.type === 'HERBAL' ? medA : medB;
+              const drugMed = medA.type === 'HERBAL' ? medB : medA;
+              const allHerbRefs = await prisma.herbDrugReference.findMany();
+              const herbNameLower = herbMed.name.toLowerCase().trim();
+              const drugNameLower = drugMed.name.toLowerCase().trim();
+
+              herbRef = allHerbRefs.find((ref) => {
+                const refHerb = ref.herbName.toLowerCase();
+                const refDrug = ref.drugName.toLowerCase();
+                const herbMatch = herbNameLower.includes(refHerb) || refHerb.includes(herbNameLower);
+                if (!herbMatch) return false;
+                return (
+                  drugNameLower.includes(refDrug) ||
+                  refDrug.includes(drugNameLower) ||
+                  refDrug.split(/\s+/).some((w) => w.length > 3 && drugNameLower.includes(w))
+                );
+              });
+            }
+
+            if (match.found || herbRef) {
+              const severity = match.found ? match.severity : herbRef.severity;
               const explanation = await generateExplanation({
                 drugA: medA.name,
                 drugB: medB.name,
-                severity: match.severity,
+                severity,
                 patientAge: patient.age,
                 patientConditions: patient.conditions || [],
               });
@@ -202,10 +225,10 @@ router.get('/home-summary', auth, async (req, res) => {
                   patientId: patient.id,
                   medicineAId: medA.id,
                   medicineBId: medB.id,
-                  severity: match.severity,
-                  clinicalExplanation: explanation.clinical,
-                  plainExplanation: explanation.plain,
-                  generatedBy: explanation.generatedBy ?? 'fallback',
+                  severity,
+                  clinicalExplanation: explanation.clinical || herbRef?.description,
+                  plainExplanation: explanation.plain || herbRef?.description,
+                  generatedBy: explanation.generatedBy ?? (herbRef ? 'herb-drug' : 'fallback'),
                   dateFlagged: new Date(),
                 },
                 include: {
@@ -408,6 +431,7 @@ router.get('/timeline', auth, async (req, res) => {
         name:             med.name,
         type:             med.type,
         dosage:           med.dosage,
+        harmLevel:        med.harmLevel || getDrugHarmLevel(med.name),
         standardizedCode: med.standardizedCode,
         dateAdded:        med.dateAdded,
         removedAt:        med.removedAt,

@@ -55,9 +55,9 @@ async function calculateCumulativeBurden(patientId) {
   }
 
   try {
-    // 1. Fetch all current medicines for the patient
+    // 1. Fetch all current active medicines for the patient
     const medicines = await prisma.medicine.findMany({
-      where: { patientId },
+      where: { patientId, removedAt: null },
       select: { id: true, name: true, type: true },
     });
 

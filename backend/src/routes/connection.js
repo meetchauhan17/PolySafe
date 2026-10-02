@@ -512,7 +512,36 @@ const handleDoctorSafetyCheck = async (req, res) => {
           severity: match.severity || 'Moderate',
           plainExplanation: match.note || `Potential ${match.severity || 'Moderate'} pharmacological interaction between ${resolvedName} and ${med.name}.`,
           note: match.note,
+          source: 'ddinter',
         });
+      } else if (med.type === 'HERBAL' || resolved.class?.toLowerCase().includes('herb') || rawDrug.toLowerCase().includes('herb')) {
+        const isMedHerbal = med.type === 'HERBAL';
+        const herbCandidates = isMedHerbal ? [med.name.toLowerCase().trim()] : constituents.map(c => c.toLowerCase().trim());
+        const drugCandidates = isMedHerbal ? constituents.map(c => c.toLowerCase().trim()) : [med.name.toLowerCase().trim()];
+
+        const herbRef = await prisma.herbDrugReference.findFirst({
+          where: {
+            OR: herbCandidates.map(h => ({
+              herbName: { contains: h.split(/\s+/)[0], mode: 'insensitive' },
+            })),
+            AND: {
+              OR: drugCandidates.map(d => ({
+                drugName: { contains: d.split(/\s+/)[0], mode: 'insensitive' },
+              })),
+            },
+          },
+        });
+
+        if (herbRef) {
+          detectedFlags.push({
+            counterpart: med.name,
+            interactingDrug: med.name,
+            severity: herbRef.severity || 'Moderate',
+            plainExplanation: herbRef.description,
+            note: `Documented Herb-Drug Interaction: ${herbRef.description}`,
+            source: 'herb-drug',
+          });
+        }
       }
     }
 

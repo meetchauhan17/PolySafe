@@ -277,6 +277,10 @@ router.post('/', auth, requireRole(['PATIENT', 'CAREGIVER']), async (req, res) =
       };
 
       try {
+        // Verify patient still exists (e.g. wasn't deleted while async job queued)
+        const patientRow = await prisma.patient.findUnique({ where: { id: patient.id } });
+        if (!patientRow) return;
+
         // Calculate cumulative anticholinergic/sedative burden index
         const cumulativeBurden = await calculateCumulativeBurden(patient.id);
 
@@ -329,31 +333,49 @@ router.post('/', auth, requireRole(['PATIENT', 'CAREGIVER']), async (req, res) =
               patientConditions: patient.conditions || [],
             });
 
-            // Create InteractionFlag record with clinical & plain explanation + generatedBy source
-            const flag = await prisma.interactionFlag.create({
-              data: {
-                patientId:           patient.id,
-                medicineAId:         medicine.id,
-                medicineBId:         pair.existingMedId,
-                severity:            match.severity,
-                clinicalExplanation: explanation.clinical,
-                plainExplanation:    explanation.plain,
-                generatedBy:         explanation.generatedBy ?? 'fallback', // persisted for frontend UI
-                dateFlagged:         new Date(),
+            // Check that both medicines are still active in the database
+            const activeCheck = await prisma.medicine.findMany({
+              where: {
+                id: { in: [medicine.id, pair.existingMedId] },
+                patientId: patient.id,
+                removedAt: null,
               },
             });
+            if (activeCheck.length < 2) continue;
 
-            flagsCreated.push({
-              flagId:               flag.id,
-              drugA:                pair.drugA,
-              drugB:                pair.drugB,
-              severity:             match.severity,
-              clinicalExplanation:  flag.clinicalExplanation,
-              plainExplanation:     flag.plainExplanation,
-              cumulativeBurdenLevel: cumulativeBurden.level,
-              generatedBy:          explanation.generatedBy,
-              source:               'ddinter',
-            });
+            try {
+              // Create InteractionFlag record with clinical & plain explanation + generatedBy source
+              const flag = await prisma.interactionFlag.create({
+                data: {
+                  patientId:           patient.id,
+                  medicineAId:         medicine.id,
+                  medicineBId:         pair.existingMedId,
+                  severity:            match.severity,
+                  clinicalExplanation: explanation.clinical,
+                  plainExplanation:    explanation.plain,
+                  generatedBy:         explanation.generatedBy ?? 'fallback', // persisted for frontend UI
+                  dateFlagged:         new Date(),
+                },
+              });
+
+              flagsCreated.push({
+                flagId:               flag.id,
+                drugA:                pair.drugA,
+                drugB:                pair.drugB,
+                severity:             match.severity,
+                clinicalExplanation:  flag.clinicalExplanation,
+                plainExplanation:     flag.plainExplanation,
+                cumulativeBurdenLevel: cumulativeBurden.level,
+                generatedBy:          explanation.generatedBy,
+                source:               'ddinter',
+              });
+            } catch (flagErr) {
+              if (flagErr.code === 'P2003') {
+                console.warn(`[interaction-check] Skipped flag creation for ${pair.drugA} + ${pair.drugB} because record was deleted concurrently.`);
+              } else {
+                throw flagErr;
+              }
+            }
           } else if (match.notInDataset) {
             notInDataset.push({ drugA: pair.drugA, drugB: pair.drugB });
           }
@@ -422,34 +444,52 @@ router.post('/', auth, requireRole(['PATIENT', 'CAREGIVER']), async (req, res) =
             const herbMedId   = medicine.type === 'HERBAL' ? medicine.id : pair.existingMedId;
             const drugMedId   = medicine.type === 'HERBAL' ? pair.existingMedId : medicine.id;
 
-            const flag = await prisma.interactionFlag.create({
-              data: {
-                patientId:           patient.id,
-                medicineAId:         herbMedId,
-                medicineBId:         drugMedId,
-                severity:            herbRef.severity,
-                clinicalExplanation: explanation.clinical || herbRef.description,
-                plainExplanation:    explanation.plain || herbRef.description,
-                generatedBy:         explanation.generatedBy ?? 'fallback', // persisted for frontend UI
-                dateFlagged:         new Date(),
+            // Check that both medicines are still active in the database
+            const activeCheckHerb = await prisma.medicine.findMany({
+              where: {
+                id: { in: [herbMedId, drugMedId] },
+                patientId: patient.id,
+                removedAt: null,
               },
             });
+            if (activeCheckHerb.length < 2) continue;
 
-            flagsCreated.push({
-              flagId:               flag.id,
-              drugA:                pair.drugA,
-              drugB:                pair.drugB,
-              severity:             herbRef.severity,
-              clinicalExplanation:  flag.clinicalExplanation,
-              plainExplanation:     flag.plainExplanation,
-              cumulativeBurdenLevel: cumulativeBurden.level,
-              generatedBy:          explanation.generatedBy,
-              source:               'herb-drug', // lets frontend show a herb icon
-            });
+            try {
+              const flag = await prisma.interactionFlag.create({
+                data: {
+                  patientId:           patient.id,
+                  medicineAId:         herbMedId,
+                  medicineBId:         drugMedId,
+                  severity:            herbRef.severity,
+                  clinicalExplanation: explanation.clinical || herbRef.description,
+                  plainExplanation:    explanation.plain || herbRef.description,
+                  generatedBy:         explanation.generatedBy ?? 'fallback', // persisted for frontend UI
+                  dateFlagged:         new Date(),
+                },
+              });
 
-            console.log(
-              `[herb-drug] Herb-drug flag: ${herbName} ↔ ${drugName} (${herbRef.severity}) for patient ${userId}`
-            );
+              flagsCreated.push({
+                flagId:               flag.id,
+                drugA:                pair.drugA,
+                drugB:                pair.drugB,
+                severity:             herbRef.severity,
+                clinicalExplanation:  flag.clinicalExplanation,
+                plainExplanation:     flag.plainExplanation,
+                cumulativeBurdenLevel: cumulativeBurden.level,
+                generatedBy:          explanation.generatedBy,
+                source:               'herb-drug', // lets frontend show a herb icon
+              });
+
+              console.log(
+                `[herb-drug] Herb-drug flag: ${herbName} ↔ ${drugName} (${herbRef.severity}) for patient ${userId}`
+              );
+            } catch (flagErr) {
+              if (flagErr.code === 'P2003') {
+                console.warn(`[herb-drug] Skipped flag creation for ${herbName} ↔ ${drugName} because record was deleted concurrently.`);
+              } else {
+                throw flagErr;
+              }
+            }
           }
         }
 
@@ -559,6 +599,113 @@ router.post('/batch', auth, async (req, res) => {
 
     const cumulativeBurden = await calculateCumulativeBurden(patient.id);
 
+    // ASYNC: Run pairwise interaction check for all newly added batch medicines
+    if (addedMeds.length > 0) {
+      setImmediate(async () => {
+        try {
+          const allActive = await prisma.medicine.findMany({
+            where: { patientId: patient.id, removedAt: null },
+            select: { id: true, name: true, type: true },
+          });
+
+          if (allActive.length < 2) return;
+
+          const allHerbRefs = await prisma.herbDrugReference.findMany();
+          const newlyAddedIds = new Set(addedMeds.map((m) => m.id));
+
+          for (const newMed of addedMeds) {
+            const others = allActive.filter((m) => m.id !== newMed.id);
+
+            for (const other of others) {
+              // Avoid checking pairs twice
+              if (newlyAddedIds.has(other.id) && newMed.id >= other.id) continue;
+
+              const existingFlag = await prisma.interactionFlag.findFirst({
+                where: {
+                  patientId: patient.id,
+                  OR: [
+                    { medicineAId: newMed.id, medicineBId: other.id },
+                    { medicineAId: other.id, medicineBId: newMed.id },
+                  ],
+                },
+              });
+              if (existingFlag) continue;
+
+              const matchResult = await lookupAllPairs([newMed.name, other.name]);
+              const match = matchResult[0];
+
+              if (match && match.found) {
+                const explanation = await generateExplanation({
+                  drugA: newMed.name,
+                  drugB: other.name,
+                  severity: match.severity,
+                  burdenScore: cumulativeBurden.totalScore,
+                  burdenLevel: cumulativeBurden.level,
+                  patientAge: patient.age,
+                  patientConditions: patient.conditions || [],
+                });
+
+                await prisma.interactionFlag.create({
+                  data: {
+                    patientId:           patient.id,
+                    medicineAId:         newMed.id,
+                    medicineBId:         other.id,
+                    severity:            match.severity,
+                    clinicalExplanation: explanation.clinical,
+                    plainExplanation:    explanation.plain,
+                    generatedBy:         explanation.generatedBy ?? 'fallback',
+                    dateFlagged:         new Date(),
+                  },
+                });
+              } else if (newMed.type === 'HERBAL' || other.type === 'HERBAL') {
+                const herbName = (newMed.type === 'HERBAL' ? newMed.name : other.name).toLowerCase().trim();
+                const drugName = (newMed.type === 'HERBAL' ? other.name : newMed.name).toLowerCase().trim();
+
+                const herbRef = allHerbRefs.find((ref) => {
+                  const rH = ref.herbName.toLowerCase();
+                  const rD = ref.drugName.toLowerCase();
+                  const herbMatch = herbName.includes(rH) || rH.includes(herbName);
+                  if (!herbMatch) return false;
+                  return (
+                    drugName.includes(rD) ||
+                    rD.includes(drugName) ||
+                    rD.split(/\s+/).some((w) => w.length > 3 && drugName.includes(w))
+                  );
+                });
+
+                if (herbRef) {
+                  const explanation = await generateExplanation({
+                    drugA: newMed.name,
+                    drugB: other.name,
+                    severity: herbRef.severity,
+                    burdenScore: cumulativeBurden.totalScore,
+                    burdenLevel: cumulativeBurden.level,
+                    patientAge: patient.age,
+                    patientConditions: patient.conditions || [],
+                  });
+
+                  await prisma.interactionFlag.create({
+                    data: {
+                      patientId:           patient.id,
+                      medicineAId:         newMed.type === 'HERBAL' ? newMed.id : other.id,
+                      medicineBId:         newMed.type === 'HERBAL' ? other.id : newMed.id,
+                      severity:            herbRef.severity,
+                      clinicalExplanation: explanation.clinical || herbRef.description,
+                      plainExplanation:    explanation.plain || herbRef.description,
+                      generatedBy:         explanation.generatedBy ?? 'fallback',
+                      dateFlagged:         new Date(),
+                    },
+                  });
+                }
+              }
+            }
+          }
+        } catch (bgErr) {
+          console.error('[POST /medicine/batch interaction check]', bgErr);
+        }
+      });
+    }
+
     return res.status(201).json({
       message: `Successfully added ${addedMeds.length} medicine(s) to your regimen.`,
       addedCount: addedMeds.length,
@@ -590,18 +737,26 @@ router.get('/', auth, async (req, res) => {
         const raw = (m.name || '').toLowerCase().trim();
         const cleaned = raw.replace(/\s+\d+(\.\d+)?\s*(mg|mcg|g|ml|iu)?$/i, '').trim();
         const alias = BRAND_ALIASES[raw] || BRAND_ALIASES[cleaned] || Object.entries(BRAND_ALIASES).find(([k]) => raw.includes(k) || k.includes(raw))?.[1];
+        const harmLevel = m.harmLevel || getDrugHarmLevel(m.name, alias?.category);
         return {
           id:               m.id,
           name:             m.name,
           type:             m.type,
           dosage:           m.dosage,
+          purpose:          m.purpose || null,
+          frequency:        m.frequency || null,
+          prescribedBy:     m.prescribedBy || null,
+          notes:            m.notes || null,
+          reminderEnabled:  m.reminderEnabled || false,
+          refillDate:       m.refillDate || null,
+          harmLevel,
           standardizedCode: m.standardizedCode,
           standardized:     !!m.standardizedCode,
           dateAdded:        m.dateAdded,
           category:         alias?.category || (m.type === 'HERBAL' ? 'Herbal Supplement' : m.type === 'OTC' ? 'Over-The-Counter' : 'Prescription Medicine'),
           generic:          alias?.generic || m.name,
           safetyTip:        alias?.safetyTip || null,
-          foodInstruction:  alias?.foodInstruction || (m.type === 'HERBAL' ? 'with_food' : 'after_food'),
+          foodInstruction:  m.foodInstruction || alias?.foodInstruction || (m.type === 'HERBAL' ? 'with_food' : 'after_food'),
         };
       }),
     });

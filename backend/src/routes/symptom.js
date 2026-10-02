@@ -31,6 +31,7 @@ const express = require('express');
 const { z }   = require('zod');
 const prisma  = require('../lib/prisma');
 const { auth, requireRole } = require('../middleware/auth');
+const { resolveDrugCandidates } = require('../services/drugAliases');
 
 const router = express.Router();
 
@@ -107,10 +108,14 @@ const CATEGORY_DRUG_KEYWORDS = {
  * @returns {string[]}
  */
 function getMatchingCategories(drugName) {
+  if (!drugName) return [];
   const lower = drugName.toLowerCase();
+  const candidates = resolveDrugCandidates(drugName).map((c) => c.toLowerCase());
+  const allTerms = Array.from(new Set([lower, ...candidates]));
+
   const matched = [];
   for (const [category, keywords] of Object.entries(CATEGORY_DRUG_KEYWORDS)) {
-    if (keywords.some((kw) => lower.includes(kw))) {
+    if (keywords.some((kw) => allTerms.some((term) => term.includes(kw) || kw.includes(term)))) {
       matched.push(category);
     }
   }
