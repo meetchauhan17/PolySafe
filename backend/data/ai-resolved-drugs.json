@@ -4698,5 +4698,45 @@
     "safetyTip": "May cause drowsiness or dizziness; avoid alcohol and use caution when driving or operating machinery.",
     "standardizedCode": "402349",
     "layer": "Layer 5 (gemini_gemini-3.5-flash-lite)"
+  },
+  "amlodipine": {
+    "resolvedName": "Amlodipine",
+    "genericName": "Amlodipine",
+    "genericSalts": [
+      "Amlodipine"
+    ],
+    "constituents": [
+      "Amlodipine"
+    ],
+    "harmLevel": 3,
+    "class": "RxNorm Standard Drug",
+    "foodInstruction": "after_food",
+    "dosageOptions": [
+      "Standard dose"
+    ],
+    "safetyTip": "RxNorm validated medication. Take as directed.",
+    "standardizedCode": "17767",
+    "layer": "Layer 4 (RxNorm REST API)"
+  },
+  "augmentin 625 duo": {
+    "resolvedName": "Augmentin 625 Duo",
+    "genericName": "Amoxicillin + Clavulanate Potassium",
+    "genericSalts": [
+      "Amoxicillin trihydrate",
+      "Potassium clavulanate"
+    ],
+    "constituents": [
+      "Amoxicillin trihydrate",
+      "Potassium clavulanate"
+    ],
+    "harmLevel": 3,
+    "class": "Aminopenicillin/Beta-lactamase inhibitor combination",
+    "foodInstruction": "after_food",
+    "dosageOptions": [
+      "One tablet twice daily"
+    ],
+    "safetyTip": "Complete the full course of therapy even if symptoms improve to prevent antibiotic resistance.",
+    "standardizedCode": "133008",
+    "layer": "Layer 5 (gemini_gemini-3.5-flash-lite)"
   }
 }

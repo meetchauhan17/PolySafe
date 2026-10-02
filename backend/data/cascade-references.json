@@ -1,11 +1,11 @@
 {
   "_source": "Documented prescribing cascade pairs from peer-reviewed pharmacology literature. Sources: Rochon & Gurwitz (1997, 2017), Kalisch et al. (2011), Ontario Drug Policy Research Network, Canadian Deprescribing Network.",
-  "_note": "symptomKeyword is a lowercase searchable fragment — multiple aliases per cascade pair are listed as separate entries to maximise keyword matching coverage.",
+  "_note": "symptomKeyword is a lowercase searchable fragment \u2014 multiple aliases per cascade pair are listed as separate entries to maximise keyword matching coverage.",
   "cascades": [
     {
       "symptomKeyword": "leg swelling",
       "causingDrugCategory": "calcium channel blocker",
-      "description": "Calcium channel blockers (e.g., amlodipine, nifedipine, felodipine) cause peripheral oedema / ankle/leg swelling as a direct vasodilatory side effect. This is commonly mistaken for new-onset heart failure or venous insufficiency, triggering unnecessary diuretic prescriptions — a classic prescribing cascade."
+      "description": "Calcium channel blockers (e.g., amlodipine, nifedipine, felodipine) cause peripheral oedema / ankle/leg swelling as a direct vasodilatory side effect. This is commonly mistaken for new-onset heart failure or venous insufficiency, triggering unnecessary diuretic prescriptions \u2014 a classic prescribing cascade."
     },
     {
       "symptomKeyword": "ankle swelling",
@@ -20,7 +20,7 @@
     {
       "symptomKeyword": "confusion",
       "causingDrugCategory": "sedative",
-      "description": "Benzodiazepines, Z-drugs (zolpidem), and sedating antihistamines (diphenhydramine) frequently cause acute or subacute cognitive impairment in older adults. This is often misinterpreted as new-onset dementia or delirium requiring antipsychotic treatment — a dangerous prescribing cascade."
+      "description": "Benzodiazepines, Z-drugs (zolpidem), and sedating antihistamines (diphenhydramine) frequently cause acute or subacute cognitive impairment in older adults. This is often misinterpreted as new-onset dementia or delirium requiring antipsychotic treatment \u2014 a dangerous prescribing cascade."
     },
     {
       "symptomKeyword": "confusion",
@@ -65,7 +65,7 @@
     {
       "symptomKeyword": "frequent urination",
       "causingDrugCategory": "ACE inhibitor",
-      "description": "ACE inhibitors and diuretics (thiazides, furosemide) used for hypertension or heart failure can increase urinary frequency. This symptom is often misattributed to overactive bladder, triggering anticholinergic bladder agents — a well-documented cascade with cumulative side effect burden."
+      "description": "ACE inhibitors and diuretics (thiazides, furosemide) used for hypertension or heart failure can increase urinary frequency. This symptom is often misattributed to overactive bladder, triggering anticholinergic bladder agents \u2014 a well-documented cascade with cumulative side effect burden."
     },
     {
       "symptomKeyword": "frequent urination",
@@ -75,7 +75,7 @@
     {
       "symptomKeyword": "dizziness",
       "causingDrugCategory": "antihypertensive",
-      "description": "Antihypertensive drugs (beta-blockers, ACE inhibitors, calcium channel blockers) can cause orthostatic hypotension and dizziness, particularly in older adults. This is frequently misdiagnosed as vestibular disease or labyrinthitis, triggering prescriptions for antivert medications (meclizine) — a known prescribing cascade."
+      "description": "Antihypertensive drugs (beta-blockers, ACE inhibitors, calcium channel blockers) can cause orthostatic hypotension and dizziness, particularly in older adults. This is frequently misdiagnosed as vestibular disease or labyrinthitis, triggering prescriptions for antivert medications (meclizine) \u2014 a known prescribing cascade."
     },
     {
       "symptomKeyword": "dizziness",
@@ -90,7 +90,7 @@
     {
       "symptomKeyword": "nausea",
       "causingDrugCategory": "opioid",
-      "description": "Opioid analgesics (codeine, tramadol, morphine) stimulate the chemoreceptor trigger zone, causing nausea and vomiting in 25-40% of patients. This is a direct drug side effect that is commonly treated with antiemetic prescriptions (metoclopramide, ondansetron) — a prescribing cascade."
+      "description": "Opioid analgesics (codeine, tramadol, morphine) stimulate the chemoreceptor trigger zone, causing nausea and vomiting in 25-40% of patients. This is a direct drug side effect that is commonly treated with antiemetic prescriptions (metoclopramide, ondansetron) \u2014 a prescribing cascade."
     },
     {
       "symptomKeyword": "heartburn",
@@ -101,6 +101,81 @@
       "symptomKeyword": "stomach pain",
       "causingDrugCategory": "NSAID",
       "description": "NSAID-related gastrointestinal symptoms (stomach pain, dyspepsia, reflux) are among the most common drug adverse effects. Prescribing a PPI or H2 blocker to manage NSAID-induced GI symptoms is the most frequently cited prescribing cascade pair in the literature."
+    },
+    {
+      "symptomKeyword": "muscle pain",
+      "causingDrugCategory": "statin",
+      "description": "Statins (atorvastatin, rosuvastatin, simvastatin) cause statin-associated muscle symptoms (SAMS / myalgia) in 5-10% of patients. This is frequently misdiagnosed as osteoarthritis, leading to inappropriate NSAID or analgesic prescriptions \u2014 an avoidable prescribing cascade."
+    },
+    {
+      "symptomKeyword": "muscle weakness",
+      "causingDrugCategory": "statin",
+      "description": "Statin-induced myopathy can manifest as symmetrical proximal limb weakness. Clinicians may mistakenly attribute this to ageing or musculoskeletal conditions and prescribe analgesics or physiotherapy without addressing statin toxicity."
+    },
+    {
+      "symptomKeyword": "myalgia",
+      "causingDrugCategory": "statin",
+      "description": "Unexplained generalized muscle aching from statins commonly triggers new orders for muscle relaxants or NSAIDs rather than statin dose reduction or holiday."
+    },
+    {
+      "symptomKeyword": "tremor",
+      "causingDrugCategory": "antipsychotic",
+      "description": "Dopamine D2 receptor blockade by typical and atypical antipsychotics (haloperidol, risperidone, olanzapine) induces drug-induced parkinsonism with resting tremor. Misidentifying this as idiopathic Parkinson's disease triggers inappropriate levodopa or anticholinergic (trihexyphenidyl) prescriptions."
+    },
+    {
+      "symptomKeyword": "stiffness",
+      "causingDrugCategory": "antipsychotic",
+      "description": "Cogwheel rigidity and muscle stiffness induced by antipsychotic therapy is often misinterpreted as geriatric musculoskeletal decline or Parkinson's, starting an antiparkinsonian medication cascade."
+    },
+    {
+      "symptomKeyword": "high blood sugar",
+      "causingDrugCategory": "corticosteroid",
+      "description": "Systemic corticosteroids (prednisone, prednisolone, dexamethasone) increase hepatic gluconeogenesis and induce peripheral insulin resistance. Treating steroid-induced hyperglycemia as new-onset Type 2 diabetes by initiating oral hypoglycemics or insulin is a common cascade."
+    },
+    {
+      "symptomKeyword": "hyperglycemia",
+      "causingDrugCategory": "corticosteroid",
+      "description": "Steroid-induced hyperglycemia is a transient pharmacological effect. Escalating antidiabetic regimens without tapering the steroid creates a severe hypoglycemia hazard once the steroid course concludes."
+    },
+    {
+      "symptomKeyword": "fatigue",
+      "causingDrugCategory": "beta-blocker",
+      "description": "Beta-blockers (metoprolol, atenolol, propranolol) reduce cardiac output and cross the blood-brain barrier, causing profound lethargy and fatigue. Misattributing this to depression frequently leads to unnecessary antidepressant prescriptions."
+    },
+    {
+      "symptomKeyword": "erectile dysfunction",
+      "causingDrugCategory": "beta-blocker",
+      "description": "Beta-blocker sympathetic inhibition and peripheral vasoconstriction frequently causes erectile dysfunction. Treating this with PDE5 inhibitors (sildenafil) rather than switching to an ARB risks severe hypotensive interaction."
+    },
+    {
+      "symptomKeyword": "gout",
+      "causingDrugCategory": "diuretic",
+      "description": "Loop and thiazide diuretics (furosemide, hydrochlorothiazide) compete with uric acid for renal tubular secretion, causing hyperuricemia and acute gout flares. Prescribing allopurinol or colchicine instead of adjusting diuretic therapy is a textbook prescribing cascade."
+    },
+    {
+      "symptomKeyword": "joint pain in big toe",
+      "causingDrugCategory": "diuretic",
+      "description": "Acute podagra from diuretic-induced hyperuricemia is frequently managed with anti-gout therapy without reviewing the causative diuretic dose."
+    },
+    {
+      "symptomKeyword": "yeast infection",
+      "causingDrugCategory": "sglt2 inhibitor",
+      "description": "SGLT2 inhibitors (dapagliflozin, empagliflozin) promote massive renal glucose excretion (glucosuria), creating a fertile environment for mycotic genital infections. Treating recurrent candidiasis with repetitive antifungals without patient glycemic counseling constitutes an SGLT2 cascade."
+    },
+    {
+      "symptomKeyword": "urinary tract infection",
+      "causingDrugCategory": "sglt2 inhibitor",
+      "description": "Glycosuria from SGLT2 inhibitors elevates the incidence of ascending bacterial UTIs. Repetitive antibiotic courses without reassessing diabetes therapy is an emerging cascade."
+    },
+    {
+      "symptomKeyword": "urinary incontinence",
+      "causingDrugCategory": "cholinesterase inhibitor",
+      "description": "Cholinesterase inhibitors (donepezil, rivastigmine, galantamine) for Alzheimer's dementia stimulate bladder muscarinic M3 receptors, inducing urge incontinence. Prescribing an anticholinergic bladder drug (oxybutynin) to treat the incontinence directly neutralizes the dementia benefit and accelerates cognitive decline (a famous double-cascade)."
+    },
+    {
+      "symptomKeyword": "bladder leakage",
+      "causingDrugCategory": "cholinesterase inhibitor",
+      "description": "Drug-induced urinary leakage caused by donepezil is often treated with anticholinergic bladder agents, causing delirium and worsening cognitive deficits."
     }
   ]
 }

@@ -7,7 +7,7 @@ import axios from 'axios';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import {
   ChevronDown, ChevronUp, Loader2, Info, FlaskConical,
-  Activity, AlertTriangle, Pill, Heart
+  Activity, AlertTriangle, Pill, Heart, Leaf, ShieldAlert
 } from 'lucide-react';
 import Card from './Card';
 import LedIndicator from './LedIndicator';
@@ -122,21 +122,37 @@ export function computeRiskLevel(category = '', name = '', flags = []) {
   return 3;
 }
 
-// ─── OFFSIDES Side Effects Explorer Component (Expandable) ────────────────────
+// ─── OFFSIDES Side Effects & Clinical Safety Explorer (Expandable) ───────────
 export function KnownSideEffectsPanel({ medicineId, medicineName, defaultOpen = false, className = '' }) {
   const [open, setOpen] = useState(defaultOpen);
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (open && !data && medicineId) {
+    if (open && !data) {
       setLoading(true);
-      axios.get(`/medicine/${medicineId}/sideeffects`)
+      const isDemo = !medicineId || String(medicineId).startsWith('demo-');
+      const url = isDemo
+        ? `/medicine/sideeffects/lookup?name=${encodeURIComponent(medicineName || '')}`
+        : `/medicine/${medicineId}/sideeffects`;
+
+      axios.get(url)
         .then(r => setData(r.data))
-        .catch(() => setData(null))
+        .catch(() => {
+          if (medicineName) {
+            return axios.get(`/medicine/sideeffects/lookup?name=${encodeURIComponent(medicineName)}`)
+              .then(r => setData(r.data))
+              .catch(() => setData(null));
+          }
+          setData(null);
+        })
         .finally(() => setLoading(false));
     }
-  }, [open, data, medicineId]);
+  }, [open, data, medicineId, medicineName]);
+
+  const hasBurden = data?.burden && data.burden.score > 0;
+  const hasCascades = data?.cascades && data.cascades.length > 0;
+  const hasHerbs = data?.herbInteractions && data.herbInteractions.length > 0;
 
   return (
     <div className={`rounded-xl overflow-hidden shadow-[var(--shadow-sm)] bg-[var(--chassis)] border border-[rgba(255,255,255,0.3)] ${className}`}>
@@ -146,14 +162,21 @@ export function KnownSideEffectsPanel({ medicineId, medicineName, defaultOpen = 
         onClick={() => setOpen(o => !o)}
         className="w-full flex items-center justify-between px-3.5 py-2.5 bg-[var(--chassis)] hover:bg-[var(--chassis-dark)] transition-colors cursor-pointer text-left"
       >
-        <div className="flex items-center gap-2">
-          <FlaskConical className="w-4 h-4 text-[var(--accent-primary)]" />
-          <span className="text-xs font-bold text-[var(--text-primary)] font-display">Adverse Drug Reactions</span>
+        <div className="flex items-center gap-2 flex-wrap">
+          <FlaskConical className="w-4 h-4 text-[var(--accent-primary)] flex-shrink-0" />
+          <span className="text-xs font-bold text-[var(--text-primary)] font-display">
+            Clinical Safety Signals
+          </span>
           <span className="text-[10px] font-mono font-bold text-[var(--text-muted)] bg-[var(--chassis-dark)] px-2 py-0.5 rounded-full shadow-[var(--shadow-recessed)]">
             FDA OFFSIDES
           </span>
+          {hasBurden && (
+            <span className="text-[9px] font-mono font-bold px-1.5 py-0.2 rounded bg-amber-500/15 text-amber-700 dark:text-amber-400 border border-amber-500/30">
+              ACB {data.burden.score}
+            </span>
+          )}
         </div>
-        <div className="flex items-center gap-1 text-[11px] font-mono font-bold text-[var(--accent-primary)]">
+        <div className="flex items-center gap-1 text-[11px] font-mono font-bold text-[var(--accent-primary)] flex-shrink-0">
           <span>{open ? 'COLLAPSE' : 'EXPAND'}</span>
           {open ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
         </div>
@@ -169,56 +192,122 @@ export function KnownSideEffectsPanel({ medicineId, medicineName, defaultOpen = 
             transition={{ duration: 0.2 }}
             className="overflow-hidden border-t border-[var(--chassis-dark)]"
           >
-            <div className="p-3.5 space-y-3 bg-[var(--chassis)]">
-              <div className="flex items-center justify-between text-[10px] text-[var(--text-muted)] font-mono">
-                <span className="font-bold uppercase tracking-wider">FDA FAERS Signals (PRR ≥ 2.0)</span>
-                {data?.total ? <span>{data.total} signals identified</span> : null}
-              </div>
-
+            <div className="p-3.5 space-y-3 bg-[var(--chassis)] text-xs">
               {loading ? (
                 <div className="flex items-center gap-2 py-3 text-xs text-[var(--text-muted)] font-mono">
                   <Loader2 className="w-4 h-4 animate-spin text-[var(--accent-primary)]" />
-                  <span>Mining 1.22M OFFSIDES records...</span>
+                  <span>Mining FDA adverse event signals & clinical data...</span>
                 </div>
-              ) : !data || data.sideEffects?.length === 0 ? (
-                <p className="text-xs text-[var(--text-muted)] font-mono italic py-1">
-                  No statistically elevated adverse signals (PRR ≥ 2.0) found for {medicineName || 'this medicine'}.
-                </p>
               ) : (
-                <div className="space-y-2 max-h-64 overflow-y-auto pr-1">
-                  {data.sideEffects.map((se, idx) => {
-                    const prr = parseFloat(se.prr);
-                    const isHigh = prr >= 10;
-                    const isMedium = prr >= 5;
-                    const badgeCls = isHigh
-                      ? 'text-[var(--led-critical)] border-[var(--led-critical)]'
-                      : isMedium
-                      ? 'text-orange-600 border-orange-500'
-                      : 'text-amber-600 border-amber-500';
-
-                    return (
-                      <div
-                        key={idx}
-                        className="flex items-center justify-between gap-2.5 p-2.5 rounded-lg bg-[var(--chassis)] shadow-[var(--shadow-recessed)] text-xs"
-                      >
-                        <div className="flex items-center gap-2 flex-1 min-w-0">
-                          <Activity className="w-3.5 h-3.5 text-rose-500 flex-shrink-0" />
-                          <span className="font-medium text-[var(--text-primary)] leading-snug break-words">
-                            {se.sideEffect}
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-1.5 flex-shrink-0">
-                          <span
-                            className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded border bg-[var(--chassis)] shadow-[var(--shadow-sm)] whitespace-nowrap ${badgeCls}`}
-                            title={`Proportional Reporting Ratio (PRR): ${prr.toFixed(2)}`}
-                          >
-                            PRR {prr.toFixed(1)}×
-                          </span>
-                        </div>
+                <>
+                  {/* Anticholinergic Cognitive Burden Alert */}
+                  {hasBurden && (
+                    <div className="p-2.5 rounded-lg border bg-amber-500/10 border-amber-500/25 space-y-1">
+                      <div className="flex items-center justify-between text-xs font-bold text-amber-800 dark:text-amber-300">
+                        <span className="flex items-center gap-1.5">
+                          <Activity className="w-3.5 h-3.5 text-amber-600 flex-shrink-0" />
+                          Anticholinergic Burden: ACB {data.burden.score} / 3
+                        </span>
+                        <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-800 dark:text-amber-200 border border-amber-500/30">
+                          {data.burden.category}
+                        </span>
                       </div>
-                    );
-                  })}
-                </div>
+                      <p className="text-[11px] text-[var(--text-secondary)] leading-relaxed">
+                        {data.burden.clinicalNote} — monitor for cumulative sedation, dizziness, dry mouth, or cognitive symptoms under polypharmacy.
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Known Prescribing Cascade Alert */}
+                  {hasCascades && (
+                    <div className="p-2.5 rounded-lg border bg-purple-500/10 border-purple-500/25 space-y-1.5">
+                      <div className="flex items-center gap-1.5 text-xs font-bold text-purple-900 dark:text-purple-200">
+                        <AlertTriangle className="w-3.5 h-3.5 text-purple-600 flex-shrink-0" />
+                        <span>Documented Prescribing Cascade Risk</span>
+                      </div>
+                      <div className="space-y-1">
+                        {data.cascades.map((c, ci) => (
+                          <p key={ci} className="text-[11px] text-[var(--text-secondary)] leading-snug">
+                            • <strong className="text-[var(--text-primary)]">{c.symptomKeyword}:</strong> {c.description}
+                          </p>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Herb-Drug Interaction Precautions */}
+                  {hasHerbs && (
+                    <div className="p-2.5 rounded-lg border bg-emerald-500/10 border-emerald-500/25 space-y-1.5">
+                      <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-900 dark:text-emerald-200">
+                        <Leaf className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
+                        <span>Documented Herbal Precautions</span>
+                      </div>
+                      <div className="flex flex-wrap gap-1.5 pt-0.5">
+                        {data.herbInteractions.map((h, hi) => (
+                          <span
+                            key={hi}
+                            className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-[var(--brand-surface)] text-[var(--text-primary)] border border-emerald-400/40 shadow-xs"
+                            title={h.description}
+                          >
+                            {h.herbName} ({h.severity})
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* FDA OFFSIDES Pharmacovigilance Header */}
+                  <div className="flex items-center justify-between text-[10px] text-[var(--text-muted)] font-mono pt-1">
+                    <span className="font-bold uppercase tracking-wider">FDA Pharmacovigilance Signals (PRR ≥ 1.5)</span>
+                    {data?.total ? <span>{data.total} signals identified</span> : null}
+                  </div>
+
+                  {/* Adverse Reactions List */}
+                  {!data?.sideEffects || data.sideEffects.length === 0 ? (
+                    <p className="text-xs text-[var(--text-muted)] font-mono italic py-1">
+                      No statistically elevated adverse signals (PRR ≥ 1.5) recorded for {medicineName || 'this medicine'}.
+                    </p>
+                  ) : (
+                    <div className="space-y-1.5 max-h-60 overflow-y-auto pr-1">
+                      {data.sideEffects.map((se, idx) => {
+                        const prr = parseFloat(se.prr);
+                        const isHigh = prr >= 10;
+                        const isMedium = prr >= 5;
+                        const badgeCls = isHigh
+                          ? 'text-[var(--led-critical)] border-[var(--led-critical)]/40 bg-rose-500/10'
+                          : isMedium
+                          ? 'text-orange-600 dark:text-orange-400 border-orange-500/40 bg-orange-500/10'
+                          : 'text-amber-600 dark:text-amber-400 border-amber-500/40 bg-amber-500/10';
+
+                        return (
+                          <div
+                            key={idx}
+                            className="flex items-center justify-between gap-2.5 p-2 rounded-lg bg-[var(--brand-surface)] border border-[var(--brand-border)] text-xs shadow-xs"
+                          >
+                            <div className="flex items-center gap-2 flex-1 min-w-0">
+                              <Activity className="w-3.5 h-3.5 text-rose-500 flex-shrink-0" />
+                              <span className="font-medium text-[var(--text-primary)] leading-snug break-words">
+                                {se.sideEffect}
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-1.5 flex-shrink-0">
+                              <span
+                                className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded border whitespace-nowrap shadow-xs ${badgeCls}`}
+                                title={`Proportional Reporting Ratio (PRR): ${prr.toFixed(2)}`}
+                              >
+                                PRR {prr.toFixed(1)}×
+                              </span>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+
+                  <div className="text-[10px] text-[var(--text-muted)] font-mono pt-1 text-right">
+                    Source: FDA FAERS & OFFSIDES (1.2M records)
+                  </div>
+                </>
               )}
             </div>
           </motion.div>

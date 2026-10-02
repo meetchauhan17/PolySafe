@@ -102,7 +102,7 @@
       "herbName": "valerian",
       "drugName": "sedative",
       "severity": "Moderate",
-      "description": "Valerian root (Valeriana officinalis) exerts GABAergic CNS depressant effects. Combined use with benzodiazepines, barbiturates, Z-drugs, or opioids may produce additive sedation, respiratory depression, and cognitive impairment — particularly dangerous in older adults."
+      "description": "Valeriana officinalis enhances GABAergic transmission. Combined use with benzodiazepines, barbiturates, or sedatives causes excessive daytime sedation and respiratory depression."
     },
     {
       "herbName": "valerian",
@@ -126,25 +126,139 @@
       "herbName": "ginseng",
       "drugName": "warfarin",
       "severity": "Moderate",
-      "description": "Panax ginseng has both procoagulant and antiplatelet properties depending on the preparation and dose. American ginseng has been shown in controlled studies to reduce warfarin's anticoagulant effect (lower INR), potentially leading to therapeutic failure."
+      "description": "Panax ginseng has been shown to reduce blood levels of warfarin and decrease INR response. Frequent INR surveillance recommended."
     },
     {
       "herbName": "ginseng",
       "drugName": "antidiabetic",
-      "severity": "Minor",
-      "description": "Ginseng has documented hypoglycaemic activity. Combined use with antidiabetic agents (metformin, insulin, sulfonylureas) may enhance glucose-lowering effects, increasing hypoglycaemia risk. Blood glucose monitoring is advisable."
+      "severity": "Moderate",
+      "description": "Ginseng enhances insulin sensitivity and pancreatic beta-cell function. Concomitant use with insulin or sulfonylureas increases the likelihood of hypoglycemia."
     },
     {
       "herbName": "licorice root",
       "drugName": "antihypertensive",
-      "severity": "Major",
-      "description": "Glycyrrhizic acid in licorice root inhibits 11β-hydroxysteroid dehydrogenase, causing mineralocorticoid excess (pseudohyperaldosteronism) with sodium retention, hypokalaemia, and hypertension. This directly antagonises antihypertensive drugs and may cause drug-resistant hypertension."
+      "severity": "Moderate",
+      "description": "Licorice-induced sodium and water retention elevates systemic vascular resistance, neutralizing blood pressure control from antihypertensive medications."
     },
     {
       "herbName": "licorice root",
       "drugName": "digoxin",
       "severity": "Major",
-      "description": "Licorice root-induced hypokalaemia increases myocardial sensitivity to digoxin toxicity (arrhythmias, nausea, visual disturbances). This is a clinically important pharmacodynamic interaction, particularly in patients with cardiac conditions."
+      "description": "Licorice-induced hypokalemia profoundly sensitizes cardiac myocytes to digoxin toxicity, triggering fatal arrhythmias and heart block."
+    },
+    {
+      "herbName": "st. john's wort",
+      "drugName": "antidepressant",
+      "severity": "Major",
+      "description": "Hypericum perforatum inhibits reuptake of serotonin, dopamine, and norepinephrine. Combined use with SSRIs, SNRIs, or TCAs significantly increases the risk of severe Serotonin Syndrome (hyperthermia, autonomic instability, rigidity)."
+    },
+    {
+      "herbName": "st. john's wort",
+      "drugName": "oral contraceptive",
+      "severity": "Major",
+      "description": "St. John's Wort is a potent inducer of hepatic CYP3A4 enzymes and intestinal P-glycoprotein. It accelerates estrogen and progestin clearance, resulting in breakthrough bleeding and unintended pregnancy."
+    },
+    {
+      "herbName": "st. john's wort",
+      "drugName": "warfarin",
+      "severity": "Major",
+      "description": "Induces CYP2C9 and CYP3A4, substantially reducing plasma warfarin concentrations, causing sudden drop in INR and heightened risk of thromboembolism."
+    },
+    {
+      "herbName": "st. john's wort",
+      "drugName": "digoxin",
+      "severity": "Major",
+      "description": "P-glycoprotein induction decreases digoxin bioavailability by up to 25-40%, precipitating loss of heart rate and cardiac rhythm control in heart failure/atrial fibrillation."
+    },
+    {
+      "herbName": "st. john's wort",
+      "drugName": "cyclosporine",
+      "severity": "Major",
+      "description": "Massive induction of CYP3A4 clearance reduces immunosuppressive drug levels, directly documented to cause acute organ transplant rejection."
+    },
+    {
+      "herbName": "green tea extract",
+      "drugName": "warfarin",
+      "severity": "Moderate",
+      "description": "Green tea extracts contain substantial amounts of Vitamin K, directly antagonizing the anticoagulant action of warfarin and lowering therapeutic INR."
+    },
+    {
+      "herbName": "green tea extract",
+      "drugName": "antihypertensive",
+      "severity": "Moderate",
+      "description": "Epigallocatechin gallate (EGCG) inhibits organic anion-transporting polypeptide (OATP1A2/OATP1B1), significantly decreasing the intestinal absorption and bioavailability of beta-blockers like nadolol and atenolol."
+    },
+    {
+      "herbName": "green tea extract",
+      "drugName": "statin",
+      "severity": "Moderate",
+      "description": "EGCG modulates hepatic OATP transport and CYP3A4 metabolism, altering plasma concentrations of atorvastatin and simvastatin."
+    },
+    {
+      "herbName": "coenzyme q10",
+      "drugName": "warfarin",
+      "severity": "Moderate",
+      "description": "Coenzyme Q10 shares chemical structural homology with Vitamin K (menaquinone). It can diminish warfarin's anticoagulant efficacy, causing sub-therapeutic INR and clot risk."
+    },
+    {
+      "herbName": "coenzyme q10",
+      "drugName": "antihypertensive",
+      "severity": "Minor",
+      "description": "CoQ10 has mild intrinsic vasodilatory and blood pressure-lowering properties. Concomitant use with ACE inhibitors, ARBs, or CCBs can cause additive hypotension."
+    },
+    {
+      "herbName": "melatonin",
+      "drugName": "sedative",
+      "severity": "Moderate",
+      "description": "Melatonin combined with benzodiazepines (diazepam, lorazepam) or Z-drugs (zolpidem) results in profound central nervous system depression, impaired psychomotor performance, and increased risk of nocturnal falls."
+    },
+    {
+      "herbName": "melatonin",
+      "drugName": "antihypertensive",
+      "severity": "Moderate",
+      "description": "Exogenous melatonin may impair nocturnal blood pressure dip and has been reported to interfere with the efficacy of calcium channel blockers (nifedipine)."
+    },
+    {
+      "herbName": "fenugreek",
+      "drugName": "antidiabetic",
+      "severity": "Moderate",
+      "description": "Fenugreek (Trigonella foenum-graecum / Methi) seeds contain 4-hydroxyisoleucine and galactomannan which stimulate insulin release and delay glucose absorption, causing additive hypoglycemia with metformin and sulfonylureas."
+    },
+    {
+      "herbName": "fenugreek",
+      "drugName": "warfarin",
+      "severity": "Moderate",
+      "description": "Fenugreek contains natural coumarin derivatives. Co-administration with warfarin or antiplatelet agents increases the risk of bleeding."
+    },
+    {
+      "herbName": "tulsi",
+      "drugName": "warfarin",
+      "severity": "Moderate",
+      "description": "Holy Basil (Ocimum sanctum / Tulsi) exhibits antiplatelet and anticoagulant properties via cyclooxygenase inhibition, synergistically increasing bleeding risks with warfarin, aspirin, or clopidogrel."
+    },
+    {
+      "herbName": "tulsi",
+      "drugName": "antidiabetic",
+      "severity": "Minor",
+      "description": "Tulsi has documented hypoglycemic action. When combined with oral antidiabetics (metformin, glimepiride), monitor for sudden blood glucose drops."
+    },
+    {
+      "herbName": "licorice root",
+      "drugName": "diuretic",
+      "severity": "Major",
+      "description": "Glycyrrhizin in licorice inhibits 11-beta-hydroxysteroid dehydrogenase, inducing apparent mineralocorticoid excess (pseudoaldosteronism) causing severe hypokalemia, sodium retention, and ventricular arrhythmia with loop diuretics (furosemide)."
+    },
+    {
+      "herbName": "kava kava",
+      "drugName": "paracetamol",
+      "severity": "Major",
+      "description": "Piper methysticum (Kava) is strongly hepatotoxic and depletes hepatic glutathione reserves. Concurrent use with paracetamol (acetaminophen) significantly accelerates hepatic injury and acute liver failure risk."
+    },
+    {
+      "herbName": "ginkgo biloba",
+      "drugName": "ibuprofen",
+      "severity": "Moderate",
+      "description": "Ginkgolide B is a potent platelet-activating factor (PAF) antagonist. When co-administered with NSAIDs like ibuprofen, multiple clinical reports document spontaneous hyphema and subdural hematomas."
     }
   ]
 }

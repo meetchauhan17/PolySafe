@@ -746,8 +746,162 @@ router.delete('/:id', auth, requireRole(['PATIENT']), async (req, res) => {
 });
 
 // ═════════════════════════════════════════════════════════════════════════════
-// GET /medicine/:id/sideeffects — Fetch known side effects from OFFSIDES
-// Returns top side effects for this drug from the 1.2M OFFSIDES dataset.
+// Helper: Fetch Full Clinical Safety & Pharmacovigilance Profile for any drug
+// ═════════════════════════════════════════════════════════════════════════════
+async function fetchDrugClinicalSafetyProfile(drugName) {
+  const { getConstituentGenerics } = require('../services/aiDrugResolver');
+  const rawCandidates = await getConstituentGenerics(drugName);
+
+  // Normalize candidate terms: strip dosage strengths, formulations, and salt suffixes
+  const cleanCandidate = (s) => (s || '')
+    .replace(/\s+\d+(\.\d+)?\s*(mg|mcg|g|ml|iu|%)(\s*(tablet|capsule|oral|syrup|injection|drops|gel|cream))?/ig, '')
+    .replace(/\s+(hydrochloride|hcl|trihydrate|maleate|succinate|tartrate|mesylate|besylate|fumarate|potassium|sodium|calcium|phosphate|sulfate|sulphate)$/i, '')
+    .replace(/^(tab|cap|inj|syp)\.?\s+/i, '')
+    .trim();
+
+  const candidatesSet = new Set();
+  if (drugName) {
+    candidatesSet.add(drugName.trim());
+    const cl = cleanCandidate(drugName);
+    if (cl) candidatesSet.add(cl);
+  }
+  for (const c of rawCandidates) {
+    if (c) {
+      candidatesSet.add(c.trim());
+      const cl = cleanCandidate(c);
+      if (cl) candidatesSet.add(cl);
+    }
+  }
+  const candidates = Array.from(candidatesSet).filter(c => c && c.length >= 2);
+
+  // 1. Search OFFSIDES for side effects of any constituent
+  const sideEffects = await prisma.drugSideEffect.findMany({
+    where: {
+      OR: candidates.map(c => ({
+        drugName: { contains: c, mode: 'insensitive' },
+      })),
+      prr: { gte: 1.5 },
+    },
+    orderBy: { prr: 'desc' },
+    take: 30,
+    select: {
+      sideEffect:    true,
+      severity:      true,
+      prr:           true,
+      reportingFreq: true,
+      drugName:      true,
+      source:        true,
+    },
+  });
+
+  // Deduplicate side effects across constituents
+  const seen = new Set();
+  const unique = sideEffects.filter(se => {
+    const key = se.sideEffect.toLowerCase();
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+
+  // 2. Query Anticholinergic Cognitive Burden score (ACB / AGS Beers Criteria)
+  let burden = null;
+  for (const c of candidates) {
+    const b = await prisma.burdenScore.findFirst({
+      where: {
+        OR: [
+          { drugName: { equals: c.toLowerCase().trim() } },
+          { drugName: { contains: c.toLowerCase().trim() } },
+        ],
+      },
+      orderBy: { score: 'desc' },
+    });
+    if (b) {
+      burden = {
+        score: b.score,
+        category: b.score === 3 ? 'High Burden' : b.score === 2 ? 'Moderate Burden' : b.score === 1 ? 'Mild Burden' : 'Minimal / No Burden',
+        clinicalNote: b.score >= 2 ? 'AGS Beers Criteria high-alert anticholinergic agent' : 'Low anticholinergic risk profile',
+      };
+      break;
+    }
+  }
+
+  // 3. Query Prescribing Cascades involving this drug or class
+  const cascades = await prisma.cascadeReference.findMany({
+    where: {
+      OR: candidates.map(c => ({
+        OR: [
+          { causingDrugCategory: { contains: c, mode: 'insensitive' } },
+          { description: { contains: c, mode: 'insensitive' } },
+        ],
+      })),
+    },
+    take: 5,
+    select: {
+      symptomKeyword:      true,
+      causingDrugCategory: true,
+      description:         true,
+    },
+  });
+
+  // 4. Query Herb-Drug interactions for this drug
+  const herbInteractions = await prisma.herbDrugReference.findMany({
+    where: {
+      OR: candidates.map(c => ({
+        drugName: { contains: c, mode: 'insensitive' },
+      })),
+    },
+    take: 8,
+    select: {
+      herbName:    true,
+      severity:    true,
+      description: true,
+    },
+  });
+
+  return {
+    drugName,
+    constituents: candidates,
+    burden: burden || {
+      score: 0,
+      category: 'Minimal / No Burden',
+      clinicalNote: 'No significant anticholinergic burden documented',
+    },
+    sideEffects: unique.map(se => ({
+      sideEffect:    se.sideEffect,
+      prr:           parseFloat(se.prr.toFixed(2)),
+      severity:      se.severity || 'Moderate',
+      reportingFreq: se.reportingFreq,
+      source:        se.source || 'OFFSIDES',
+    })),
+    cascades,
+    herbInteractions,
+    total: unique.length,
+    source: 'OFFSIDES (FDA pharmacovigilance — 1.2M records) + AGS Beers + Clinical Monographs',
+    note: 'From FDA pharmacovigilance records (PRR >= 1.5)',
+  };
+}
+
+// ═════════════════════════════════════════════════════════════════════════════
+// GET /medicine/sideeffects/lookup?name=<drugName>
+// Public/Universal safety profile query by drug name
+// ═════════════════════════════════════════════════════════════════════════════
+router.get('/sideeffects/lookup', async (req, res) => {
+  const query = (req.query.name || req.query.q || '').trim();
+  if (!query) {
+    return res.status(400).json({ error: 'Drug name is required as ?name=...' });
+  }
+
+  try {
+    const profile = await fetchDrugClinicalSafetyProfile(query);
+    res.json(profile);
+  } catch (err) {
+    console.error('[GET /medicine/sideeffects/lookup]', err);
+    res.status(500).json({ error: 'Failed to fetch drug clinical safety profile.' });
+  }
+});
+
+// ═════════════════════════════════════════════════════════════════════════════
+// GET /medicine/:id/sideeffects — Fetch known side effects for a saved medicine
 // ═════════════════════════════════════════════════════════════════════════════
 router.get('/:id/sideeffects', auth, async (req, res) => {
   const { userId, role } = req.user;
@@ -768,52 +922,10 @@ router.get('/:id/sideeffects', auth, async (req, res) => {
     }
     if (!medicine) return res.status(404).json({ error: 'Medicine not found.' });
 
-    // Resolve all generic/constituent names for this medicine
-    const { getConstituentGenerics } = require('../services/aiDrugResolver');
-    const candidates = await getConstituentGenerics(medicine.name);
-
-    // Search OFFSIDES for side effects of any constituent
-    const sideEffects = await prisma.drugSideEffect.findMany({
-      where: {
-        OR: candidates.map(c => ({
-          drugName: { contains: c, mode: 'insensitive' },
-        })),
-        prr: { gte: 2.0 }, // Only statistically significant signals (PRR >= 2.0)
-      },
-      orderBy: { prr: 'desc' },
-      take: 30,
-      select: {
-        sideEffect:    true,
-        severity:      true,
-        prr:           true,
-        reportingFreq: true,
-        drugName:      true,
-        source:        true,
-      },
-    });
-
-    // Deduplicate side effects across constituents
-    const seen = new Set();
-    const unique = sideEffects.filter(se => {
-      const key = se.sideEffect.toLowerCase();
-      if (seen.has(key)) return false;
-      seen.add(key);
-      return true;
-    });
-
+    const profile = await fetchDrugClinicalSafetyProfile(medicine.name);
     res.json({
-      drugName:     medicine.name,
-      medicineId:   id,
-      constituents: candidates,
-      sideEffects:  unique.map(se => ({
-        sideEffect: se.sideEffect,
-        prr:        parseFloat(se.prr.toFixed(2)),
-        severity:   se.severity || 'Moderate',
-        source:     se.source || 'OFFSIDES',
-      })),
-      total:        unique.length,
-      source:       'OFFSIDES (FDA pharmacovigilance — 1.2M records)',
-      note:         'From FDA pharmacovigilance records (PRR >= 2.0)',
+      ...profile,
+      medicineId: id,
     });
   } catch (err) {
     console.error('[GET /medicine/:id/sideeffects]', err);

@@ -25,7 +25,7 @@ import {
 import Card from '../components/Card';
 import BackButton from '../components/BackButton';
 import LedIndicator from '../components/LedIndicator';
-import { DrugHarmBadge } from '../components/DrugHarmLevel';
+import { DrugHarmBadge, KnownSideEffectsPanel } from '../components/DrugHarmLevel';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { EmptyTimelineIllustration } from '../components/EmptyIllustrations';
 import { TimelineSkeleton } from '../components/Skeletons';
@@ -487,6 +487,16 @@ export default function TimelinePage() {
                               <span>RxNorm CUI:</span>
                               <span className="font-mono font-bold text-[var(--text-primary)] tracking-wide">{med.standardizedCode}</span>
                             </span>
+                          </div>
+                        )}
+
+                        {/* Interactive Clinical Safety & Pharmacovigilance Panel */}
+                        {!isDiscontinued && (
+                          <div className="pt-1.5">
+                            <KnownSideEffectsPanel
+                              medicineId={med.id}
+                              medicineName={med.name}
+                            />
                           </div>
                         )}
                       </Card>

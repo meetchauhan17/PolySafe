@@ -81,6 +81,24 @@ const CATEGORY_DRUG_KEYWORDS = {
     'eplerenone', 'amiloride', 'triamterene', 'bumetanide', 'torsemide',
     'indapamide', 'metolazone',
   ],
+  'statin': [
+    'atorvastatin', 'rosuvastatin', 'simvastatin', 'pravastatin', 'lovastatin', 'pitavastatin',
+  ],
+  'antipsychotic': [
+    'haloperidol', 'risperidone', 'olanzapine', 'quetiapine', 'clozapine', 'aripiprazole', 'chlorpromazine',
+  ],
+  'corticosteroid': [
+    'prednisone', 'prednisolone', 'dexamethasone', 'methylprednisolone', 'hydrocortisone', 'budesonide',
+  ],
+  'beta-blocker': [
+    'metoprolol', 'atenolol', 'bisoprolol', 'carvedilol', 'propranolol', 'nebivolol', 'labetalol',
+  ],
+  'sglt2 inhibitor': [
+    'dapagliflozin', 'empagliflozin', 'canagliflozin', 'forxiga', 'jardiance',
+  ],
+  'cholinesterase inhibitor': [
+    'donepezil', 'rivastigmine', 'galantamine',
+  ],
 };
 
 /**
