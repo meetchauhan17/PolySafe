@@ -108,6 +108,372 @@ const CLASS_RISK_MAP = {
   'garlic': 1, 'ginseng': 1, 'ginger': 1, 'omega-3': 1,
 };
 
+// ─── Mathematical Average Regimen Burden Scale ───────────────────────────────
+export function getAverageBurdenTier(avgScore) {
+  const score = parseFloat(avgScore) || 1.0;
+  if (score >= 4.5) {
+    return {
+      tier: 'L5',
+      label: 'Critical Load',
+      color: 'var(--critical-fg)',
+      ledStatus: 'critical',
+      desc: 'Critical aggregate pharmacological burden across regimen.',
+    };
+  }
+  if (score >= 3.5) {
+    return {
+      tier: 'L4',
+      label: 'High Load (Tier 4)',
+      color: '#d97706',
+      ledStatus: 'caution',
+      desc: 'Elevated pharmacological burden across multiple active systemic medications.',
+    };
+  }
+  if (score >= 2.5) {
+    return {
+      tier: 'L3',
+      label: 'Moderate Load (Tier 3)',
+      color: 'var(--caution-fg)',
+      ledStatus: 'caution',
+      desc: 'Standard therapeutic polypharmacy burden requiring routine clinical monitoring.',
+    };
+  }
+  if (score >= 1.5) {
+    return {
+      tier: 'L2',
+      label: 'Mild Load (Tier 2)',
+      color: 'var(--doctor-600)',
+      ledStatus: 'online',
+      desc: 'Low-to-moderate pharmacological complexity with mild cumulative burden.',
+    };
+  }
+  return {
+    tier: 'L1',
+    label: 'Low Load (Tier 1)',
+    color: 'var(--safe-fg)',
+    ledStatus: 'safe',
+    desc: 'Minimal pharmacological burden; low intrinsic toxicity potential.',
+  };
+}
+
+// ─── Clinical Pharmacology & Risk Rationale Engine ───────────────────────────
+export function getDrugHarmReason(drugOrName, category = '', composition = '') {
+  let name = '';
+  let cat = category || '';
+  let salts = composition || '';
+  let dosage = '';
+  let generic = '';
+
+  if (typeof drugOrName === 'object' && drugOrName !== null) {
+    name = drugOrName.name || '';
+    cat = drugOrName.category || cat;
+    salts = drugOrName.composition || drugOrName.salts || salts;
+    dosage = drugOrName.dosage || '';
+    generic = drugOrName.generic || '';
+  } else if (typeof drugOrName === 'string') {
+    name = drugOrName;
+  }
+
+  const combined = `${name} ${cat} ${salts} ${dosage} ${generic}`.toLowerCase();
+
+  // 1. Tofacitinib / TFCT-NIB / JAK Inhibitors / Targeted DMARDs (Level 5)
+  if (/tofacitinib|tfct|jak inhibitor|baricitinib|upadacitinib|targeted dmard/i.test(combined)) {
+    return {
+      level: 5,
+      tier: 'L5',
+      className: 'Oral Janus Kinase (JAK1/JAK3) Inhibitor · Targeted Synthetic DMARD',
+      summary: 'Targeted synthetic DMARD with systemic immunosuppression & FDA boxed warnings for infection and thrombosis.',
+      reason: 'Inhibits intracellular JAK-STAT cytokine signaling. Classified as Level 5 Critical Risk due to potent systemic immunosuppression and official FDA Boxed Warnings for severe opportunistic infections (bacterial, viral, fungal, mycobacterial), deep vein thrombosis and pulmonary embolism (DVT/PE), major adverse cardiovascular events (MACE), and malignancies.',
+      monitoring: 'Complete blood count with differential (ANC/hemoglobin), liver enzymes (ALT/AST), fasting lipid panel, latent TB screening, and infection surveillance.',
+      sentinel: true,
+    };
+  }
+
+  // 2. Warfarin / Oral Vitamin K Antagonists (Level 5)
+  if (/warfarin|coumadin|vitamin k antagonist/i.test(combined)) {
+    return {
+      level: 5,
+      tier: 'L5',
+      className: 'Vitamin K Antagonist (Oral Anticoagulant)',
+      summary: 'Narrow therapeutic index anticoagulant with severe major hemorrhage and INR instability risks.',
+      reason: 'Competitively blocks vitamin K epoxide reductase (VKORC1), depleting clotting factors II, VII, IX, and X. Classified as Level 5 Critical Risk due to an extremely narrow therapeutic index and high risk of life-threatening internal or intracranial hemorrhage, exacerbated by dietary vitamin K changes and CYP2C9 metabolic interactions.',
+      monitoring: 'Routine Prothrombin Time (PT) and International Normalized Ratio (INR) calibration, bleeding symptom surveillance (bruising, melena, hematuria), and interaction checks.',
+      sentinel: true,
+    };
+  }
+
+  // 3. Direct Oral Anticoagulants (DOACs) & Heparins (Level 5)
+  if (/apixaban|rivaroxaban|dabigatran|edoxaban|eliquis|xarelto|pradaxa|heparin|enoxaparin|clexane/i.test(combined)) {
+    return {
+      level: 5,
+      tier: 'L5',
+      className: 'Direct Oral Anticoagulant (DOAC / Factor Xa / Thrombin Inhibitor)',
+      summary: 'Direct antithrombotic agent requiring strict renal dose calibration and major bleeding surveillance.',
+      reason: 'Directly neutralizes Factor Xa or thrombin. Classified as Level 5 Critical Risk due to major bleeding liabilities, lack of rapid oral reversal in community settings, and strong dependence on renal elimination.',
+      monitoring: 'Renal function (eGFR / serum creatinine), baseline CBC, and observation for occult gastrointestinal or systemic bleeding.',
+      sentinel: true,
+    };
+  }
+
+  // 4. Insulins & Analogues (Level 5)
+  if (/insulin|glargine|lantus|novorapid|humalog|actrapid|mixtard|toujeo|degludec|lispro|aspart/i.test(combined)) {
+    return {
+      level: 5,
+      tier: 'L5',
+      className: 'Exogenous Pancreatic Hormone (ISMP High-Alert)',
+      summary: 'High-alert injectable hormone requiring precise blood glucose tracking and meal coordination.',
+      reason: 'Stimulates cellular glucose uptake. Classified as Level 5 Critical Risk (ISMP High-Alert) due to sudden, life-threatening neuroglycopenic hypoglycemia risks (confusion, seizures, coma) and acute intracellular potassium shifts triggering dangerous hypokalemia.',
+      monitoring: 'Self-monitoring of blood glucose (SMBG), HbA1c every 3 months, continuous glucose telemetry, and hypoglycemia rescue readiness.',
+      sentinel: true,
+    };
+  }
+
+  // 5. Lithium (Level 5)
+  if (/lithium/i.test(combined)) {
+    return {
+      level: 5,
+      tier: 'L5',
+      className: 'Monovalent Cation Mood Stabilizer',
+      summary: 'Narrow therapeutic index psychotropic with severe neurotoxicity and nephrotoxicity risks.',
+      reason: 'Therapeutic window (0.6–1.2 mEq/L) is dangerously close to neurotoxic and nephrotoxic thresholds (>1.5 mEq/L). Toxicity is readily precipitated by dehydration, sodium depletion, thiazide diuretics, ACE inhibitors, or NSAIDs.',
+      monitoring: 'Trough serum lithium concentration, serum creatinine, electrolytes (sodium/potassium), and thyroid profile (TSH).',
+      sentinel: true,
+    };
+  }
+
+  // 6. Narrow Therapeutic Index Anticonvulsants (Level 5)
+  if (/phenytoin|carbamazepine|valproate|divalproex|lamotrigine|levetiracetam|tegretol|eptoin|keppra/i.test(combined)) {
+    return {
+      level: 5,
+      tier: 'L5',
+      className: 'Narrow Therapeutic Index Antiepileptic / Mood Stabilizer',
+      summary: 'Narrow therapeutic range antiepileptic with saturable kinetics, organ toxicity, and CYP enzyme modulation.',
+      reason: 'Suppresses neuronal excitability via sodium/calcium channel modulation. Classified as Level 5 Critical Risk due to saturable zero-order pharmacokinetics (phenytoin), hepatic auto-induction (carbamazepine), and severe toxicities (cerebellar ataxia, bone marrow suppression, hepatotoxicity, and DRESS/SJS syndrome).',
+      monitoring: 'Therapeutic drug serum levels, liver function tests, complete blood counts, and dermatological vigilance.',
+      sentinel: true,
+    };
+  }
+
+  // 7. Amlodipine & Calcium Channel Blockers (Level 3)
+  if (/amlodipine|nifedipine|felodipine|diltiazem|verapamil|calcium channel blocker|ccb|stamlo/i.test(combined)) {
+    return {
+      level: 3,
+      tier: 'L3',
+      className: 'Dihydropyridine Calcium Channel Blocker (CCB)',
+      summary: 'Peripheral arterial vasodilator requiring routine clinical monitoring for dependent ankle edema and hypotension.',
+      reason: 'Inhibits transmembrane calcium influx in vascular smooth muscle, causing selective arterial vasodilation. Classified as Level 3 Moderate Risk: requires routine clinical monitoring for dose-dependent dependent peripheral ankle edema (precapillary arteriolar dilation), orthostatic hypotension, reflex tachycardia, and CYP3A4 substrate drug interactions.',
+      monitoring: 'Resting seated blood pressure, heart rate, daily inspection for lower-limb/ankle edema, and avoidance of strong CYP3A4 inhibitors.',
+      sentinel: false,
+    };
+  }
+
+  // 8. Naxdom / Naproxen + Domperidone (Level 3)
+  if (/naxdom|naproxen|domperidone/i.test(combined)) {
+    return {
+      level: 3,
+      tier: 'L3',
+      className: 'Dual NSAID + Dopamine D2 Prokinetic',
+      summary: 'Naproxen (gastric mucosal erosion & renal perfusion risk) combined with Domperidone (arrhythmia/QT risk).',
+      reason: 'Naproxen non-selectively inhibits COX-1/COX-2, depleting gastric protective prostaglandins (high risk of dyspepsia, peptic ulceration, and GI bleeding) and blunting renal blood flow. Domperidone is a peripheral dopamine antagonist that carries potential cardiac QTc prolongation and ventricular arrhythmia risks if combined with other QT-prolonging drugs or CYP3A4 inhibitors.',
+      monitoring: 'Gastrointestinal tolerance (dyspepsia, dark/tarry stools), resting blood pressure, renal function, and strict avoidance of additional NSAIDs (aspirin/ibuprofen).',
+      sentinel: false,
+    };
+  }
+
+  // 9. Xyzal M / Levocetirizine + Montelukast (Level 3)
+  if (/xyzal|levocetirizine|montelukast/i.test(combined)) {
+    return {
+      level: 3,
+      tier: 'L3',
+      className: 'Dual 2nd-Gen H1-Antihistamine + Leukotriene Receptor Antagonist (LTRA)',
+      summary: 'Levocetirizine (sedation under polypharmacy) combined with Montelukast (neuropsychiatric safety advisory).',
+      reason: 'Levocetirizine provides selective peripheral H1 histamine blockade with low sedation, but can compound central nervous system depression when combined with sedatives, analgesics, or alcohol. Montelukast selectively antagonizes the cysteinyl leukotriene CysLT1 receptor and carries an official FDA boxed safety alert for neuropsychiatric events (including dream abnormalities, insomnia, depression, and agitation).',
+      monitoring: 'Daytime alertness/sedation, behavioral and sleep symptoms, and caution with concurrent CNS depressants.',
+      sentinel: false,
+    };
+  }
+
+  // 10. Paracetamol / Acetaminophen (Level 3)
+  if (/paracetamol|acetaminophen|dolo|crocin|calpol/i.test(combined)) {
+    return {
+      level: 3,
+      tier: 'L3',
+      className: 'Central Analgesic & Antipyretic',
+      summary: 'Centrally-acting analgesic; strict 24-hr cumulative dose ceiling to prevent hepatotoxicity.',
+      reason: 'Inhibits central prostaglandin synthesis. Classified as Level 3 Moderate Risk because hepatic metabolism via CYP2E1 generates the reactive metabolite NAPQI, which depletes hepatic glutathione. Cumulative daily dose must not exceed 4000 mg (or 2000 mg in hepatic compromise/chronic alcohol intake) to prevent acute hepatocellular necrosis.',
+      monitoring: '24-hour cumulative paracetamol dose tracking across all multi-ingredient medications; liver function tests in chronic therapy.',
+      sentinel: false,
+    };
+  }
+
+  // 11. Systemic NSAIDs (Level 3)
+  if (/ibuprofen|diclofenac|aceclofenac|combiflam|voveran|zerodol|meloxicam|etoricoxib|nsaid/i.test(combined)) {
+    return {
+      level: 3,
+      tier: 'L3',
+      className: 'Non-Steroidal Anti-Inflammatory Drug (NSAID)',
+      summary: 'COX inhibitor with gastrointestinal mucosal ulceration, cardiovascular, and renal risks.',
+      reason: 'Inhibits cyclooxygenase (COX-1/COX-2), depleting protective gastric prostaglandins and reducing renal perfusion. Carries risks of peptic ulcer disease, gastrointestinal hemorrhage, blunting of antihypertensive therapy, fluid retention, accelerated renal impairment, and thrombotic cardiovascular events.',
+      monitoring: 'Blood pressure, renal function (serum creatinine), GI tolerance (dyspepsia/dark stools), and hydration.',
+      sentinel: false,
+    };
+  }
+
+  // 12. Statins (Level 4)
+  if (/statin|atorvastatin|rosuvastatin|simvastatin|pravastatin|atorlip|rozavel/i.test(combined)) {
+    return {
+      level: 4,
+      tier: 'L4',
+      className: 'HMG-CoA Reductase Inhibitor (Statin)',
+      summary: 'High-alert lipid lowering agent with skeletal muscle myopathy and transaminase elevation risks.',
+      reason: 'Competitively inhibits 3-hydroxy-3-methylglutaryl-coenzyme A reductase. Classified as Level 4 High Risk due to risks of skeletal muscle toxicity (ranging from myalgias to toxic rhabdomyolysis and renal failure), elevated liver transaminases, and high susceptibility to CYP3A4/OATP1B1 drug-drug interactions.',
+      monitoring: 'Baseline and periodic liver function tests (ALT/AST), serum creatine kinase (CK) if muscle pain occurs.',
+      sentinel: false,
+    };
+  }
+
+  // 13. ARBs & ACE Inhibitors (Level 4)
+  if (/telmisartan|losartan|valsartan|olmesartan|ramipril|enalapril|lisinopril|arb|acei|telma/i.test(combined)) {
+    return {
+      level: 4,
+      tier: 'L4',
+      className: 'Renin-Angiotensin System Inhibitor (ARB / ACEI)',
+      summary: 'Antihypertensive requiring vigilance for acute hyperkalemia, renal decline, and hypotension.',
+      reason: 'Blocks angiotensin II type 1 (AT1) receptors or inhibits angiotensin-converting enzyme, decreasing peripheral vascular resistance. Classified as Level 4 High Risk due to critical hemodynamic and electrolyte risks: acute hyperkalemia (especially with potassium supplements/diuretics), orthostatic hypotension, and acute GFR reduction during dehydration.',
+      monitoring: 'Serum potassium, serum creatinine/eGFR, blood pressure, and hydration status.',
+      sentinel: false,
+    };
+  }
+
+  // 14. Oral Antidiabetics (Level 4)
+  if (/metformin|glimepiride|gliclazide|glipizide|dapagliflozin|empagliflozin|sitagliptin|vildagliptin|oral antidiabetic|januvia|galvus|forxiga/i.test(combined)) {
+    return {
+      level: 4,
+      tier: 'L4',
+      className: 'Oral Antidiabetic / Hypoglycemic Agent',
+      summary: 'Glycemic control agent with hypoglycemia (sulfonylureas) or lactic acidosis (metformin) risks.',
+      reason: 'Controls glycemic load. Classified as Level 4 High Risk: sulfonylureas (Glimepiride) carry prolonged severe hypoglycemia risk in renal compromise or skipped meals; Metformin carries rare but life-threatening lactic acidosis risk during acute renal decline or tissue hypoxia; SGLT2 inhibitors require euDKA monitoring.',
+      monitoring: 'Blood glucose levels (fasting/postprandial), HbA1c, renal function (eGFR), and hydration.',
+      sentinel: false,
+    };
+  }
+
+  // 15. Opioids & Central Analgesics (Level 4)
+  if (/tramadol|morphine|codeine|fentanyl|oxycodone|tapentadol|opioid|narcotic|ultracet/i.test(combined)) {
+    return {
+      level: 4,
+      tier: 'L4',
+      className: 'Central Mu-Opioid Receptor Agonist',
+      summary: 'High-alert opioid analgesic with respiratory depression, profound sedation, and dependence risks.',
+      reason: 'Binds central mu-opioid receptors. Classified as Level 4 High-Alert due to severe dose-dependent respiratory depression, profound sedation, and synergistic fatality risk when combined with benzodiazepines or sedatives. Tramadol additionally carries serotonin syndrome and seizure risks.',
+      monitoring: 'Respiratory rate, sedation depth, bowel motility, and strict avoidance of concurrent sedative polypharmacy.',
+      sentinel: false,
+    };
+  }
+
+  // 16. Antidepressants (Level 4)
+  if (/sertraline|escitalopram|fluoxetine|paroxetine|citalopram|duloxetine|venlafaxine|amitriptyline|ssri|snri|tca|zoloft|prozac|nexito/i.test(combined)) {
+    return {
+      level: 4,
+      tier: 'L4',
+      className: 'Serotonergic Antidepressant (SSRI / SNRI / TCA)',
+      summary: 'Psychotropic with additive serotonin syndrome, platelet bleeding, and QTc prolongation risks.',
+      reason: 'Modulates central monoamine reuptake. Classified as Level 4 High Risk due to collective polypharmacy risks: severe serotonin syndrome with other serotonergic agents, increased bleeding propensity due to platelet serotonin depletion, hyponatremia (SIADH), and cardiac QTc interval prolongation.',
+      monitoring: 'Serotonin toxicity signs (tremor, hyperreflexia), serum sodium, ECG QTc interval, and mood symptoms.',
+      sentinel: false,
+    };
+  }
+
+  // 17. Proton Pump Inhibitors & Acid Reducers (Level 2)
+  if (/pantoprazole|omeprazole|rabeprazole|esomeprazole|famotidine|ranitidine|ppi|antacid|h2 blocker|pan-d|pantocid/i.test(combined)) {
+    return {
+      level: 2,
+      tier: 'L2',
+      className: 'Proton Pump Inhibitor (PPI) / Gastric Acid Suppressant',
+      summary: 'Gastric acid inhibitor; long-term polypharmacy risks include hypomagnesemia and nutrient malabsorption.',
+      reason: 'Irreversibly inhibits the gastric parietal H+/K+-ATPase pump. Classified as Level 2 Mild Risk for short-term courses, but continuous long-term polypharmacy is associated with hypomagnesemia, impaired absorption of calcium and vitamin B12, and altered bioavailability of pH-dependent co-prescribed drugs.',
+      monitoring: 'Periodic reassessment of long-term indication, serum magnesium, and dietary calcium/B12.',
+      sentinel: false,
+    };
+  }
+
+  // 18. Antihistamines (Level 2)
+  if (/cetirizine|loratadine|fexofenadine|antihistamine|allegra|cetzine|avil/i.test(combined)) {
+    return {
+      level: 2,
+      tier: 'L2',
+      className: 'Peripheral 2nd-Generation H1 Antihistamine',
+      summary: 'Peripheral H1 blocker with low sedation; monitor for additive drowsiness in elderly polypharmacy.',
+      reason: 'Blocks peripheral H1 receptors with low sedation compared to first-generation agents. Classified as Level 2 Mild Risk; monitor for additive sedation if co-administered with central nervous system depressants or analgesics.',
+      monitoring: 'Daytime alertness and caution when combined with sedative medications.',
+      sentinel: false,
+    };
+  }
+
+  // 19. Antibiotics (Level 3)
+  if (/antibiotic|amoxicillin|azithromycin|ciprofloxacin|levofloxacin|cefixime|augmentin/i.test(combined)) {
+    return {
+      level: 3,
+      tier: 'L3',
+      className: 'Systemic Antimicrobial / Antibiotic',
+      summary: 'Antimicrobial agent requiring monitoring for hypersensitivity, microbiome disruption, and CYP interactions.',
+      reason: 'Bactericidal or bacteriostatic antimicrobial therapy. Classified as Level 3 Moderate Risk due to risks of hypersensitivity, gut microbiome disruption (C. difficile colitis), organ clearance burdens, and specific class toxicities (e.g. fluoroquinolone QT prolongation and tendinopathy; macrolide CYP3A4 inhibition).',
+      monitoring: 'Signs of allergic reaction, gastrointestinal tolerance, hydration, and renal function.',
+      sentinel: false,
+    };
+  }
+
+  // 20. Corticosteroids (Level 3)
+  if (/prednisolone|dexamethasone|budesonide|corticosteroid|steroid/i.test(combined)) {
+    return {
+      level: 3,
+      tier: 'L3',
+      className: 'Systemic Glucocorticoid',
+      summary: 'Anti-inflammatory steroid with glycemic, fluid retention, and gastrointestinal liabilities.',
+      reason: 'Suppresses multiple inflammatory pathways. Classified as Level 3 Moderate Risk due to acute liabilities: steroid-induced hyperglycemia, fluid/sodium retention, peptic ulceration (synergistic ulcer risk with NSAIDs), and secondary adrenal suppression upon abrupt discontinuation.',
+      monitoring: 'Blood glucose, blood pressure, weight/edema, gastric comfort, and structured taper schedule.',
+      sentinel: false,
+    };
+  }
+
+  // 21. Vitamins, Minerals & Botanicals (Level 1)
+  if (/vitamin|mineral|calcium|zinc|iron|folic acid|herb|turmeric|curcumin|probiotic|omega-3/i.test(combined)) {
+    return {
+      level: 1,
+      tier: 'L1',
+      className: 'Nutritional Supplement / Botanical / Micronutrient',
+      summary: 'Essential micronutrient or botanical with minimal intrinsic cytotoxicity at recommended doses.',
+      reason: 'Classified as Level 1 Low Risk. In polypharmacy, considerations primarily involve avoiding excessive fat-soluble vitamin accumulation or specific botanical metabolic interactions (e.g., high-dose concentrated curcumin mildly inhibiting CYP2C9).',
+      monitoring: 'Periodic reassessment of ongoing need and adherence to standard recommended daily allowances.',
+      sentinel: false,
+    };
+  }
+
+  // Default fallback based on harm level without recursion
+  let fallbackLevel = drugOrName?.harmLevel;
+  if (!fallbackLevel) {
+    const text = `${cat} ${name}`.toLowerCase();
+    for (const [key, level] of Object.entries(CLASS_RISK_MAP)) {
+      if (text.includes(key)) {
+        fallbackLevel = level;
+        break;
+      }
+    }
+  }
+  if (!fallbackLevel) fallbackLevel = 3;
+  const cfg = HARM_LEVELS[fallbackLevel] || HARM_LEVELS[3];
+
+  return {
+    level: fallbackLevel,
+    tier: cfg.tier,
+    className: cat || 'Prescription Medication',
+    summary: `${cfg.label} agent under WHO/NCI clinical pharmacological scale.`,
+    reason: `${cfg.label} medication requiring clinical monitoring for organ clearance, dose tolerance, and potential pharmacokinetic interactions in polypharmacy.`,
+    monitoring: 'Routine clinical evaluation, symptom tolerance, and adherence checks.',
+    sentinel: fallbackLevel === 5,
+  };
+}
+
 export function computeRiskLevel(category = '', name = '', flags = []) {
   const text = `${category} ${name}`.toLowerCase();
 
@@ -117,8 +483,8 @@ export function computeRiskLevel(category = '', name = '', flags = []) {
     }
   }
 
-  if (flags.length >= 2) return 4;
-  if (flags.length === 1) return 3;
+  if (flags && flags.length >= 2) return 4;
+  if (flags && flags.length === 1) return 3;
 
   return 3;
 }
@@ -322,12 +688,13 @@ export function KnownSideEffectsPanel({ medicineId, medicineName, defaultOpen = 
 export function DrugHarmBadge({ harmLevel, category = '', name = '', flags = [], size = 'sm', className = '' }) {
   const level = harmLevel || computeRiskLevel(category, name, flags);
   const cfg = HARM_LEVELS[level] || HARM_LEVELS[3];
+  const reason = getDrugHarmReason(name, category);
 
   if (size === 'lg') {
     return (
       <span
         className={`inline-flex items-center gap-1.5 text-xs font-mono font-bold px-3 py-1 rounded-xl border bg-[var(--canvas)] ${cfg.badgeCls} ${className}`}
-        title={cfg.tip}
+        title={reason.summary || cfg.tip}
       >
         <span className="w-2 h-2 rounded-full" style={{ backgroundColor: cfg.color }} />
         <span>{cfg.shortLabel} — {cfg.label}</span>
@@ -338,7 +705,7 @@ export function DrugHarmBadge({ harmLevel, category = '', name = '', flags = [],
   return (
     <span
       className={`inline-flex items-center gap-1 text-[10px] font-mono font-bold px-2 py-0.5 rounded-lg border bg-[var(--canvas)] ${cfg.badgeCls} ${className}`}
-      title={cfg.tip}
+      title={reason.summary || cfg.tip}
     >
       <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: cfg.color }} />
       <span>{cfg.shortLabel}</span>
@@ -352,6 +719,7 @@ export function DrugHarmPanel({ medicine, flags = [], className = '' }) {
 
   const level = medicine.harmLevel || computeRiskLevel(medicine.category, medicine.name, flags);
   const cfg = HARM_LEVELS[level] || HARM_LEVELS[3];
+  const reason = getDrugHarmReason(medicine);
 
   const myFlags = flags.filter(f =>
     f.medicineA?.id === medicine.id || f.medicineB?.id === medicine.id
@@ -370,13 +738,21 @@ export function DrugHarmPanel({ medicine, flags = [], className = '' }) {
           <span className="text-xs font-bold font-[var(--font-heading)] tracking-tight" style={{ color: cfg.color }}>
             {cfg.tier} · {cfg.label}
           </span>
+          {reason.sentinel && (
+            <span className="text-[9px] bg-rose-100 dark:bg-rose-950/40 text-rose-800 dark:text-rose-300 border border-rose-300 dark:border-rose-800 px-2 py-0.5 rounded-full font-bold">
+              High-Alert
+            </span>
+          )}
           {myFlags.length > 0 && (
             <span className="text-[10px] bg-rose-100 text-rose-800 border border-rose-300 px-2 py-0.5 rounded-full font-bold">
               {myFlags.length} flag{myFlags.length !== 1 ? 's' : ''}
             </span>
           )}
         </div>
-        {open ? <ChevronUp className="w-3.5 h-3.5 text-[var(--ink-3)]" /> : <ChevronDown className="w-3.5 h-3.5 text-[var(--ink-3)]" />}
+        <div className="flex items-center gap-1 text-[11px] text-[var(--ink-3)] font-medium">
+          <span>{open ? 'Hide Details' : 'View Risk Rationale'}</span>
+          {open ? <ChevronUp className="w-3.5 h-3.5 text-[var(--ink-3)]" /> : <ChevronDown className="w-3.5 h-3.5 text-[var(--ink-3)]" />}
+        </div>
       </button>
 
       {/* Expanded body */}
@@ -395,9 +771,9 @@ export function DrugHarmPanel({ medicine, flags = [], className = '' }) {
               <div className="space-y-1">
                 <div className="flex items-center justify-between text-[10px] font-mono">
                   <span className="text-[var(--ink-3)] font-bold uppercase">WHO/NCI Harm Level</span>
-                  <span className="font-bold" style={{ color: cfg.color }}>Level {level} / 5</span>
+                  <span className="font-bold" style={{ color: cfg.color }}>Level {level} / 5 · {cfg.label}</span>
                 </div>
-                <div className="h-2 rounded-full bg-[var(--canvas)] shadow-[var(--shadow-inner)] overflow-hidden relative">
+                <div className="h-2 rounded-full bg-[var(--surface-2)] shadow-[var(--shadow-inner)] overflow-hidden relative">
                   <motion.div
                     className={`h-full rounded-full ${cfg.barColor}`}
                     initial={{ width: 0 }}
@@ -407,20 +783,43 @@ export function DrugHarmPanel({ medicine, flags = [], className = '' }) {
                 </div>
               </div>
 
-              {/* Clinical note */}
-              <div className="flex gap-2 text-[11px] text-[var(--ink-3)] leading-snug">
-                <Info className="w-3.5 h-3.5 flex-shrink-0 mt-0.5 text-[var(--ink-3)]" />
-                <span>{cfg.tip}</span>
-              </div>
-
-              {/* Class & Generic info */}
-              {medicine.category && (
-                <div className="flex items-center gap-2 text-[11px] text-[var(--ink-3)] font-mono">
-                  <Pill className="w-3 h-3 text-[var(--brand-600)]" />
-                  <span className="font-bold">CLASS:</span>
-                  <span>{medicine.category}</span>
+              {/* Dedicated Clinical Pharmacology & Safety Rationale */}
+              <div className="p-3 rounded-xl bg-[var(--surface-2)] border border-[var(--border)] space-y-2">
+                <div className="flex items-center justify-between gap-2 flex-wrap">
+                  <div className="flex items-center gap-1.5 text-xs font-bold text-[var(--ink)] font-[var(--font-heading)]">
+                    <FlaskConical className="w-3.5 h-3.5 text-[var(--brand-600)] flex-shrink-0" />
+                    <span>Clinical Pharmacology & Risk Rationale</span>
+                  </div>
+                  {reason.sentinel ? (
+                    <span className="text-[9px] font-mono font-bold px-2 py-0.5 rounded-full bg-rose-600 text-white shadow-2xs">
+                      HIGH-ALERT SENTINEL
+                    </span>
+                  ) : (
+                    <span className="text-[9px] font-mono font-bold px-2 py-0.5 rounded-full bg-[var(--surface)] text-[var(--ink-3)] border border-[var(--border)]">
+                      TIER {level} SURVEILLANCE
+                    </span>
+                  )}
                 </div>
-              )}
+
+                {/* Class Tag */}
+                <div className="flex items-center gap-1.5 text-[11px] text-[var(--brand-600)] font-semibold">
+                  <Pill className="w-3 h-3 flex-shrink-0" />
+                  <span>{reason.className || medicine.category || 'Prescription Medicine'}</span>
+                </div>
+
+                {/* Specific Medical Rationale */}
+                <p className="text-[11px] text-[var(--ink-2)] leading-relaxed">
+                  {reason.reason}
+                </p>
+
+                {/* Specific Monitoring Parameters */}
+                {reason.monitoring && (
+                  <div className="pt-2 border-t border-[var(--border)] flex items-start gap-1.5 text-[10px] text-[var(--ink-2)]">
+                    <Activity className="w-3 h-3 text-[var(--brand-600)] flex-shrink-0 mt-0.5" />
+                    <span><strong>Clinical Monitoring Focus:</strong> {reason.monitoring}</span>
+                  </div>
+                )}
+              </div>
 
               {/* Active interaction flags */}
               {myFlags.length > 0 && (
@@ -466,9 +865,16 @@ export function PolypharmacyHarmDashboard({ medicines = [], flags = [], regimenR
 
   const highestDrug = medicines.find(m => (m.harmLevel || computeRiskLevel(m.category, m.name, flags)) === highestLevel) || medicines[0];
   const highestCfg = HARM_LEVELS[highestLevel] || HARM_LEVELS[3];
+  const peakReason = getDrugHarmReason(highestDrug);
 
-  const currentTierLevel = regimenRisk?.level || Math.round(avgRisk);
+  // True mathematical average burden tier for the mean score (e.g. 3.5 -> High Load)
+  const avgBurden = getAverageBurdenTier(avgRisk);
+
+  // Overall clinical regimen tier (e.g. 5 if peak is 5 or flags >= 3, else backend regimenRisk level)
+  const currentTierLevel = regimenRisk?.level || (highestLevel === 5 ? 5 : Math.round(avgRisk));
   const currentTierCfg = HARM_LEVELS[currentTierLevel] || HARM_LEVELS[3];
+
+  const isEscalated = currentTierLevel > Math.round(avgRisk) || (highestLevel === 5 && avgRisk < 4.5);
 
   return (
     <Card
@@ -487,26 +893,33 @@ export function PolypharmacyHarmDashboard({ medicines = [], flags = [], regimenR
           {/* Average Risk Score */}
           <div className="p-4 rounded-2xl bg-[var(--canvas)] border border-[var(--border)] shadow-xs hover:border-[var(--border-strong)] transition-all space-y-1.5">
             <div className="flex items-center justify-between">
-              <span className="text-[10px] font-mono font-bold text-[var(--ink-3)] uppercase tracking-wider">Average Regimen Risk</span>
-              <LedIndicator status={currentTierCfg.ledStatus} size="sm" />
+              <span className="text-[10px] font-mono font-bold text-[var(--ink-3)] uppercase tracking-wider">
+                Average Regimen Burden
+              </span>
+              <LedIndicator status={avgBurden.ledStatus} size="sm" />
             </div>
             <div className="flex items-baseline gap-2 flex-wrap">
-              <span className="text-xl sm:text-2xl font-black font-mono" style={{ color: currentTierCfg.color }}>
+              <span className="text-xl sm:text-2xl font-black font-mono" style={{ color: avgBurden.color }}>
                 {avgRisk.toFixed(1)} / 5.0
               </span>
-              <span className="text-[11px] font-mono font-bold px-2 py-0.5 rounded-full border bg-[var(--surface)] shadow-2xs" style={{ borderColor: currentTierCfg.color, color: currentTierCfg.color }}>
-                {currentTierCfg.label}
+              <span
+                className="text-[11px] font-mono font-bold px-2 py-0.5 rounded-full border bg-[var(--surface)] shadow-2xs"
+                style={{ borderColor: avgBurden.color, color: avgBurden.color }}
+              >
+                {avgBurden.label}
               </span>
             </div>
             <p className="text-[11px] text-[var(--ink-3)] font-mono leading-tight">
-              WHO/NCI weighted pharmacological harm classification.
+              Calculated mean harm load across {medicines.length} active medication{medicines.length !== 1 ? 's' : ''}.
             </p>
           </div>
 
           {/* Highest Risk Drug */}
           <div className="p-4 rounded-2xl bg-[var(--canvas)] border border-[var(--border)] shadow-xs hover:border-[var(--border-strong)] transition-all space-y-1.5">
             <div className="flex items-center justify-between">
-              <span className="text-[10px] font-mono font-bold text-[var(--ink-3)] uppercase tracking-wider">Peak Risk Agent</span>
+              <span className="text-[10px] font-mono font-bold text-[var(--ink-3)] uppercase tracking-wider">
+                Peak Risk Agent
+              </span>
               <LedIndicator status={highestCfg.ledStatus} size="sm" />
             </div>
             <div className="flex items-baseline gap-2 flex-wrap min-w-0">
@@ -516,12 +929,34 @@ export function PolypharmacyHarmDashboard({ medicines = [], flags = [], regimenR
               <DrugHarmBadge harmLevel={highestLevel} size="sm" />
             </div>
             <p className="text-[11px] text-[var(--ink-3)] font-mono leading-tight">
-              {highestCfg.tip}
+              {peakReason.summary || highestCfg.tip}
             </p>
           </div>
         </div>
 
-        {/* 5-Tier Spectrum Meter with Crisp Embedded Active Indicator */}
+        {/* Clinical Sentinel Escalation Override Banner */}
+        {isEscalated && (
+          <div className="p-3.5 rounded-2xl bg-rose-500/10 border border-rose-500/25 flex items-start gap-3 shadow-xs">
+            <div className="p-2 rounded-xl bg-rose-500/15 border border-rose-500/30 flex-shrink-0 mt-0.5">
+              <ShieldAlert className="w-4 h-4 text-rose-700 dark:text-rose-400" />
+            </div>
+            <div className="flex-1 min-w-0 space-y-1">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-xs font-bold font-[var(--font-heading)] text-rose-900 dark:text-rose-200">
+                  Clinical Sentinel Rule: Regimen Escalated to L5 Critical
+                </span>
+                <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-rose-600 text-white shadow-xs">
+                  SENTINEL OVERRIDE
+                </span>
+              </div>
+              <p className="text-[11px] text-[var(--ink-2)] leading-relaxed">
+                While the mathematical average burden across your {medicines.length} medicines is <strong>{avgRisk.toFixed(1)} / 5.0 ({avgBurden.label})</strong>, clinical safety protocols escalate overall regimen monitoring to <strong>L5 Critical Risk</strong> because your regimen includes <strong className="text-rose-700 dark:text-rose-400">{highestDrug.name}</strong>. In clinical pharmacotherapy, high-alert and narrow therapeutic index sentinel agents supersede numerical averages to mandate specialized clinical vigilance.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* 5-Tier Spectrum Meter */}
         <div className="space-y-3 p-4 rounded-2xl bg-[var(--canvas)] border border-[var(--border)] shadow-xs">
           <div className="flex items-center justify-between text-xs font-bold text-[var(--ink)]">
             <div className="flex items-center gap-2">
@@ -537,7 +972,7 @@ export function PolypharmacyHarmDashboard({ medicines = [], flags = [], regimenR
                 color: currentTierCfg.color,
               }}
             >
-              Regimen: {currentTierCfg.tier} ({currentTierCfg.label})
+              Regimen: {currentTierCfg.tier} ({currentTierCfg.label}) {isEscalated ? '· Escalated' : ''}
             </span>
           </div>
 

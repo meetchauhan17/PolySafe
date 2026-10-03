@@ -66,9 +66,10 @@
       "tier": "L5",
       "name": "Critical Risk",
       "color": "red",
-      "description": "Anticoagulants (Warfarin), Insulins, Anticonvulsants, Lithium",
+      "description": "Anticoagulants (Warfarin), Insulins, Anticonvulsants, Lithium, Targeted DMARDs (JAK Inhibitors)",
       "keywords": [
         "anticoagulant", "insulin", "anticonvulsant", "lithium", "chemotherapy",
+        "tofacitinib", "jak inhibitor", "targeted dmard", "immunosuppressant", "tfct", "tfct-nib",
         "warfarin", "heparin", "enoxaparin", "apixaban", "rivaroxaban", "dabigatran", "edoxaban",
         "insulin regular", "insulin glargine", "insulin lispro", "insulin aspart", "insulin degludec",
         "novorapid", "lantus", "humalog", "actrapid", "mixtard", "toujeo",
@@ -79,6 +80,9 @@
     }
   },
   "drugs": {
+    "tofacitinib": 5,
+    "tfct": 5,
+    "tfct-nib": 5,
     "warfarin": 5,
     "coumadin": 5,
     "apixaban": 5,
