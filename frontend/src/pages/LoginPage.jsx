@@ -788,21 +788,21 @@ export default function LoginPage() {
                     <h2 className="text-2xl text-[var(--ink)] font-bold font-[var(--font-heading)]">
                       {roleLabels[selectedRole]?.title} Sign In
                     </h2>
-                    <p className="text-xs text-[var(--ink-3)] font-mono">
+                    <p className="text-xs text-[var(--ink-3)] font-medium">
                       Enter your email and password to access your clinical dashboard.
                     </p>
                   </div>
 
                   {/* Lockout banner */}
                   {lockoutSecsLeft > 0 && (
-                    <div className="p-4 bg-amber-500/10 border-2 border-amber-500/40 rounded-2xl text-sm text-[var(--ink)] space-y-1 shadow-sm font-mono">
+                    <div className="p-4 bg-amber-500/10 border-2 border-amber-500/40 rounded-2xl text-sm text-[var(--ink)] space-y-1 shadow-sm">
                       <div className="flex items-center gap-2 font-bold text-amber-700">
                         <AlertCircle className="w-4 h-4 text-amber-500 flex-shrink-0" />
                         Account temporarily locked
                       </div>
                       <p className="text-xs text-[var(--ink-2)] pl-6">
                         Too many failed attempts. Try again in{' '}
-                        <strong className="font-bold font-mono text-[var(--ink)]">
+                        <strong className="font-bold text-[var(--ink)]">
                           {lockoutSecsLeft} second{lockoutSecsLeft !== 1 ? 's' : ''}
                         </strong>.
                       </p>
@@ -811,7 +811,7 @@ export default function LoginPage() {
 
                   {/* Email Address */}
                   <div className="space-y-1">
-                    <label className="block text-xs font-bold text-[var(--ink-2)] uppercase tracking-wider font-mono">
+                    <label className="block text-xs font-bold text-[var(--ink-2)] uppercase tracking-wider">
                       Email Address
                     </label>
                     <PolySafeInput
@@ -827,7 +827,7 @@ export default function LoginPage() {
                       className="text-base"
                     />
                     {emailError && (
-                      <p className="text-xs text-rose-600 mt-1 flex items-center gap-1 font-medium font-mono">
+                      <p className="text-xs text-rose-600 mt-1 flex items-center gap-1 font-medium">
                         <AlertCircle className="w-3.5 h-3.5" />{emailError}
                       </p>
                     )}
@@ -835,7 +835,7 @@ export default function LoginPage() {
 
                   {/* Password */}
                   <div className="space-y-1">
-                    <label className="block text-xs font-bold text-[var(--ink-2)] uppercase tracking-wider font-mono">
+                    <label className="block text-xs font-bold text-[var(--ink-2)] uppercase tracking-wider">
                       Password
                     </label>
                     <PolySafeInput
@@ -851,7 +851,7 @@ export default function LoginPage() {
                       className="text-base"
                     />
                     {passwordError && (
-                      <p className="text-xs text-rose-600 mt-1 flex items-center gap-1 font-medium font-mono">
+                      <p className="text-xs text-rose-600 mt-1 flex items-center gap-1 font-medium">
                         <AlertCircle className="w-3.5 h-3.5" />{passwordError}
                       </p>
                     )}
@@ -859,7 +859,7 @@ export default function LoginPage() {
 
                   {/* Remind Me */}
                   <div className="flex items-center pt-1">
-                    <label className="flex items-center space-x-2 text-xs cursor-pointer select-none font-mono">
+                    <label className="flex items-center space-x-2 text-xs cursor-pointer select-none">
                       <input
                         type="checkbox"
                         checked={remindMe}
@@ -885,7 +885,7 @@ export default function LoginPage() {
                   </button>
 
                   {/* Switch to sign up */}
-                  <p className="text-center text-xs text-[var(--ink-3)] font-mono pt-2">
+                  <p className="text-center text-xs text-[var(--ink-3)] font-medium pt-2">
                     New to PolySafe?{' '}
                     <button
                       type="button"
@@ -905,14 +905,14 @@ export default function LoginPage() {
                     <h2 className="text-2xl text-[var(--ink)] font-bold font-[var(--font-heading)]">
                       Create {roleLabels[selectedRole]?.title} Account
                     </h2>
-                    <p className="text-xs text-[var(--ink-3)] font-mono">
+                    <p className="text-xs text-[var(--ink-3)] font-medium">
                       A 6-digit verification code will be sent to your email to verify your identity.
                     </p>
                   </div>
 
                   {/* Full Name */}
                   <div className="space-y-1">
-                    <label className="block text-xs font-bold text-[var(--ink-2)] uppercase tracking-wider font-mono">
+                    <label className="block text-xs font-bold text-[var(--ink-2)] uppercase tracking-wider">
                       {selectedRole === 'DOCTOR' ? 'Physician Full Name' : 'Full Name'}
                     </label>
                     <PolySafeInput
@@ -928,7 +928,7 @@ export default function LoginPage() {
                       className="text-base"
                     />
                     {nameError && (
-                      <p className="text-xs text-rose-600 mt-1 flex items-center gap-1 font-medium font-mono">
+                      <p className="text-xs text-rose-600 mt-1 flex items-center gap-1 font-medium">
                         <AlertCircle className="w-3.5 h-3.5" />{nameError}
                       </p>
                     )}
@@ -937,7 +937,7 @@ export default function LoginPage() {
                   {/* Doctor Medical Registration Number */}
                   {selectedRole === 'DOCTOR' && (
                     <div className="space-y-1">
-                      <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider font-mono">
+                      <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider">
                         Medical Registration / License No.
                       </label>
                       <PolySafeInput
@@ -952,7 +952,7 @@ export default function LoginPage() {
                         className="text-base"
                       />
                       {doctorRegNumError && (
-                        <p className="text-xs text-rose-600 mt-1 flex items-center gap-1 font-medium font-mono">
+                        <p className="text-xs text-rose-600 mt-1 flex items-center gap-1 font-medium">
                           <AlertCircle className="w-3.5 h-3.5" />{doctorRegNumError}
                         </p>
                       )}
@@ -961,7 +961,7 @@ export default function LoginPage() {
 
                   {/* Email Address */}
                   <div className="space-y-1">
-                    <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider font-mono">
+                    <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider">
                       Email Address
                     </label>
                     <PolySafeInput
@@ -976,7 +976,7 @@ export default function LoginPage() {
                       className="text-base"
                     />
                     {emailError && (
-                      <p className="text-xs text-rose-600 mt-1 flex items-center gap-1 font-medium font-mono">
+                      <p className="text-xs text-rose-600 mt-1 flex items-center gap-1 font-medium">
                         <AlertCircle className="w-3.5 h-3.5" />{emailError}
                       </p>
                     )}
@@ -984,7 +984,7 @@ export default function LoginPage() {
 
                   {/* Password */}
                   <div className="space-y-1">
-                    <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider font-mono">
+                    <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider">
                       Password (min. 8 characters)
                     </label>
                     <PolySafeInput
@@ -999,14 +999,14 @@ export default function LoginPage() {
                       className="text-base"
                     />
                     {passwordError && (
-                      <p className="text-xs text-rose-600 mt-1 flex items-center gap-1 font-medium font-mono">
+                      <p className="text-xs text-rose-600 mt-1 flex items-center gap-1 font-medium">
                         <AlertCircle className="w-3.5 h-3.5" />{passwordError}
                       </p>
                     )}
                     {/* Password strength meter */}
                     {password && (
                       <div className="mt-2 space-y-1.5 p-3 bg-[var(--canvas)] border border-[var(--border)] rounded-xl text-xs">
-                        <div className="flex items-center justify-between font-mono">
+                        <div className="flex items-center justify-between font-medium">
                           <span className="text-slate-500">Password Strength:</span>
                           <span className="font-bold" style={{ color: passwordStrength.color }}>{passwordStrength.label}</span>
                         </div>
@@ -1016,7 +1016,7 @@ export default function LoginPage() {
                             style={{ width: `${(passwordStrength.score / 3) * 100}%`, backgroundColor: passwordStrength.color }}
                           />
                         </div>
-                        <div className="grid grid-cols-2 gap-1 pt-1 text-[11px] text-slate-500 font-mono">
+                        <div className="grid grid-cols-2 gap-1 pt-1 text-[11px] text-slate-500 font-medium">
                           <div className="flex items-center gap-1">
                             {passwordStrength.hasLen ? <Check className="w-3 h-3 text-emerald-500" /> : <X className="w-3 h-3 text-slate-400" />}
                             <span className={passwordStrength.hasLen ? 'text-[var(--ink)] font-medium' : ''}>8+ characters</span>
@@ -1032,7 +1032,7 @@ export default function LoginPage() {
 
                   {/* Remind Me */}
                   <div className="flex items-center pt-1">
-                    <label className="flex items-center space-x-2 text-xs cursor-pointer select-none font-mono">
+                    <label className="flex items-center space-x-2 text-xs cursor-pointer select-none">
                       <input
                         type="checkbox"
                         checked={remindMe}
@@ -1058,7 +1058,7 @@ export default function LoginPage() {
                   </button>
 
                   {/* Switch to sign in */}
-                  <p className="text-center text-xs text-slate-500 font-mono pt-2">
+                  <p className="text-center text-xs text-slate-500 font-medium pt-2">
                     Already have an account?{' '}
                     <button
                       type="button"
@@ -1083,15 +1083,15 @@ export default function LoginPage() {
                         Verify Your Email
                       </h2>
                     </div>
-                    <p className="text-xs text-slate-500 font-mono">
+                    <p className="text-xs text-slate-500 font-medium">
                       Enter the 6-digit code sent to <strong className="text-[var(--ink)]">{email}</strong>.
                     </p>
                   </div>
 
                   {/* Dev OTP quick fill helper in dev mode */}
                   {devOtpHint && (
-                    <div className="p-3 bg-[var(--canvas)] border border-indigo-500/40 rounded-xl flex items-center justify-between text-xs font-mono">
-                      <span className="text-[var(--ink-2)]">Dev Code: <strong className="text-blue-600 font-bold">{devOtpHint}</strong></span>
+                    <div className="p-3 bg-[var(--canvas)] border border-indigo-500/40 rounded-xl flex items-center justify-between text-xs">
+                      <span className="text-[var(--ink-2)]">Dev Code: <strong className="text-blue-600 font-bold font-mono">{devOtpHint}</strong></span>
                       <button
                         type="button"
                         onClick={() => {
@@ -1142,7 +1142,7 @@ export default function LoginPage() {
                       )}
                     </button>
 
-                    <div className="flex items-center justify-between pt-2 text-xs font-mono">
+                    <div className="flex items-center justify-between pt-2 text-xs">
                       <button
                         type="button"
                         onClick={() => { setAuthMode('signup'); setOtp(['', '', '', '', '', '']); setErrorMsg(null); }}
@@ -1153,7 +1153,7 @@ export default function LoginPage() {
 
                       {countdown > 0 ? (
                         <span className="text-slate-500 font-medium">
-                          Resend in <strong className="text-[var(--ink)]">0:{countdown < 10 ? `0${countdown}` : countdown}</strong>
+                          Resend in <strong className="text-[var(--ink)] font-mono">0:{countdown < 10 ? `0${countdown}` : countdown}</strong>
                         </span>
                       ) : (
                         <button
@@ -1176,7 +1176,7 @@ export default function LoginPage() {
       </main>
 
       {/* ── Footer ── */}
-      <footer className="relative w-full max-w-6xl mx-auto px-4 sm:px-6 py-4 text-center text-xs text-[var(--ink-3)] border-t border-[var(--border)] font-mono z-20">
+      <footer className="relative w-full max-w-6xl mx-auto px-4 sm:px-6 py-4 text-center text-xs text-[var(--ink-3)] border-t border-[var(--border)] z-20">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-2">
           <span>&copy; {new Date().getFullYear()} PolySafe AI &middot; Clinical Polypharmacy Intelligence Platform</span>
           <span className="text-[11px] text-slate-400">Zero-Trust Protected &middot; HIPAA &amp; ISO-27001 Clinical Guidelines</span>

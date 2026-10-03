@@ -36,16 +36,20 @@ export default function Card({
     unknown:  'border-l-4 border-l-[var(--unknown-fg)]',
   };
 
+  const statusList = ['safe', 'caution', 'critical', 'unknown'];
+  const effectiveStatus = status || (statusList.includes(variant) ? variant : undefined);
+  const effectiveVariant = statusList.includes(variant) ? 'flat' : (variant || 'flat');
+
   const finalAction = action || badge;
   const hasHeader = Boolean(title || subtitle || icon || finalAction);
 
   return (
     <Component
       className={clsx(
-        variant === 'flat'        && 'card-flat',
-        variant === 'raised'      && 'card-raised',
-        variant === 'interactive' && 'card-interactive',
-        status && statusBorder[status],
+        effectiveVariant === 'flat'        && 'card-flat',
+        effectiveVariant === 'raised'      && 'card-raised',
+        effectiveVariant === 'interactive' && 'card-interactive',
+        effectiveStatus && statusBorder[effectiveStatus],
         'p-5',
         className
       )}

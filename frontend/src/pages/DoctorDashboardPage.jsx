@@ -144,7 +144,10 @@ function DoctorSafetyCheckModal({ isOpen, onClose, patientId, patientAge, onPres
 	if (!isOpen) return null;
 
 	return (
-		<div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-[var(--canvas)]/75 backdrop-blur-md overflow-y-auto animate-fade-in">
+		<div
+			className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-[#0f172a]/70 backdrop-blur-md overflow-y-auto animate-fade-in"
+			onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+		>
 			<motion.div
 				initial={{ opacity: 0, scale: 0.95, y: 10 }}
 				animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -464,7 +467,10 @@ function DrugSubstituteModal({ isOpen, onClose, patientId, medicines, onSuccess 
 	};
 
 	return (
-		<div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-[var(--canvas)]/75 backdrop-blur-md overflow-y-auto animate-fade-in">
+		<div
+			className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-[#0f172a]/70 backdrop-blur-md overflow-y-auto animate-fade-in"
+			onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+		>
 			<motion.div
 				initial={{ opacity: 0, scale: 0.96, y: 10 }}
 				animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -875,7 +881,10 @@ function ClinicalConsultationReportModal({ isOpen, onClose, patientId }) {
 	};
 
 	return (
-		<div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-[var(--canvas)]/75 backdrop-blur-md overflow-y-auto animate-fade-in">
+		<div
+			className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-[#0f172a]/70 backdrop-blur-md overflow-y-auto animate-fade-in"
+			onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+		>
 			<motion.div
 				initial={{ opacity: 0, scale: 0.95 }}
 				animate={{ opacity: 1, scale: 1 }}
@@ -1634,7 +1643,7 @@ function PatientView({ patientId }) {
 																</h4>
 																<DrugHarmBadge harmLevel={med.harmLevel} size="sm" />
 																{isDiscontinued && (
-																	<span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-md bg-amber-100 text-amber-800 border border-amber-200">
+																	<span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-amber-100 text-amber-800 border border-amber-200">
 																		Discontinued
 																	</span>
 																)}
@@ -1642,7 +1651,7 @@ function PatientView({ patientId }) {
 														</div>
 
 														{med.dosage && (
-															<p className="text-xs text-[var(--ink-3)] font-mono">
+															<p className="text-xs text-[var(--ink-2)] font-medium">
 																Dose: {med.dosage}
 															</p>
 														)}
@@ -1941,7 +1950,7 @@ export default function DoctorDashboardPage() {
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-teal-500" />
               </span>
               <Stethoscope className="w-3 h-3 text-teal-600" />
-              <span className="font-mono">Physician Clinical Workstation</span>
+              <span>Physician Clinical Workstation</span>
             </div>
             <h1 className="text-2xl md:text-3xl font-extrabold text-[var(--ink)] tracking-tight font-[var(--font-heading)]">
               Clinical{' '}
@@ -1963,7 +1972,7 @@ export default function DoctorDashboardPage() {
             </div>
             <button
               onClick={() => setStep('claim')}
-              className="ps-btn-shine ps-btn ps-btn-primary py-2 px-4 text-xs font-mono font-bold uppercase tracking-wider flex items-center gap-2"
+              className="ps-btn-shine ps-btn ps-btn-primary py-2 px-4 text-xs font-bold uppercase tracking-wider flex items-center gap-2"
               style={{ background: 'linear-gradient(135deg, #0d9488, #059669)', boxShadow: '0 4px 16px -4px rgba(13,148,136,0.35)' }}
             >
               <Plus className="w-4 h-4" />

@@ -81,6 +81,7 @@ const CLASS_RISK_MAP = {
   'anticoagulant': 5, 'blood thinner': 5, 'warfarin': 5, 'factor xa': 5, 'heparin': 5, 'apixaban': 5,
   'insulin': 5, 'basal insulin': 5, 'anticonvulsant': 5, 'antiseizure': 5, 'phenytoin': 5, 'carbamazepine': 5,
   'valproate': 5, 'lithium': 5, 'chemotherapy': 5, 'cytotoxic': 5, 'immunosuppressant': 5,
+  'tofacitinib': 5, 'tfct': 5, 'jak inhibitor': 5, 'targeted dmard': 5,
 
   // L4 High
   'statin': 4, 'atorvastatin': 4, 'rosuvastatin': 4, 'simvastatin': 4, 'opioid': 4, 'narcotic': 4,

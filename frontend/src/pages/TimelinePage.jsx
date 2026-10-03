@@ -21,6 +21,7 @@ import {
   Zap,
   Shield,
   Activity,
+  Clock,
 } from 'lucide-react';
 import Card from '../components/Card';
 import BackButton from '../components/BackButton';
@@ -429,36 +430,37 @@ export default function TimelinePage() {
  </div>
  )}
 
- {details.simple ? (
- <p className="text-xs text-[var(--ink-3)] font-mono font-medium">
- Dose: {details.simple}
- </p>
- ) : (
- <div className="flex items-center gap-2 flex-wrap text-[11px] text-[var(--ink-3)] font-mono">
- {details.strength && (
- <span className={`px-2 py-0.5 rounded-md border shadow-xs ${isFlagged ? 'bg-[var(--surface)] border-rose-200/60' : 'bg-[var(--canvas)] border-[var(--border)]'}`}>
- {details.strength}
- </span>
- )}
- {details.form && (
- <span className={`px-2 py-0.5 rounded-md border shadow-xs ${isFlagged ? 'bg-[var(--surface)] border-rose-200/60' : 'bg-[var(--canvas)] border-[var(--border)]'}`}>
- {details.form}
- </span>
- )}
- {details.frequency && (
- <span className={`px-2 py-0.5 rounded-md border shadow-xs ${isFlagged ? 'bg-[var(--surface)] border-rose-200/60' : 'bg-[var(--canvas)] border-[var(--border)]'}`}>
- {details.frequency}
- </span>
- )}
- {details.manufacturer && (
- <span className="text-[10px] text-[var(--ink-3)] opacity-80">
- Mfr: {details.manufacturer}
- </span>
- )}
- </div>
- )}
- </div>
- )}
+								{details.simple ? (
+									<p className="text-xs text-[var(--ink-2)] font-medium">
+										Dose: {details.simple.replace(/_/g, ' ')}
+									</p>
+								) : (
+									<div className="flex items-center gap-1.5 flex-wrap text-[11px] text-[var(--ink-2)] font-medium">
+										{details.strength && (
+											<span className="px-2.5 py-0.5 rounded-lg border border-teal-500/20 bg-teal-500/10 text-teal-800 font-semibold shadow-2xs">
+												{details.strength}
+											</span>
+										)}
+										{details.form && (
+											<span className="px-2.5 py-0.5 rounded-lg border border-[var(--border)] bg-[var(--surface-2)] text-[var(--ink-2)] shadow-2xs">
+												{details.form}
+											</span>
+										)}
+										{details.frequency && (
+											<span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg border border-[var(--border)] bg-[var(--surface-2)] text-[var(--ink-2)] shadow-2xs">
+												<Clock className="w-3 h-3 text-[var(--brand-600)]" />
+												{details.frequency.replace(/_/g, ' ')}
+											</span>
+										)}
+										{details.manufacturer && (
+											<span className="text-[10px] text-[var(--ink-3)]">
+												Mfr: {details.manufacturer}
+											</span>
+										)}
+									</div>
+								)}
+							</div>
+						)}
 
                         {/* Flagged Red Interaction Capsule */}
                         {isFlagged && (

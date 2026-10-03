@@ -36,7 +36,7 @@ export default function GuestLockModal({ isOpen, onClose, featureName = 'this fe
             className="fixed inset-0 z-[201] flex items-center justify-center p-4"
           >
             <div
-              className="w-full max-w-sm bg-[var(--surface)] rounded-[var(--radius-xl)] border border-[var(--border)] shadow-[var(--shadow-lg)] p-6"
+              className="relative w-full max-w-sm bg-[var(--surface)] rounded-[var(--radius-xl)] border border-[var(--border)] shadow-[var(--shadow-lg)] p-6"
               role="dialog"
               aria-modal="true"
               aria-label="Authentication required"

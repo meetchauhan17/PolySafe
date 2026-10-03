@@ -519,7 +519,7 @@ export default function CaregiverViewPage() {
               <span className="w-2 h-2 rounded-full bg-[var(--caregiver-600)] animate-pulse" />
               <span>Family Safety System</span>
               <span className="text-[var(--caregiver-600)]/60">·</span>
-              <span className="font-mono text-[11px] text-[var(--caregiver-600)]">Caregiver Oversight</span>
+              <span className="text-[11px] text-[var(--caregiver-600)] font-medium">Caregiver Oversight</span>
             </div>
             <h1 className="text-2xl md:text-3xl font-extrabold text-[var(--ink)] tracking-tight font-[var(--font-heading)]">
               Caregiver <span className="ps-glow-text" style={{ backgroundImage: 'linear-gradient(135deg, var(--caregiver-600) 0%, #f97316 50%, var(--doctor-600) 100%)' }}>Oversight Hub</span>
@@ -547,7 +547,7 @@ export default function CaregiverViewPage() {
           <button
             type="button"
             onClick={() => { setShowClaimModal(!showClaimModal); setClaimError(''); }}
-            className="ps-btn ps-btn-primary self-start md:self-center py-2 px-4 text-xs font-mono font-bold uppercase tracking-wider flex items-center gap-2 shadow-sm shadow-cyan-900/20"
+            className="ps-btn ps-btn-primary self-start md:self-center py-2 px-4 text-xs font-bold uppercase tracking-wider flex items-center gap-2 shadow-sm shadow-cyan-900/20"
           >
             <KeyRound className="w-4 h-4" />
             <span>{showClaimModal ? 'Close PIN Entry' : 'Link via 6-Digit PIN'}</span>
@@ -588,7 +588,7 @@ export default function CaregiverViewPage() {
               <button
                 type="submit"
                 disabled={claimCodeInput.length !== 6 || claimMut.isPending}
-                className="ps-btn ps-btn-primary py-2.5 px-5 text-xs font-bold font-mono flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                className="ps-btn ps-btn-primary py-2.5 px-5 text-xs font-bold flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
               >
                 {claimMut.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}
                 <span>Link Patient</span>
@@ -601,13 +601,13 @@ export default function CaregiverViewPage() {
       {/* ── Pending Invites ── */}
       {(loadingInvites || invites.length > 0) && (
         <div className="space-y-3">
-          <h2 className="text-xs font-extrabold uppercase tracking-widest text-[var(--ink)] font-mono">
+          <h2 className="text-xs font-extrabold uppercase tracking-widest text-[var(--ink)]">
             Pending Caregiver Invitations ({invites.length})
           </h2>
           {loadingInvites ? (
             <Card className="p-5 flex items-center gap-3">
               <Loader2 className="w-4 h-4 animate-spin text-[var(--brand-600)]" />
-              <span className="text-sm text-[var(--ink-3)] font-mono">Loading pending invites…</span>
+              <span className="text-sm text-[var(--ink-3)] font-medium">Loading pending invites…</span>
             </Card>
           ) : (
             <div className="space-y-3">
@@ -631,7 +631,7 @@ export default function CaregiverViewPage() {
                           </div>
                           <div className="flex-1">
                             <p className="text-sm font-bold text-[var(--ink)] font-[var(--font-heading)]">Caregiver Link Request</p>
-                            <p className="text-xs text-[var(--ink-3)] font-mono mt-0.5">
+                            <p className="text-xs text-[var(--ink-3)] font-medium mt-0.5">
                               Patient (Age {inv.patientAge}) has invited you to monitor their daily medication schedule.
                               {inv.conditions?.length > 0 && ` Active conditions: ${inv.conditions.join(', ')}.`}
                             </p>
@@ -641,7 +641,7 @@ export default function CaregiverViewPage() {
                           <button
                             onClick={() => acceptMut.mutate(inv.connectionId)}
                             disabled={isAccepting || isDeclining}
-                            className="ps-btn ps-btn-primary flex-1 py-2.5 text-xs font-bold font-mono flex items-center justify-center gap-1.5"
+                            className="ps-btn ps-btn-primary flex-1 py-2.5 text-xs font-bold flex items-center justify-center gap-1.5"
                           >
                             {isAccepting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <CheckCircle2 className="w-3.5 h-3.5" />}
                             <span>Accept Link</span>
@@ -649,7 +649,7 @@ export default function CaregiverViewPage() {
                           <button
                             onClick={() => revokeMut.mutate(inv.connectionId)}
                             disabled={isAccepting || isDeclining}
-                            className="btn-outline-danger flex-1 py-2.5 text-xs font-bold font-mono flex items-center justify-center gap-1.5"
+                            className="btn-outline-danger flex-1 py-2.5 text-xs font-bold flex items-center justify-center gap-1.5"
                           >
                             {isDeclining ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <XCircle className="w-3.5 h-3.5" />}
                             <span>Decline</span>

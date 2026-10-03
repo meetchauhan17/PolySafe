@@ -99,104 +99,130 @@ const SEVERITY_STYLES = {
 
 // ─── Medicine type icon/badge ─────────────────────────────────────────────
 function MedicineTypeBadge({ type }) {
- const map = {
- PRESCRIPTION: { icon: <Stethoscope className="w-3 h-3" />, label: 'Rx', cls: 'bg-[var(--doctor-600)]/10 text-[var(--doctor-600)] border-[var(--doctor-600)]/20' },
- OTC: { icon: <ShoppingBag className="w-3 h-3" />, label: 'OTC', cls: 'bg-[var(--caregiver-600)]/10 text-[var(--caregiver-600)] border-[var(--caregiver-600)]/20' },
- HERBAL: { icon: <Leaf className="w-3 h-3" />, label: 'Herbal', cls: 'bg-[var(--brand-600)]/10 text-[var(--brand-600)] border-[var(--brand-600)]/20' },
- };
- const t = map[type] ?? map.PRESCRIPTION;
- return (
- <span className={`inline-flex items-center space-x-1 px-2 py-0.5 rounded-lg border text-[10px] font-bold ${t.cls}`}>
- {t.icon}
- <span>{t.label}</span>
- </span>
- );
+  const map = {
+    PRESCRIPTION: { icon: <Stethoscope className="w-3 h-3" />, label: 'Rx', cls: 'bg-[var(--doctor-600)]/10 text-[var(--doctor-600)] border-[var(--doctor-600)]/20' },
+    OTC: { icon: <ShoppingBag className="w-3 h-3" />, label: 'OTC', cls: 'bg-[var(--caregiver-600)]/10 text-[var(--caregiver-600)] border-[var(--caregiver-600)]/20' },
+    HERBAL: { icon: <Leaf className="w-3 h-3" />, label: 'Herbal', cls: 'bg-[var(--brand-600)]/10 text-[var(--brand-600)] border-[var(--brand-600)]/20' },
+  };
+  const t = map[type] ?? map.PRESCRIPTION;
+  return (
+    <span className={`inline-flex items-center space-x-1 px-2 py-0.5 rounded-lg border text-[10px] font-bold ${t.cls}`}>
+      {t.icon}
+      <span>{t.label}</span>
+    </span>
+  );
+}
+
+// ─── Format Schedule Dose String (Cleaner, No snake_case or chemistry formulas) ─
+function formatScheduleDose(raw) {
+  if (!raw) return '';
+  if (!raw.includes('•')) {
+    return raw.replace(/_/g, ' ');
+  }
+  const parts = raw.split('•').map((p) => p.trim()).filter(Boolean);
+  const cleanParts = [];
+  for (const part of parts) {
+    if (/^(salts:|mfr:)/i.test(part)) continue;
+    if (/not specified/i.test(part)) continue;
+    cleanParts.push(part.replace(/_/g, ' '));
+  }
+  return cleanParts.join(' · ') || raw.replace(/_/g, ' ');
 }
 
 // ─── Structured Medication Details Parser ─────────────────────────────
 function renderMedicationDetails(med) {
   if (!med.dosage) return null;
-  const raw = med.dosage;
+  const raw = String(med.dosage).trim();
+
+  let strengthAndForm = [];
+  let schedule = null;
+  let timing = null;
+  let salts = null;
+  let manufacturer = null;
+  let others = [];
 
   if (raw.includes('•')) {
     const parts = raw.split('•').map((p) => p.trim()).filter(Boolean);
-    let strengthAndForm = [];
-    let schedule = null;
-    let timing = null;
-    let salts = null;
-    let manufacturer = null;
-    let others = [];
-
     parts.forEach((part) => {
       if (/^salts:/i.test(part)) {
         salts = part.replace(/^salts:\s*/i, '');
       } else if (/^mfr:/i.test(part)) {
         manufacturer = part.replace(/^mfr:\s*/i, '');
-      } else if (/once daily|twice daily|thrice daily|every|daily/i.test(part)) {
-        schedule = part;
-      } else if (/before food|after food|with food|without food/i.test(part)) {
-        timing = part.replace(/_/g, ' ');
-      } else if (/tablet|capsule|syrup|injection|drops|cream|gel|suspension|\d+\s*(mg|mcg|ml|g)/i.test(part)) {
-        strengthAndForm.push(part);
+      } else if (/once daily|twice daily|thrice daily|every|daily|bedtime|morning|night/i.test(part)) {
+        schedule = part.replace(/_/g, ' ');
+      } else if (/food|stomach/i.test(part)) {
+        const clean = part.replace(/_/g, ' ');
+        if (clean.toLowerCase() !== 'not specified') {
+          timing = clean;
+        }
+      } else if (/tablet|capsule|syrup|injection|drops|cream|gel|suspension|\d+\s*(mg|mcg|ml|g)\b/i.test(part)) {
+        strengthAndForm.push(part.replace(/_/g, ' '));
       } else if (part.toLowerCase() !== 'not specified') {
         others.push(part.replace(/_/g, ' '));
       }
     });
-
-    return (
-      <div className="space-y-2 my-2 text-xs">
-        {/* Pills row */}
-        <div className="flex flex-wrap items-center gap-1.5">
-          {strengthAndForm.length > 0 && (
-            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg font-semibold bg-teal-500/10 text-teal-800 border border-teal-500/20 text-[11px]">
-              {strengthAndForm.join(' · ')}
-            </span>
-          )}
-          {schedule && (
-            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg font-medium bg-[var(--surface-2)] text-[var(--ink-2)] border border-[var(--border)] text-[11px]">
-              <Clock className="w-3 h-3 text-[var(--brand-600)]" />
-              {schedule}
-            </span>
-          )}
-          {timing && timing.toLowerCase() !== 'not specified' && (
-            <span className="inline-flex items-center px-2 py-0.5 rounded-lg text-[10px] font-medium bg-[var(--canvas)] text-[var(--ink-3)] border border-[var(--border)] capitalize">
-              {timing}
-            </span>
-          )}
-          {others.map((o, idx) => (
-            <span key={idx} className="inline-flex items-center px-2 py-0.5 rounded-lg text-[10px] bg-[var(--canvas)] text-[var(--ink-3)] border border-[var(--border)] capitalize">
-              {o}
-            </span>
-          ))}
-        </div>
-
-        {/* Chemical Salts / Active Formula */}
-        {salts && (
-          <div className="flex items-start gap-1.5 text-[11px] text-[var(--ink-2)] bg-[var(--canvas)]/80 px-2.5 py-1.5 rounded-xl border border-[var(--border)]">
-            <FlaskConical className="w-3.5 h-3.5 text-[var(--brand-600)] flex-shrink-0 mt-0.5" />
-            <span className="leading-snug">
-              <span className="text-[var(--ink-3)] font-medium">Composition: </span>
-              <strong className="font-semibold text-[var(--ink)]">{salts}</strong>
-            </span>
-          </div>
-        )}
-
-        {/* Manufacturer */}
-        {manufacturer && (
-          <p className="text-[10px] text-[var(--ink-3)] tracking-tight">
-            Mfr: <span className="font-medium text-[var(--ink-2)]">{manufacturer}</span>
-          </p>
-        )}
-      </div>
-    );
+  } else {
+    // Non-bullet raw string, e.g. "5mg once daily", "500mg after food"
+    let text = raw.replace(/_/g, ' ');
+    const scheduleMatch = text.match(/\b(once daily|twice daily|thrice daily|four times daily|every \d+ hours?|at bedtime|daily|as needed)\b/i);
+    if (scheduleMatch) {
+      schedule = scheduleMatch[0];
+      text = text.replace(scheduleMatch[0], '').trim();
+    }
+    const timingMatch = text.match(/\b(before food|after food|with food|without food|with or without food|empty stomach)\b/i);
+    if (timingMatch) {
+      timing = timingMatch[0];
+      text = text.replace(timingMatch[0], '').trim();
+    }
+    if (text) {
+      strengthAndForm.push(text);
+    }
   }
 
-  // Simple string fallback
   return (
-    <div className="flex items-center gap-1.5 my-1.5 text-xs">
-      <span className="inline-flex items-center px-2.5 py-0.5 rounded-lg font-semibold bg-teal-500/10 text-teal-800 border border-teal-500/20 text-[11px]">
-        {raw}
-      </span>
+    <div className="space-y-2 my-2 text-xs">
+      {/* Pills row */}
+      <div className="flex flex-wrap items-center gap-1.5">
+        {strengthAndForm.length > 0 && (
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg font-semibold bg-teal-500/10 text-teal-800 border border-teal-500/20 text-[11px]">
+            {strengthAndForm.join(' · ')}
+          </span>
+        )}
+        {schedule && (
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg font-medium bg-[var(--surface-2)] text-[var(--ink-2)] border border-[var(--border)] text-[11px]">
+            <Clock className="w-3 h-3 text-[var(--brand-600)]" />
+            {schedule}
+          </span>
+        )}
+        {timing && timing.toLowerCase() !== 'not specified' && (
+          <span className="inline-flex items-center px-2 py-0.5 rounded-lg text-[10px] font-medium bg-[var(--canvas)] text-[var(--ink-3)] border border-[var(--border)] capitalize">
+            {timing}
+          </span>
+        )}
+        {others.map((o, idx) => (
+          <span key={idx} className="inline-flex items-center px-2 py-0.5 rounded-lg text-[10px] bg-[var(--canvas)] text-[var(--ink-3)] border border-[var(--border)] capitalize">
+            {o}
+          </span>
+        ))}
+      </div>
+
+      {/* Chemical Salts / Active Formula */}
+      {salts && (
+        <div className="flex items-start gap-1.5 text-[11px] text-[var(--ink-2)] bg-[var(--canvas)]/80 px-2.5 py-1.5 rounded-xl border border-[var(--border)]">
+          <FlaskConical className="w-3.5 h-3.5 text-[var(--brand-600)] flex-shrink-0 mt-0.5" />
+          <span className="leading-snug">
+            <span className="text-[var(--ink-3)] font-medium">Composition: </span>
+            <strong className="font-semibold text-[var(--ink)]">{salts}</strong>
+          </span>
+        </div>
+      )}
+
+      {/* Manufacturer */}
+      {manufacturer && (
+        <p className="text-[10px] text-[var(--ink-3)] tracking-tight">
+          Mfr: <span className="font-medium text-[var(--ink-2)]">{manufacturer}</span>
+        </p>
+      )}
     </div>
   );
 }
@@ -610,11 +636,11 @@ export default function HomePage() {
               if (flags.length > 0 && hasMajorFlags) {
                 return (
                   <Card
-                    variant="critical"
-                    hideScrews={true}
-                    className="!flex-row items-center gap-4 p-4 sm:p-5 shadow-xs"
+                    status="critical"
+                    variant="flat"
+                    className="flex flex-row items-center gap-4 p-4 sm:p-5 shadow-xs"
                   >
-                    <div className="p-2 rounded-xl bg-rose-500/10 shadow-xs border border-rose-500/20 flex-shrink-0">
+                    <div className="p-2.5 rounded-xl bg-rose-500/10 shadow-xs border border-rose-500/20 flex-shrink-0">
                       <LedIndicator status="critical" size="md" />
                     </div>
                     <div className="flex-1 min-w-0">
@@ -626,7 +652,7 @@ export default function HomePage() {
                           CRITICAL RISK
                         </span>
                       </div>
-                      <p className="text-xs font-mono text-[var(--ink-3)] mt-0.5 leading-snug">
+                      <p className="text-xs text-[var(--ink-2)] mt-0.5 leading-snug">
                         Major or contraindicated pharmacological interactions detected. Immediate physician review and clinical evaluation advised.
                       </p>
                     </div>
@@ -638,11 +664,11 @@ export default function HomePage() {
               if (flags.length > 0) {
                 return (
                   <Card
-                    variant="caution"
-                    hideScrews={true}
-                    className="!flex-row items-center gap-4 p-4 sm:p-5 shadow-xs"
+                    status="caution"
+                    variant="flat"
+                    className="flex flex-row items-center gap-4 p-4 sm:p-5 shadow-xs"
                   >
-                    <div className="p-2 rounded-xl bg-amber-500/10 shadow-xs border border-amber-500/20 flex-shrink-0">
+                    <div className="p-2.5 rounded-xl bg-amber-500/10 shadow-xs border border-amber-500/20 flex-shrink-0">
                       <LedIndicator status="caution" size="md" />
                     </div>
                     <div className="flex-1 min-w-0">
@@ -654,7 +680,7 @@ export default function HomePage() {
                           CAUTION
                         </span>
                       </div>
-                      <p className="text-xs font-mono text-[var(--ink-3)] mt-0.5 leading-snug">
+                      <p className="text-xs text-[var(--ink-2)] mt-0.5 leading-snug">
                         Potential pharmacological interactions detected in active regimen. Review interaction telemetry below and consult your doctor.
                       </p>
                     </div>
@@ -666,11 +692,11 @@ export default function HomePage() {
               if (highestHarmLevel === 5) {
                 return (
                   <Card
-                    variant="critical"
-                    hideScrews={true}
-                    className="!flex-row items-center gap-4 p-4 sm:p-5 shadow-xs"
+                    status="critical"
+                    variant="flat"
+                    className="flex flex-row items-center gap-4 p-4 sm:p-5 shadow-xs"
                   >
-                    <div className="p-2 rounded-xl bg-rose-500/10 shadow-xs border border-rose-500/20 flex-shrink-0">
+                    <div className="p-2.5 rounded-xl bg-rose-500/10 shadow-xs border border-rose-500/20 flex-shrink-0">
                       <LedIndicator status="critical" size="md" />
                     </div>
                     <div className="flex-1 min-w-0">
@@ -682,7 +708,7 @@ export default function HomePage() {
                           L5 CRITICAL MONITORING
                         </span>
                       </div>
-                      <p className="text-xs font-mono text-[var(--ink-3)] mt-0.5 leading-snug">
+                      <p className="text-xs text-[var(--ink-2)] mt-0.5 leading-snug">
                         No pairwise drug-drug interactions detected between active medicines. However, <strong className="text-rose-700 font-bold">{highestRiskDrugName}</strong> is an L5 Critical Risk agent (narrow therapeutic index) requiring specialized clinical monitoring.
                       </p>
                     </div>
@@ -694,11 +720,11 @@ export default function HomePage() {
               if (highestHarmLevel === 4) {
                 return (
                   <Card
-                    variant="caution"
-                    hideScrews={true}
-                    className="!flex-row items-center gap-4 p-4 sm:p-5 shadow-xs"
+                    status="caution"
+                    variant="flat"
+                    className="flex flex-row items-center gap-4 p-4 sm:p-5 shadow-xs"
                   >
-                    <div className="p-2 rounded-xl bg-amber-500/10 shadow-xs border border-amber-500/20 flex-shrink-0">
+                    <div className="p-2.5 rounded-xl bg-amber-500/10 shadow-xs border border-amber-500/20 flex-shrink-0">
                       <LedIndicator status="caution" size="md" />
                     </div>
                     <div className="flex-1 min-w-0">
@@ -710,7 +736,7 @@ export default function HomePage() {
                           L4 MONITORING
                         </span>
                       </div>
-                      <p className="text-xs font-mono text-[var(--ink-3)] mt-0.5 leading-snug">
+                      <p className="text-xs text-[var(--ink-2)] mt-0.5 leading-snug">
                         No pairwise drug-drug interactions detected between active medicines. However, <strong className="text-amber-700 font-bold">{highestRiskDrugName}</strong> is an L4 High Risk medication requiring standard clinical surveillance.
                       </p>
                     </div>
@@ -721,11 +747,11 @@ export default function HomePage() {
               // Case 5: Zero Interaction Flags AND all active medicines are L1–L3 (Low/Mild/Moderate baseline toxicity)
               return (
                 <Card
-                  variant="safe"
-                  hideScrews={true}
-                  className="!flex-row items-center gap-4 p-4 sm:p-5 shadow-xs"
+                  status="safe"
+                  variant="flat"
+                  className="flex flex-row items-center gap-4 p-4 sm:p-5 shadow-xs"
                 >
-                  <div className="p-2 rounded-xl bg-emerald-500/10 shadow-xs border border-emerald-500/20 flex-shrink-0">
+                  <div className="p-2.5 rounded-xl bg-emerald-500/10 shadow-xs border border-emerald-500/20 flex-shrink-0">
                     <LedIndicator status="safe" size="md" />
                   </div>
                   <div className="flex-1 min-w-0">
@@ -737,7 +763,7 @@ export default function HomePage() {
                         SAFE
                       </span>
                     </div>
-                    <p className="text-xs font-mono text-[var(--ink-3)] mt-0.5 leading-snug">
+                    <p className="text-xs text-[var(--ink-2)] mt-0.5 leading-snug">
                       All {medicines.length} active medicine{medicines.length !== 1 ? 's' : ''} in your regimen are verified safe against DDInter clinical benchmarks.
                     </p>
                   </div>
@@ -810,7 +836,7 @@ export default function HomePage() {
                     {/* Medicine info */}
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-bold text-[var(--ink)] truncate">{item.name}</p>
-                      <p className="text-xs text-[var(--ink-2)] font-medium mt-0.5 leading-relaxed">{item.dosage}</p>
+                      <p className="text-xs text-[var(--ink-2)] font-medium mt-0.5 leading-relaxed">{formatScheduleDose(item.dosage)}</p>
                     </div>
 
                     <MedicineTypeBadge type={item.type} />
@@ -877,7 +903,7 @@ export default function HomePage() {
                         )}
                       </div>
                       <div className="flex items-center gap-1 flex-shrink-0">
-                        <DrugHarmBadge category={med.category} name={med.name} flags={flags} />
+                        <DrugHarmBadge harmLevel={med.harmLevel} category={med.category} name={med.name} flags={flags} />
                         <MedicineTypeBadge type={med.type} />
                       </div>
                     </div>
@@ -1299,26 +1325,26 @@ function EditMedicineModal({ med, isOpen, onClose, onSave, isPending }) {
  </div>
 
  {/* Dosage */}
- <div className="space-y-1.5">
- <label className="text-[10px] font-extrabold text-[var(--ink-3)] uppercase tracking-widest">Dosage Instructions</label>
+              <div className="flex flex-col gap-1.5">
+                <label className="block text-xs font-bold text-[var(--ink-2)] font-[var(--font-heading)]">Dosage Instructions</label>
  <input
  type="text"
  value={dosage}
  onChange={(e) => setDosage(e.target.value)}
  placeholder="e.g. 10mg, 500mg, 1 tablet"
- className="input-field text-sm"
+                className="ps-input text-sm w-full"
  />
  </div>
 
  {/* Prescribed By */}
- <div className="space-y-1.5">
- <label className="text-[10px] font-extrabold text-[var(--ink-3)] uppercase tracking-widest">Prescribed By</label>
+              <div className="flex flex-col gap-1.5">
+                <label className="block text-xs font-bold text-[var(--ink-2)] font-[var(--font-heading)]">Prescribed By</label>
  <input
  type="text"
  value={prescribedBy}
  onChange={(e) => setPrescribedBy(e.target.value)}
  placeholder="e.g. Dr. Sharma, Self-prescribed, OTC purchase"
- className="input-field text-sm"
+                className="ps-input text-sm w-full"
  />
  </div>
  </div>
@@ -1328,12 +1354,12 @@ function EditMedicineModal({ med, isOpen, onClose, onSave, isPending }) {
  {activeTab === 'schedule' && (
  <div className="space-y-4">
  {/* Frequency */}
- <div className="space-y-1.5">
- <label className="text-[10px] font-extrabold text-[var(--ink-3)] uppercase tracking-widest">Dosing Frequency</label>
+              <div className="flex flex-col gap-1.5">
+                <label className="block text-xs font-bold text-[var(--ink-2)] font-[var(--font-heading)]">Dosing Frequency</label>
  <select
  value={frequency}
  onChange={(e) => setFrequency(e.target.value)}
- className="input-field text-sm"
+                className="ps-input text-sm w-full"
  >
  <option value="">Select frequency…</option>
  {FREQUENCY_OPTIONS.map(f => (
@@ -1344,14 +1370,14 @@ function EditMedicineModal({ med, isOpen, onClose, onSave, isPending }) {
  type="text"
  value={frequency && !FREQUENCY_OPTIONS.includes(frequency) ? frequency : ''}
  onChange={(e) => setFrequency(e.target.value)}
- placeholder="Or type a custom frequency…"
+                className="ps-input text-sm w-full mt-1.5"
  className="input-field text-sm mt-1.5"
  />
  </div>
 
  {/* Food Instruction */}
- <div className="space-y-1.5">
- <label className="text-[10px] font-extrabold text-[var(--ink-3)] uppercase tracking-widest">Food Instruction</label>
+              <div className="flex flex-col gap-1.5">
+                <label className="block text-xs font-bold text-[var(--ink-2)] font-[var(--font-heading)]">Food Instruction</label>
  <div className="grid grid-cols-2 gap-2">
  {FOOD_OPTIONS.map(opt => (
  <button
@@ -1374,21 +1400,19 @@ function EditMedicineModal({ med, isOpen, onClose, onSave, isPending }) {
  </div>
  </div>
 
- {/* Refill Date */}
- <div className="space-y-1.5">
- <label className="text-[10px] font-extrabold text-[var(--ink-3)] uppercase tracking-widest">
- Next Refill / Prescription Renewal Date
- </label>
- <div className="relative">
- <CalendarDays className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--ink-3)] pointer-events-none" />
- <input
- type="date"
- value={refillDate}
- onChange={(e) => setRefillDate(e.target.value)}
- className="input-field text-sm !pl-11 has-icon-left"
- min={new Date().toISOString().split('T')[0]}
- />
- </div>
+              {/* Refill Date */}
+              <div className="flex flex-col gap-1.5">
+                <label className="block text-xs font-bold text-[var(--ink-2)] font-[var(--font-heading)]">Next Refill / Renewal Date</label>
+                <div className="relative">
+                  <CalendarDays className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--ink-3)] pointer-events-none" />
+                  <input
+                    type="date"
+                    value={refillDate}
+                    onChange={(e) => setRefillDate(e.target.value)}
+                    className="ps-input text-sm !pl-11 w-full"
+                    min={new Date().toISOString().split('T')[0]}
+                  />
+                </div>
  {refillDate && (
  <p className="text-[11px] text-[var(--brand-600)] font-semibold flex items-center gap-1.5">
  <CalendarDays className="w-3 h-3" />

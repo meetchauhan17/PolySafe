@@ -681,8 +681,27 @@ details.ps-accordion > summary::-webkit-details-marker { display: none; }
 .ps-orb--primary { display: none; }
 .ps-orb--secondary { display: none; }
 
-/* ps-input-field → ps-input alias */
-.ps-input-field { display:block; width:100%; background-color:var(--surface); border:1.5px solid var(--border); border-radius:var(--radius-sm); color:var(--ink); font-family:var(--font-body); font-size:1rem; padding:0.625rem 0.875rem; min-height:44px; outline:none; }
+/* input-field and ps-input-field → ps-input alias */
+.input-field,
+.ps-input-field {
+  display: block;
+  width: 100%;
+  background-color: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  padding: 0.625rem 0.875rem;
+  min-height: 42px;
+  outline: none;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+.input-field:focus,
+.ps-input-field:focus {
+  border-color: var(--brand-600);
+  box-shadow: 0 0 0 3px rgba(14, 116, 144, 0.15);
+}
 
 /* Stat tiles grid utility */
 .ps-stats-grid {

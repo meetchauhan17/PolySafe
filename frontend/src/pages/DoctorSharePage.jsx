@@ -162,7 +162,7 @@ export default function DoctorSharePage() {
                 <span className="w-2 h-2 rounded-full bg-[var(--doctor-600)] animate-pulse" />
                 <span>Physician Consultation</span>
                 <span className="text-[var(--doctor-600)]/60">·</span>
-                <span className="font-mono text-[11px] text-[var(--doctor-600)]">Instant Sync</span>
+                <span className="text-[11px] text-[var(--doctor-600)] font-medium">Instant Sync</span>
               </div>
             </div>
 

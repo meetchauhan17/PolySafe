@@ -14,20 +14,20 @@ export const notify = {
   success: (title, description, options = {}) => {
     const toastId = options.id || `toast-success-${title}-${description || ''}`;
     return toast.custom((t) => (
-      <div className="w-full max-w-sm bg-[var(--canvas)] border-2 border-[var(--safe-fg)]/40 rounded-2xl p-4 shadow-[8px_8px_20px_rgba(0,0,0,0.18),-4px_-4px_12px_rgba(255,255,255,0.7)] flex items-start gap-3 relative text-left font-sans">
-        <div className="p-2 bg-[var(--canvas)] text-[var(--safe-fg)] rounded-xl flex-shrink-0 mt-0.5">
+      <div className="w-full max-w-sm bg-[var(--surface)] border border-[var(--border)] border-l-4 border-l-[var(--safe-fg)] rounded-2xl p-4 shadow-[var(--shadow-lg)] flex items-start gap-3 relative text-left font-sans">
+        <div className="p-2 bg-emerald-500/10 text-[var(--safe-fg)] rounded-xl flex-shrink-0 mt-0.5">
           <CheckCircle2 className="w-5 h-5" />
         </div>
         <div className="flex-1 pr-6 space-y-0.5">
           <h4 className="text-sm font-bold text-[var(--ink)]">{title}</h4>
           {description && (
-            <p className="text-xs text-[var(--ink-3)] leading-relaxed">{description}</p>
+            <p className="text-xs text-[var(--ink-2)] leading-relaxed">{description}</p>
           )}
         </div>
         <button
           type="button"
           onClick={() => toast.dismiss(t)}
-          className="absolute top-3 right-3 text-[#9CA3AF] hover:text-[var(--ink)] transition-colors p-1 rounded-lg hover:bg-[var(--canvas)] cursor-pointer"
+          className="absolute top-3 right-3 text-[var(--ink-3)] hover:text-[var(--ink)] transition-colors p-1 rounded-lg hover:bg-[var(--canvas)] cursor-pointer"
           aria-label="Dismiss notification"
         >
           <X className="w-3.5 h-3.5" />
@@ -39,20 +39,20 @@ export const notify = {
   error: (title, description, options = {}) => {
     const toastId = options.id || `toast-error-${title}-${description || ''}`;
     return toast.custom((t) => (
-      <div className="w-full max-w-sm bg-[var(--canvas)] border-2 border-[var(--critical-fg)]/40 rounded-2xl p-4 shadow-[8px_8px_20px_rgba(0,0,0,0.18),-4px_-4px_12px_rgba(255,255,255,0.7)] flex items-start gap-3 relative text-left font-sans">
-        <div className="p-2 bg-[var(--canvas)] text-[var(--critical-fg)] rounded-xl flex-shrink-0 mt-0.5">
+      <div className="w-full max-w-sm bg-[var(--surface)] border border-[var(--border)] border-l-4 border-l-[var(--critical-fg)] rounded-2xl p-4 shadow-[var(--shadow-lg)] flex items-start gap-3 relative text-left font-sans">
+        <div className="p-2 bg-rose-500/10 text-[var(--critical-fg)] rounded-xl flex-shrink-0 mt-0.5">
           <AlertCircle className="w-5 h-5" />
         </div>
         <div className="flex-1 pr-6 space-y-0.5">
           <h4 className="text-sm font-bold text-[var(--critical-fg)]">{title}</h4>
           {description && (
-            <p className="text-xs text-[var(--ink-3)] leading-relaxed">{description}</p>
+            <p className="text-xs text-[var(--ink-2)] leading-relaxed">{description}</p>
           )}
         </div>
         <button
           type="button"
           onClick={() => toast.dismiss(t)}
-          className="absolute top-3 right-3 text-[#9CA3AF] hover:text-[var(--ink)] transition-colors p-1 rounded-lg hover:bg-[var(--canvas)] cursor-pointer"
+          className="absolute top-3 right-3 text-[var(--ink-3)] hover:text-[var(--ink)] transition-colors p-1 rounded-lg hover:bg-[var(--canvas)] cursor-pointer"
           aria-label="Dismiss notification"
         >
           <X className="w-3.5 h-3.5" />
@@ -64,20 +64,20 @@ export const notify = {
   warning: (title, description, options = {}) => {
     const toastId = options.id || `toast-warning-${title}-${description || ''}`;
     return toast.custom((t) => (
-      <div className="w-full max-w-sm bg-[var(--canvas)] border-2 border-[var(--caution-fg)]/40 rounded-2xl p-4 shadow-[8px_8px_20px_rgba(0,0,0,0.18),-4px_-4px_12px_rgba(255,255,255,0.7)] flex items-start gap-3 relative text-left font-sans">
-        <div className="p-2 bg-[var(--canvas)] text-[var(--caution-fg)] rounded-xl flex-shrink-0 mt-0.5">
+      <div className="w-full max-w-sm bg-[var(--surface)] border border-[var(--border)] border-l-4 border-l-[var(--caution-fg)] rounded-2xl p-4 shadow-[var(--shadow-lg)] flex items-start gap-3 relative text-left font-sans">
+        <div className="p-2 bg-amber-500/10 text-[var(--caution-fg)] rounded-xl flex-shrink-0 mt-0.5">
           <AlertTriangle className="w-5 h-5" />
         </div>
         <div className="flex-1 pr-6 space-y-0.5">
           <h4 className="text-sm font-bold text-[var(--ink)]">{title}</h4>
           {description && (
-            <p className="text-xs text-[var(--ink-3)] leading-relaxed">{description}</p>
+            <p className="text-xs text-[var(--ink-2)] leading-relaxed">{description}</p>
           )}
         </div>
         <button
           type="button"
           onClick={() => toast.dismiss(t)}
-          className="absolute top-3 right-3 text-[#9CA3AF] hover:text-[var(--ink)] transition-colors p-1 rounded-lg hover:bg-[var(--canvas)] cursor-pointer"
+          className="absolute top-3 right-3 text-[var(--ink-3)] hover:text-[var(--ink)] transition-colors p-1 rounded-lg hover:bg-[var(--canvas)] cursor-pointer"
           aria-label="Dismiss notification"
         >
           <X className="w-3.5 h-3.5" />
@@ -89,20 +89,20 @@ export const notify = {
   info: (title, description, options = {}) => {
     const toastId = options.id || `toast-info-${title}-${description || ''}`;
     return toast.custom((t) => (
-      <div className="w-full max-w-sm bg-[var(--canvas)] border-2 border-[var(--doctor-600)]/40 rounded-2xl p-4 shadow-[8px_8px_20px_rgba(0,0,0,0.18),-4px_-4px_12px_rgba(255,255,255,0.7)] flex items-start gap-3 relative text-left font-sans">
-        <div className="p-2 bg-[#E6EFF5] text-[var(--doctor-600)] rounded-xl flex-shrink-0 mt-0.5">
+      <div className="w-full max-w-sm bg-[var(--surface)] border border-[var(--border)] border-l-4 border-l-[var(--doctor-600)] rounded-2xl p-4 shadow-[var(--shadow-lg)] flex items-start gap-3 relative text-left font-sans">
+        <div className="p-2 bg-[var(--doctor-600)]/10 text-[var(--doctor-600)] rounded-xl flex-shrink-0 mt-0.5">
           <Info className="w-5 h-5" />
         </div>
         <div className="flex-1 pr-6 space-y-0.5">
           <h4 className="text-sm font-bold text-[var(--doctor-600)]">{title}</h4>
           {description && (
-            <p className="text-xs text-[var(--ink-3)] leading-relaxed">{description}</p>
+            <p className="text-xs text-[var(--ink-2)] leading-relaxed">{description}</p>
           )}
         </div>
         <button
           type="button"
           onClick={() => toast.dismiss(t)}
-          className="absolute top-3 right-3 text-[#9CA3AF] hover:text-[var(--ink)] transition-colors p-1 rounded-lg hover:bg-[var(--canvas)] cursor-pointer"
+          className="absolute top-3 right-3 text-[var(--ink-3)] hover:text-[var(--ink)] transition-colors p-1 rounded-lg hover:bg-[var(--canvas)] cursor-pointer"
           aria-label="Dismiss notification"
         >
           <X className="w-3.5 h-3.5" />

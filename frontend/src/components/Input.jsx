@@ -3,10 +3,12 @@ import React, { forwardRef } from 'react';
 import { clsx } from 'clsx';
 
 const Input = forwardRef(function Input(
-  { label, hint, error, icon, iconRight, className, id, ...props },
+  { label, hint, error, icon, iconRight, leftIcon, rightIcon, className, id, ...props },
   ref
 ) {
   const inputId = id || label?.toLowerCase().replace(/\s+/g, '-');
+  const finalIcon = icon || leftIcon;
+  const finalIconRight = iconRight || rightIcon;
   return (
     <div className="flex flex-col gap-1.5">
       {label && (
@@ -19,9 +21,9 @@ const Input = forwardRef(function Input(
         </label>
       )}
       <div className="relative">
-        {icon && (
+        {finalIcon && (
           <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--ink-3)] pointer-events-none flex-shrink-0">
-            {icon}
+            {finalIcon}
           </span>
         )}
         <input
@@ -29,8 +31,8 @@ const Input = forwardRef(function Input(
           id={inputId}
           className={clsx(
             'ps-input',
-            icon && 'pl-10',
-            iconRight && 'pr-10',
+            finalIcon && 'pl-10',
+            finalIconRight && 'pr-10',
             error && 'border-[var(--critical-fg)] focus:shadow-[0_0_0_3px_rgba(185,28,28,.25)]',
             className
           )}
@@ -40,9 +42,9 @@ const Input = forwardRef(function Input(
           }
           {...props}
         />
-        {iconRight && (
+        {finalIconRight && (
           <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--ink-3)] flex-shrink-0">
-            {iconRight}
+            {finalIconRight}
           </span>
         )}
       </div>
@@ -63,7 +65,7 @@ const Input = forwardRef(function Input(
 export default Input;
 
 export const Textarea = forwardRef(function Textarea(
-  { label, hint, error, className, id, rows = 3, ...props },
+  { label, hint, error, className, id, rows = 3, icon, leftIcon, rightIcon, iconRight, ...props },
   ref
 ) {
   const inputId = id || label?.toLowerCase().replace(/\s+/g, '-');
@@ -97,7 +99,7 @@ export const Textarea = forwardRef(function Textarea(
 });
 
 export const Select = forwardRef(function Select(
-  { label, hint, error, className, id, children, ...props },
+  { label, hint, error, className, id, children, icon, leftIcon, rightIcon, iconRight, ...props },
   ref
 ) {
   const inputId = id || label?.toLowerCase().replace(/\s+/g, '-');

@@ -292,9 +292,9 @@ function DrugCard({ med, score }) {
               <TypeBadge type={med.type} />
             </div>
           </div>
-          {med.dosage && <p className="text-[11px] text-[var(--ink-3)] font-mono mt-0.5">{med.dosage}</p>}
+          {med.dosage && <p className="text-xs text-[var(--ink-2)] font-medium mt-0.5">{med.dosage}</p>}
           {score != null && (
-            <p className="text-[10px] text-[var(--ink-3)] mt-1 font-mono">
+            <p className="text-xs text-[var(--ink-3)] mt-1 font-medium">
               ACB burden score:{' '}
               <span className={`font-bold ${score >= 3 ? 'text-rose-600' : score >= 1 ? 'text-amber-600' : 'text-[var(--brand-600)]'}`}>
                 {score}

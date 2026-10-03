@@ -274,7 +274,7 @@ function ConnectionRow({ conn, onRevoke, revoking, onApprove, approving, customL
               type="button"
               onClick={() => onApprove(conn.connectionId)}
               disabled={approving || revoking}
-              className="ps-btn ps-btn-primary flex-1 py-2.5 text-xs font-bold font-mono flex items-center justify-center gap-1.5 cursor-pointer shadow-xs active:scale-95"
+              className="ps-btn ps-btn-primary flex-1 py-2.5 text-xs font-bold flex items-center justify-center gap-1.5 cursor-pointer shadow-xs active:scale-95"
             >
               {approving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <CheckCircle2 className="w-3.5 h-3.5" />}
               <span>Approve Doctor Access</span>
@@ -283,7 +283,7 @@ function ConnectionRow({ conn, onRevoke, revoking, onApprove, approving, customL
               type="button"
               onClick={() => onRevoke(conn.connectionId)}
               disabled={approving || revoking}
-              className="btn-outline-danger py-2.5 px-4 text-xs font-bold font-mono flex items-center justify-center gap-1.5 cursor-pointer shadow-xs active:scale-95"
+              className="btn-outline-danger py-2.5 px-4 text-xs font-bold flex items-center justify-center gap-1.5 cursor-pointer shadow-xs active:scale-95"
             >
               <XCircle className="w-3.5 h-3.5" />
               <span>Decline</span>
@@ -557,10 +557,10 @@ function AddCaregiverPanel({ onSuccess }) {
           </div>
 
           <div className="p-3 rounded-xl bg-[var(--canvas)] border border-[var(--border)]  space-y-1.5">
-            <p className="text-[10px] font-mono uppercase tracking-wider text-[var(--ink-3)] font-bold">
+            <p className="text-[10px] uppercase tracking-wider text-[var(--ink-3)] font-bold">
               Ready-to-send Invite Message:
             </p>
-            <p className="text-xs text-[var(--ink-2)] font-mono leading-relaxed">
+            <p className="text-xs text-[var(--ink-2)] font-medium italic leading-relaxed">
               "{invitedData.inviteMessage}"
             </p>
           </div>
@@ -915,7 +915,7 @@ export default function ConnectedPeoplePage() {
                 <span className="w-2 h-2 rounded-full bg-[var(--brand-600)] animate-pulse" />
                 <span>Consent & Security Hub</span>
                 <span className="text-[var(--brand-600)]/60">·</span>
-                <span className="font-mono text-[11px] text-[var(--brand-600)]">Active Authorization</span>
+                <span className="text-[11px] text-[var(--brand-600)] font-medium">Active Authorization</span>
               </div>
             </div>
 
@@ -943,18 +943,18 @@ export default function ConnectedPeoplePage() {
 
         {/* Quick Status Chips */}
         <div className="flex flex-wrap gap-2 pt-0.5">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-bold bg-[var(--doctor-600)]/10 text-[var(--doctor-600)] border border-[var(--doctor-600)]/25 shadow-xs">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-[var(--doctor-600)]/10 text-[var(--doctor-600)] border border-[var(--doctor-600)]/25 shadow-xs">
             <Stethoscope className="w-3.5 h-3.5" />
             <span>{approvedDoctors} Active Doctor{approvedDoctors !== 1 ? 's' : ''}</span>
           </span>
 
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-bold bg-[var(--brand-600)]/10 text-[var(--brand-600)] border border-[var(--brand-600)]/25 shadow-xs">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-[var(--brand-600)]/10 text-[var(--brand-600)] border border-[var(--brand-600)]/25 shadow-xs">
             <Heart className="w-3.5 h-3.5" />
             <span>{caregivers.filter(c => c.status === 'APPROVED').length} Caregiver{caregivers.filter(c => c.status === 'APPROVED').length !== 1 ? 's' : ''}</span>
           </span>
 
           {pendingCount > 0 && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-bold bg-amber-500/10 text-amber-800  border border-amber-500/30 shadow-xs">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-800  border border-amber-500/30 shadow-xs">
               <Clock className="w-3.5 h-3.5 text-amber-600 " />
               <span>{pendingCount} Pending Invite{pendingCount !== 1 ? 's' : ''}</span>
             </span>
