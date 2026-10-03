@@ -3,7 +3,7 @@ import React, { forwardRef } from 'react';
 import { clsx } from 'clsx';
 
 const Input = forwardRef(function Input(
-  { label, hint, error, icon, iconRight, leftIcon, rightIcon, className, id, ...props },
+  { label, hint, error, icon, iconRight, leftIcon, rightIcon, className, id, style, ...props },
   ref
 ) {
   const inputId = id || label?.toLowerCase().replace(/\s+/g, '-');
@@ -20,30 +20,35 @@ const Input = forwardRef(function Input(
           {props.required && <span className="text-[var(--critical-fg)] ml-0.5">*</span>}
         </label>
       )}
-      <div className="relative">
+      <div className="relative flex items-center">
         {finalIcon && (
-          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--ink-3)] pointer-events-none flex-shrink-0">
+          <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--ink-3)] pointer-events-none flex-shrink-0 z-10 flex items-center justify-center">
             {finalIcon}
           </span>
         )}
         <input
           ref={ref}
           id={inputId}
+          {...props}
           className={clsx(
             'ps-input',
-            finalIcon && 'pl-10',
-            finalIconRight && 'pr-10',
+            finalIcon && '!pl-11 has-icon-left',
+            finalIconRight && '!pr-11 has-icon-right',
             error && 'border-[var(--critical-fg)] focus:shadow-[0_0_0_3px_rgba(185,28,28,.25)]',
             className
           )}
+          style={{
+            ...style,
+            ...(finalIcon ? { paddingLeft: '2.75rem' } : {}),
+            ...(finalIconRight ? { paddingRight: '2.75rem' } : {}),
+          }}
           aria-invalid={error ? 'true' : undefined}
           aria-describedby={
             error ? `${inputId}-error` : hint ? `${inputId}-hint` : undefined
           }
-          {...props}
         />
         {finalIconRight && (
-          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--ink-3)] flex-shrink-0">
+          <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[var(--ink-3)] flex-shrink-0 z-10 flex items-center justify-center">
             {finalIconRight}
           </span>
         )}

@@ -320,6 +320,22 @@
   box-shadow: var(--shadow-focus);
 }
 .ps-input:disabled { opacity: .5; cursor: not-allowed; background: var(--surface-2); }
+.ps-input.has-icon-left,
+.ps-input.has-left-icon,
+.input-field.has-icon-left,
+.input-field.has-left-icon,
+.ps-input-field.has-icon-left,
+.ps-input-field.has-left-icon {
+  padding-left: 2.75rem !important;
+}
+.ps-input.has-icon-right,
+.ps-input.has-right-icon,
+.input-field.has-icon-right,
+.input-field.has-right-icon,
+.ps-input-field.has-icon-right,
+.ps-input-field.has-right-icon {
+  padding-right: 2.75rem !important;
+}
 
 /* ── BADGE / CHIP ─────────────────────────────────────────────────── */
 .ps-badge {
