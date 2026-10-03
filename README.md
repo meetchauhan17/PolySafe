@@ -79,11 +79,13 @@ PolySafe addresses the 4 primary clinical failure modes of fragmented healthcare
 ```
 
 - **DDInter 2024 Integration:** Evaluates active regimens against 222,385 bidirectional pairwise interaction records across 4 clinical severity classifications (`Contraindicated`, `Major`, `Moderate`, `Minor`, and `Unknown`).
-- **Cumulative Anticholinergic Burden (ACB):** Calculates total cognitive load (0 to 6+ scale) to prevent acute delirium and fall hazards.
-- **Prescribing Cascade Correlator:** Maps symptom logs against prior prescription start dates and CaDeN rules.
+- **Cumulative Anticholinergic Burden (ACB):** Calculates total cognitive load from 561 clinically validated medications (567 in DB) calibrated against the Boustani ACB Scale and AGS Beers Criteria 2024 to prevent acute delirium and fall hazards.
+- **Prescribing Cascade Correlator:** 581 peer-reviewed clinical cascade rules linking symptom logs against prior prescription start dates and CaDeN/Rochon & Gurwitz protocols.
+- **Herb-Drug Cross-Reactivity:** 526 clinical interaction monographs mapping 50+ botanical/Ayurvedic herbs against pharmaceuticals to prevent occult bleeding and CYP enzyme failure.
+- **Clinical Indications Formulary:** 691 curated indications resolving "What this medicine is used for" across Indian and international brands.
+- **Multi-Layer AI Pill Imprint Identifier:** Stamped tablet and capsule code identification across 560 authentic FDA/NLM pill imprints with cascading AI fallback.
 - **Indian Formulary 5-Layer Multi-Salt Resolver:** Breaks down branded multi-constituent formulations (e.g., *Augmentin 625*, *Pan-D*, *Naxdom 500*, *Combiflam*, *Zerodol SP*, *Stamlo Beta*, *Telma H*) to pure active chemical salts.
 - **Multi-Engine Packaging & Label OCR:** Multimodal extraction (Gemini Vision $\rightarrow$ RxNorm $\rightarrow$ Tesseract $\rightarrow$ OCR.space $\rightarrow$ Manual) with confidence scoring.
-- **Multi-Layer AI Pill Imprint Identifier:** Stamped tablet and capsule code identification with cascading Groq LLaMA-3.3, Gemini Flash, and NLM RxNav fallback with instant auto-caching.
 - **4-System Organ Toxicity Radar:** Quantifies stress indices for **Renal Clearance**, **Hepatic Metabolism**, **Cardiovascular Strain**, and **CNS Burden**.
 
 ---
@@ -93,9 +95,11 @@ PolySafe addresses the 4 primary clinical failure modes of fragmented healthcare
 | Clinical Subsystem | Underlying Dataset / Model | Mechanism & Scope |
 | :--- | :--- | :--- |
 | **Drug-Drug Interactions** | **DDInter 2024 Master Dataset** | 222,385 validated bidirectional pairs; distinguishes uncatalogued pairs (`notInDataset: true`) from verified safe combinations. |
-| **Anticholinergic Burden** | **ACB Scale (Boustani et al.)** | Tallies individual drug scores (0–3) into a cumulative regimen load index (`Normal`, `Moderate`, `Critical`). |
-| **Cascade Detection** | **CaDeN Prescribing Protocols** | Rule-based engine linking symptom keywords with offending drug pharmacological classes initiated within 90 days. |
-| **Herbal Cross-Reactivity** | **MSKCC & Natural Medicines Database** | Identifies bleeding, metabolic, and clearance interference between botanical supplements and pharmaceuticals. |
+| **Anticholinergic Burden** | **ACB Scale (Boustani et al.)** | 561 validated drugs (567 in DB) scored 0–3 into a cumulative regimen load index (`Normal`, `Moderate`, `Critical`). |
+| **Cascade Detection** | **CaDeN & Rochon Protocols** | 581 validated clinical rules linking symptom keywords with offending drug pharmacological classes. |
+| **Herbal Cross-Reactivity** | **MSKCC & Natural Medicines DB** | 526 clinical monographs covering bleeding, metabolic, and clearance interference across 50+ herbs. |
+| **Clinical Indications** | **CDSCO, WHO & FDA Formularies** | 691 curated medicine indications resolving therapeutic purpose across Indian and global brands. |
+| **Pill Imprint Identifier** | **FDA DailyMed & NLM Pillbox** | 560 authentic stamped pill imprints with strength, shape, and color matching. |
 | **Medication Harm Tiers** | **WHO / NCI 5-Tier Classification** | Assigns Tier L1 (Low) to Tier L5 (Critical Risk) based on therapeutic index, narrow safety margins, and clearance pathways. |
 | **Post-Market Adverse Events**| **FDA OFFSIDES Pharmacovigilance** | 7,330 curated adverse reaction signals with Proportional Reporting Ratios ($\text{PRR} \ge 2.0$). |
 | **Brand-to-Salt Resolution**| **Indian Formulary + RxNorm + AI** | 5-layer cascading pipeline resolving branded combination products to exact chemical salt constituents. |
@@ -116,17 +120,17 @@ PolySafe addresses the 4 primary clinical failure modes of fragmented healthcare
 +--------------------------------------------v--------------------------------------------+
 |                              SERVER API LAYER (Node.js 22 + Express 5)                  |
 |  * JWT Auth & Brute-Force Rate Limiting     * Socket.IO Room Broadcaster Engine         |
-|  * DDInter 222K Pairwise Evaluator          * Cumulative ACB Burden Calculator          |
-|  * Prescribing Cascade Correlator           * 5-Layer Indian Drug Resolver Core         |
+|  * DDInter 222K Pairwise Evaluator          * Cumulative ACB Burden Calculator (561)    |
+|  * Prescribing Cascade Correlator (581)     * 5-Layer Indian Drug Resolver Core         |
 |  * 4-System Organ Toxicity Engine           * Dual LLM Clinical Explanation Service     |
 +--------------------------------------------+--------------------------------------------+
                                              | Prisma ORM Client
 +--------------------------------------------v--------------------------------------------+
 |                             PERSISTENCE & DATASETS (PostgreSQL / SQLite)                |
 |  * User & Patient Profiles (Role-Based)     * Active & Discontinued Medication Lifecycle|
-|  * DDInter Reference (222,385 records)      * Anticholinergic Burden Scoring Map        |
-|  * CaDeN Cascade Rule Repository            * Herb-Drug Interaction Clinical Dataset   |
-|  * FDA OFFSIDES Pharmacovigilance (PRR>=2.0)* Loose Pill Physical Imprint Catalog       |
+|  * DDInter Reference (222,385 records)      * Anticholinergic Burden Scores (567 in DB) |
+|  * Cascade Rule Repository (581 in DB)      * Herb-Drug Clinical Dataset (526 in DB)    |
+|  * FDA OFFSIDES Pharmacovigilance (PRR>=2.0)* Pill Imprint Catalog (560 in DB)          |
 +-----------------------------------------------------------------------------------------+
 ```
 

@@ -108,6 +108,46 @@ const CATEGORY_DRUG_KEYWORDS = {
     'metformin', 'glycomet', 'glucophage', 'glimepiride', 'gliclazide',
     'sitagliptin', 'vildagliptin', 'dapagliflozin', 'empagliflozin', 'insulin',
   ],
+  'gabapentinoid': [
+    'gabapentin', 'pregabalin', 'neurontin', 'lyrica',
+  ],
+  'thiazolidinedione': [
+    'pioglitazone', 'rosiglitazone', 'actos',
+  ],
+  'bisphosphonate': [
+    'alendronate', 'risedronate', 'ibandronate', 'zoledronic acid', 'fosamax', 'actonel',
+  ],
+  'alpha-blocker': [
+    'tamsulosin', 'doxazosin', 'terazosin', 'prazosin', 'alfuzosin', 'silodosin', 'flomax',
+  ],
+  'dopamine antagonist': [
+    'metoclopramide', 'prochlorperazine', 'stemetil', 'reglan', 'domperidone',
+  ],
+  'antibiotic': [
+    'ciprofloxacin', 'levofloxacin', 'moxifloxacin', 'azithromycin', 'clarithromycin',
+    'erythromycin', 'amoxicillin', 'augmentin', 'clindamycin', 'cephalexin',
+  ],
+  'anticoagulant': [
+    'warfarin', 'apixaban', 'rivaroxaban', 'dabigatran', 'edoxaban', 'eliquis', 'xarelto', 'pradaxa',
+  ],
+  'antiparkinsonian': [
+    'levodopa', 'carbidopa', 'sinemet', 'pramipexole', 'ropinirole', 'amantadine', 'selegiline', 'rasagiline',
+  ],
+  'decongestant': [
+    'pseudoephedrine', 'phenylephrine', 'oxymetazoline', 'xylometazoline', 'sudafed',
+  ],
+  'antiarrhythmic': [
+    'amiodarone', 'cordarone', 'flecainide', 'sotalol', 'dronedarone', 'propafenone', 'digoxin',
+  ],
+  'thyroid hormone': [
+    'levothyroxine', 'synthroid', 'eltroxin', 'thyronorm', 'liothyronine',
+  ],
+  'immunosuppressant': [
+    'tacrolimus', 'cyclosporine', 'methotrexate', 'azathioprine', 'mycophenolate', 'cellcept', 'prograf',
+  ],
+  'cholinergic': [
+    'pilocarpine', 'bethanechol', 'cevimeline',
+  ],
 };
 
 /**

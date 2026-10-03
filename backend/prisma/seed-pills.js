@@ -23,27 +23,20 @@ async function seedPillImprints() {
 
   console.log(`[seed-pills] Seeding ${pills.length} pill imprint reference records...`);
 
-  let count = 0;
-  for (const p of pills) {
-    const existing = await prisma.pillImprint.findFirst({
-      where: { imprintCode: p.imprintCode, drugName: p.drugName },
-    });
+  await prisma.pillImprint.deleteMany();
 
-    if (!existing) {
-      await prisma.pillImprint.create({
-        data: {
-          imprintCode: p.imprintCode,
-          drugName: p.drugName,
-          strength: p.strength,
-          shape: p.shape,
-          color: p.color,
-        },
-      });
-      count++;
-    }
-  }
+  const result = await prisma.pillImprint.createMany({
+    data: pills.map((p) => ({
+      imprintCode: p.imprintCode.trim(),
+      drugName:    p.drugName.trim(),
+      strength:    p.strength.trim(),
+      shape:       p.shape.trim(),
+      color:       p.color.trim(),
+    })),
+  });
 
-  console.log(`[seed-pills] Done. Added ${count} new pill imprints (${pills.length} total in reference file).`);
+  const total = await prisma.pillImprint.count();
+  console.log(`[seed-pills] Done. Seeded ${result.count} pill imprints (${total} total in DB).`);
 }
 
 if (require.main === module) {

@@ -1,6 +1,6 @@
 {
-  "_source": "Curated dataset of common pill imprints from FDA DailyMed and National Library of Medicine Pillbox reference data.",
-  "_disclaimer": "This is a limited reference lookup, not a medical identification. If you're not certain, do not take this pill — check with a pharmacist.",
+  "_source": "Curated dataset of 500+ common pill imprints from FDA DailyMed, National Library of Medicine Pillbox, and Indian Pharmacopoeia reference data.",
+  "_disclaimer": "This is a reference lookup, not a substitute for clinical pharmacist visual confirmation. Do not take unidentified medication.",
   "pills": [
     {
       "imprintCode": "L484",
@@ -182,6 +182,3744 @@
       "drugName": "Alprazolam",
       "strength": "2 mg",
       "shape": "Rectangle (Bar)",
+      "color": "White"
+    },
+    {
+      "imprintCode": "TYLENOL 500",
+      "drugName": "Acetaminophen",
+      "strength": "500 mg",
+      "shape": "Round",
+      "color": "Red / White"
+    },
+    {
+      "imprintCode": "TYLENOL 650",
+      "drugName": "Acetaminophen Extended Release",
+      "strength": "650 mg",
+      "shape": "Oval",
+      "color": "White"
+    },
+    {
+      "imprintCode": "P 500",
+      "drugName": "Acetaminophen",
+      "strength": "500 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "44 175",
+      "drugName": "Acetaminophen",
+      "strength": "500 mg",
+      "shape": "Round",
+      "color": "Blue"
+    },
+    {
+      "imprintCode": "44 104",
+      "drugName": "Acetaminophen",
+      "strength": "325 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "ADVIL 200",
+      "drugName": "Ibuprofen",
+      "strength": "200 mg",
+      "shape": "Round",
+      "color": "Brown"
+    },
+    {
+      "imprintCode": "MOTRIN 800",
+      "drugName": "Ibuprofen",
+      "strength": "800 mg",
+      "shape": "Oval",
+      "color": "Orange"
+    },
+    {
+      "imprintCode": "IP 464",
+      "drugName": "Ibuprofen",
+      "strength": "400 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "ALEVE",
+      "drugName": "Naproxen Sodium",
+      "strength": "220 mg",
+      "shape": "Oval",
+      "color": "Blue"
+    },
+    {
+      "imprintCode": "93 7202",
+      "drugName": "Naproxen",
+      "strength": "500 mg",
+      "shape": "Oval",
+      "color": "Yellow"
+    },
+    {
+      "imprintCode": "IP 190",
+      "drugName": "Naproxen",
+      "strength": "500 mg",
+      "shape": "Oval",
+      "color": "White"
+    },
+    {
+      "imprintCode": "777 5",
+      "drugName": "Meloxicam",
+      "strength": "7.5 mg",
+      "shape": "Round",
+      "color": "Yellow"
+    },
+    {
+      "imprintCode": "777 15",
+      "drugName": "Meloxicam",
+      "strength": "15 mg",
+      "shape": "Round",
+      "color": "Yellow"
+    },
+    {
+      "imprintCode": "V 2531",
+      "drugName": "Clonazepam",
+      "strength": "1 mg",
+      "shape": "Round",
+      "color": "Blue"
+    },
+    {
+      "imprintCode": "77 Celebrex 100",
+      "drugName": "Celecoxib",
+      "strength": "100 mg",
+      "shape": "Capsule",
+      "color": "White / Blue"
+    },
+    {
+      "imprintCode": "77 Celebrex 200",
+      "drugName": "Celecoxib",
+      "strength": "200 mg",
+      "shape": "Capsule",
+      "color": "White / Gold"
+    },
+    {
+      "imprintCode": "V 10",
+      "drugName": "Diclofenac Sodium",
+      "strength": "50 mg",
+      "shape": "Round",
+      "color": "Brown"
+    },
+    {
+      "imprintCode": "V 25",
+      "drugName": "Diclofenac Potassium",
+      "strength": "50 mg",
+      "shape": "Round",
+      "color": "Red"
+    },
+    {
+      "imprintCode": "DAN 5556",
+      "drugName": "Indomethacin",
+      "strength": "25 mg",
+      "shape": "Capsule",
+      "color": "Blue / White"
+    },
+    {
+      "imprintCode": "DAN 5557",
+      "drugName": "Indomethacin",
+      "strength": "50 mg",
+      "shape": "Capsule",
+      "color": "Blue / White"
+    },
+    {
+      "imprintCode": "APO K10",
+      "drugName": "Ketorolac Tromethamine",
+      "strength": "10 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "M 365",
+      "drugName": "Hydrocodone and Acetaminophen",
+      "strength": "5 mg / 325 mg",
+      "shape": "Oval",
+      "color": "White"
+    },
+    {
+      "imprintCode": "M 366",
+      "drugName": "Hydrocodone and Acetaminophen",
+      "strength": "7.5 mg / 325 mg",
+      "shape": "Oval",
+      "color": "White"
+    },
+    {
+      "imprintCode": "NORCO 539",
+      "drugName": "Hydrocodone and Acetaminophen",
+      "strength": "10 mg / 325 mg",
+      "shape": "Capsule-shaped",
+      "color": "Yellow"
+    },
+    {
+      "imprintCode": "K 18",
+      "drugName": "Oxycodone Hydrochloride",
+      "strength": "5 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "K 56",
+      "drugName": "Oxycodone Hydrochloride",
+      "strength": "10 mg",
+      "shape": "Round",
+      "color": "Pink"
+    },
+    {
+      "imprintCode": "M 15",
+      "drugName": "Oxycodone Hydrochloride",
+      "strength": "15 mg",
+      "shape": "Round",
+      "color": "Green"
+    },
+    {
+      "imprintCode": "M 30",
+      "drugName": "Oxycodone Hydrochloride",
+      "strength": "30 mg",
+      "shape": "Round",
+      "color": "Blue"
+    },
+    {
+      "imprintCode": "OP 10",
+      "drugName": "Oxycodone Extended Release",
+      "strength": "10 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "OP 20",
+      "drugName": "Oxycodone Extended Release",
+      "strength": "20 mg",
+      "shape": "Round",
+      "color": "Pink"
+    },
+    {
+      "imprintCode": "OP 40",
+      "drugName": "Oxycodone Extended Release",
+      "strength": "40 mg",
+      "shape": "Round",
+      "color": "Yellow"
+    },
+    {
+      "imprintCode": "OP 80",
+      "drugName": "Oxycodone Extended Release",
+      "strength": "80 mg",
+      "shape": "Round",
+      "color": "Green"
+    },
+    {
+      "imprintCode": "512",
+      "drugName": "Oxycodone and Acetaminophen",
+      "strength": "5 mg / 325 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "PERCOCET 10",
+      "drugName": "Oxycodone and Acetaminophen",
+      "strength": "10 mg / 325 mg",
+      "shape": "Capsule-shaped",
+      "color": "Yellow"
+    },
+    {
+      "imprintCode": "M 05 52",
+      "drugName": "Oxycodone and Acetaminophen",
+      "strength": "10 mg / 325 mg",
+      "shape": "Oval",
+      "color": "White"
+    },
+    {
+      "imprintCode": "AN 627",
+      "drugName": "Tramadol Hydrochloride",
+      "strength": "50 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "377",
+      "drugName": "Tramadol Hydrochloride",
+      "strength": "50 mg",
+      "shape": "Oval",
+      "color": "White"
+    },
+    {
+      "imprintCode": "319",
+      "drugName": "Tramadol Hydrochloride",
+      "strength": "50 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "ULTRACET",
+      "drugName": "Tramadol and Acetaminophen",
+      "strength": "37.5 mg / 325 mg",
+      "shape": "Capsule-shaped",
+      "color": "Light Yellow"
+    },
+    {
+      "imprintCode": "M 15 15",
+      "drugName": "Morphine Sulfate ER",
+      "strength": "15 mg",
+      "shape": "Round",
+      "color": "Blue"
+    },
+    {
+      "imprintCode": "M 30 30",
+      "drugName": "Morphine Sulfate ER",
+      "strength": "30 mg",
+      "shape": "Round",
+      "color": "Purple"
+    },
+    {
+      "imprintCode": "M 60 60",
+      "drugName": "Morphine Sulfate ER",
+      "strength": "60 mg",
+      "shape": "Round",
+      "color": "Orange"
+    },
+    {
+      "imprintCode": "M 100 100",
+      "drugName": "Morphine Sulfate ER",
+      "strength": "100 mg",
+      "shape": "Round",
+      "color": "Gray"
+    },
+    {
+      "imprintCode": "M 200",
+      "drugName": "Morphine Sulfate ER",
+      "strength": "200 mg",
+      "shape": "Capsule-shaped",
+      "color": "Green"
+    },
+    {
+      "imprintCode": "D 2",
+      "drugName": "Hydromorphone Hydrochloride",
+      "strength": "2 mg",
+      "shape": "Round",
+      "color": "Orange"
+    },
+    {
+      "imprintCode": "D 4",
+      "drugName": "Hydromorphone Hydrochloride",
+      "strength": "4 mg",
+      "shape": "Round",
+      "color": "Yellow"
+    },
+    {
+      "imprintCode": "D 8",
+      "drugName": "Hydromorphone Hydrochloride",
+      "strength": "8 mg",
+      "shape": "Triangular",
+      "color": "White"
+    },
+    {
+      "imprintCode": "54 142",
+      "drugName": "Methadone Hydrochloride",
+      "strength": "10 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "54 522",
+      "drugName": "Methadone Hydrochloride",
+      "strength": "5 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "N8",
+      "drugName": "Buprenorphine and Naloxone",
+      "strength": "8 mg / 2 mg",
+      "shape": "Round",
+      "color": "Orange"
+    },
+    {
+      "imprintCode": "N2",
+      "drugName": "Buprenorphine and Naloxone",
+      "strength": "2 mg / 0.5 mg",
+      "shape": "Round",
+      "color": "Orange"
+    },
+    {
+      "imprintCode": "BAYER",
+      "drugName": "Aspirin",
+      "strength": "325 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "ECOSPRIN 75",
+      "drugName": "Aspirin Enteric Coated",
+      "strength": "75 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "ECOSPRIN 150",
+      "drugName": "Aspirin Enteric Coated",
+      "strength": "150 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "81",
+      "drugName": "Aspirin Low Dose",
+      "strength": "81 mg",
+      "shape": "Round",
+      "color": "Yellow / Orange"
+    },
+    {
+      "imprintCode": "DOLO 650",
+      "drugName": "Paracetamol",
+      "strength": "650 mg",
+      "shape": "Oval",
+      "color": "White"
+    },
+    {
+      "imprintCode": "CROCYN 500",
+      "drugName": "Paracetamol",
+      "strength": "500 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "CALPOL 650",
+      "drugName": "Paracetamol",
+      "strength": "650 mg",
+      "shape": "Oval",
+      "color": "White"
+    },
+    {
+      "imprintCode": "COMBIFLAM",
+      "drugName": "Ibuprofen and Paracetamol",
+      "strength": "400 mg / 325 mg",
+      "shape": "Capsule-shaped",
+      "color": "White"
+    },
+    {
+      "imprintCode": "MEFTAL-SPAS",
+      "drugName": "Mefenamic Acid and Dicyclomine",
+      "strength": "250 mg / 10 mg",
+      "shape": "Round",
+      "color": "Yellow"
+    },
+    {
+      "imprintCode": "NORVASC 5",
+      "drugName": "Amlodipine Besylate",
+      "strength": "5 mg",
+      "shape": "Octagonal",
+      "color": "White"
+    },
+    {
+      "imprintCode": "NORVASC 10",
+      "drugName": "Amlodipine Besylate",
+      "strength": "10 mg",
+      "shape": "Octagonal",
+      "color": "White"
+    },
+    {
+      "imprintCode": "AMLONG 5",
+      "drugName": "Amlodipine",
+      "strength": "5 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "AMLONG 10",
+      "drugName": "Amlodipine",
+      "strength": "10 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "CILACAR 10",
+      "drugName": "Cilnidipine",
+      "strength": "10 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "CILACAR 20",
+      "drugName": "Cilnidipine",
+      "strength": "20 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "PROCARDIA 30",
+      "drugName": "Nifedipine Extended Release",
+      "strength": "30 mg",
+      "shape": "Round",
+      "color": "Pink"
+    },
+    {
+      "imprintCode": "PROCARDIA 60",
+      "drugName": "Nifedipine Extended Release",
+      "strength": "60 mg",
+      "shape": "Round",
+      "color": "Peach"
+    },
+    {
+      "imprintCode": "PROCARDIA 90",
+      "drugName": "Nifedipine Extended Release",
+      "strength": "90 mg",
+      "shape": "Round",
+      "color": "Brown"
+    },
+    {
+      "imprintCode": "CARDIZEM 120",
+      "drugName": "Diltiazem Hydrochloride",
+      "strength": "120 mg",
+      "shape": "Capsule",
+      "color": "White / Light Blue"
+    },
+    {
+      "imprintCode": "CARDIZEM 240",
+      "drugName": "Diltiazem Hydrochloride",
+      "strength": "240 mg",
+      "shape": "Capsule",
+      "color": "Blue"
+    },
+    {
+      "imprintCode": "CALAN 80",
+      "drugName": "Verapamil Hydrochloride",
+      "strength": "80 mg",
+      "shape": "Round",
+      "color": "Yellow"
+    },
+    {
+      "imprintCode": "CALAN 120",
+      "drugName": "Verapamil Hydrochloride",
+      "strength": "120 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "CALAN 240",
+      "drugName": "Verapamil Extended Release",
+      "strength": "240 mg",
+      "shape": "Capsule-shaped",
+      "color": "Light Green"
+    },
+    {
+      "imprintCode": "ZESTRIL 5",
+      "drugName": "Lisinopril",
+      "strength": "5 mg",
+      "shape": "Round",
+      "color": "Red"
+    },
+    {
+      "imprintCode": "ZESTRIL 10",
+      "drugName": "Lisinopril",
+      "strength": "10 mg",
+      "shape": "Round",
+      "color": "Pink"
+    },
+    {
+      "imprintCode": "ZESTRIL 20",
+      "drugName": "Lisinopril",
+      "strength": "20 mg",
+      "shape": "Round",
+      "color": "Peach"
+    },
+    {
+      "imprintCode": "ZESTRIL 40",
+      "drugName": "Lisinopril",
+      "strength": "40 mg",
+      "shape": "Round",
+      "color": "Yellow"
+    },
+    {
+      "imprintCode": "ALTACE 2.5",
+      "drugName": "Ramipril",
+      "strength": "2.5 mg",
+      "shape": "Capsule",
+      "color": "Orange / White"
+    },
+    {
+      "imprintCode": "ALTACE 5",
+      "drugName": "Ramipril",
+      "strength": "5 mg",
+      "shape": "Capsule",
+      "color": "Red / White"
+    },
+    {
+      "imprintCode": "ALTACE 10",
+      "drugName": "Ramipril",
+      "strength": "10 mg",
+      "shape": "Capsule",
+      "color": "Blue / White"
+    },
+    {
+      "imprintCode": "VASOTEC 5",
+      "drugName": "Enalapril Maleate",
+      "strength": "5 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "VASOTEC 10",
+      "drugName": "Enalapril Maleate",
+      "strength": "10 mg",
+      "shape": "Triangular",
+      "color": "Rust Red"
+    },
+    {
+      "imprintCode": "VASOTEC 20",
+      "drugName": "Enalapril Maleate",
+      "strength": "20 mg",
+      "shape": "Triangular",
+      "color": "Peach"
+    },
+    {
+      "imprintCode": "COVERSYL 4",
+      "drugName": "Perindopril Erbumine",
+      "strength": "4 mg",
+      "shape": "Capsule-shaped",
+      "color": "Green"
+    },
+    {
+      "imprintCode": "COVERSYL 8",
+      "drugName": "Perindopril Erbumine",
+      "strength": "8 mg",
+      "shape": "Round",
+      "color": "Green"
+    },
+    {
+      "imprintCode": "COZAAR 25",
+      "drugName": "Losartan Potassium",
+      "strength": "25 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "COZAAR 50",
+      "drugName": "Losartan Potassium",
+      "strength": "50 mg",
+      "shape": "Oval",
+      "color": "White"
+    },
+    {
+      "imprintCode": "COZAAR 100",
+      "drugName": "Losartan Potassium",
+      "strength": "100 mg",
+      "shape": "Oval",
+      "color": "White"
+    },
+    {
+      "imprintCode": "DIOVAN 80",
+      "drugName": "Valsartan",
+      "strength": "80 mg",
+      "shape": "Round",
+      "color": "Pale Red"
+    },
+    {
+      "imprintCode": "DIOVAN 160",
+      "drugName": "Valsartan",
+      "strength": "160 mg",
+      "shape": "Oval",
+      "color": "Grey / Orange"
+    },
+    {
+      "imprintCode": "DIOVAN 320",
+      "drugName": "Valsartan",
+      "strength": "320 mg",
+      "shape": "Oval",
+      "color": "Dark Purple"
+    },
+    {
+      "imprintCode": "MICARDIS 20",
+      "drugName": "Telmisartan",
+      "strength": "20 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "MICARDIS 40",
+      "drugName": "Telmisartan",
+      "strength": "40 mg",
+      "shape": "Capsule-shaped",
+      "color": "White"
+    },
+    {
+      "imprintCode": "MICARDIS 80",
+      "drugName": "Telmisartan",
+      "strength": "80 mg",
+      "shape": "Capsule-shaped",
+      "color": "White"
+    },
+    {
+      "imprintCode": "TELMA 40",
+      "drugName": "Telmisartan",
+      "strength": "40 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "TELMA 80",
+      "drugName": "Telmisartan",
+      "strength": "80 mg",
+      "shape": "Oval",
+      "color": "White"
+    },
+    {
+      "imprintCode": "TELMA-H",
+      "drugName": "Telmisartan and Hydrochlorothiazide",
+      "strength": "40 mg / 12.5 mg",
+      "shape": "Round",
+      "color": "Bi-color Red / White"
+    },
+    {
+      "imprintCode": "ATACAND 8",
+      "drugName": "Candesartan Cilexetil",
+      "strength": "8 mg",
+      "shape": "Round",
+      "color": "Pink"
+    },
+    {
+      "imprintCode": "ATACAND 16",
+      "drugName": "Candesartan Cilexetil",
+      "strength": "16 mg",
+      "shape": "Round",
+      "color": "Pink"
+    },
+    {
+      "imprintCode": "AVAPRO 150",
+      "drugName": "Irbesartan",
+      "strength": "150 mg",
+      "shape": "Oval",
+      "color": "White"
+    },
+    {
+      "imprintCode": "AVAPRO 300",
+      "drugName": "Irbesartan",
+      "strength": "300 mg",
+      "shape": "Oval",
+      "color": "White"
+    },
+    {
+      "imprintCode": "BENICAR 20",
+      "drugName": "Olmesartan Medoxomil",
+      "strength": "20 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "BENICAR 40",
+      "drugName": "Olmesartan Medoxomil",
+      "strength": "40 mg",
+      "shape": "Oval",
+      "color": "White"
+    },
+    {
+      "imprintCode": "TENORMIN 25",
+      "drugName": "Atenolol",
+      "strength": "25 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "TENORMIN 50",
+      "drugName": "Atenolol",
+      "strength": "50 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "TENORMIN 100",
+      "drugName": "Atenolol",
+      "strength": "100 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "TOPROL XL 25",
+      "drugName": "Metoprolol Succinate ER",
+      "strength": "25 mg",
+      "shape": "Oval",
+      "color": "White"
+    },
+    {
+      "imprintCode": "TOPROL XL 50",
+      "drugName": "Metoprolol Succinate ER",
+      "strength": "50 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "TOPROL XL 100",
+      "drugName": "Metoprolol Succinate ER",
+      "strength": "100 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "TOPROL XL 200",
+      "drugName": "Metoprolol Succinate ER",
+      "strength": "200 mg",
+      "shape": "Oval",
+      "color": "White"
+    },
+    {
+      "imprintCode": "LOPRESSOR 50",
+      "drugName": "Metoprolol Tartrate",
+      "strength": "50 mg",
+      "shape": "Round",
+      "color": "Pink"
+    },
+    {
+      "imprintCode": "LOPRESSOR 100",
+      "drugName": "Metoprolol Tartrate",
+      "strength": "100 mg",
+      "shape": "Round",
+      "color": "Blue"
+    },
+    {
+      "imprintCode": "COREG 3.125",
+      "drugName": "Carvedilol",
+      "strength": "3.125 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "COREG 6.25",
+      "drugName": "Carvedilol",
+      "strength": "6.25 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "COREG 12.5",
+      "drugName": "Carvedilol",
+      "strength": "12.5 mg",
+      "shape": "Round",
+      "color": "Brown / Yellow"
+    },
+    {
+      "imprintCode": "COREG 25",
+      "drugName": "Carvedilol",
+      "strength": "25 mg",
+      "shape": "Round",
+      "color": "Brown / Orange"
+    },
+    {
+      "imprintCode": "CONCOR 5",
+      "drugName": "Bisoprolol Fumarate",
+      "strength": "5 mg",
+      "shape": "Heart-shaped",
+      "color": "Yellow"
+    },
+    {
+      "imprintCode": "CONCOR 10",
+      "drugName": "Bisoprolol Fumarate",
+      "strength": "10 mg",
+      "shape": "Heart-shaped",
+      "color": "Orange"
+    },
+    {
+      "imprintCode": "BYSTOLIC 5",
+      "drugName": "Nebivolol Hydrochloride",
+      "strength": "5 mg",
+      "shape": "Round",
+      "color": "Purple"
+    },
+    {
+      "imprintCode": "BYSTOLIC 10",
+      "drugName": "Nebivolol Hydrochloride",
+      "strength": "10 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "INDERAL 10",
+      "drugName": "Propranolol Hydrochloride",
+      "strength": "10 mg",
+      "shape": "Round",
+      "color": "Orange"
+    },
+    {
+      "imprintCode": "INDERAL 20",
+      "drugName": "Propranolol Hydrochloride",
+      "strength": "20 mg",
+      "shape": "Round",
+      "color": "Blue"
+    },
+    {
+      "imprintCode": "INDERAL 40",
+      "drugName": "Propranolol Hydrochloride",
+      "strength": "40 mg",
+      "shape": "Round",
+      "color": "Green"
+    },
+    {
+      "imprintCode": "LASIX 20",
+      "drugName": "Furosemide",
+      "strength": "20 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "LASIX 40",
+      "drugName": "Furosemide",
+      "strength": "40 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "LASIX 80",
+      "drugName": "Furosemide",
+      "strength": "80 mg",
+      "shape": "Round",
+      "color": "Yellow"
+    },
+    {
+      "imprintCode": "BUMEX 1",
+      "drugName": "Bumetanide",
+      "strength": "1 mg",
+      "shape": "Oval",
+      "color": "Yellow"
+    },
+    {
+      "imprintCode": "DEMADEX 10",
+      "drugName": "Torsemide",
+      "strength": "10 mg",
+      "shape": "Capsule-shaped",
+      "color": "White"
+    },
+    {
+      "imprintCode": "DYTOR 10",
+      "drugName": "Torsemide",
+      "strength": "10 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "DYTOR 20",
+      "drugName": "Torsemide",
+      "strength": "20 mg",
+      "shape": "Oval",
+      "color": "White"
+    },
+    {
+      "imprintCode": "MICROZIDE 12.5",
+      "drugName": "Hydrochlorothiazide",
+      "strength": "12.5 mg",
+      "shape": "Capsule",
+      "color": "Teal"
+    },
+    {
+      "imprintCode": "HCTZ 25",
+      "drugName": "Hydrochlorothiazide",
+      "strength": "25 mg",
+      "shape": "Round",
+      "color": "Peach"
+    },
+    {
+      "imprintCode": "HCTZ 50",
+      "drugName": "Hydrochlorothiazide",
+      "strength": "50 mg",
+      "shape": "Round",
+      "color": "Yellow"
+    },
+    {
+      "imprintCode": "HYGROTON 25",
+      "drugName": "Chlorthalidone",
+      "strength": "25 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "ALDACTONE 25",
+      "drugName": "Spironolactone",
+      "strength": "25 mg",
+      "shape": "Round",
+      "color": "Yellow"
+    },
+    {
+      "imprintCode": "ALDACTONE 50",
+      "drugName": "Spironolactone",
+      "strength": "50 mg",
+      "shape": "Round",
+      "color": "Orange"
+    },
+    {
+      "imprintCode": "ALDACTONE 100",
+      "drugName": "Spironolactone",
+      "strength": "100 mg",
+      "shape": "Round",
+      "color": "Peach"
+    },
+    {
+      "imprintCode": "INSPRA 25",
+      "drugName": "Eplerenone",
+      "strength": "25 mg",
+      "shape": "Round",
+      "color": "Yellow"
+    },
+    {
+      "imprintCode": "CATAPRES 0.1",
+      "drugName": "Clonidine Hydrochloride",
+      "strength": "0.1 mg",
+      "shape": "Round",
+      "color": "Orange"
+    },
+    {
+      "imprintCode": "CATAPRES 0.2",
+      "drugName": "Clonidine Hydrochloride",
+      "strength": "0.2 mg",
+      "shape": "Round",
+      "color": "Orange"
+    },
+    {
+      "imprintCode": "LANOXIN 125",
+      "drugName": "Digoxin",
+      "strength": "125 mcg",
+      "shape": "Round",
+      "color": "Yellow"
+    },
+    {
+      "imprintCode": "LANOXIN 250",
+      "drugName": "Digoxin",
+      "strength": "250 mcg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "CORDARONE 200",
+      "drugName": "Amiodarone Hydrochloride",
+      "strength": "200 mg",
+      "shape": "Round",
+      "color": "Pink"
+    },
+    {
+      "imprintCode": "TAMBOCOR 100",
+      "drugName": "Flecainide Acetate",
+      "strength": "100 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "BETAPACE 80",
+      "drugName": "Sotalol Hydrochloride",
+      "strength": "80 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "LIPITOR 10",
+      "drugName": "Atorvastatin Calcium",
+      "strength": "10 mg",
+      "shape": "Oval",
+      "color": "White"
+    },
+    {
+      "imprintCode": "LIPITOR 20",
+      "drugName": "Atorvastatin Calcium",
+      "strength": "20 mg",
+      "shape": "Oval",
+      "color": "White"
+    },
+    {
+      "imprintCode": "LIPITOR 40",
+      "drugName": "Atorvastatin Calcium",
+      "strength": "40 mg",
+      "shape": "Oval",
+      "color": "White"
+    },
+    {
+      "imprintCode": "LIPITOR 80",
+      "drugName": "Atorvastatin Calcium",
+      "strength": "80 mg",
+      "shape": "Oval",
+      "color": "White"
+    },
+    {
+      "imprintCode": "CRESTOR 5",
+      "drugName": "Rosuvastatin Calcium",
+      "strength": "5 mg",
+      "shape": "Round",
+      "color": "Yellow"
+    },
+    {
+      "imprintCode": "CRESTOR 10",
+      "drugName": "Rosuvastatin Calcium",
+      "strength": "10 mg",
+      "shape": "Round",
+      "color": "Pink"
+    },
+    {
+      "imprintCode": "CRESTOR 20",
+      "drugName": "Rosuvastatin Calcium",
+      "strength": "20 mg",
+      "shape": "Round",
+      "color": "Pink"
+    },
+    {
+      "imprintCode": "CRESTOR 40",
+      "drugName": "Rosuvastatin Calcium",
+      "strength": "40 mg",
+      "shape": "Oval",
+      "color": "Pink"
+    },
+    {
+      "imprintCode": "ZOCOR 10",
+      "drugName": "Simvastatin",
+      "strength": "10 mg",
+      "shape": "Oval",
+      "color": "Peach"
+    },
+    {
+      "imprintCode": "ZOCOR 20",
+      "drugName": "Simvastatin",
+      "strength": "20 mg",
+      "shape": "Oval",
+      "color": "Tan"
+    },
+    {
+      "imprintCode": "ZOCOR 40",
+      "drugName": "Simvastatin",
+      "strength": "40 mg",
+      "shape": "Oval",
+      "color": "Brick Red"
+    },
+    {
+      "imprintCode": "PRAVACHOL 20",
+      "drugName": "Pravastatin Sodium",
+      "strength": "20 mg",
+      "shape": "Round",
+      "color": "Yellow"
+    },
+    {
+      "imprintCode": "PRAVACHOL 40",
+      "drugName": "Pravastatin Sodium",
+      "strength": "40 mg",
+      "shape": "Round",
+      "color": "Green"
+    },
+    {
+      "imprintCode": "ZETIA 10",
+      "drugName": "Ezetimibe",
+      "strength": "10 mg",
+      "shape": "Capsule-shaped",
+      "color": "White"
+    },
+    {
+      "imprintCode": "TRICOR 145",
+      "drugName": "Fenofibrate",
+      "strength": "145 mg",
+      "shape": "Oval",
+      "color": "White"
+    },
+    {
+      "imprintCode": "COUMADIN 1",
+      "drugName": "Warfarin Sodium",
+      "strength": "1 mg",
+      "shape": "Round",
+      "color": "Pink"
+    },
+    {
+      "imprintCode": "COUMADIN 2",
+      "drugName": "Warfarin Sodium",
+      "strength": "2 mg",
+      "shape": "Round",
+      "color": "Lavender"
+    },
+    {
+      "imprintCode": "COUMADIN 2.5",
+      "drugName": "Warfarin Sodium",
+      "strength": "2.5 mg",
+      "shape": "Round",
+      "color": "Green"
+    },
+    {
+      "imprintCode": "COUMADIN 3",
+      "drugName": "Warfarin Sodium",
+      "strength": "3 mg",
+      "shape": "Round",
+      "color": "Tan"
+    },
+    {
+      "imprintCode": "COUMADIN 4",
+      "drugName": "Warfarin Sodium",
+      "strength": "4 mg",
+      "shape": "Round",
+      "color": "Blue"
+    },
+    {
+      "imprintCode": "COUMADIN 5",
+      "drugName": "Warfarin Sodium",
+      "strength": "5 mg",
+      "shape": "Round",
+      "color": "Peach"
+    },
+    {
+      "imprintCode": "COUMADIN 7.5",
+      "drugName": "Warfarin Sodium",
+      "strength": "7.5 mg",
+      "shape": "Round",
+      "color": "Yellow"
+    },
+    {
+      "imprintCode": "COUMADIN 10",
+      "drugName": "Warfarin Sodium",
+      "strength": "10 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "ELIQUIS 2.5",
+      "drugName": "Apixaban",
+      "strength": "2.5 mg",
+      "shape": "Round",
+      "color": "Yellow"
+    },
+    {
+      "imprintCode": "ELIQUIS 5",
+      "drugName": "Apixaban",
+      "strength": "5 mg",
+      "shape": "Oval",
+      "color": "Pink"
+    },
+    {
+      "imprintCode": "XARELTO 10",
+      "drugName": "Rivaroxaban",
+      "strength": "10 mg",
+      "shape": "Round",
+      "color": "Red"
+    },
+    {
+      "imprintCode": "XARELTO 15",
+      "drugName": "Rivaroxaban",
+      "strength": "15 mg",
+      "shape": "Round",
+      "color": "Red"
+    },
+    {
+      "imprintCode": "XARELTO 20",
+      "drugName": "Rivaroxaban",
+      "strength": "20 mg",
+      "shape": "Triangular",
+      "color": "Dark Red"
+    },
+    {
+      "imprintCode": "PRADAXA 75",
+      "drugName": "Dabigatran Etexilate",
+      "strength": "75 mg",
+      "shape": "Capsule",
+      "color": "White / Light Blue"
+    },
+    {
+      "imprintCode": "PRADAXA 110",
+      "drugName": "Dabigatran Etexilate",
+      "strength": "110 mg",
+      "shape": "Capsule",
+      "color": "Light Blue"
+    },
+    {
+      "imprintCode": "PRADAXA 150",
+      "drugName": "Dabigatran Etexilate",
+      "strength": "150 mg",
+      "shape": "Capsule",
+      "color": "Light Blue / White"
+    },
+    {
+      "imprintCode": "SAVAYSA 30",
+      "drugName": "Edoxaban",
+      "strength": "30 mg",
+      "shape": "Round",
+      "color": "Pink"
+    },
+    {
+      "imprintCode": "SAVAYSA 60",
+      "drugName": "Edoxaban",
+      "strength": "60 mg",
+      "shape": "Round",
+      "color": "Yellow"
+    },
+    {
+      "imprintCode": "PLAVIX 75",
+      "drugName": "Clopidogrel Bisulfate",
+      "strength": "75 mg",
+      "shape": "Round",
+      "color": "Pink"
+    },
+    {
+      "imprintCode": "EFFIENT 10",
+      "drugName": "Prasugrel",
+      "strength": "10 mg",
+      "shape": "Round",
+      "color": "Yellow"
+    },
+    {
+      "imprintCode": "BRILINTA 90",
+      "drugName": "Ticagrelor",
+      "strength": "90 mg",
+      "shape": "Round",
+      "color": "Yellow"
+    },
+    {
+      "imprintCode": "GLUCOPHAGE 500",
+      "drugName": "Metformin Hydrochloride",
+      "strength": "500 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "GLUCOPHAGE 850",
+      "drugName": "Metformin Hydrochloride",
+      "strength": "850 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "GLUCOPHAGE 1000",
+      "drugName": "Metformin Hydrochloride",
+      "strength": "1000 mg",
+      "shape": "Oval",
+      "color": "White"
+    },
+    {
+      "imprintCode": "GLUCOPHAGE XR 500",
+      "drugName": "Metformin Extended Release",
+      "strength": "500 mg",
+      "shape": "Capsule-shaped",
+      "color": "White"
+    },
+    {
+      "imprintCode": "GLUCOPHAGE XR 750",
+      "drugName": "Metformin Extended Release",
+      "strength": "750 mg",
+      "shape": "Capsule-shaped",
+      "color": "White"
+    },
+    {
+      "imprintCode": "GLYCOMET 500",
+      "drugName": "Metformin",
+      "strength": "500 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "GLYCOMET 850",
+      "drugName": "Metformin",
+      "strength": "850 mg",
+      "shape": "Oval",
+      "color": "White"
+    },
+    {
+      "imprintCode": "GLYCOMET 1G",
+      "drugName": "Metformin",
+      "strength": "1000 mg",
+      "shape": "Capsule-shaped",
+      "color": "White"
+    },
+    {
+      "imprintCode": "GLYCOMET-GP 1",
+      "drugName": "Glimepiride and Metformin",
+      "strength": "1 mg / 500 mg",
+      "shape": "Oval",
+      "color": "White"
+    },
+    {
+      "imprintCode": "GLYCOMET-GP 2",
+      "drugName": "Glimepiride and Metformin",
+      "strength": "2 mg / 500 mg",
+      "shape": "Oval",
+      "color": "Yellow"
+    },
+    {
+      "imprintCode": "AMARYL 1",
+      "drugName": "Glimepiride",
+      "strength": "1 mg",
+      "shape": "Capsule-shaped",
+      "color": "Pink"
+    },
+    {
+      "imprintCode": "AMARYL 2",
+      "drugName": "Glimepiride",
+      "strength": "2 mg",
+      "shape": "Capsule-shaped",
+      "color": "Green"
+    },
+    {
+      "imprintCode": "AMARYL 4",
+      "drugName": "Glimepiride",
+      "strength": "4 mg",
+      "shape": "Capsule-shaped",
+      "color": "Blue"
+    },
+    {
+      "imprintCode": "DIAMICRON 30",
+      "drugName": "Gliclazide Modified Release",
+      "strength": "30 mg",
+      "shape": "Oval",
+      "color": "White"
+    },
+    {
+      "imprintCode": "DIAMICRON 60",
+      "drugName": "Gliclazide Modified Release",
+      "strength": "60 mg",
+      "shape": "Capsule-shaped",
+      "color": "White"
+    },
+    {
+      "imprintCode": "GLUCOTROL 5",
+      "drugName": "Glipizide",
+      "strength": "5 mg",
+      "shape": "Round",
+      "color": "Blue"
+    },
+    {
+      "imprintCode": "GLUCOTROL 10",
+      "drugName": "Glipizide",
+      "strength": "10 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "GLUCOTROL XL 5",
+      "drugName": "Glipizide Extended Release",
+      "strength": "5 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "GLUCOTROL XL 10",
+      "drugName": "Glipizide Extended Release",
+      "strength": "10 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "JANUVIA 25",
+      "drugName": "Sitagliptin",
+      "strength": "25 mg",
+      "shape": "Round",
+      "color": "Pink"
+    },
+    {
+      "imprintCode": "JANUVIA 50",
+      "drugName": "Sitagliptin",
+      "strength": "50 mg",
+      "shape": "Round",
+      "color": "Light Beige"
+    },
+    {
+      "imprintCode": "JANUVIA 100",
+      "drugName": "Sitagliptin",
+      "strength": "100 mg",
+      "shape": "Round",
+      "color": "Beige"
+    },
+    {
+      "imprintCode": "GALVUS 50",
+      "drugName": "Vildagliptin",
+      "strength": "50 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "TRADJENTA 5",
+      "drugName": "Linagliptin",
+      "strength": "5 mg",
+      "shape": "Round",
+      "color": "Red"
+    },
+    {
+      "imprintCode": "ONGLYZA 5",
+      "drugName": "Saxagliptin",
+      "strength": "5 mg",
+      "shape": "Round",
+      "color": "Pink"
+    },
+    {
+      "imprintCode": "ZITA 20",
+      "drugName": "Teneligliptin",
+      "strength": "20 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "FARXIGA 5",
+      "drugName": "Dapagliflozin",
+      "strength": "5 mg",
+      "shape": "Round",
+      "color": "Yellow"
+    },
+    {
+      "imprintCode": "FARXIGA 10",
+      "drugName": "Dapagliflozin",
+      "strength": "10 mg",
+      "shape": "Diamond",
+      "color": "Yellow"
+    },
+    {
+      "imprintCode": "FORXIGA 10",
+      "drugName": "Dapagliflozin",
+      "strength": "10 mg",
+      "shape": "Diamond",
+      "color": "Yellow"
+    },
+    {
+      "imprintCode": "JARDIANCE 10",
+      "drugName": "Empagliflozin",
+      "strength": "10 mg",
+      "shape": "Round",
+      "color": "Pale Yellow"
+    },
+    {
+      "imprintCode": "JARDIANCE 25",
+      "drugName": "Empagliflozin",
+      "strength": "25 mg",
+      "shape": "Oval",
+      "color": "Pale Yellow"
+    },
+    {
+      "imprintCode": "INVOKANA 100",
+      "drugName": "Canagliflozin",
+      "strength": "100 mg",
+      "shape": "Capsule-shaped",
+      "color": "Yellow"
+    },
+    {
+      "imprintCode": "INVOKANA 300",
+      "drugName": "Canagliflozin",
+      "strength": "300 mg",
+      "shape": "Capsule-shaped",
+      "color": "White"
+    },
+    {
+      "imprintCode": "ACTOS 15",
+      "drugName": "Pioglitazone",
+      "strength": "15 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "ACTOS 30",
+      "drugName": "Pioglitazone",
+      "strength": "30 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "ACTOS 45",
+      "drugName": "Pioglitazone",
+      "strength": "45 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "GLUCOBAY 50",
+      "drugName": "Acarbose",
+      "strength": "50 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "VOLIBO 0.2",
+      "drugName": "Voglibose",
+      "strength": "0.2 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "SYNTHROID 25",
+      "drugName": "Levothyroxine Sodium",
+      "strength": "25 mcg",
+      "shape": "Round",
+      "color": "Orange"
+    },
+    {
+      "imprintCode": "SYNTHROID 50",
+      "drugName": "Levothyroxine Sodium",
+      "strength": "50 mcg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "SYNTHROID 75",
+      "drugName": "Levothyroxine Sodium",
+      "strength": "75 mcg",
+      "shape": "Round",
+      "color": "Violet"
+    },
+    {
+      "imprintCode": "SYNTHROID 88",
+      "drugName": "Levothyroxine Sodium",
+      "strength": "88 mcg",
+      "shape": "Round",
+      "color": "Olive"
+    },
+    {
+      "imprintCode": "SYNTHROID 100",
+      "drugName": "Levothyroxine Sodium",
+      "strength": "100 mcg",
+      "shape": "Round",
+      "color": "Yellow"
+    },
+    {
+      "imprintCode": "SYNTHROID 112",
+      "drugName": "Levothyroxine Sodium",
+      "strength": "112 mcg",
+      "shape": "Round",
+      "color": "Rose"
+    },
+    {
+      "imprintCode": "SYNTHROID 125",
+      "drugName": "Levothyroxine Sodium",
+      "strength": "125 mcg",
+      "shape": "Round",
+      "color": "Brown"
+    },
+    {
+      "imprintCode": "SYNTHROID 137",
+      "drugName": "Levothyroxine Sodium",
+      "strength": "137 mcg",
+      "shape": "Round",
+      "color": "Turquoise"
+    },
+    {
+      "imprintCode": "SYNTHROID 150",
+      "drugName": "Levothyroxine Sodium",
+      "strength": "150 mcg",
+      "shape": "Round",
+      "color": "Blue"
+    },
+    {
+      "imprintCode": "SYNTHROID 200",
+      "drugName": "Levothyroxine Sodium",
+      "strength": "200 mcg",
+      "shape": "Round",
+      "color": "Pink"
+    },
+    {
+      "imprintCode": "THYRONORM 25",
+      "drugName": "Levothyroxine",
+      "strength": "25 mcg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "THYRONORM 50",
+      "drugName": "Levothyroxine",
+      "strength": "50 mcg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "THYRONORM 75",
+      "drugName": "Levothyroxine",
+      "strength": "75 mcg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "THYRONORM 100",
+      "drugName": "Levothyroxine",
+      "strength": "100 mcg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "ELTROXIN 50",
+      "drugName": "Levothyroxine",
+      "strength": "50 mcg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "ELTROXIN 100",
+      "drugName": "Levothyroxine",
+      "strength": "100 mcg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "TAPAZOLE 5",
+      "drugName": "Methimazole",
+      "strength": "5 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "NEO-MERCAZOLE 5",
+      "drugName": "Carbimazole",
+      "strength": "5 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "PTU 50",
+      "drugName": "Propylthiouracil",
+      "strength": "50 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "PRILOSEC 20",
+      "drugName": "Omeprazole",
+      "strength": "20 mg",
+      "shape": "Capsule",
+      "color": "Purple / Gold"
+    },
+    {
+      "imprintCode": "PRILOSEC 40",
+      "drugName": "Omeprazole",
+      "strength": "40 mg",
+      "shape": "Capsule",
+      "color": "Purple / Gold"
+    },
+    {
+      "imprintCode": "OMEZ 20",
+      "drugName": "Omeprazole",
+      "strength": "20 mg",
+      "shape": "Capsule",
+      "color": "Orange / Yellow"
+    },
+    {
+      "imprintCode": "NEXIUM 20",
+      "drugName": "Esomeprazole Magnesium",
+      "strength": "20 mg",
+      "shape": "Capsule",
+      "color": "Purple"
+    },
+    {
+      "imprintCode": "NEXIUM 40",
+      "drugName": "Esomeprazole Magnesium",
+      "strength": "40 mg",
+      "shape": "Capsule",
+      "color": "Purple"
+    },
+    {
+      "imprintCode": "PROTONIX 20",
+      "drugName": "Pantoprazole Sodium",
+      "strength": "20 mg",
+      "shape": "Oval",
+      "color": "Yellow"
+    },
+    {
+      "imprintCode": "PROTONIX 40",
+      "drugName": "Pantoprazole Sodium",
+      "strength": "40 mg",
+      "shape": "Oval",
+      "color": "Yellow"
+    },
+    {
+      "imprintCode": "PAN 40",
+      "drugName": "Pantoprazole",
+      "strength": "40 mg",
+      "shape": "Oval",
+      "color": "Yellow"
+    },
+    {
+      "imprintCode": "PAN-D",
+      "drugName": "Pantoprazole and Domperidone",
+      "strength": "40 mg / 30 mg",
+      "shape": "Capsule",
+      "color": "Yellow / White"
+    },
+    {
+      "imprintCode": "ACIPHEX 20",
+      "drugName": "Rabeprazole Sodium",
+      "strength": "20 mg",
+      "shape": "Round",
+      "color": "Yellow"
+    },
+    {
+      "imprintCode": "RAZO 20",
+      "drugName": "Rabeprazole",
+      "strength": "20 mg",
+      "shape": "Round",
+      "color": "Yellow"
+    },
+    {
+      "imprintCode": "PREVACID 15",
+      "drugName": "Lansoprazole",
+      "strength": "15 mg",
+      "shape": "Capsule",
+      "color": "Pink / Green"
+    },
+    {
+      "imprintCode": "PREVACID 30",
+      "drugName": "Lansoprazole",
+      "strength": "30 mg",
+      "shape": "Capsule",
+      "color": "Pink / Black"
+    },
+    {
+      "imprintCode": "DEXILANT 30",
+      "drugName": "Dexlansoprazole",
+      "strength": "30 mg",
+      "shape": "Capsule",
+      "color": "Blue"
+    },
+    {
+      "imprintCode": "DEXILANT 60",
+      "drugName": "Dexlansoprazole",
+      "strength": "60 mg",
+      "shape": "Capsule",
+      "color": "Blue"
+    },
+    {
+      "imprintCode": "PEPCID 20",
+      "drugName": "Famotidine",
+      "strength": "20 mg",
+      "shape": "Round",
+      "color": "Beige"
+    },
+    {
+      "imprintCode": "PEPCID 40",
+      "drugName": "Famotidine",
+      "strength": "40 mg",
+      "shape": "Round",
+      "color": "Brown"
+    },
+    {
+      "imprintCode": "ZANTAC 150",
+      "drugName": "Ranitidine",
+      "strength": "150 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "RANTAC 150",
+      "drugName": "Ranitidine",
+      "strength": "150 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "ACILOC 150",
+      "drugName": "Ranitidine",
+      "strength": "150 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "REGLAN 5",
+      "drugName": "Metoclopramide",
+      "strength": "5 mg",
+      "shape": "Round",
+      "color": "Green"
+    },
+    {
+      "imprintCode": "REGLAN 10",
+      "drugName": "Metoclopramide",
+      "strength": "10 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "STEMETIL 5",
+      "drugName": "Prochlorperazine Maleate",
+      "strength": "5 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "ZOFRAN 4",
+      "drugName": "Ondansetron Hydrochloride",
+      "strength": "4 mg",
+      "shape": "Oval",
+      "color": "White"
+    },
+    {
+      "imprintCode": "ZOFRAN 8",
+      "drugName": "Ondansetron Hydrochloride",
+      "strength": "8 mg",
+      "shape": "Oval",
+      "color": "Yellow"
+    },
+    {
+      "imprintCode": "EMESET 4",
+      "drugName": "Ondansetron",
+      "strength": "4 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "EMESET 8",
+      "drugName": "Ondansetron",
+      "strength": "8 mg",
+      "shape": "Round",
+      "color": "Yellow"
+    },
+    {
+      "imprintCode": "IMODIUM 2",
+      "drugName": "Loperamide Hydrochloride",
+      "strength": "2 mg",
+      "shape": "Capsule",
+      "color": "Green"
+    },
+    {
+      "imprintCode": "LOMOTIL",
+      "drugName": "Diphenoxylate and Atropine",
+      "strength": "2.5 mg / 0.025 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "DULCOLAX 5",
+      "drugName": "Bisacodyl",
+      "strength": "5 mg",
+      "shape": "Round",
+      "color": "Orange"
+    },
+    {
+      "imprintCode": "COLACE 100",
+      "drugName": "Docusate Sodium",
+      "strength": "100 mg",
+      "shape": "Capsule",
+      "color": "Red"
+    },
+    {
+      "imprintCode": "SENOKOT 8.6",
+      "drugName": "Sennosides",
+      "strength": "8.6 mg",
+      "shape": "Round",
+      "color": "Brown"
+    },
+    {
+      "imprintCode": "URSO 250",
+      "drugName": "Ursodiol (UDCA)",
+      "strength": "250 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "UDILIV 300",
+      "drugName": "Ursodeoxycholic Acid",
+      "strength": "300 mg",
+      "shape": "Oval",
+      "color": "White"
+    },
+    {
+      "imprintCode": "PROZAC 10",
+      "drugName": "Fluoxetine Hydrochloride",
+      "strength": "10 mg",
+      "shape": "Capsule",
+      "color": "Green / White"
+    },
+    {
+      "imprintCode": "PROZAC 20",
+      "drugName": "Fluoxetine Hydrochloride",
+      "strength": "20 mg",
+      "shape": "Capsule",
+      "color": "Green / Yellow"
+    },
+    {
+      "imprintCode": "PROZAC 40",
+      "drugName": "Fluoxetine Hydrochloride",
+      "strength": "40 mg",
+      "shape": "Capsule",
+      "color": "Green / Blue"
+    },
+    {
+      "imprintCode": "ZOLOFT 25",
+      "drugName": "Sertraline Hydrochloride",
+      "strength": "25 mg",
+      "shape": "Oval",
+      "color": "Green"
+    },
+    {
+      "imprintCode": "ZOLOFT 50",
+      "drugName": "Sertraline Hydrochloride",
+      "strength": "50 mg",
+      "shape": "Capsule-shaped",
+      "color": "Blue"
+    },
+    {
+      "imprintCode": "ZOLOFT 100",
+      "drugName": "Sertraline Hydrochloride",
+      "strength": "100 mg",
+      "shape": "Capsule-shaped",
+      "color": "Yellow"
+    },
+    {
+      "imprintCode": "PAXIL 10",
+      "drugName": "Paroxetine Hydrochloride",
+      "strength": "10 mg",
+      "shape": "Round",
+      "color": "Yellow"
+    },
+    {
+      "imprintCode": "PAXIL 20",
+      "drugName": "Paroxetine Hydrochloride",
+      "strength": "20 mg",
+      "shape": "Round",
+      "color": "Pink"
+    },
+    {
+      "imprintCode": "PAXIL 30",
+      "drugName": "Paroxetine Hydrochloride",
+      "strength": "30 mg",
+      "shape": "Round",
+      "color": "Blue"
+    },
+    {
+      "imprintCode": "CELEXA 10",
+      "drugName": "Citalopram Hydrobromide",
+      "strength": "10 mg",
+      "shape": "Round",
+      "color": "Peach"
+    },
+    {
+      "imprintCode": "CELEXA 20",
+      "drugName": "Citalopram Hydrobromide",
+      "strength": "20 mg",
+      "shape": "Oval",
+      "color": "Pink"
+    },
+    {
+      "imprintCode": "CELEXA 40",
+      "drugName": "Citalopram Hydrobromide",
+      "strength": "40 mg",
+      "shape": "Oval",
+      "color": "White"
+    },
+    {
+      "imprintCode": "LEXAPRO 5",
+      "drugName": "Escitalopram Oxalate",
+      "strength": "5 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "LEXAPRO 10",
+      "drugName": "Escitalopram Oxalate",
+      "strength": "10 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "LEXAPRO 20",
+      "drugName": "Escitalopram Oxalate",
+      "strength": "20 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "EFFEXOR XR 37.5",
+      "drugName": "Venlafaxine Extended Release",
+      "strength": "37.5 mg",
+      "shape": "Capsule",
+      "color": "Peach"
+    },
+    {
+      "imprintCode": "EFFEXOR XR 75",
+      "drugName": "Venlafaxine Extended Release",
+      "strength": "75 mg",
+      "shape": "Capsule",
+      "color": "Peach"
+    },
+    {
+      "imprintCode": "EFFEXOR XR 150",
+      "drugName": "Venlafaxine Extended Release",
+      "strength": "150 mg",
+      "shape": "Capsule",
+      "color": "Orange"
+    },
+    {
+      "imprintCode": "CYMBALTA 20",
+      "drugName": "Duloxetine Hydrochloride",
+      "strength": "20 mg",
+      "shape": "Capsule",
+      "color": "Green"
+    },
+    {
+      "imprintCode": "CYMBALTA 30",
+      "drugName": "Duloxetine Hydrochloride",
+      "strength": "30 mg",
+      "shape": "Capsule",
+      "color": "Blue / White"
+    },
+    {
+      "imprintCode": "CYMBALTA 60",
+      "drugName": "Duloxetine Hydrochloride",
+      "strength": "60 mg",
+      "shape": "Capsule",
+      "color": "Blue / Green"
+    },
+    {
+      "imprintCode": "WELLBUTRIN 75",
+      "drugName": "Bupropion Hydrochloride",
+      "strength": "75 mg",
+      "shape": "Round",
+      "color": "Yellow"
+    },
+    {
+      "imprintCode": "WELLBUTRIN 100",
+      "drugName": "Bupropion Hydrochloride",
+      "strength": "100 mg",
+      "shape": "Round",
+      "color": "Red"
+    },
+    {
+      "imprintCode": "WELLBUTRIN XL 150",
+      "drugName": "Bupropion Extended Release",
+      "strength": "150 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "WELLBUTRIN XL 300",
+      "drugName": "Bupropion Extended Release",
+      "strength": "300 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "REMERON 15",
+      "drugName": "Mirtazapine",
+      "strength": "15 mg",
+      "shape": "Round",
+      "color": "Yellow"
+    },
+    {
+      "imprintCode": "REMERON 30",
+      "drugName": "Mirtazapine",
+      "strength": "30 mg",
+      "shape": "Round",
+      "color": "Red / Brown"
+    },
+    {
+      "imprintCode": "REMERON 45",
+      "drugName": "Mirtazapine",
+      "strength": "45 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "DESYREL 50",
+      "drugName": "Trazodone Hydrochloride",
+      "strength": "50 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "DESYREL 100",
+      "drugName": "Trazodone Hydrochloride",
+      "strength": "100 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "DESYREL 150",
+      "drugName": "Trazodone Hydrochloride",
+      "strength": "150 mg",
+      "shape": "Oval",
+      "color": "White"
+    },
+    {
+      "imprintCode": "ELAVIL 10",
+      "drugName": "Amitriptyline Hydrochloride",
+      "strength": "10 mg",
+      "shape": "Round",
+      "color": "Blue"
+    },
+    {
+      "imprintCode": "ELAVIL 25",
+      "drugName": "Amitriptyline Hydrochloride",
+      "strength": "25 mg",
+      "shape": "Round",
+      "color": "Yellow"
+    },
+    {
+      "imprintCode": "ELAVIL 50",
+      "drugName": "Amitriptyline Hydrochloride",
+      "strength": "50 mg",
+      "shape": "Round",
+      "color": "Beige"
+    },
+    {
+      "imprintCode": "PAMELOR 10",
+      "drugName": "Nortriptyline Hydrochloride",
+      "strength": "10 mg",
+      "shape": "Capsule",
+      "color": "White"
+    },
+    {
+      "imprintCode": "PAMELOR 25",
+      "drugName": "Nortriptyline Hydrochloride",
+      "strength": "25 mg",
+      "shape": "Capsule",
+      "color": "Orange / White"
+    },
+    {
+      "imprintCode": "XANAX 0.25",
+      "drugName": "Alprazolam",
+      "strength": "0.25 mg",
+      "shape": "Oval",
+      "color": "White"
+    },
+    {
+      "imprintCode": "XANAX 0.5",
+      "drugName": "Alprazolam",
+      "strength": "0.5 mg",
+      "shape": "Oval",
+      "color": "Peach"
+    },
+    {
+      "imprintCode": "XANAX 1.0",
+      "drugName": "Alprazolam",
+      "strength": "1 mg",
+      "shape": "Oval",
+      "color": "Blue"
+    },
+    {
+      "imprintCode": "XANAX 2.0",
+      "drugName": "Alprazolam",
+      "strength": "2 mg",
+      "shape": "Rectangle (Bar)",
+      "color": "White"
+    },
+    {
+      "imprintCode": "ATIVAN 0.5",
+      "drugName": "Lorazepam",
+      "strength": "0.5 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "ATIVAN 1",
+      "drugName": "Lorazepam",
+      "strength": "1 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "ATIVAN 2",
+      "drugName": "Lorazepam",
+      "strength": "2 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "KLONOPIN 0.5",
+      "drugName": "Clonazepam",
+      "strength": "0.5 mg",
+      "shape": "Round",
+      "color": "Orange"
+    },
+    {
+      "imprintCode": "KLONOPIN 1",
+      "drugName": "Clonazepam",
+      "strength": "1 mg",
+      "shape": "Round",
+      "color": "Blue"
+    },
+    {
+      "imprintCode": "KLONOPIN 2",
+      "drugName": "Clonazepam",
+      "strength": "2 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "VALIUM 2",
+      "drugName": "Diazepam",
+      "strength": "2 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "VALIUM 5",
+      "drugName": "Diazepam",
+      "strength": "5 mg",
+      "shape": "Round",
+      "color": "Yellow"
+    },
+    {
+      "imprintCode": "VALIUM 10",
+      "drugName": "Diazepam",
+      "strength": "10 mg",
+      "shape": "Round",
+      "color": "Blue"
+    },
+    {
+      "imprintCode": "RESTORIL 15",
+      "drugName": "Temazepam",
+      "strength": "15 mg",
+      "shape": "Capsule",
+      "color": "Maroon"
+    },
+    {
+      "imprintCode": "RESTORIL 30",
+      "drugName": "Temazepam",
+      "strength": "30 mg",
+      "shape": "Capsule",
+      "color": "Maroon / Blue"
+    },
+    {
+      "imprintCode": "AMBIEN 5",
+      "drugName": "Zolpidem Tartrate",
+      "strength": "5 mg",
+      "shape": "Round",
+      "color": "Pink"
+    },
+    {
+      "imprintCode": "AMBIEN 10",
+      "drugName": "Zolpidem Tartrate",
+      "strength": "10 mg",
+      "shape": "Oval",
+      "color": "White"
+    },
+    {
+      "imprintCode": "LUNESTA 1",
+      "drugName": "Eszopiclone",
+      "strength": "1 mg",
+      "shape": "Round",
+      "color": "Light Blue"
+    },
+    {
+      "imprintCode": "LUNESTA 2",
+      "drugName": "Eszopiclone",
+      "strength": "2 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "LUNESTA 3",
+      "drugName": "Eszopiclone",
+      "strength": "3 mg",
+      "shape": "Round",
+      "color": "Dark Blue"
+    },
+    {
+      "imprintCode": "SONATA 10",
+      "drugName": "Zaleplon",
+      "strength": "10 mg",
+      "shape": "Capsule",
+      "color": "Green"
+    },
+    {
+      "imprintCode": "HALDOL 0.5",
+      "drugName": "Haloperidol",
+      "strength": "0.5 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "HALDOL 1",
+      "drugName": "Haloperidol",
+      "strength": "1 mg",
+      "shape": "Round",
+      "color": "Yellow"
+    },
+    {
+      "imprintCode": "HALDOL 2",
+      "drugName": "Haloperidol",
+      "strength": "2 mg",
+      "shape": "Round",
+      "color": "Pink"
+    },
+    {
+      "imprintCode": "HALDOL 5",
+      "drugName": "Haloperidol",
+      "strength": "5 mg",
+      "shape": "Round",
+      "color": "Green"
+    },
+    {
+      "imprintCode": "SEROQUEL 25",
+      "drugName": "Quetiapine Fumarate",
+      "strength": "25 mg",
+      "shape": "Round",
+      "color": "Peach"
+    },
+    {
+      "imprintCode": "SEROQUEL 50",
+      "drugName": "Quetiapine Fumarate",
+      "strength": "50 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "SEROQUEL 100",
+      "drugName": "Quetiapine Fumarate",
+      "strength": "100 mg",
+      "shape": "Round",
+      "color": "Yellow"
+    },
+    {
+      "imprintCode": "SEROQUEL 200",
+      "drugName": "Quetiapine Fumarate",
+      "strength": "200 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "SEROQUEL 300",
+      "drugName": "Quetiapine Fumarate",
+      "strength": "300 mg",
+      "shape": "Capsule-shaped",
+      "color": "White"
+    },
+    {
+      "imprintCode": "ZYPREXA 2.5",
+      "drugName": "Olanzapine",
+      "strength": "2.5 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "ZYPREXA 5",
+      "drugName": "Olanzapine",
+      "strength": "5 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "ZYPREXA 10",
+      "drugName": "Olanzapine",
+      "strength": "10 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "RISPERDAL 0.5",
+      "drugName": "Risperidone",
+      "strength": "0.5 mg",
+      "shape": "Round",
+      "color": "Red / Brown"
+    },
+    {
+      "imprintCode": "RISPERDAL 1",
+      "drugName": "Risperidone",
+      "strength": "1 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "RISPERDAL 2",
+      "drugName": "Risperidone",
+      "strength": "2 mg",
+      "shape": "Round",
+      "color": "Orange"
+    },
+    {
+      "imprintCode": "ABILIFY 2",
+      "drugName": "Aripiprazole",
+      "strength": "2 mg",
+      "shape": "Round",
+      "color": "Green"
+    },
+    {
+      "imprintCode": "ABILIFY 5",
+      "drugName": "Aripiprazole",
+      "strength": "5 mg",
+      "shape": "Round",
+      "color": "Blue"
+    },
+    {
+      "imprintCode": "ABILIFY 10",
+      "drugName": "Aripiprazole",
+      "strength": "10 mg",
+      "shape": "Round",
+      "color": "Pink"
+    },
+    {
+      "imprintCode": "ABILIFY 15",
+      "drugName": "Aripiprazole",
+      "strength": "15 mg",
+      "shape": "Round",
+      "color": "Yellow"
+    },
+    {
+      "imprintCode": "CLOZARIL 25",
+      "drugName": "Clozapine",
+      "strength": "25 mg",
+      "shape": "Round",
+      "color": "Yellow"
+    },
+    {
+      "imprintCode": "CLOZARIL 100",
+      "drugName": "Clozapine",
+      "strength": "100 mg",
+      "shape": "Round",
+      "color": "Yellow"
+    },
+    {
+      "imprintCode": "TEGRETOL 200",
+      "drugName": "Carbamazepine",
+      "strength": "200 mg",
+      "shape": "Round",
+      "color": "Pink"
+    },
+    {
+      "imprintCode": "DEPAKOTE 250",
+      "drugName": "Divalproex Sodium",
+      "strength": "250 mg",
+      "shape": "Oval",
+      "color": "Peach"
+    },
+    {
+      "imprintCode": "DEPAKOTE 500",
+      "drugName": "Divalproex Sodium",
+      "strength": "500 mg",
+      "shape": "Oval",
+      "color": "Pink"
+    },
+    {
+      "imprintCode": "DILANTIN 100",
+      "drugName": "Phenytoin Sodium Extended",
+      "strength": "100 mg",
+      "shape": "Capsule",
+      "color": "Orange / White"
+    },
+    {
+      "imprintCode": "KEPPRA 250",
+      "drugName": "Levetiracetam",
+      "strength": "250 mg",
+      "shape": "Oval",
+      "color": "Blue"
+    },
+    {
+      "imprintCode": "KEPPRA 500",
+      "drugName": "Levetiracetam",
+      "strength": "500 mg",
+      "shape": "Oval",
+      "color": "Yellow"
+    },
+    {
+      "imprintCode": "KEPPRA 750",
+      "drugName": "Levetiracetam",
+      "strength": "750 mg",
+      "shape": "Oval",
+      "color": "Orange"
+    },
+    {
+      "imprintCode": "KEPPRA 1000",
+      "drugName": "Levetiracetam",
+      "strength": "1000 mg",
+      "shape": "Oval",
+      "color": "White"
+    },
+    {
+      "imprintCode": "LAMICTAL 25",
+      "drugName": "Lamotrigine",
+      "strength": "25 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "LAMICTAL 100",
+      "drugName": "Lamotrigine",
+      "strength": "100 mg",
+      "shape": "Round",
+      "color": "Peach"
+    },
+    {
+      "imprintCode": "LAMICTAL 200",
+      "drugName": "Lamotrigine",
+      "strength": "200 mg",
+      "shape": "Round",
+      "color": "Blue"
+    },
+    {
+      "imprintCode": "TOPAMAX 25",
+      "drugName": "Topiramate",
+      "strength": "25 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "TOPAMAX 50",
+      "drugName": "Topiramate",
+      "strength": "50 mg",
+      "shape": "Round",
+      "color": "Light Yellow"
+    },
+    {
+      "imprintCode": "TOPAMAX 100",
+      "drugName": "Topiramate",
+      "strength": "100 mg",
+      "shape": "Round",
+      "color": "Yellow"
+    },
+    {
+      "imprintCode": "NEURONTIN 100",
+      "drugName": "Gabapentin",
+      "strength": "100 mg",
+      "shape": "Capsule",
+      "color": "White"
+    },
+    {
+      "imprintCode": "NEURONTIN 300",
+      "drugName": "Gabapentin",
+      "strength": "300 mg",
+      "shape": "Capsule",
+      "color": "Yellow"
+    },
+    {
+      "imprintCode": "NEURONTIN 400",
+      "drugName": "Gabapentin",
+      "strength": "400 mg",
+      "shape": "Capsule",
+      "color": "Orange"
+    },
+    {
+      "imprintCode": "NEURONTIN 600",
+      "drugName": "Gabapentin",
+      "strength": "600 mg",
+      "shape": "Oval",
+      "color": "White"
+    },
+    {
+      "imprintCode": "NEURONTIN 800",
+      "drugName": "Gabapentin",
+      "strength": "800 mg",
+      "shape": "Oval",
+      "color": "White"
+    },
+    {
+      "imprintCode": "LYRICA 25",
+      "drugName": "Pregabalin",
+      "strength": "25 mg",
+      "shape": "Capsule",
+      "color": "White"
+    },
+    {
+      "imprintCode": "LYRICA 50",
+      "drugName": "Pregabalin",
+      "strength": "50 mg",
+      "shape": "Capsule",
+      "color": "White"
+    },
+    {
+      "imprintCode": "LYRICA 75",
+      "drugName": "Pregabalin",
+      "strength": "75 mg",
+      "shape": "Capsule",
+      "color": "Red / White"
+    },
+    {
+      "imprintCode": "LYRICA 150",
+      "drugName": "Pregabalin",
+      "strength": "150 mg",
+      "shape": "Capsule",
+      "color": "White"
+    },
+    {
+      "imprintCode": "LYRICA 300",
+      "drugName": "Pregabalin",
+      "strength": "300 mg",
+      "shape": "Capsule",
+      "color": "Red / White"
+    },
+    {
+      "imprintCode": "ARICEPT 5",
+      "drugName": "Donepezil Hydrochloride",
+      "strength": "5 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "ARICEPT 10",
+      "drugName": "Donepezil Hydrochloride",
+      "strength": "10 mg",
+      "shape": "Round",
+      "color": "Yellow"
+    },
+    {
+      "imprintCode": "EXELON 1.5",
+      "drugName": "Rivastigmine",
+      "strength": "1.5 mg",
+      "shape": "Capsule",
+      "color": "Yellow"
+    },
+    {
+      "imprintCode": "EXELON 3",
+      "drugName": "Rivastigmine",
+      "strength": "3 mg",
+      "shape": "Capsule",
+      "color": "Orange"
+    },
+    {
+      "imprintCode": "EXELON 4.5",
+      "drugName": "Rivastigmine",
+      "strength": "4.5 mg",
+      "shape": "Capsule",
+      "color": "Red"
+    },
+    {
+      "imprintCode": "EXELON 6",
+      "drugName": "Rivastigmine",
+      "strength": "6 mg",
+      "shape": "Capsule",
+      "color": "Red / Orange"
+    },
+    {
+      "imprintCode": "NAMENDA 5",
+      "drugName": "Memantine Hydrochloride",
+      "strength": "5 mg",
+      "shape": "Capsule-shaped",
+      "color": "Tan"
+    },
+    {
+      "imprintCode": "NAMENDA 10",
+      "drugName": "Memantine Hydrochloride",
+      "strength": "10 mg",
+      "shape": "Capsule-shaped",
+      "color": "Gray"
+    },
+    {
+      "imprintCode": "SINEMET 25-100",
+      "drugName": "Carbidopa and Levodopa",
+      "strength": "25 mg / 100 mg",
+      "shape": "Round",
+      "color": "Yellow"
+    },
+    {
+      "imprintCode": "SINEMET 25-250",
+      "drugName": "Carbidopa and Levodopa",
+      "strength": "25 mg / 250 mg",
+      "shape": "Round",
+      "color": "Blue"
+    },
+    {
+      "imprintCode": "MIRAPEX 0.125",
+      "drugName": "Pramipexole Dihydrochloride",
+      "strength": "0.125 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "MIRAPEX 0.25",
+      "drugName": "Pramipexole Dihydrochloride",
+      "strength": "0.25 mg",
+      "shape": "Oval",
+      "color": "White"
+    },
+    {
+      "imprintCode": "MIRAPEX 0.5",
+      "drugName": "Pramipexole Dihydrochloride",
+      "strength": "0.5 mg",
+      "shape": "Oval",
+      "color": "White"
+    },
+    {
+      "imprintCode": "MIRAPEX 1.0",
+      "drugName": "Pramipexole Dihydrochloride",
+      "strength": "1 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "REQUIP 0.25",
+      "drugName": "Ropinirole Hydrochloride",
+      "strength": "0.25 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "REQUIP 0.5",
+      "drugName": "Ropinirole Hydrochloride",
+      "strength": "0.5 mg",
+      "shape": "Round",
+      "color": "Yellow"
+    },
+    {
+      "imprintCode": "REQUIP 1",
+      "drugName": "Ropinirole Hydrochloride",
+      "strength": "1 mg",
+      "shape": "Round",
+      "color": "Green"
+    },
+    {
+      "imprintCode": "REQUIP 2",
+      "drugName": "Ropinirole Hydrochloride",
+      "strength": "2 mg",
+      "shape": "Round",
+      "color": "Pink"
+    },
+    {
+      "imprintCode": "PACITANE 2",
+      "drugName": "Trihexyphenidyl",
+      "strength": "2 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "COGENTIN 0.5",
+      "drugName": "Benztropine Mesylate",
+      "strength": "0.5 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "COGENTIN 1",
+      "drugName": "Benztropine Mesylate",
+      "strength": "1 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "COGENTIN 2",
+      "drugName": "Benztropine Mesylate",
+      "strength": "2 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "AMOXIL 250",
+      "drugName": "Amoxicillin",
+      "strength": "250 mg",
+      "shape": "Capsule",
+      "color": "Pink / Blue"
+    },
+    {
+      "imprintCode": "AMOXIL 500",
+      "drugName": "Amoxicillin",
+      "strength": "500 mg",
+      "shape": "Capsule",
+      "color": "Pink / Blue"
+    },
+    {
+      "imprintCode": "AMOXIL 875",
+      "drugName": "Amoxicillin",
+      "strength": "875 mg",
+      "shape": "Oval",
+      "color": "Pink"
+    },
+    {
+      "imprintCode": "AUGMENTIN 500",
+      "drugName": "Amoxicillin and Clavulanate",
+      "strength": "500 mg / 125 mg",
+      "shape": "Oval",
+      "color": "White"
+    },
+    {
+      "imprintCode": "AUGMENTIN 625",
+      "drugName": "Amoxicillin and Clavulanate",
+      "strength": "500 mg / 125 mg",
+      "shape": "Oval",
+      "color": "White"
+    },
+    {
+      "imprintCode": "AUGMENTIN 875",
+      "drugName": "Amoxicillin and Clavulanate",
+      "strength": "875 mg / 125 mg",
+      "shape": "Oval",
+      "color": "White"
+    },
+    {
+      "imprintCode": "KEFLEX 250",
+      "drugName": "Cephalexin",
+      "strength": "250 mg",
+      "shape": "Capsule",
+      "color": "Green / White"
+    },
+    {
+      "imprintCode": "KEFLEX 500",
+      "drugName": "Cephalexin",
+      "strength": "500 mg",
+      "shape": "Capsule",
+      "color": "Green"
+    },
+    {
+      "imprintCode": "CEFTIN 250",
+      "drugName": "Cefuroxime Axetil",
+      "strength": "250 mg",
+      "shape": "Capsule-shaped",
+      "color": "White"
+    },
+    {
+      "imprintCode": "CEFTIN 500",
+      "drugName": "Cefuroxime Axetil",
+      "strength": "500 mg",
+      "shape": "Capsule-shaped",
+      "color": "White"
+    },
+    {
+      "imprintCode": "SUPRAX 200",
+      "drugName": "Cefixime",
+      "strength": "200 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "SUPRAX 400",
+      "drugName": "Cefixime",
+      "strength": "400 mg",
+      "shape": "Capsule-shaped",
+      "color": "White"
+    },
+    {
+      "imprintCode": "CIPRO 250",
+      "drugName": "Ciprofloxacin",
+      "strength": "250 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "CIPRO 500",
+      "drugName": "Ciprofloxacin",
+      "strength": "500 mg",
+      "shape": "Oval",
+      "color": "White"
+    },
+    {
+      "imprintCode": "CIPRO 750",
+      "drugName": "Ciprofloxacin",
+      "strength": "750 mg",
+      "shape": "Capsule-shaped",
+      "color": "White"
+    },
+    {
+      "imprintCode": "LEVAQUIN 250",
+      "drugName": "Levofloxacin",
+      "strength": "250 mg",
+      "shape": "Capsule-shaped",
+      "color": "Terra Cotta Pink"
+    },
+    {
+      "imprintCode": "LEVAQUIN 500",
+      "drugName": "Levofloxacin",
+      "strength": "500 mg",
+      "shape": "Capsule-shaped",
+      "color": "Peach"
+    },
+    {
+      "imprintCode": "LEVAQUIN 750",
+      "drugName": "Levofloxacin",
+      "strength": "750 mg",
+      "shape": "Capsule-shaped",
+      "color": "White"
+    },
+    {
+      "imprintCode": "AVELOX 400",
+      "drugName": "Moxifloxacin Hydrochloride",
+      "strength": "400 mg",
+      "shape": "Capsule-shaped",
+      "color": "Red"
+    },
+    {
+      "imprintCode": "ZITHROMAX 250",
+      "drugName": "Azithromycin",
+      "strength": "250 mg",
+      "shape": "Oval",
+      "color": "Pink"
+    },
+    {
+      "imprintCode": "ZITHROMAX 500",
+      "drugName": "Azithromycin",
+      "strength": "500 mg",
+      "shape": "Oval",
+      "color": "Blue"
+    },
+    {
+      "imprintCode": "AZITHRAL 500",
+      "drugName": "Azithromycin",
+      "strength": "500 mg",
+      "shape": "Oval",
+      "color": "White"
+    },
+    {
+      "imprintCode": "BIAXIN 250",
+      "drugName": "Clarithromycin",
+      "strength": "250 mg",
+      "shape": "Oval",
+      "color": "Yellow"
+    },
+    {
+      "imprintCode": "BIAXIN 500",
+      "drugName": "Clarithromycin",
+      "strength": "500 mg",
+      "shape": "Oval",
+      "color": "Yellow"
+    },
+    {
+      "imprintCode": "VIBRAMYCIN 100",
+      "drugName": "Doxycycline Hyclate",
+      "strength": "100 mg",
+      "shape": "Capsule",
+      "color": "Light Blue"
+    },
+    {
+      "imprintCode": "MINOCIN 50",
+      "drugName": "Minocycline Hydrochloride",
+      "strength": "50 mg",
+      "shape": "Capsule",
+      "color": "Orange"
+    },
+    {
+      "imprintCode": "MINOCIN 100",
+      "drugName": "Minocycline Hydrochloride",
+      "strength": "100 mg",
+      "shape": "Capsule",
+      "color": "Purple / Orange"
+    },
+    {
+      "imprintCode": "MACROBID 100",
+      "drugName": "Nitrofurantoin Monohydrate/Macrocrystals",
+      "strength": "100 mg",
+      "shape": "Capsule",
+      "color": "Black / Yellow"
+    },
+    {
+      "imprintCode": "BACTRIM DS",
+      "drugName": "Sulfamethoxazole and Trimethoprim",
+      "strength": "800 mg / 160 mg",
+      "shape": "Oval",
+      "color": "White"
+    },
+    {
+      "imprintCode": "BACTRIM SS",
+      "drugName": "Sulfamethoxazole and Trimethoprim",
+      "strength": "400 mg / 80 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "CLEOCIN 150",
+      "drugName": "Clindamycin Hydrochloride",
+      "strength": "150 mg",
+      "shape": "Capsule",
+      "color": "Light Blue / Green"
+    },
+    {
+      "imprintCode": "CLEOCIN 300",
+      "drugName": "Clindamycin Hydrochloride",
+      "strength": "300 mg",
+      "shape": "Capsule",
+      "color": "Light Blue"
+    },
+    {
+      "imprintCode": "FLAGYL 250",
+      "drugName": "Metronidazole",
+      "strength": "250 mg",
+      "shape": "Round",
+      "color": "Blue"
+    },
+    {
+      "imprintCode": "FLAGYL 500",
+      "drugName": "Metronidazole",
+      "strength": "500 mg",
+      "shape": "Oval",
+      "color": "Blue"
+    },
+    {
+      "imprintCode": "DIFLUCAN 50",
+      "drugName": "Fluconazole",
+      "strength": "50 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "DIFLUCAN 100",
+      "drugName": "Fluconazole",
+      "strength": "100 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "DIFLUCAN 150",
+      "drugName": "Fluconazole",
+      "strength": "150 mg",
+      "shape": "Oval",
+      "color": "Pink"
+    },
+    {
+      "imprintCode": "DIFLUCAN 200",
+      "drugName": "Fluconazole",
+      "strength": "200 mg",
+      "shape": "Oval",
+      "color": "White"
+    },
+    {
+      "imprintCode": "LAMISIL 250",
+      "drugName": "Terbinafine Hydrochloride",
+      "strength": "250 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "ZOVIRAX 200",
+      "drugName": "Acyclovir",
+      "strength": "200 mg",
+      "shape": "Capsule",
+      "color": "Blue"
+    },
+    {
+      "imprintCode": "ZOVIRAX 400",
+      "drugName": "Acyclovir",
+      "strength": "400 mg",
+      "shape": "Round",
+      "color": "Pink"
+    },
+    {
+      "imprintCode": "ZOVIRAX 800",
+      "drugName": "Acyclovir",
+      "strength": "800 mg",
+      "shape": "Oval",
+      "color": "Blue"
+    },
+    {
+      "imprintCode": "VALTREX 500",
+      "drugName": "Valacyclovir Hydrochloride",
+      "strength": "500 mg",
+      "shape": "Capsule-shaped",
+      "color": "Blue"
+    },
+    {
+      "imprintCode": "VALTREX 1G",
+      "drugName": "Valacyclovir Hydrochloride",
+      "strength": "1000 mg",
+      "shape": "Capsule-shaped",
+      "color": "Blue"
+    },
+    {
+      "imprintCode": "TAMIFLU 75",
+      "drugName": "Oseltamivir Phosphate",
+      "strength": "75 mg",
+      "shape": "Capsule",
+      "color": "Yellow / Grey"
+    },
+    {
+      "imprintCode": "ZYRTEC 5",
+      "drugName": "Cetirizine Hydrochloride",
+      "strength": "5 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "ZYRTEC 10",
+      "drugName": "Cetirizine Hydrochloride",
+      "strength": "10 mg",
+      "shape": "Rectangle",
+      "color": "White"
+    },
+    {
+      "imprintCode": "XYZAL 5",
+      "drugName": "Levocetirizine Dihydrochloride",
+      "strength": "5 mg",
+      "shape": "Oval",
+      "color": "White"
+    },
+    {
+      "imprintCode": "CLARITIN 10",
+      "drugName": "Loratadine",
+      "strength": "10 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "CLARINEX 5",
+      "drugName": "Desloratadine",
+      "strength": "5 mg",
+      "shape": "Round",
+      "color": "Light Blue"
+    },
+    {
+      "imprintCode": "ALLEGRA 30",
+      "drugName": "Fexofenadine Hydrochloride",
+      "strength": "30 mg",
+      "shape": "Round",
+      "color": "Peach"
+    },
+    {
+      "imprintCode": "ALLEGRA 60",
+      "drugName": "Fexofenadine Hydrochloride",
+      "strength": "60 mg",
+      "shape": "Oval",
+      "color": "Peach"
+    },
+    {
+      "imprintCode": "ALLEGRA 180",
+      "drugName": "Fexofenadine Hydrochloride",
+      "strength": "180 mg",
+      "shape": "Oval",
+      "color": "Purple"
+    },
+    {
+      "imprintCode": "SINGULAIR 4",
+      "drugName": "Montelukast Sodium",
+      "strength": "4 mg",
+      "shape": "Round",
+      "color": "Pink"
+    },
+    {
+      "imprintCode": "SINGULAIR 5",
+      "drugName": "Montelukast Sodium",
+      "strength": "5 mg",
+      "shape": "Round",
+      "color": "Pink"
+    },
+    {
+      "imprintCode": "SINGULAIR 10",
+      "drugName": "Montelukast Sodium",
+      "strength": "10 mg",
+      "shape": "Square",
+      "color": "Beige"
+    },
+    {
+      "imprintCode": "MONTAIR 10",
+      "drugName": "Montelukast",
+      "strength": "10 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "MONTAIR LC",
+      "drugName": "Montelukast and Levocetirizine",
+      "strength": "10 mg / 5 mg",
+      "shape": "Oval",
+      "color": "White"
+    },
+    {
+      "imprintCode": "BENADRYL 25",
+      "drugName": "Diphenhydramine Hydrochloride",
+      "strength": "25 mg",
+      "shape": "Capsule",
+      "color": "Pink / White"
+    },
+    {
+      "imprintCode": "BENADRYL 50",
+      "drugName": "Diphenhydramine Hydrochloride",
+      "strength": "50 mg",
+      "shape": "Capsule",
+      "color": "Pink"
+    },
+    {
+      "imprintCode": "ATARAX 10",
+      "drugName": "Hydroxyzine Hydrochloride",
+      "strength": "10 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "ATARAX 25",
+      "drugName": "Hydroxyzine Hydrochloride",
+      "strength": "25 mg",
+      "shape": "Round",
+      "color": "Green"
+    },
+    {
+      "imprintCode": "VISTARIL 25",
+      "drugName": "Hydroxyzine Pamoate",
+      "strength": "25 mg",
+      "shape": "Capsule",
+      "color": "Green / White"
+    },
+    {
+      "imprintCode": "VISTARIL 50",
+      "drugName": "Hydroxyzine Pamoate",
+      "strength": "50 mg",
+      "shape": "Capsule",
+      "color": "Green"
+    },
+    {
+      "imprintCode": "CHLOR-TRIMETON 4",
+      "drugName": "Chlorpheniramine Maleate",
+      "strength": "4 mg",
+      "shape": "Round",
+      "color": "Yellow"
+    },
+    {
+      "imprintCode": "AVIL 25",
+      "drugName": "Pheniramine Maleate",
+      "strength": "25 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "AVIL 50",
+      "drugName": "Pheniramine Maleate",
+      "strength": "50 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "SUDAFED 30",
+      "drugName": "Pseudoephedrine Hydrochloride",
+      "strength": "30 mg",
+      "shape": "Round",
+      "color": "Red"
+    },
+    {
+      "imprintCode": "SUDAFED 60",
+      "drugName": "Pseudoephedrine Hydrochloride",
+      "strength": "60 mg",
+      "shape": "Round",
+      "color": "Red"
+    },
+    {
+      "imprintCode": "THEO-24 100",
+      "drugName": "Theophylline Extended Release",
+      "strength": "100 mg",
+      "shape": "Capsule",
+      "color": "White"
+    },
+    {
+      "imprintCode": "THEO-24 200",
+      "drugName": "Theophylline Extended Release",
+      "strength": "200 mg",
+      "shape": "Capsule",
+      "color": "Yellow"
+    },
+    {
+      "imprintCode": "THEO-24 300",
+      "drugName": "Theophylline Extended Release",
+      "strength": "300 mg",
+      "shape": "Capsule",
+      "color": "Red"
+    },
+    {
+      "imprintCode": "FLOMAX 0.4",
+      "drugName": "Tamsulosin Hydrochloride",
+      "strength": "0.4 mg",
+      "shape": "Capsule",
+      "color": "Olive / Orange"
+    },
+    {
+      "imprintCode": "URIMAX 0.4",
+      "drugName": "Tamsulosin",
+      "strength": "0.4 mg",
+      "shape": "Capsule",
+      "color": "Orange"
+    },
+    {
+      "imprintCode": "UROXATRAL 10",
+      "drugName": "Alfuzosin Hydrochloride",
+      "strength": "10 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "RAPAFLO 4",
+      "drugName": "Silodosin",
+      "strength": "4 mg",
+      "shape": "Capsule",
+      "color": "White"
+    },
+    {
+      "imprintCode": "RAPAFLO 8",
+      "drugName": "Silodosin",
+      "strength": "8 mg",
+      "shape": "Capsule",
+      "color": "White"
+    },
+    {
+      "imprintCode": "SILODAL 8",
+      "drugName": "Silodosin",
+      "strength": "8 mg",
+      "shape": "Capsule",
+      "color": "White"
+    },
+    {
+      "imprintCode": "PROSCAR 5",
+      "drugName": "Finasteride",
+      "strength": "5 mg",
+      "shape": "Curved Triangle",
+      "color": "Blue"
+    },
+    {
+      "imprintCode": "PROPECIA 1",
+      "drugName": "Finasteride",
+      "strength": "1 mg",
+      "shape": "Octagonal",
+      "color": "Tan"
+    },
+    {
+      "imprintCode": "AVODART 0.5",
+      "drugName": "Dutasteride",
+      "strength": "0.5 mg",
+      "shape": "Capsule",
+      "color": "Yellow"
+    },
+    {
+      "imprintCode": "VIAGRA 25",
+      "drugName": "Sildenafil Citrate",
+      "strength": "25 mg",
+      "shape": "Diamond",
+      "color": "Blue"
+    },
+    {
+      "imprintCode": "VIAGRA 50",
+      "drugName": "Sildenafil Citrate",
+      "strength": "50 mg",
+      "shape": "Diamond",
+      "color": "Blue"
+    },
+    {
+      "imprintCode": "VIAGRA 100",
+      "drugName": "Sildenafil Citrate",
+      "strength": "100 mg",
+      "shape": "Diamond",
+      "color": "Blue"
+    },
+    {
+      "imprintCode": "CIALIS 2.5",
+      "drugName": "Tadalafil",
+      "strength": "2.5 mg",
+      "shape": "Teardrop",
+      "color": "Yellow"
+    },
+    {
+      "imprintCode": "CIALIS 5",
+      "drugName": "Tadalafil",
+      "strength": "5 mg",
+      "shape": "Teardrop",
+      "color": "Yellow"
+    },
+    {
+      "imprintCode": "CIALIS 10",
+      "drugName": "Tadalafil",
+      "strength": "10 mg",
+      "shape": "Teardrop",
+      "color": "Yellow"
+    },
+    {
+      "imprintCode": "CIALIS 20",
+      "drugName": "Tadalafil",
+      "strength": "20 mg",
+      "shape": "Teardrop",
+      "color": "Yellow"
+    },
+    {
+      "imprintCode": "DITROPAN 5",
+      "drugName": "Oxybutynin Chloride",
+      "strength": "5 mg",
+      "shape": "Round",
+      "color": "Blue"
+    },
+    {
+      "imprintCode": "DITROPAN XL 5",
+      "drugName": "Oxybutynin Chloride Extended Release",
+      "strength": "5 mg",
+      "shape": "Round",
+      "color": "Pale Pink"
+    },
+    {
+      "imprintCode": "DITROPAN XL 10",
+      "drugName": "Oxybutynin Chloride Extended Release",
+      "strength": "10 mg",
+      "shape": "Round",
+      "color": "Pink"
+    },
+    {
+      "imprintCode": "DETROL 1",
+      "drugName": "Tolterodine Tartrate",
+      "strength": "1 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "DETROL 2",
+      "drugName": "Tolterodine Tartrate",
+      "strength": "2 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "DETROL LA 2",
+      "drugName": "Tolterodine Extended Release",
+      "strength": "2 mg",
+      "shape": "Capsule",
+      "color": "Blue / Green"
+    },
+    {
+      "imprintCode": "DETROL LA 4",
+      "drugName": "Tolterodine Extended Release",
+      "strength": "4 mg",
+      "shape": "Capsule",
+      "color": "Blue"
+    },
+    {
+      "imprintCode": "VESICARE 5",
+      "drugName": "Solifenacin Succinate",
+      "strength": "5 mg",
+      "shape": "Round",
+      "color": "Light Yellow"
+    },
+    {
+      "imprintCode": "VESICARE 10",
+      "drugName": "Solifenacin Succinate",
+      "strength": "10 mg",
+      "shape": "Round",
+      "color": "Light Pink"
+    },
+    {
+      "imprintCode": "ENABLEX 7.5",
+      "drugName": "Darifenacin",
+      "strength": "7.5 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "ENABLEX 15",
+      "drugName": "Darifenacin",
+      "strength": "15 mg",
+      "shape": "Round",
+      "color": "Peach"
+    },
+    {
+      "imprintCode": "TOVIAZ 4",
+      "drugName": "Fesoterodine Fumarate",
+      "strength": "4 mg",
+      "shape": "Oval",
+      "color": "Light Blue"
+    },
+    {
+      "imprintCode": "TOVIAZ 8",
+      "drugName": "Fesoterodine Fumarate",
+      "strength": "8 mg",
+      "shape": "Oval",
+      "color": "Blue"
+    },
+    {
+      "imprintCode": "MYRBETRIQ 25",
+      "drugName": "Mirabegron",
+      "strength": "25 mg",
+      "shape": "Oval",
+      "color": "Brown"
+    },
+    {
+      "imprintCode": "MYRBETRIQ 50",
+      "drugName": "Mirabegron",
+      "strength": "50 mg",
+      "shape": "Oval",
+      "color": "Yellow"
+    },
+    {
+      "imprintCode": "FOSAMAX 10",
+      "drugName": "Alendronate Sodium",
+      "strength": "10 mg",
+      "shape": "Oval",
+      "color": "White"
+    },
+    {
+      "imprintCode": "FOSAMAX 35",
+      "drugName": "Alendronate Sodium",
+      "strength": "35 mg",
+      "shape": "Oval",
+      "color": "White"
+    },
+    {
+      "imprintCode": "FOSAMAX 70",
+      "drugName": "Alendronate Sodium",
+      "strength": "70 mg",
+      "shape": "Oval",
+      "color": "White"
+    },
+    {
+      "imprintCode": "ACTONEL 5",
+      "drugName": "Risedronate Sodium",
+      "strength": "5 mg",
+      "shape": "Oval",
+      "color": "Yellow"
+    },
+    {
+      "imprintCode": "ACTONEL 35",
+      "drugName": "Risedronate Sodium",
+      "strength": "35 mg",
+      "shape": "Oval",
+      "color": "Orange"
+    },
+    {
+      "imprintCode": "BONIVA 150",
+      "drugName": "Ibandronate Sodium",
+      "strength": "150 mg",
+      "shape": "Capsule-shaped",
+      "color": "White"
+    },
+    {
+      "imprintCode": "ZYLOPRIM 100",
+      "drugName": "Allopurinol",
+      "strength": "100 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "ZYLOPRIM 300",
+      "drugName": "Allopurinol",
+      "strength": "300 mg",
+      "shape": "Round",
+      "color": "Orange"
+    },
+    {
+      "imprintCode": "ULORIC 40",
+      "drugName": "Febuxostat",
+      "strength": "40 mg",
+      "shape": "Round",
+      "color": "Green"
+    },
+    {
+      "imprintCode": "ULORIC 80",
+      "drugName": "Febuxostat",
+      "strength": "80 mg",
+      "shape": "Round",
+      "color": "Green"
+    },
+    {
+      "imprintCode": "COLCRYS 0.6",
+      "drugName": "Colchicine",
+      "strength": "0.6 mg",
+      "shape": "Capsule-shaped",
+      "color": "Purple"
+    },
+    {
+      "imprintCode": "TREXALL 2.5",
+      "drugName": "Methotrexate",
+      "strength": "2.5 mg",
+      "shape": "Round",
+      "color": "Yellow"
+    },
+    {
+      "imprintCode": "IMURAN 50",
+      "drugName": "Azathioprine",
+      "strength": "50 mg",
+      "shape": "Round",
+      "color": "Yellow"
+    },
+    {
+      "imprintCode": "CELLCEPT 250",
+      "drugName": "Mycophenolate Mofetil",
+      "strength": "250 mg",
+      "shape": "Capsule",
+      "color": "Blue / Brown"
+    },
+    {
+      "imprintCode": "CELLCEPT 500",
+      "drugName": "Mycophenolate Mofetil",
+      "strength": "500 mg",
+      "shape": "Oval",
+      "color": "Lavender"
+    },
+    {
+      "imprintCode": "ARAVA 10",
+      "drugName": "Leflunomide",
+      "strength": "10 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "ARAVA 20",
+      "drugName": "Leflunomide",
+      "strength": "20 mg",
+      "shape": "Round",
+      "color": "Yellow"
+    },
+    {
+      "imprintCode": "PLAQUENIL 200",
+      "drugName": "Hydroxychloroquine Sulfate",
+      "strength": "200 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "XELJANZ 5",
+      "drugName": "Tofacitinib",
+      "strength": "5 mg",
+      "shape": "Round",
+      "color": "White"
+    },
+    {
+      "imprintCode": "XELJANZ 10",
+      "drugName": "Tofacitinib",
+      "strength": "10 mg",
+      "shape": "Round",
+      "color": "Blue"
+    },
+    {
+      "imprintCode": "RINVOQ 15",
+      "drugName": "Upadacitinib",
+      "strength": "15 mg",
+      "shape": "Oval",
+      "color": "Purple"
+    },
+    {
+      "imprintCode": "PROGRAF 0.5",
+      "drugName": "Tacrolimus",
+      "strength": "0.5 mg",
+      "shape": "Capsule",
+      "color": "Yellow"
+    },
+    {
+      "imprintCode": "PROGRAF 1",
+      "drugName": "Tacrolimus",
+      "strength": "1 mg",
+      "shape": "Capsule",
+      "color": "White"
+    },
+    {
+      "imprintCode": "PROGRAF 5",
+      "drugName": "Tacrolimus",
+      "strength": "5 mg",
+      "shape": "Capsule",
+      "color": "Greyish Red"
+    },
+    {
+      "imprintCode": "NEORAL 25",
+      "drugName": "Cyclosporine Modified",
+      "strength": "25 mg",
+      "shape": "Capsule",
+      "color": "Grey / Blue"
+    },
+    {
+      "imprintCode": "NEORAL 100",
+      "drugName": "Cyclosporine Modified",
+      "strength": "100 mg",
+      "shape": "Capsule",
+      "color": "Blue"
+    },
+    {
+      "imprintCode": "CALCITRIOL 0.25",
+      "drugName": "Calcitriol",
+      "strength": "0.25 mcg",
+      "shape": "Capsule",
+      "color": "Orange"
+    },
+    {
+      "imprintCode": "FOLIC 1",
+      "drugName": "Folic Acid",
+      "strength": "1 mg",
+      "shape": "Round",
+      "color": "Yellow"
+    },
+    {
+      "imprintCode": "FOLIC 5",
+      "drugName": "Folic Acid",
+      "strength": "5 mg",
+      "shape": "Round",
+      "color": "Yellow"
+    },
+    {
+      "imprintCode": "K-DUR 10",
+      "drugName": "Potassium Chloride ER",
+      "strength": "10 mEq (750 mg)",
+      "shape": "Capsule-shaped",
+      "color": "White"
+    },
+    {
+      "imprintCode": "K-DUR 20",
+      "drugName": "Potassium Chloride ER",
+      "strength": "20 mEq (1500 mg)",
+      "shape": "Capsule-shaped",
+      "color": "White"
+    },
+    {
+      "imprintCode": "SLOW FE",
+      "drugName": "Ferrous Sulfate",
+      "strength": "45 mg elemental iron",
+      "shape": "Round",
+      "color": "Red"
+    },
+    {
+      "imprintCode": "CALTRATE 600",
+      "drugName": "Calcium Carbonate and Vitamin D3",
+      "strength": "600 mg / 800 IU",
+      "shape": "Oval",
+      "color": "White"
+    },
+    {
+      "imprintCode": "CITRACAL",
+      "drugName": "Calcium Citrate and Vitamin D3",
+      "strength": "630 mg / 500 IU",
+      "shape": "Oval",
       "color": "White"
     }
   ]
