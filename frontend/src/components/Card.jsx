@@ -15,6 +15,7 @@ export default function Card({
   subtitle,
   icon,
   action,
+  badge,
   variant = 'flat',
   status,      // 'safe' | 'caution' | 'critical' | 'unknown'
   className,
@@ -35,7 +36,8 @@ export default function Card({
     unknown:  'border-l-4 border-l-[var(--unknown-fg)]',
   };
 
-  const hasHeader = Boolean(title || subtitle || icon || action);
+  const finalAction = action || badge;
+  const hasHeader = Boolean(title || subtitle || icon || finalAction);
 
   return (
     <Component
@@ -70,7 +72,7 @@ export default function Card({
             )
           }
           subtitle={subtitle}
-          action={action}
+          action={finalAction}
         />
       )}
       {children}
