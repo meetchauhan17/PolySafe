@@ -281,8 +281,8 @@ function DrugCard({ med, score }) {
   return (
     <div className="flex flex-col space-y-2.5 p-4 bg-[var(--surface)] border border-[var(--border)] shadow-xs hover:border-[var(--brand-600)]/40 transition-all rounded-2xl min-w-0">
       <div className="flex items-start space-x-3.5">
-        <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-blue-500/10 to-indigo-500/15 text-blue-600 border border-blue-500/25 flex items-center justify-center flex-shrink-0 shadow-2xs">
-          <Pill className="w-4 h-4 text-blue-600" />
+        <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-teal-500/10 to-cyan-500/15 text-[var(--brand-600)] border border-teal-500/25 flex items-center justify-center flex-shrink-0 shadow-2xs">
+          <Pill className="w-4 h-4 text-[var(--brand-600)]" />
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between gap-2 flex-wrap">
@@ -296,7 +296,7 @@ function DrugCard({ med, score }) {
           {score != null && (
             <p className="text-[10px] text-[var(--ink-3)] mt-1 font-mono">
               ACB burden score:{' '}
-              <span className={`font-bold ${score >= 3 ? 'text-rose-600' : score >= 1 ? 'text-amber-600' : 'text-blue-600'}`}>
+              <span className={`font-bold ${score >= 3 ? 'text-rose-600' : score >= 1 ? 'text-amber-600' : 'text-[var(--brand-600)]'}`}>
                 {score}
               </span>
             </p>
@@ -398,12 +398,12 @@ export default function RiskAnalysisPage() {
             {/* Drug chips */}
             <div className="flex items-center gap-2.5 pt-1 flex-wrap">
               <span className="flex items-center gap-2 bg-[var(--canvas)] border border-[var(--border)] shadow-2xs px-3.5 py-1.5 rounded-2xl text-xs font-bold text-[var(--ink)]">
-                <Pill className="w-3.5 h-3.5 text-blue-600" />
+                <Pill className="w-3.5 h-3.5 text-[var(--brand-600)]" />
                 {flag.medicineA?.name}
               </span>
               <span className="text-lg text-slate-400 font-bold">+</span>
               <span className="flex items-center gap-2 bg-[var(--canvas)] border border-[var(--border)] shadow-2xs px-3.5 py-1.5 rounded-2xl text-xs font-bold text-[var(--ink)]">
-                <Pill className="w-3.5 h-3.5 text-blue-600" />
+                <Pill className="w-3.5 h-3.5 text-[var(--brand-600)]" />
                 {flag.medicineB?.name}
               </span>
             </div>
@@ -414,7 +414,7 @@ export default function RiskAnalysisPage() {
         <Card
           title="Medicines Involved"
           subtitle="Pair evaluated by the safety engine"
-          icon={<Pill className="w-4 h-4 text-blue-600" />}
+          icon={<Pill className="w-4 h-4 text-[var(--brand-600)]" />}
           className="space-y-3"
         >
           <DrugCard med={flag.medicineA} score={scoreFor(flag.medicineA?.id)} />
@@ -433,7 +433,7 @@ export default function RiskAnalysisPage() {
                 Generating detailed explanation…
               </span>
             ) : flag.generatedBy === 'demo-mock' ? (
-              <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-blue-600 bg-blue-50 border border-blue-200 px-2.5 py-0.5 rounded-full shadow-xs">
+              <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[var(--brand-600)] bg-teal-50 border border-teal-200 text-teal-800 px-2.5 py-0.5 rounded-full shadow-xs">
                 DEMO
               </span>
             ) : null
@@ -472,7 +472,7 @@ export default function RiskAnalysisPage() {
         <Card
           title="For You"
           subtitle="Simple explanation of what this means for your daily routine"
-          icon={<User className="w-4 h-4 text-blue-600" />}
+          icon={<User className="w-4 h-4 text-[var(--brand-600)]" />}
           badge={
             flag.generatedBy === 'timeout' ? (
               <span className="flex items-center gap-1 text-[10px] font-semibold text-amber-700 italic">

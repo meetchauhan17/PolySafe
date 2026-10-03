@@ -305,14 +305,20 @@ function PatientSummaryCard({ patientId, patientAge, patientName }) {
           <p className="text-xs text-[var(--ink)] leading-relaxed">
             Active medication combinations present heightened physiological risk for patients of this demographic.
           </p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-mono">
-            <div className="p-2.5 rounded-xl bg-[var(--canvas)] shadow-[var(--shadow-inner)] space-y-1">
-              <p className="font-bold text-[var(--critical-fg)]">🚨 Red-Flag Symptoms:</p>
-              <p className="text-[11px] text-[var(--ink-3)]">Sudden dizziness, unusual bruising, ankle swelling, shortness of breath.</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+            <div className="p-2.5 rounded-xl bg-[var(--canvas)] border border-[var(--border)] shadow-xs space-y-1">
+              <p className="font-bold text-[var(--critical-fg)] flex items-center gap-1.5">
+                <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" />
+                <span>Red-Flag Symptoms:</span>
+              </p>
+              <p className="text-[11px] text-[var(--ink-3)] leading-relaxed">Sudden dizziness, unusual bruising, ankle swelling, shortness of breath.</p>
             </div>
-            <div className="p-2.5 rounded-xl bg-[var(--canvas)] shadow-[var(--shadow-inner)] space-y-1">
-              <p className="font-bold text-[var(--brand-600)]">🩺 Clinical Action:</p>
-              <p className="text-[11px] text-[var(--ink-3)]">Encourage patient to share their 6-digit Doctor PIN during next clinical consult.</p>
+            <div className="p-2.5 rounded-xl bg-[var(--canvas)] border border-[var(--border)] shadow-xs space-y-1">
+              <p className="font-bold text-[var(--brand-600)] flex items-center gap-1.5">
+                <Stethoscope className="w-3.5 h-3.5 flex-shrink-0" />
+                <span>Clinical Action:</span>
+              </p>
+              <p className="text-[11px] text-[var(--ink-3)] leading-relaxed">Encourage patient to share their 6-digit Doctor PIN during next clinical consult.</p>
             </div>
           </div>
         </Card>
