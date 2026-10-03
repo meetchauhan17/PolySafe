@@ -7,10 +7,11 @@ import axios from 'axios';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import {
   ChevronDown, ChevronUp, Loader2, Info, FlaskConical,
-  Activity, AlertTriangle, Pill, Heart, Leaf, ShieldAlert
+  Activity, AlertTriangle, Pill, Heart, Leaf, ShieldAlert, Stethoscope
 } from 'lucide-react';
 import Card from './Card';
 import LedIndicator from './LedIndicator';
+import { getMedicineIndication } from '../utils/indications';
 
 // ─── Harm level config (WHO / NCI 5-Tier) ─────────────────────────────────────
 export const HARM_LEVELS = {
@@ -968,6 +969,21 @@ export function DrugHarmPanel({ medicine, flags = [], className = '' }) {
                   <Pill className="w-3 h-3 flex-shrink-0" />
                   <span>{reason.className || medicine.category || 'Prescription Medicine'}</span>
                 </div>
+
+                {/* Primary Clinical Indication */}
+                {(() => {
+                  const indication = getMedicineIndication(medicine);
+                  if (!indication) return null;
+                  return (
+                    <div className="flex items-start gap-1.5 text-[11px] text-[var(--ink-2)] bg-[var(--surface)] p-2 rounded-lg border border-[var(--border)]">
+                      <Stethoscope className="w-3.5 h-3.5 text-[var(--brand-600)] flex-shrink-0 mt-0.5" />
+                      <span className="leading-snug">
+                        <strong className="text-[var(--ink)]">Used For: </strong>
+                        {indication}
+                      </span>
+                    </div>
+                  );
+                })()}
 
                 {/* Specific Medical Rationale */}
                 <p className="text-[11px] text-[var(--ink-2)] leading-relaxed">

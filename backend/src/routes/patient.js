@@ -292,7 +292,7 @@ router.get('/home-summary', auth, async (req, res) => {
           name: m.name,
           type: m.type,
           dosage: m.dosage,
-          purpose: m.purpose || null,
+          purpose: m.purpose || alias?.purpose || null,
           harmLevel,
           standardizedCode: m.standardizedCode,
           dateAdded: m.dateAdded,

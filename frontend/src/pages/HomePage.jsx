@@ -56,6 +56,7 @@ import { useAuth } from '../context/AuthContext';
 import { notify } from '../utils/toast';
 import { DrugHarmBadge, DrugHarmPanel, PolypharmacyHarmDashboard } from '../components/DrugHarmLevel';
 import LedIndicator from '../components/LedIndicator';
+import { getMedicineIndication } from '../utils/indications';
 
 // ─── Severity colour map ─────────────────────────────────────────────────────
 const SEVERITY_STYLES = {
@@ -909,6 +910,25 @@ export default function HomePage() {
                     </div>
 
                     {renderMedicationDetails(med)}
+
+                    {/* Primary Medical Indication / Used For */}
+                    {(() => {
+                      const indication = getMedicineIndication(med);
+                      if (!indication) return null;
+                      return (
+                        <div className="flex items-start gap-2 p-2.5 rounded-xl bg-teal-500/10 border border-teal-500/20 text-xs">
+                          <Stethoscope className="w-3.5 h-3.5 text-teal-700 dark:text-teal-400 flex-shrink-0 mt-0.5" />
+                          <div className="leading-snug">
+                            <span className="text-[10px] font-bold text-teal-800 dark:text-teal-300 uppercase tracking-wider block">
+                              Used For / Treats
+                            </span>
+                            <span className="font-semibold text-[var(--ink)] text-xs">
+                              {indication}
+                            </span>
+                          </div>
+                        </div>
+                      );
+                    })()}
 
                     {/* Interactive Drug Harm & Side Effects Panel */}
                     <DrugHarmPanel medicine={med} flags={flags} className="mt-1" />

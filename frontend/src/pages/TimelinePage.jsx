@@ -25,13 +25,13 @@ import {
 } from 'lucide-react';
 import Card from '../components/Card';
 import BackButton from '../components/BackButton';
-import LedIndicator from '../components/LedIndicator';
 import { DrugHarmBadge, KnownSideEffectsPanel } from '../components/DrugHarmLevel';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { EmptyTimelineIllustration } from '../components/EmptyIllustrations';
 import { TimelineSkeleton } from '../components/Skeletons';
 import { useAuth } from '../context/AuthContext';
 import { Lock } from 'lucide-react';
+import { getMedicineIndication } from '../utils/indications';
 
 // ─── Helper: Medicine Type Badge ──────────────────────────────────────────────
 function MedicineTypeBadge({ type }) {
@@ -429,6 +429,18 @@ export default function TimelinePage() {
  <span>Salts: <strong className="text-[var(--ink)] font-semibold">{details.salts}</strong></span>
  </div>
  )}
+
+									{/* Clinical Indication / Treats */}
+									{(() => {
+										const indication = getMedicineIndication(med);
+										if (!indication) return null;
+										return (
+											<div className="flex items-center gap-1.5 text-xs text-[var(--ink-2)] bg-[var(--surface-2)]/60 px-2.5 py-1.5 rounded-xl border border-[var(--border)]">
+												<Stethoscope className="w-3.5 h-3.5 text-[var(--brand-600)] flex-shrink-0" />
+												<span><strong className="text-[var(--ink)]">Used For:</strong> {indication}</span>
+											</div>
+										);
+									})()}
 
 								{details.simple ? (
 									<p className="text-xs text-[var(--ink-2)] font-medium">
