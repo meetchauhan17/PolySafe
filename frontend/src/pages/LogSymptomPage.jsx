@@ -117,7 +117,7 @@ export default function LogSymptomPage() {
             <div className="space-y-2">
               <h1 className="text-2xl md:text-3xl font-extrabold text-[var(--ink)] tracking-tight font-[var(--font-heading)]">
                 Log a{' '}
-                <span style={{ background: 'linear-gradient(135deg, #f43f5e, #6366f1)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>New Symptom</span>
+                <span style={{ background: 'linear-gradient(135deg, #f43f5e, #0E7490)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>New Symptom</span>
               </h1>
               <p className="text-sm text-[var(--ink-2)] max-w-xl leading-relaxed">
                 PolySafe automatically cross-references newly emerged symptoms against your prescription timeline to check for drug-induced prescribing cascades.

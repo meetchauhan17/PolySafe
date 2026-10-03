@@ -437,9 +437,9 @@ export default function InsightsPage() {
  <Line
  type="monotone"
  dataKey="cumulativeScore"
- stroke="#6366f1"
+ stroke="#0E7490"
  strokeWidth={3}
- dot={{ fill: '#FFFFFF', stroke: '#6366f1', strokeWidth: 2.5, r: 5 }}
+ dot={{ fill: '#FFFFFF', stroke: '#0E7490', strokeWidth: 2.5, r: 5 }}
  activeDot={{ fill: 'var(--brand-600)', stroke: '#FFFFFF', strokeWidth: 2, r: 7 }}
  isAnimationActive={!shouldReduceMotion}
  animationDuration={800}

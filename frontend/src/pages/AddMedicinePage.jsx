@@ -1755,7 +1755,7 @@ export default function AddMedicinePage() {
 							onClick={() => setScanMode('single')}
 							className={`flex-1 py-2.5 px-3 text-xs font-semibold rounded-xl transition-all cursor-pointer flex items-center justify-center gap-2 ${
 								scanMode === 'single'
-									? 'bg-gradient-to-r from-[#6366f1] to-[#4f46e5] text-white font-bold shadow-sm border border-white/20'
+									? 'bg-[var(--brand-600)] text-white font-semibold shadow-sm border border-[var(--brand-700)]'
 									: 'bg-transparent text-[var(--ink-3)] hover:text-[var(--ink)] hover:bg-[var(--border)]/40'
 							}`}
 						>
@@ -1767,7 +1767,7 @@ export default function AddMedicinePage() {
 							onClick={() => setScanMode('two_sided')}
 							className={`flex-1 py-2.5 px-3 text-xs font-semibold rounded-xl transition-all cursor-pointer flex items-center justify-center gap-2 ${
 								scanMode === 'two_sided'
-									? 'bg-gradient-to-r from-[#6366f1] to-[#4f46e5] text-white font-bold shadow-sm border border-white/20'
+									? 'bg-[var(--brand-600)] text-white font-semibold shadow-sm border border-[var(--brand-700)]'
 									: 'bg-transparent text-[var(--ink-3)] hover:text-[var(--ink)] hover:bg-[var(--border)]/40'
 							}`}
 						>
