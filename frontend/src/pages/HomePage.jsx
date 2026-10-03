@@ -946,59 +946,74 @@ export default function HomePage() {
  )}
 
  {/* Quick nav: log symptom + view timeline + insights + connected people + share with doctor */}
- <div className="space-y-2">
-   <p className="text-[11px] font-bold uppercase tracking-widest text-[var(--ink-3)] font-mono px-1">Quick Access</p>
-   <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-     <Link
-       to="/log-symptom"
-       onClick={(e) => {
-         if (isGuest) { e.preventDefault(); openGuestLockModal('log symptoms'); }
-       }}
-       className="ps-quick-card relative"
-     >
-       <div className="w-10 h-10 rounded-2xl bg-orange-100 flex items-center justify-center flex-shrink-0">
-         <Activity className="w-5 h-5 text-orange-600" />
-       </div>
-       <span className="text-xs font-bold text-[var(--ink)]">Log Symptom</span>
-       {isGuest && <Lock className="w-3 h-3 text-[var(--caregiver-600)] absolute top-2 right-2" />}
-     </Link>
-     <Link to="/timeline" className="ps-quick-card">
-       <div className="w-10 h-10 rounded-2xl bg-[var(--brand-600)]/10 flex items-center justify-center flex-shrink-0">
-         <Clock className="w-5 h-5 text-[var(--brand-600)]" />
-       </div>
-       <span className="text-xs font-bold text-[var(--ink)]">Timeline</span>
-     </Link>
-     <Link to="/insights" className="ps-quick-card">
-       <div className="w-10 h-10 rounded-2xl bg-violet-100 flex items-center justify-center flex-shrink-0">
-         <TrendingUp className="w-5 h-5 text-violet-600" />
-       </div>
-       <span className="text-xs font-bold text-[var(--ink)]">Insights</span>
-     </Link>
-     <Link to="/connected-people" className="ps-quick-card">
-       <div className="w-10 h-10 rounded-2xl bg-[var(--caregiver-600)]/10 flex items-center justify-center flex-shrink-0">
-         <Users className="w-5 h-5 text-[var(--caregiver-600)]" />
-       </div>
-       <span className="text-xs font-bold text-[var(--ink)]">Connected</span>
-     </Link>
-     <Link
-       to="/share-with-doctor"
-       onClick={(e) => {
-         if (isGuest) { e.preventDefault(); openGuestLockModal('generate clinical share codes'); }
-       }}
-       className="ps-quick-card sm:col-span-2 relative flex-row sm:justify-start sm:gap-3"
-     >
-       <div className="w-10 h-10 rounded-2xl bg-[var(--doctor-600)]/10 flex items-center justify-center flex-shrink-0">
-         <QrCode className="w-5 h-5 text-[var(--doctor-600)]" />
-       </div>
-       <div className="text-left">
-         <span className="text-xs font-bold text-[var(--ink)] block">Doctor QR Share</span>
-         <span className="text-[10px] text-[var(--ink-3)] font-mono">Generate clinical share code</span>
-       </div>
-       {isGuest && <Lock className="w-3 h-3 text-[var(--caregiver-600)] absolute top-2 right-2" />}
-     </Link>
-   </div>
- </div>
- </>
+					<div className="space-y-3 pt-2">
+						<p className="text-[11px] font-bold uppercase tracking-widest text-[var(--ink-3)] font-mono px-1">Quick Access</p>
+						<div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
+							<Link
+								to="/log-symptom"
+								onClick={(e) => {
+									if (isGuest) { e.preventDefault(); openGuestLockModal('log symptoms'); }
+								}}
+								className="ps-quick-card group"
+							>
+								<div className="w-10 h-10 rounded-xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
+									<Activity className="w-5 h-5 text-rose-600" />
+								</div>
+								<div className="text-center">
+									<span className="text-xs font-bold text-[var(--ink)] block">Log Symptom</span>
+									<span className="text-[10px] text-[var(--ink-3)] block mt-0.5">Cascade check</span>
+								</div>
+								{isGuest && <Lock className="w-3.5 h-3.5 text-[var(--caregiver-600)] absolute top-2.5 right-2.5" />}
+							</Link>
+
+							<Link to="/timeline" className="ps-quick-card group">
+								<div className="w-10 h-10 rounded-xl bg-[var(--brand-600)]/10 border border-[var(--brand-600)]/20 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
+									<Clock className="w-5 h-5 text-[var(--brand-600)]" />
+								</div>
+								<div className="text-center">
+									<span className="text-xs font-bold text-[var(--ink)] block">Timeline</span>
+									<span className="text-[10px] text-[var(--ink-3)] block mt-0.5">Prescription log</span>
+								</div>
+							</Link>
+
+							<Link to="/insights" className="ps-quick-card group">
+								<div className="w-10 h-10 rounded-xl bg-sky-500/10 border border-sky-500/20 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
+									<TrendingUp className="w-5 h-5 text-sky-600" />
+								</div>
+								<div className="text-center">
+									<span className="text-xs font-bold text-[var(--ink)] block">Insights</span>
+									<span className="text-[10px] text-[var(--ink-3)] block mt-0.5">ACB score radar</span>
+								</div>
+							</Link>
+
+							<Link to="/connected-people" className="ps-quick-card group">
+								<div className="w-10 h-10 rounded-xl bg-[var(--caregiver-600)]/10 border border-[var(--caregiver-600)]/20 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
+									<Users className="w-5 h-5 text-[var(--caregiver-600)]" />
+								</div>
+								<div className="text-center">
+									<span className="text-xs font-bold text-[var(--ink)] block">Connected</span>
+									<span className="text-[10px] text-[var(--ink-3)] block mt-0.5">Doctor & family</span>
+								</div>
+							</Link>
+
+							<Link
+								to="/share-with-doctor"
+								onClick={(e) => {
+									if (isGuest) { e.preventDefault(); openGuestLockModal('generate clinical share codes'); }
+								}}
+								className="ps-quick-card group col-span-2 sm:col-span-1"
+							>
+								<div className="w-10 h-10 rounded-xl bg-[var(--doctor-600)]/10 border border-[var(--doctor-600)]/20 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
+									<QrCode className="w-5 h-5 text-[var(--doctor-600)]" />
+								</div>
+								<div className="text-center">
+									<span className="text-xs font-bold text-[var(--ink)] block">Doctor QR</span>
+									<span className="text-[10px] text-[var(--ink-3)] block mt-0.5">Share code</span>
+								</div>
+								{isGuest && <Lock className="w-3.5 h-3.5 text-[var(--caregiver-600)] absolute top-2.5 right-2.5" />}
+							</Link>
+						</div>
+					</div></>
  )}
 
  {/* ─── Edit Medicine Modal ─── */}

@@ -730,3 +730,34 @@ details.ps-accordion > summary::-webkit-details-marker { display: none; }
   background: var(--border);
 }
 
+/* ── QUICK ACCESS CARDS ─────────────────────────────────────────────── */
+.ps-quick-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 0.625rem;
+  padding: 1.125rem 1rem;
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  transition: all var(--duration-fast) var(--ease-out);
+  text-decoration: none;
+  cursor: pointer;
+  position: relative;
+}
+
+.ps-quick-card:hover {
+  background-color: var(--surface-2);
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.ps-quick-card:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-sm);
+}
+
