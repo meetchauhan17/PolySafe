@@ -100,6 +100,14 @@ const CATEGORY_DRUG_KEYWORDS = {
   'cholinesterase inhibitor': [
     'donepezil', 'rivastigmine', 'galantamine',
   ],
+  'antacid': [
+    'pantoprazole', 'omeprazole', 'rabeprazole', 'esomeprazole', 'lansoprazole',
+    'pan 40', 'pan-d', 'omez', 'razo', 'nexpro',
+  ],
+  'antidiabetic': [
+    'metformin', 'glycomet', 'glucophage', 'glimepiride', 'gliclazide',
+    'sitagliptin', 'vildagliptin', 'dapagliflozin', 'empagliflozin', 'insulin',
+  ],
 };
 
 /**

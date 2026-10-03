@@ -1,10 +1,10 @@
 {
-  "_comment": "Anticholinergic Cognitive Burden (ACB) scale \u2014 scores 0-3. drugName must be lowercase for lookup. Sources: ACB Scale (Boustani et al.), FORTA list, NHS medicines guide.",
+  "_comment": "Anticholinergic Cognitive Burden (ACB) scale — scores 0-3. drugName must be lowercase for lookup. Sources: ACB Scale (Boustani et al.), FORTA list, NHS medicines guide.",
   "_scoring": {
     "0": "No clinically relevant anticholinergic or sedative burden",
-    "1": "Mild burden \u2014 possible anticholinergic or sedative activity",
-    "2": "Moderate burden \u2014 definite anticholinergic or sedative activity",
-    "3": "Severe burden \u2014 strongly anticholinergic/sedative, high risk in elderly and polypharmacy"
+    "1": "Mild burden — possible anticholinergic or sedative activity",
+    "2": "Moderate burden — definite anticholinergic or sedative activity",
+    "3": "Severe burden — strongly anticholinergic/sedative, high risk in elderly and polypharmacy"
   },
   "drugs": [
     {
@@ -14,34 +14,82 @@
       "notes": "Elavil; very strong anticholinergic TCA"
     },
     {
+      "drugName": "atropine",
+      "score": 3,
+      "category": "Anticholinergic Alkaloid",
+      "notes": "Prototypical non-selective muscarinic blocker"
+    },
+    {
+      "drugName": "belladonna",
+      "score": 3,
+      "category": "Anticholinergic Alkaloids",
+      "notes": "Natural solanaceous alkaloids with severe ACB load"
+    },
+    {
       "drugName": "benztropine",
       "score": 3,
       "category": "Antiparkinsonian",
       "notes": "Cogentin; severe anticholinergic load in elderly"
     },
     {
+      "drugName": "biperiden",
+      "score": 3,
+      "category": "Antiparkinsonian",
+      "notes": "Akineton; strong central anticholinergic"
+    },
+    {
+      "drugName": "brompheniramine",
+      "score": 3,
+      "category": "Antihistamine",
+      "notes": "Dimetapp; high anticholinergic burden"
+    },
+    {
+      "drugName": "carbinoxamine",
+      "score": 3,
+      "category": "Antihistamine",
+      "notes": "First-gen antihistamine with strong muscarinic blockade"
+    },
+    {
       "drugName": "chlorpheniramine",
       "score": 3,
       "category": "Antihistamine",
-      "notes": "First-gen H1 blocker; strong CNS penetration"
+      "notes": "First-gen H1 blocker; strong CNS penetration & delirium risk"
+    },
+    {
+      "drugName": "chlorpromazine",
+      "score": 3,
+      "category": "Antipsychotic",
+      "notes": "Thorazine; prototypical phenothiazine with severe ACB load"
+    },
+    {
+      "drugName": "chlorzoxazone",
+      "score": 3,
+      "category": "Muscle relaxant",
+      "notes": "Parafon Forte; definite central anticholinergic sedative burden"
+    },
+    {
+      "drugName": "clemastine",
+      "score": 3,
+      "category": "Antihistamine",
+      "notes": "Tavist; first-generation sedating antihistamine"
     },
     {
       "drugName": "clomipramine",
       "score": 3,
       "category": "Antidepressant (TCA)",
-      "notes": "Anafranil; strong anticholinergic load"
+      "notes": "Anafranil; potent muscarinic and serotonin blocker"
     },
     {
       "drugName": "clozapine",
       "score": 3,
       "category": "Antipsychotic",
-      "notes": "Clozaril; highest ACB among antipsychotics"
+      "notes": "Clozaril; highest ACB among all antipsychotics"
     },
     {
       "drugName": "cyclobenzaprine",
       "score": 3,
       "category": "Muscle relaxant",
-      "notes": "Flexeril; structurally similar to TCAs"
+      "notes": "Flexeril; tricyclic structure with severe anticholinergic sedation"
     },
     {
       "drugName": "cyproheptadine",
@@ -50,172 +98,406 @@
       "notes": "Periactin; potent central anticholinergic"
     },
     {
+      "drugName": "darifenacin",
+      "score": 3,
+      "category": "Urological / Bladder agent",
+      "notes": "Enablex; M3 antagonist with peripheral/central load"
+    },
+    {
+      "drugName": "desipramine",
+      "score": 3,
+      "category": "Antidepressant (TCA)",
+      "notes": "Norpramin; strong central anticholinergic burden"
+    },
+    {
+      "drugName": "dicyclomine",
+      "score": 3,
+      "category": "Gastrointestinal Antispasmodic",
+      "notes": "Bentyl; potent muscarinic antagonist for IBS cramps"
+    },
+    {
+      "drugName": "dimenhydrinate",
+      "score": 3,
+      "category": "Antiemetic / Motion Sickness",
+      "notes": "Dramamine; strong central anticholinergic"
+    },
+    {
       "drugName": "diphenhydramine",
       "score": 3,
       "category": "Antihistamine / Sleep aid",
-      "notes": "Strong anticholinergic; Benadryl, ZzzQuil"
+      "notes": "Benadryl; strong central anticholinergic and sedative"
     },
     {
       "drugName": "doxepin",
       "score": 3,
       "category": "Antidepressant (TCA)",
-      "notes": "Sinequan; high ACB score, avoid in elderly"
+      "notes": "Sinequan/Silenor; marked anticholinergic sedation"
     },
     {
       "drugName": "doxylamine",
       "score": 3,
       "category": "Antihistamine / Sleep aid",
-      "notes": "Unisom; heavily sedating"
+      "notes": "Unisom; strong OTC anticholinergic hypnotic"
     },
     {
       "drugName": "fesoterodine",
       "score": 3,
-      "category": "Bladder / Urinary",
-      "notes": "Toviaz; antimuscarinic bladder agent"
+      "category": "Urological / Bladder agent",
+      "notes": "Toviaz; active 5-HMT metabolite creates high ACB load"
+    },
+    {
+      "drugName": "flavoxate",
+      "score": 3,
+      "category": "Urological / Bladder agent",
+      "notes": "Urispas; smooth muscle antispasmodic with anticholinergic load"
+    },
+    {
+      "drugName": "fluphenazine",
+      "score": 3,
+      "category": "Antipsychotic",
+      "notes": "Prolixin; high-potency with definite anticholinergic load"
+    },
+    {
+      "drugName": "glycopyrrolate",
+      "score": 3,
+      "category": "Anticholinergic Antisecretory",
+      "notes": "Robinul; peripheral antimuscarinic with high load"
     },
     {
       "drugName": "hydroxyzine",
       "score": 3,
       "category": "Antihistamine / Anxiolytic",
-      "notes": "Atarax; used for anxiety and pruritus"
+      "notes": "Atarax/Vistaril; high muscarinic receptor affinity"
+    },
+    {
+      "drugName": "hyoscyamine",
+      "score": 3,
+      "category": "Gastrointestinal Antispasmodic",
+      "notes": "Levsin; pure belladonna alkaloid with severe ACB load"
     },
     {
       "drugName": "imipramine",
       "score": 3,
       "category": "Antidepressant (TCA)",
-      "notes": "Tofranil; strong anticholinergic TCA"
+      "notes": "Tofranil; prototypical strong anticholinergic TCA"
+    },
+    {
+      "drugName": "meclizine",
+      "score": 3,
+      "category": "Antiemetic / Vertigo",
+      "notes": "Antivert; marked anticholinergic load in elderly"
     },
     {
       "drugName": "nortriptyline",
       "score": 3,
       "category": "Antidepressant (TCA)",
-      "notes": "Pamelor; strong anticholinergic TCA"
+      "notes": "Pamelor; secondary amine TCA with high ACB load"
+    },
+    {
+      "drugName": "orphenadrine",
+      "score": 3,
+      "category": "Skeletal Muscle Relaxant",
+      "notes": "Norflex; strong central anticholinergic properties"
     },
     {
       "drugName": "oxybutynin",
       "score": 3,
-      "category": "Bladder / Urinary",
-      "notes": "Ditropan; top ACB offender, high CNS penetration"
+      "category": "Urological / Bladder agent",
+      "notes": "Ditropan; highest CNS penetration among bladder agents"
+    },
+    {
+      "drugName": "perphenazine",
+      "score": 3,
+      "category": "Antipsychotic",
+      "notes": "Trilafon; marked anticholinergic activity"
+    },
+    {
+      "drugName": "procyclidine",
+      "score": 3,
+      "category": "Antiparkinsonian",
+      "notes": "Kemadrin; potent anticholinergic antiparkinsonian"
     },
     {
       "drugName": "promethazine",
       "score": 3,
       "category": "Antihistamine / Antiemetic",
-      "notes": "Phenergan; strong anticholinergic + sedation"
+      "notes": "Phenergan; potent central anticholinergic & sedative"
+    },
+    {
+      "drugName": "propantheline",
+      "score": 3,
+      "category": "Gastrointestinal Antispasmodic",
+      "notes": "Pro-Banthine; quaternary antimuscarinic"
+    },
+    {
+      "drugName": "protriptyline",
+      "score": 3,
+      "category": "Antidepressant (TCA)",
+      "notes": "Vivactil; significant anticholinergic effect"
     },
     {
       "drugName": "scopolamine",
       "score": 3,
       "category": "Anticholinergic / Antiemetic",
-      "notes": "Transderm-Scop; pure anticholinergic"
+      "notes": "Transderm Scop; strong central amnesia and delirium risk"
+    },
+    {
+      "drugName": "solifenacin",
+      "score": 3,
+      "category": "Urological / Bladder agent",
+      "notes": "Vesicare; selective M3 antagonist with cognitive burden"
+    },
+    {
+      "drugName": "thioridazine",
+      "score": 3,
+      "category": "Antipsychotic",
+      "notes": "Mellaril; very strong anticholinergic and cardiotoxic burden"
+    },
+    {
+      "drugName": "tolterodine",
+      "score": 3,
+      "category": "Urological / Bladder agent",
+      "notes": "Detrol; potent muscarinic antagonist"
+    },
+    {
+      "drugName": "trifluoperazine",
+      "score": 3,
+      "category": "Antipsychotic",
+      "notes": "Stelazine; phenothiazine with anticholinergic load"
     },
     {
       "drugName": "trihexyphenidyl",
       "score": 3,
       "category": "Antiparkinsonian",
-      "notes": "Artane / Pacitane; extreme central anticholinergic risk"
+      "notes": "Artane; strong central muscarinic blockade & confusion risk"
     },
     {
-      "drugName": "darifenacin",
-      "score": 2,
-      "category": "Bladder / Urinary",
-      "notes": "Enablex; selective M3, moderate ACB"
+      "drugName": "trimipramine",
+      "score": 3,
+      "category": "Antidepressant (TCA)",
+      "notes": "Surmontil; high sedative and muscarinic load"
     },
     {
-      "drugName": "meclizine",
+      "drugName": "triprolidine",
+      "score": 3,
+      "category": "Antihistamine",
+      "notes": "Actifed constituent; high anticholinergic burden"
+    },
+    {
+      "drugName": "trospium",
+      "score": 3,
+      "category": "Urological / Bladder agent",
+      "notes": "Sanctura; quaternary amine with muscarinic burden"
+    },
+    {
+      "drugName": "amantadine",
       "score": 2,
-      "category": "Antivertigo / Antiemetic",
-      "notes": "Antivert; anticholinergic vestibular agent"
+      "category": "Antiparkinsonian / Antiviral",
+      "notes": "Symmetrel; NMDA antagonist with moderate anticholinergic activity"
+    },
+    {
+      "drugName": "baclofen",
+      "score": 2,
+      "category": "Muscle relaxant (GABA-B)",
+      "notes": "Lioresal; moderate sedative and central cognitive load"
+    },
+    {
+      "drugName": "carbamazepine",
+      "score": 2,
+      "category": "Anticonvulsant",
+      "notes": "Tegretol; tricyclic structure with definite anticholinergic load"
+    },
+    {
+      "drugName": "disopyramide",
+      "score": 2,
+      "category": "Antiarrhythmic (Class Ia)",
+      "notes": "Norpace; potent anticholinergic cardiac agent"
+    },
+    {
+      "drugName": "loxapine",
+      "score": 2,
+      "category": "Antipsychotic",
+      "notes": "Loxitane; moderate central anticholinergic burden"
+    },
+    {
+      "drugName": "meperidine",
+      "score": 2,
+      "category": "Opioid Analgesic",
+      "notes": "Demerol; unique anticholinergic and neurotoxic normeperidine load"
+    },
+    {
+      "drugName": "methocarbamol",
+      "score": 2,
+      "category": "Muscle relaxant",
+      "notes": "Robaxin; central sedative and mild anticholinergic effects"
+    },
+    {
+      "drugName": "nefazodone",
+      "score": 2,
+      "category": "Antidepressant",
+      "notes": "Serzone; moderate central neuro-sedative load"
     },
     {
       "drugName": "olanzapine",
       "score": 2,
-      "category": "Antipsychotic",
-      "notes": "Zyprexa; moderate anticholinergic load"
+      "category": "Atypical Antipsychotic",
+      "notes": "Zyprexa; moderate muscarinic M1 and H1 receptor binding"
     },
     {
-      "drugName": "paroxetine",
+      "drugName": "oxcarbazepine",
       "score": 2,
-      "category": "Antidepressant (SSRI)",
-      "notes": "Paxil; most anticholinergic SSRI"
+      "category": "Anticonvulsant",
+      "notes": "Trileptal; keto-analog of carbamazepine with moderate load"
+    },
+    {
+      "drugName": "pethidine",
+      "score": 2,
+      "category": "Opioid Analgesic",
+      "notes": "Demerol/Pethidine; moderate anticholinergic and seizure risk"
+    },
+    {
+      "drugName": "pimozide",
+      "score": 2,
+      "category": "Antipsychotic",
+      "notes": "Orap; moderate anticholinergic and QTc prolongation risk"
     },
     {
       "drugName": "quetiapine",
       "score": 2,
-      "category": "Antipsychotic",
-      "notes": "Seroquel; sedation + moderate ACB"
+      "category": "Atypical Antipsychotic",
+      "notes": "Seroquel; active metabolite norquetiapine has high M1 affinity"
     },
     {
-      "drugName": "solifenacin",
+      "drugName": "tizanidine",
       "score": 2,
-      "category": "Bladder / Urinary",
-      "notes": "VESIcare; overactive bladder"
-    },
-    {
-      "drugName": "tolterodine",
-      "score": 2,
-      "category": "Bladder / Urinary",
-      "notes": "Detrol; anticholinergic but lower CNS penetration"
+      "category": "Alpha-2 Agonist Muscle Relaxant",
+      "notes": "Zanaflex; moderate sedative and dry-mouth burden"
     },
     {
       "drugName": "alprazolam",
       "score": 1,
       "category": "Benzodiazepine",
-      "notes": "Xanax; sedation contributes to fall/cognitive risk"
+      "notes": "Xanax; mild anticholinergic cognitive and sedation load"
+    },
+    {
+      "drugName": "aripiprazole",
+      "score": 1,
+      "category": "Atypical Antipsychotic",
+      "notes": "Abilify; minimal muscarinic binding, mild score"
     },
     {
       "drugName": "atenolol",
       "score": 1,
-      "category": "Beta Blocker",
-      "notes": "Tenormin; mild anticholinergic rating on ACB scale"
+      "category": "Beta-Blocker",
+      "notes": "Tenormin; mild serum anticholinergic score"
     },
     {
-      "drugName": "baclofen",
+      "drugName": "bumetanide",
       "score": 1,
-      "category": "Muscle relaxant",
-      "notes": "Lioresal; CNS depressant burden"
+      "category": "Loop Diuretic",
+      "notes": "Bumex; mild score on anticholinergic burden scale"
+    },
+    {
+      "drugName": "bupropion",
+      "score": 1,
+      "category": "Antidepressant (NDRI)",
+      "notes": "Wellbutrin; mild documented anticholinergic activity"
     },
     {
       "drugName": "captopril",
       "score": 1,
       "category": "ACE Inhibitor",
-      "notes": "Capoten; mild anticholinergic activity"
+      "notes": "Capoten; mild documented anticholinergic activity"
     },
     {
-      "drugName": "carbamazepine",
+      "drugName": "carvedilol",
       "score": 1,
-      "category": "Anticonvulsant / Mood",
-      "notes": "Tegretol; mild anticholinergic activity"
+      "category": "Alpha/Beta-Blocker",
+      "notes": "Coreg; mild documented anticholinergic load"
+    },
+    {
+      "drugName": "cetirizine",
+      "score": 1,
+      "category": "Antihistamine (2nd Gen)",
+      "notes": "Zyrtec; mild sedating potential and slight muscarinic binding"
+    },
+    {
+      "drugName": "chlordiazepoxide",
+      "score": 1,
+      "category": "Benzodiazepine",
+      "notes": "Librium; long-acting sedative with mild ACB load"
+    },
+    {
+      "drugName": "chlorthalidone",
+      "score": 1,
+      "category": "Thiazide-like Diuretic",
+      "notes": "Hygroton; mild score on validated ACB lists"
     },
     {
       "drugName": "cimetidine",
       "score": 1,
-      "category": "H2 Blocker / Antacid",
-      "notes": "Tagamet; mild anticholinergic + potent CYP inhibitor"
+      "category": "H2 Blocker",
+      "notes": "Tagamet; mild anticholinergic and potent CYP inhibitor"
+    },
+    {
+      "drugName": "citalopram",
+      "score": 1,
+      "category": "Antidepressant (SSRI)",
+      "notes": "Celexa; mild ACB score, dose-dependent QTc prolongation"
+    },
+    {
+      "drugName": "clobazam",
+      "score": 1,
+      "category": "Benzodiazepine",
+      "notes": "Onfi/Frisium; 1,5-benzodiazepine with mild sedative burden"
     },
     {
       "drugName": "clonazepam",
       "score": 1,
       "category": "Benzodiazepine",
-      "notes": "Klonopin; sedative burden contributing to cognitive/fall risk"
+      "notes": "Klonopin; mild ACB load, high fall risk in elderly"
     },
     {
       "drugName": "codeine",
       "score": 1,
       "category": "Opioid Analgesic",
-      "notes": "Mild central sedative/anticholinergic burden"
+      "notes": "Mild anticholinergic and central sedative load"
+    },
+    {
+      "drugName": "colchicine",
+      "score": 1,
+      "category": "Antigout Agent",
+      "notes": "Colcrys; mild documented anticholinergic activity"
+    },
+    {
+      "drugName": "desloratadine",
+      "score": 1,
+      "category": "Antihistamine (2nd Gen)",
+      "notes": "Clarinex; active metabolite of loratadine; mild score"
+    },
+    {
+      "drugName": "desvenlafaxine",
+      "score": 1,
+      "category": "Antidepressant (SNRI)",
+      "notes": "Pristiq; active metabolite of venlafaxine; mild score"
+    },
+    {
+      "drugName": "dexamethasone",
+      "score": 1,
+      "category": "Corticosteroid",
+      "notes": "Decadron; high-potency steroid with mild ACB load"
     },
     {
       "drugName": "diazepam",
       "score": 1,
       "category": "Benzodiazepine",
-      "notes": "Valium; sedation burden, not classically anticholinergic"
+      "notes": "Valium; long-acting active metabolites with mild ACB burden"
     },
     {
       "drugName": "digoxin",
       "score": 1,
       "category": "Cardiac Glycoside",
-      "notes": "Lanoxin; mild ACB score, narrow therapeutic index"
+      "notes": "Lanoxin; mild serum anticholinergic activity score"
     },
     {
       "drugName": "diltiazem",
@@ -224,10 +506,64 @@
       "notes": "Cardizem; mild ACB rating"
     },
     {
+      "drugName": "duloxetine",
+      "score": 1,
+      "category": "Antidepressant (SNRI)",
+      "notes": "Cymbalta; mild anticholinergic burden and dry mouth"
+    },
+    {
+      "drugName": "enalapril",
+      "score": 1,
+      "category": "ACE Inhibitor",
+      "notes": "Vasotec; mild ACB score on German PRISCUS list"
+    },
+    {
+      "drugName": "escitalopram",
+      "score": 1,
+      "category": "Antidepressant (SSRI)",
+      "notes": "Lexapro; pure S-enantiomer; mild ACB score"
+    },
+    {
+      "drugName": "eszopiclone",
+      "score": 1,
+      "category": "Z-drug Sedative",
+      "notes": "Lunesta; mild cognitive burden and taste distortion"
+    },
+    {
+      "drugName": "famotidine",
+      "score": 1,
+      "category": "H2 Blocker",
+      "notes": "Pepcid; minimal central anticholinergic activity, mild score"
+    },
+    {
+      "drugName": "felodipine",
+      "score": 1,
+      "category": "Calcium Channel Blocker",
+      "notes": "Plendil; mild anticholinergic score"
+    },
+    {
+      "drugName": "fentanyl",
+      "score": 1,
+      "category": "Synthetic Opioid",
+      "notes": "Duragesic; mild anticholinergic sedative burden"
+    },
+    {
+      "drugName": "fexofenadine",
+      "score": 1,
+      "category": "Antihistamine (2nd Gen)",
+      "notes": "Allegra; non-sedating, minimal peripheral anticholinergic"
+    },
+    {
+      "drugName": "fluvoxamine",
+      "score": 1,
+      "category": "Antidepressant (SSRI)",
+      "notes": "Luvox; mild documented serum anticholinergic score"
+    },
+    {
       "drugName": "furosemide",
       "score": 1,
       "category": "Loop Diuretic",
-      "notes": "Lasix; mild anticholinergic score on Boustani scale"
+      "notes": "Lasix; mild serum anticholinergic activity on ACB scale"
     },
     {
       "drugName": "gabapentin",
@@ -238,38 +574,110 @@
     {
       "drugName": "haloperidol",
       "score": 1,
-      "category": "Antipsychotic",
-      "notes": "Haldol; mild anticholinergic, high extrapyramidal risk"
+      "category": "First-Gen Antipsychotic",
+      "notes": "Haldol; mild muscarinic affinity, high EPS"
+    },
+    {
+      "drugName": "hydralazine",
+      "score": 1,
+      "category": "Direct Vasodilator",
+      "notes": "Apresoline; mild serum anticholinergic activity"
+    },
+    {
+      "drugName": "hydrochlorothiazide",
+      "score": 1,
+      "category": "Thiazide Diuretic",
+      "notes": "Microzide; mild serum anticholinergic activity"
+    },
+    {
+      "drugName": "indapamide",
+      "score": 1,
+      "category": "Thiazide-like Diuretic",
+      "notes": "Natrilix; mild score on European ACB scales"
+    },
+    {
+      "drugName": "isosorbide dinitrate",
+      "score": 1,
+      "category": "Nitrate Vasodilator",
+      "notes": "Isordil; mild ACB load"
+    },
+    {
+      "drugName": "isosorbide mononitrate",
+      "score": 1,
+      "category": "Nitrate Vasodilator",
+      "notes": "Imdur/Monoket; mild serum anticholinergic score"
+    },
+    {
+      "drugName": "levocetirizine",
+      "score": 1,
+      "category": "Antihistamine (2nd Gen)",
+      "notes": "Xyzal; active R-enantiomer; mild sedation score"
+    },
+    {
+      "drugName": "lisinopril",
+      "score": 1,
+      "category": "ACE Inhibitor",
+      "notes": "Prinivil/Zestril; mild ACB load on European scales"
+    },
+    {
+      "drugName": "loratadine",
+      "score": 1,
+      "category": "Antihistamine (2nd Gen)",
+      "notes": "Claritin; minimal central penetration, mild score"
     },
     {
       "drugName": "lorazepam",
       "score": 1,
       "category": "Benzodiazepine",
-      "notes": "Ativan; sedative burden included in cumulative scoring"
+      "notes": "Ativan; intermediate-acting sedative with mild ACB score"
+    },
+    {
+      "drugName": "metoprolol",
+      "score": 1,
+      "category": "Beta-Blocker",
+      "notes": "Lopressor/Toprol; mild anticholinergic activity score"
     },
     {
       "drugName": "mirtazapine",
       "score": 1,
-      "category": "Antidepressant",
-      "notes": "Remeron; strong H1 sedation burden"
+      "category": "Antidepressant (NaSSA)",
+      "notes": "Remeron; strong H1 sedation, mild anticholinergic burden"
+    },
+    {
+      "drugName": "morphine",
+      "score": 1,
+      "category": "Opioid Analgesic",
+      "notes": "MS Contin; mild anticholinergic activity and constipation"
     },
     {
       "drugName": "nifedipine",
       "score": 1,
       "category": "Calcium Channel Blocker",
-      "notes": "Adalat/Procardia; mild anticholinergic rating"
+      "notes": "Procardia/Adalat; mild anticholinergic activity score"
+    },
+    {
+      "drugName": "nizatidine",
+      "score": 1,
+      "category": "H2 Blocker",
+      "notes": "Axid; mild serum anticholinergic activity"
+    },
+    {
+      "drugName": "paroxetine",
+      "score": 1,
+      "category": "Antidepressant (SSRI)",
+      "notes": "Paxil; highest muscarinic affinity among SSRIs"
     },
     {
       "drugName": "prednisolone",
       "score": 1,
       "category": "Corticosteroid",
-      "notes": "Steroid cognitive/sleep disruption load"
+      "notes": "Wysolone; active glucocorticoid with mild ACB score"
     },
     {
       "drugName": "prednisone",
       "score": 1,
       "category": "Corticosteroid",
-      "notes": "Deltasone; steroid cognitive burden"
+      "notes": "Deltasone; mild serum anticholinergic activity"
     },
     {
       "drugName": "pregabalin",
@@ -278,70 +686,226 @@
       "notes": "Lyrica; CNS sedative/fall risk load"
     },
     {
+      "drugName": "propranolol",
+      "score": 1,
+      "category": "Beta-Blocker (Non-selective)",
+      "notes": "Inderal; mild anticholinergic and central sedative effect"
+    },
+    {
+      "drugName": "ramipril",
+      "score": 1,
+      "category": "ACE Inhibitor",
+      "notes": "Altace/Cardace; mild anticholinergic activity"
+    },
+    {
       "drugName": "ranitidine",
       "score": 1,
-      "category": "H2 Blocker / Antacid",
-      "notes": "Zantac; mild anticholinergic activity on ACB scale"
+      "category": "H2 Blocker",
+      "notes": "Zantac; mild documented serum anticholinergic activity"
     },
     {
       "drugName": "risperidone",
       "score": 1,
-      "category": "Antipsychotic",
-      "notes": "Risperdal; low-to-moderate anticholinergic/sedative load"
+      "category": "Atypical Antipsychotic",
+      "notes": "Risperdal; low muscarinic affinity, mild ACB load"
+    },
+    {
+      "drugName": "sertraline",
+      "score": 1,
+      "category": "Antidepressant (SSRI)",
+      "notes": "Zoloft; mild ACB score"
+    },
+    {
+      "drugName": "spironolactone",
+      "score": 1,
+      "category": "Aldosterone Antagonist",
+      "notes": "Aldactone; mild documented serum anticholinergic load"
+    },
+    {
+      "drugName": "tapentadol",
+      "score": 1,
+      "category": "Opioid Analgesic",
+      "notes": "Nucynta; mild anticholinergic load"
     },
     {
       "drugName": "temazepam",
       "score": 1,
       "category": "Benzodiazepine",
-      "notes": "Restoril; sedative load, beers list avoidance"
+      "notes": "Restoril; hypnotic benzodiazepine with mild cognitive load"
+    },
+    {
+      "drugName": "theophylline",
+      "score": 1,
+      "category": "Methylxanthine Bronchodilator",
+      "notes": "Theo-24; mild anticholinergic burden and CNS stimulation"
+    },
+    {
+      "drugName": "torsemide",
+      "score": 1,
+      "category": "Loop Diuretic",
+      "notes": "Demadex; mild anticholinergic score"
     },
     {
       "drugName": "tramadol",
       "score": 1,
-      "category": "Opioid Analgesic",
-      "notes": "Ultram; mild central anticholinergic/sedative burden"
+      "category": "Opioid Analgesic / SNRI",
+      "notes": "Ultram; mild anticholinergic and serotonergic load"
     },
     {
       "drugName": "trazodone",
       "score": 1,
       "category": "Antidepressant / Sedative",
-      "notes": "Oleptro; sedative burden contributing to falls"
+      "notes": "Desyrel; marked 5-HT2A and alpha-1 sedation, mild ACB load"
+    },
+    {
+      "drugName": "triamterene",
+      "score": 1,
+      "category": "Potassium-Sparing Diuretic",
+      "notes": "Dyrenium; mild anticholinergic score"
+    },
+    {
+      "drugName": "venlafaxine",
+      "score": 1,
+      "category": "Antidepressant (SNRI)",
+      "notes": "Effexor; mild anticholinergic cognitive load"
+    },
+    {
+      "drugName": "warfarin",
+      "score": 1,
+      "category": "Anticoagulant",
+      "notes": "Coumadin; mild serum anticholinergic score on ACB scale"
+    },
+    {
+      "drugName": "ziprasidone",
+      "score": 1,
+      "category": "Atypical Antipsychotic",
+      "notes": "Geodon; mild anticholinergic score"
     },
     {
       "drugName": "zolpidem",
       "score": 1,
-      "category": "Sleep aid (Z-drug)",
-      "notes": "Ambien; cognitive/sedation burden, controversial but included"
+      "category": "Z-drug Sedative",
+      "notes": "Ambien; GABAA alpha-1 selective; mild cognitive and fall risk"
+    },
+    {
+      "drugName": "zopiclone",
+      "score": 1,
+      "category": "Z-drug Sedative",
+      "notes": "Imovane; mild central anticholinergic and morning sedation"
+    },
+    {
+      "drugName": "acetaminophen",
+      "score": 0,
+      "category": "Analgesic / Antipyretic",
+      "notes": "Tylenol; zero ACB burden"
     },
     {
       "drugName": "amlodipine",
       "score": 0,
-      "category": "Calcium channel blocker",
-      "notes": "Norvasc; no ACB burden"
+      "category": "Calcium Channel Blocker",
+      "notes": "Norvasc; zero anticholinergic cognitive burden"
+    },
+    {
+      "drugName": "amoxicillin",
+      "score": 0,
+      "category": "Penicillin Antibiotic",
+      "notes": "Augmentin/Mox; zero ACB burden"
     },
     {
       "drugName": "ashwagandha",
       "score": 0,
-      "category": "Herbal / Adaptogen",
-      "notes": "Withania somnifera; no documented ACB burden"
+      "category": "Herbal Adaptogen",
+      "notes": "Withania somnifera; zero documented ACB burden"
     },
     {
       "drugName": "aspirin",
       "score": 0,
-      "category": "Antiplatelet",
-      "notes": "Ecosprin; no anticholinergic burden"
+      "category": "Antiplatelet / Salicylate",
+      "notes": "Ecosprin; zero ACB burden"
     },
     {
       "drugName": "atorvastatin",
       "score": 0,
-      "category": "Statin",
-      "notes": "Lipitor; no ACB burden"
+      "category": "Statin / Lipid-Lowering",
+      "notes": "Lipitor; zero ACB burden"
+    },
+    {
+      "drugName": "azithromycin",
+      "score": 0,
+      "category": "Macrolide Antibiotic",
+      "notes": "Zithromax/Azithral; zero ACB burden"
+    },
+    {
+      "drugName": "calcium carbonate",
+      "score": 0,
+      "category": "Mineral Supplement",
+      "notes": "Shelcal; zero ACB burden"
+    },
+    {
+      "drugName": "cefixime",
+      "score": 0,
+      "category": "Cephalosporin Antibiotic",
+      "notes": "Zifi/Suprax; zero ACB burden"
+    },
+    {
+      "drugName": "cholecalciferol",
+      "score": 0,
+      "category": "Vitamin D3",
+      "notes": "Bone mineral support; zero ACB burden"
+    },
+    {
+      "drugName": "cilnidipine",
+      "score": 0,
+      "category": "Calcium Channel Blocker",
+      "notes": "Cilacar; zero ACB burden"
+    },
+    {
+      "drugName": "ciprofloxacin",
+      "score": 0,
+      "category": "Fluoroquinolone Antibiotic",
+      "notes": "Cipro/Cifran; zero ACB burden"
+    },
+    {
+      "drugName": "clopidogrel",
+      "score": 0,
+      "category": "Antiplatelet",
+      "notes": "Plavix; zero ACB burden"
     },
     {
       "drugName": "curcumin",
       "score": 0,
       "category": "Herbal",
       "notes": "No ACB burden"
+    },
+    {
+      "drugName": "dapagliflozin",
+      "score": 0,
+      "category": "Antidiabetic (SGLT2i)",
+      "notes": "Forxiga; zero ACB burden"
+    },
+    {
+      "drugName": "diclofenac",
+      "score": 0,
+      "category": "NSAID",
+      "notes": "Voltaren/Voveran; zero ACB burden"
+    },
+    {
+      "drugName": "empagliflozin",
+      "score": 0,
+      "category": "Antidiabetic (SGLT2i)",
+      "notes": "Jardiance; zero ACB burden"
+    },
+    {
+      "drugName": "esomeprazole",
+      "score": 0,
+      "category": "Proton Pump Inhibitor",
+      "notes": "Nexium; zero ACB burden"
+    },
+    {
+      "drugName": "folic acid",
+      "score": 0,
+      "category": "Vitamin B9",
+      "notes": "Folate supplement; zero ACB burden"
     },
     {
       "drugName": "ginger",
@@ -352,56 +916,134 @@
     {
       "drugName": "ginkgo biloba",
       "score": 0,
-      "category": "Herbal",
-      "notes": "No ACB burden"
+      "category": "Herbal Supplement",
+      "notes": "Cognitive support; zero ACB burden"
     },
     {
-      "drugName": "lisinopril",
+      "drugName": "gliclazide",
       "score": 0,
-      "category": "ACE Inhibitor",
-      "notes": "Prinivil/Zestril; no ACB burden"
+      "category": "Antidiabetic (Sulfonylurea)",
+      "notes": "Diamicron; zero ACB burden"
+    },
+    {
+      "drugName": "glimepiride",
+      "score": 0,
+      "category": "Antidiabetic (Sulfonylurea)",
+      "notes": "Amaryl; zero ACB burden"
+    },
+    {
+      "drugName": "ibuprofen",
+      "score": 0,
+      "category": "NSAID",
+      "notes": "Advil/Motrin; zero ACB burden"
+    },
+    {
+      "drugName": "levothyroxine",
+      "score": 0,
+      "category": "Thyroid Hormone",
+      "notes": "Synthroid/Thyronorm; zero ACB burden"
     },
     {
       "drugName": "losartan",
       "score": 0,
-      "category": "ARB Antihypertensive",
+      "category": "Angiotensin Receptor Blocker",
       "notes": "Cozaar; no ACB burden"
     },
     {
       "drugName": "metformin",
       "score": 0,
-      "category": "Antidiabetic",
-      "notes": "Glucophage; no anticholinergic burden"
+      "category": "Antidiabetic (Biguanide)",
+      "notes": "Glucophage/Glycomet; zero ACB burden"
+    },
+    {
+      "drugName": "methotrexate",
+      "score": 0,
+      "category": "Antimetabolite / DMARD",
+      "notes": "Folitrax; zero ACB burden"
+    },
+    {
+      "drugName": "montelukast",
+      "score": 0,
+      "category": "Leukotriene Receptor Antagonist",
+      "notes": "Singulair; zero ACB burden"
+    },
+    {
+      "drugName": "naproxen",
+      "score": 0,
+      "category": "NSAID",
+      "notes": "Aleve/Naprosyn; zero ACB burden"
     },
     {
       "drugName": "omeprazole",
       "score": 0,
-      "category": "PPI",
-      "notes": "Prilosec; no ACB burden"
+      "category": "Proton Pump Inhibitor",
+      "notes": "Prilosec/Omez; zero ACB burden"
     },
     {
       "drugName": "pantoprazole",
       "score": 0,
-      "category": "PPI",
-      "notes": "Pan 40; no ACB burden"
+      "category": "Proton Pump Inhibitor",
+      "notes": "Pan 40; zero ACB burden"
+    },
+    {
+      "drugName": "paracetamol",
+      "score": 0,
+      "category": "Analgesic / Antipyretic",
+      "notes": "Dolo/Tylenol; zero ACB burden"
+    },
+    {
+      "drugName": "rabeprazole",
+      "score": 0,
+      "category": "Proton Pump Inhibitor",
+      "notes": "Razo/Pariet; zero ACB burden"
+    },
+    {
+      "drugName": "rosuvastatin",
+      "score": 0,
+      "category": "Statin / Lipid-Lowering",
+      "notes": "Crestor; zero ACB burden"
+    },
+    {
+      "drugName": "simvastatin",
+      "score": 0,
+      "category": "Statin / Lipid-Lowering",
+      "notes": "Zocor; zero ACB burden"
+    },
+    {
+      "drugName": "sitagliptin",
+      "score": 0,
+      "category": "Antidiabetic (DPP-4i)",
+      "notes": "Januvia; zero ACB burden"
     },
     {
       "drugName": "telmisartan",
       "score": 0,
-      "category": "ARB Antihypertensive",
+      "category": "Angiotensin Receptor Blocker",
       "notes": "Micardis/Telma; no ACB burden"
+    },
+    {
+      "drugName": "tofacitinib",
+      "score": 0,
+      "category": "JAK Kinase Inhibitor",
+      "notes": "TFCT-NIB/Xeljanz; zero ACB burden"
     },
     {
       "drugName": "turmeric",
       "score": 0,
-      "category": "Herbal",
-      "notes": "No ACB burden"
+      "category": "Herbal Supplement",
+      "notes": "Curcumin; zero ACB burden"
     },
     {
-      "drugName": "warfarin",
+      "drugName": "valsartan",
       "score": 0,
-      "category": "Anticoagulant",
-      "notes": "Coumadin; no anticholinergic burden"
+      "category": "Angiotensin Receptor Blocker",
+      "notes": "Diovan; no ACB burden"
+    },
+    {
+      "drugName": "vildagliptin",
+      "score": 0,
+      "category": "Antidiabetic (DPP-4i)",
+      "notes": "Galvus; zero ACB burden"
     }
   ]
 }

@@ -1,11 +1,11 @@
 {
   "_source": "Documented prescribing cascade pairs from peer-reviewed pharmacology literature. Sources: Rochon & Gurwitz (1997, 2017), Kalisch et al. (2011), Ontario Drug Policy Research Network, Canadian Deprescribing Network.",
-  "_note": "symptomKeyword is a lowercase searchable fragment \u2014 multiple aliases per cascade pair are listed as separate entries to maximise keyword matching coverage.",
+  "_note": "symptomKeyword is a lowercase searchable fragment — multiple aliases per cascade pair are listed as separate entries to maximise keyword matching coverage.",
   "cascades": [
     {
       "symptomKeyword": "leg swelling",
       "causingDrugCategory": "calcium channel blocker",
-      "description": "Calcium channel blockers (e.g., amlodipine, nifedipine, felodipine) cause peripheral oedema / ankle/leg swelling as a direct vasodilatory side effect. This is commonly mistaken for new-onset heart failure or venous insufficiency, triggering unnecessary diuretic prescriptions \u2014 a classic prescribing cascade."
+      "description": "Calcium channel blockers (e.g., amlodipine, nifedipine, felodipine) cause peripheral oedema / ankle/leg swelling as a direct vasodilatory side effect. This is commonly mistaken for new-onset heart failure or venous insufficiency, triggering unnecessary diuretic prescriptions — a classic prescribing cascade."
     },
     {
       "symptomKeyword": "ankle swelling",
@@ -20,7 +20,7 @@
     {
       "symptomKeyword": "confusion",
       "causingDrugCategory": "sedative",
-      "description": "Benzodiazepines, Z-drugs (zolpidem), and sedating antihistamines (diphenhydramine) frequently cause acute or subacute cognitive impairment in older adults. This is often misinterpreted as new-onset dementia or delirium requiring antipsychotic treatment \u2014 a dangerous prescribing cascade."
+      "description": "Benzodiazepines, Z-drugs (zolpidem), and sedating antihistamines (diphenhydramine) frequently cause acute or subacute cognitive impairment in older adults. This is often misinterpreted as new-onset dementia or delirium requiring antipsychotic treatment — a dangerous prescribing cascade."
     },
     {
       "symptomKeyword": "confusion",
@@ -60,12 +60,12 @@
     {
       "symptomKeyword": "urinary retention",
       "causingDrugCategory": "anticholinergic",
-      "description": "Anticholinergic medications (oxybutynin, tolterodine, diphenhydramine) can paradoxically worsen urinary outflow obstruction in patients with benign prostatic hyperplasia (BPH) or pelvic floor dysfunction, often leading to addition of alpha-blockers as a cascade."
+      "description": "Anticholinergics (oxybutynin, amitriptyline, diphenhydramine) block bladder detrusor muscarinic receptors, causing incomplete bladder emptying and urinary retention. In men, this is routinely misdiagnosed as worsening BPH, prompting tamsulosin prescriptions."
     },
     {
       "symptomKeyword": "frequent urination",
       "causingDrugCategory": "ACE inhibitor",
-      "description": "ACE inhibitors and diuretics (thiazides, furosemide) used for hypertension or heart failure can increase urinary frequency. This symptom is often misattributed to overactive bladder, triggering anticholinergic bladder agents \u2014 a well-documented cascade with cumulative side effect burden."
+      "description": "ACE inhibitors and diuretics (thiazides, furosemide) used for hypertension or heart failure can increase urinary frequency. This symptom is often misattributed to overactive bladder, triggering anticholinergic bladder agents — a well-documented cascade with cumulative side effect burden."
     },
     {
       "symptomKeyword": "frequent urination",
@@ -75,7 +75,7 @@
     {
       "symptomKeyword": "dizziness",
       "causingDrugCategory": "antihypertensive",
-      "description": "Antihypertensive drugs (beta-blockers, ACE inhibitors, calcium channel blockers) can cause orthostatic hypotension and dizziness, particularly in older adults. This is frequently misdiagnosed as vestibular disease or labyrinthitis, triggering prescriptions for antivert medications (meclizine) \u2014 a known prescribing cascade."
+      "description": "Excessive blood pressure lowering or autonomic blunting causes orthostatic cerebral hypoperfusion when standing. Dizziness is misdiagnosed as inner-ear vertigo, prompting cinnarizine or betahistine prescriptions."
     },
     {
       "symptomKeyword": "dizziness",
@@ -90,12 +90,12 @@
     {
       "symptomKeyword": "nausea",
       "causingDrugCategory": "opioid",
-      "description": "Opioid analgesics (codeine, tramadol, morphine) stimulate the chemoreceptor trigger zone, causing nausea and vomiting in 25-40% of patients. This is a direct drug side effect that is commonly treated with antiemetic prescriptions (metoclopramide, ondansetron) \u2014 a prescribing cascade."
+      "description": "Opioid analgesics (codeine, tramadol, morphine) stimulate the chemoreceptor trigger zone, causing nausea and vomiting in 25-40% of patients. This is a direct drug side effect that is commonly treated with antiemetic prescriptions (metoclopramide, ondansetron) — a prescribing cascade."
     },
     {
       "symptomKeyword": "heartburn",
       "causingDrugCategory": "NSAID",
-      "description": "NSAIDs (ibuprofen, naproxen, diclofenac, aspirin) damage the gastric mucosa and reduce prostaglandin-mediated mucosal protection, causing heartburn, dyspepsia, and peptic ulceration. PPI (omeprazole, pantoprazole) prescriptions triggered by NSAID-induced heartburn represent one of the most common prescribing cascades globally."
+      "description": "Direct chemical irritation and systemic COX-1 inhibition reduce gastric mucus and bicarbonate secretion, causing severe heartburn and dyspepsia. Frequently managed by adding chronic PPI therapy rather than deprescribing the NSAID."
     },
     {
       "symptomKeyword": "stomach pain",
@@ -105,7 +105,7 @@
     {
       "symptomKeyword": "muscle pain",
       "causingDrugCategory": "statin",
-      "description": "Statins (atorvastatin, rosuvastatin, simvastatin) cause statin-associated muscle symptoms (SAMS / myalgia) in 5-10% of patients. This is frequently misdiagnosed as osteoarthritis, leading to inappropriate NSAID or analgesic prescriptions \u2014 an avoidable prescribing cascade."
+      "description": "Statin-associated muscle symptoms (SAMS) caused by mitochondrial coenzyme Q10 depletion manifest as diffuse bilateral myalgia. Patients frequently self-medicate or are prescribed NSAIDs, increasing gastrointestinal and renal toxicity."
     },
     {
       "symptomKeyword": "muscle weakness",
@@ -120,27 +120,27 @@
     {
       "symptomKeyword": "tremor",
       "causingDrugCategory": "antipsychotic",
-      "description": "Dopamine D2 receptor blockade by typical and atypical antipsychotics (haloperidol, risperidone, olanzapine) induces drug-induced parkinsonism with resting tremor. Misidentifying this as idiopathic Parkinson's disease triggers inappropriate levodopa or anticholinergic (trihexyphenidyl) prescriptions."
+      "description": "Dopamine D2 receptor blockade in the striatum by first- and second-generation antipsychotics causes extrapyramidal symptoms including resting tremors. Frequently misdiagnosed as Parkinson's disease, leading to inappropriate antiparkinsonian therapy (levodopa, trihexyphenidyl)."
     },
     {
       "symptomKeyword": "stiffness",
       "causingDrugCategory": "antipsychotic",
-      "description": "Cogwheel rigidity and muscle stiffness induced by antipsychotic therapy is often misinterpreted as geriatric musculoskeletal decline or Parkinson's, starting an antiparkinsonian medication cascade."
+      "description": "Lead-pipe or cogwheel muscle rigidity resulting from central dopamine antagonism is mistaken for idiopathic Parkinson's disease, creating an avoidable prescribing cascade."
     },
     {
       "symptomKeyword": "high blood sugar",
       "causingDrugCategory": "corticosteroid",
-      "description": "Systemic corticosteroids (prednisone, prednisolone, dexamethasone) increase hepatic gluconeogenesis and induce peripheral insulin resistance. Treating steroid-induced hyperglycemia as new-onset Type 2 diabetes by initiating oral hypoglycemics or insulin is a common cascade."
+      "description": "Systemic corticosteroids stimulate hepatic gluconeogenesis and induce peripheral insulin resistance, driving acute glucose elevations. Treating steroid-induced hyperglycemia with permanent antidiabetic regimens represents an avoidable cascade."
     },
     {
       "symptomKeyword": "hyperglycemia",
       "causingDrugCategory": "corticosteroid",
-      "description": "Steroid-induced hyperglycemia is a transient pharmacological effect. Escalating antidiabetic regimens without tapering the steroid creates a severe hypoglycemia hazard once the steroid course concludes."
+      "description": "Steroid-induced hyperglycemia is often mistaken for new-onset Type 2 diabetes, leading to multiple glucose-lowering drugs (metformin, sulfonylureas, insulin)."
     },
     {
       "symptomKeyword": "fatigue",
       "causingDrugCategory": "beta-blocker",
-      "description": "Beta-blockers (metoprolol, atenolol, propranolol) reduce cardiac output and cross the blood-brain barrier, causing profound lethargy and fatigue. Misattributing this to depression frequently leads to unnecessary antidepressant prescriptions."
+      "description": "Central beta-blockade and reduced cardiac output cause chronic lethargy and exercise intolerance. Misdiagnosed as clinical depression, prompting inappropriate antidepressant initiation."
     },
     {
       "symptomKeyword": "erectile dysfunction",
@@ -150,7 +150,7 @@
     {
       "symptomKeyword": "gout",
       "causingDrugCategory": "diuretic",
-      "description": "Loop and thiazide diuretics (furosemide, hydrochlorothiazide) compete with uric acid for renal tubular secretion, causing hyperuricemia and acute gout flares. Prescribing allopurinol or colchicine instead of adjusting diuretic therapy is a textbook prescribing cascade."
+      "description": "Thiazide diuretics (hydrochlorothiazide, chlorthalidone) and loop diuretics (furosemide) compete with uric acid at the renal organic acid transporter, elevating serum uric acid and precipitating acute gout attacks. Lifelong allopurinol is often started without reconsidering the diuretic."
     },
     {
       "symptomKeyword": "joint pain in big toe",
@@ -170,12 +170,232 @@
     {
       "symptomKeyword": "urinary incontinence",
       "causingDrugCategory": "cholinesterase inhibitor",
-      "description": "Cholinesterase inhibitors (donepezil, rivastigmine, galantamine) for Alzheimer's dementia stimulate bladder muscarinic M3 receptors, inducing urge incontinence. Prescribing an anticholinergic bladder drug (oxybutynin) to treat the incontinence directly neutralizes the dementia benefit and accelerates cognitive decline (a famous double-cascade)."
+      "description": "Acetylcholinesterase inhibitors (donepezil, rivastigmine, galantamine) increase acetylcholine levels at bladder muscarinic receptors, provoking urinary urge incontinence. Prescribing anticholinergic bladder agents (oxybutynin, tolterodine) directly neutralizes the cognitive benefit and accelerates dementia."
     },
     {
       "symptomKeyword": "bladder leakage",
       "causingDrugCategory": "cholinesterase inhibitor",
-      "description": "Drug-induced urinary leakage caused by donepezil is often treated with anticholinergic bladder agents, causing delirium and worsening cognitive deficits."
+      "description": "Detrusor hyperactivity from excess cholinergic tone causes sudden urinary leakage, often treated with antimuscarinics that cause severe cognitive decline in dementia patients."
+    },
+    {
+      "symptomKeyword": "pedal edema",
+      "causingDrugCategory": "calcium channel blocker",
+      "description": "Calcium channel blockers (amlodipine, nifedipine, felodipine) cause precapillary arteriolar vasodilation and hydrostatic fluid extravasation, presenting as pedal edema. Misdiagnosed as congestive heart failure, prompting inappropriate diuretic prescription."
+    },
+    {
+      "symptomKeyword": "swollen feet",
+      "causingDrugCategory": "calcium channel blocker",
+      "description": "Swelling of feet and lower extremities is a classic adverse effect of dihydropyridine calcium channel blockers. Treating this with loop diuretics represents a classic prescribing cascade."
+    },
+    {
+      "symptomKeyword": "water retention",
+      "causingDrugCategory": "calcium channel blocker",
+      "description": "Peripheral fluid accumulation from calcium channel blockers is frequently mistaken for renal or cardiac decompensation, leading to unnecessary diuretic prescribing."
+    },
+    {
+      "symptomKeyword": "leg swelling",
+      "causingDrugCategory": "NSAID",
+      "description": "NSAIDs (ibuprofen, naproxen, diclofenac) inhibit renal prostaglandin synthesis, impairing sodium excretion and inducing dependent peripheral edema often treated inappropriately with loop diuretics."
+    },
+    {
+      "symptomKeyword": "high blood pressure",
+      "causingDrugCategory": "NSAID",
+      "description": "NSAIDs blunt renal vasodilation, promoting sodium and water retention and attenuating the effects of ACE inhibitors, ARBs, and beta-blockers. Blood pressure spikes are often treated by adding another antihypertensive agent rather than stopping the NSAID."
+    },
+    {
+      "symptomKeyword": "elevated bp",
+      "causingDrugCategory": "NSAID",
+      "description": "Systemic vasoconstriction and volume expansion from chronic NSAID use causes sustained elevation of arterial blood pressure, precipitating antihypertensive dose escalation."
+    },
+    {
+      "symptomKeyword": "acid reflux",
+      "causingDrugCategory": "NSAID",
+      "description": "NSAIDs weaken mucosal defenses in the stomach and lower esophagus, exacerbating acid reflux symptoms and triggering proton pump inhibitor initiation."
+    },
+    {
+      "symptomKeyword": "stomach burning",
+      "causingDrugCategory": "NSAID",
+      "description": "Gastric mucosal damage caused by NSAIDs produces persistent epigastric burning pain, leading to chronic acid-suppression therapy."
+    },
+    {
+      "symptomKeyword": "dyspepsia",
+      "causingDrugCategory": "NSAID",
+      "description": "Indigestion and epigastric discomfort from NSAID therapy are frequently treated with H2 blockers or PPIs rather than considering safer topical or paracetamol alternatives."
+    },
+    {
+      "symptomKeyword": "cough",
+      "causingDrugCategory": "ACE inhibitor",
+      "description": "ACE inhibitors (ramipril, lisinopril, enalapril) prevent the degradation of bradykinin and substance P in bronchial tissues, inducing a persistent dry, hacking cough in up to 20% of patients. Often misdiagnosed as asthma, allergy, or bronchitis and treated with ineffective antitussives or inhalers instead of switching to an ARB."
+    },
+    {
+      "symptomKeyword": "dry cough",
+      "causingDrugCategory": "ACE inhibitor",
+      "description": "A chronic, non-productive dry cough is a hallmark adverse effect of ACE inhibitors. Inappropriate prescribing cascades include prescribing codeine, dextromethorphan, or antihistamines instead of substituting with losartan or telmisartan."
+    },
+    {
+      "symptomKeyword": "throat tickle",
+      "causingDrugCategory": "ACE inhibitor",
+      "description": "Persistent tickling sensation in the throat caused by bradykinin accumulation from ACE inhibitors is frequently treated with lozenges, allergy pills, or antibiotics."
+    },
+    {
+      "symptomKeyword": "joint pain",
+      "causingDrugCategory": "diuretic",
+      "description": "Hyperuricemic crystalline arthritis from diuretic use manifests as acute joint inflammation, commonly triggering NSAID or colchicine prescriptions."
+    },
+    {
+      "symptomKeyword": "big toe pain",
+      "causingDrugCategory": "diuretic",
+      "description": "Classic podagra (acute gout of the first metatarsophalangeal joint) triggered by diuretic volume contraction and uric acid reabsorption, leading to unnecessary chronic urate-lowering therapy."
+    },
+    {
+      "symptomKeyword": "hyperuricemia",
+      "causingDrugCategory": "diuretic",
+      "description": "Asymptomatic or symptomatic elevation of serum uric acid induced by diuretic therapy, frequently treated with allopurinol or febuxostat instead of diuretic dose reduction."
+    },
+    {
+      "symptomKeyword": "muscle cramps",
+      "causingDrugCategory": "diuretic",
+      "description": "Renal potassium and magnesium wasting from loop diuretics (furosemide) causes nocturnal leg and calf muscle cramps. Patients are prescribed large oral potassium chloride tablets that carry severe gastrointestinal ulceration risks."
+    },
+    {
+      "symptomKeyword": "leg cramps",
+      "causingDrugCategory": "diuretic",
+      "description": "Electrolyte depletion (hypokalemia, hypomagnesemia) from high-dose diuretics leads to painful leg spasms, often treated with quinine, muscle relaxants, or mineral pills."
+    },
+    {
+      "symptomKeyword": "shaking hands",
+      "causingDrugCategory": "antipsychotic",
+      "description": "Drug-induced extrapyramidal tremors from antipsychotics or antiemetics (metoclopramide) lead to unnecessary neurological consultations and dopaminergic prescriptions."
+    },
+    {
+      "symptomKeyword": "restlessness",
+      "causingDrugCategory": "antipsychotic",
+      "description": "Akathisia (an intense internal urge to move) caused by neuroleptics is often misinterpreted as worsening psychiatric anxiety or psychosis, prompting dosage increases or adding sedatives."
+    },
+    {
+      "symptomKeyword": "frequent urination",
+      "causingDrugCategory": "cholinesterase inhibitor",
+      "description": "Increased bladder contractility induced by dementia drugs is misattributed to overactive bladder or aging, initiating a dangerous anticholinergic prescribing cascade."
+    },
+    {
+      "symptomKeyword": "cannot urinate",
+      "causingDrugCategory": "opioid",
+      "description": "Opioids inhibit sacral parasympathetic outflow and contract the urinary sphincter. Acute urinary retention is misidentified as an anatomical obstruction rather than opioid-induced."
+    },
+    {
+      "symptomKeyword": "difficulty urinating",
+      "causingDrugCategory": "anticholinergic",
+      "description": "Impaired bladder contractility from anticholinergic medications creates hesitancy and weak stream, triggering urological workups and alpha-blocker initiation."
+    },
+    {
+      "symptomKeyword": "insomnia",
+      "causingDrugCategory": "corticosteroid",
+      "description": "Evening or high-dose corticosteroids disrupt the circadian cortisol rhythm, causing marked nocturnal insomnia and agitation that is treated with benzodiazepines or Z-drugs instead of shifting steroid doses to the morning."
+    },
+    {
+      "symptomKeyword": "sleeplessness",
+      "causingDrugCategory": "corticosteroid",
+      "description": "Glucocorticoid-induced central nervous system stimulation causes severe sleep deprivation, prompting hypnotic prescriptions."
+    },
+    {
+      "symptomKeyword": "wheezing",
+      "causingDrugCategory": "beta-blocker",
+      "description": "Beta-blockers antagonize bronchial beta-2 receptors, increasing airway resistance and provoking wheezing in vulnerable patients. Patients are prescribed bronchodilators instead of discontinuing the offending beta-blocker."
+    },
+    {
+      "symptomKeyword": "shortness of breath",
+      "causingDrugCategory": "beta-blocker",
+      "description": "Drug-induced bronchoconstriction or blunted chronotropic response from beta-blockers causes dyspnea that is mistaken for asthma or heart failure, triggering additional inhalers or diuretics."
+    },
+    {
+      "symptomKeyword": "extreme tiredness",
+      "causingDrugCategory": "beta-blocker",
+      "description": "Persistent profound exhaustion from lipophilic beta-blockers (propranolol, metoprolol) is treated with energizing supplements or antidepressants rather than dose titration."
+    },
+    {
+      "symptomKeyword": "muscle ache",
+      "causingDrugCategory": "statin",
+      "description": "Statin myopathy is often misattributed to aging, sprains, or arthritis, leading to long-term analgesic use instead of statin dose reduction or CoQ10 co-supplementation."
+    },
+    {
+      "symptomKeyword": "muscle soreness",
+      "causingDrugCategory": "statin",
+      "description": "Unexplained bilateral leg and shoulder soreness caused by statin therapy triggers inappropriate muscle relaxant or NSAID prescriptions."
+    },
+    {
+      "symptomKeyword": "lightheadedness",
+      "causingDrugCategory": "antihypertensive",
+      "description": "Postural blood pressure drops from antihypertensives cause lightheadedness, leading to unnecessary neurological evaluations or midodrine initiation instead of deprescribing."
+    },
+    {
+      "symptomKeyword": "falls",
+      "causingDrugCategory": "antihypertensive",
+      "description": "Orthostatic hypotension from polypharmacy antihypertensive regimens is a major cause of falls and hip fractures in elderly patients, leading to mobility aids and hospital admissions."
+    },
+    {
+      "symptomKeyword": "muscle spasms",
+      "causingDrugCategory": "antacid",
+      "description": "Chronic hypochlorhydria from long-term proton pump inhibitor therapy impairs active TRPM6/7 magnesium absorption, producing severe hypomagnesemic cramps, tetany, and cardiac arrhythmias treated with mineral supplements while the PPI is continued indefinitely."
+    },
+    {
+      "symptomKeyword": "low magnesium",
+      "causingDrugCategory": "antacid",
+      "description": "Profound refractory hypomagnesemia caused by prolonged PPI therapy is treated with oral or intravenous magnesium replacements rather than tapering the acid suppressant."
+    },
+    {
+      "symptomKeyword": "tingling feet",
+      "causingDrugCategory": "antidiabetic",
+      "description": "Long-term metformin therapy impairs calcium-dependent ileal absorption of the Vitamin B12-intrinsic factor complex, causing peripheral neuropathy. This is misdiagnosed as advancing diabetic polyneuropathy, triggering gabapentin or pregabalin prescriptions instead of B12 testing and repletion."
+    },
+    {
+      "symptomKeyword": "numbness in hands",
+      "causingDrugCategory": "antidiabetic",
+      "description": "Metformin-induced Vitamin B12 deficiency neuropathy presents with symmetric paresthesias in the hands and feet, leading to inappropriate neuropathic pain medications."
+    },
+    {
+      "symptomKeyword": "pins and needles",
+      "causingDrugCategory": "antidiabetic",
+      "description": "Peripheral neuropathy symptoms from metformin-induced B12 malabsorption are treated symptomatically with gabapentin rather than addressing the nutritional deficiency."
+    },
+    {
+      "symptomKeyword": "weight gain",
+      "causingDrugCategory": "antipsychotic",
+      "description": "Antagonism of 5-HT2C and H1 receptors by second-generation antipsychotics drives intense hyperphagia and rapid visceral weight gain, leading to the initiation of metformin or weight-loss drugs."
+    },
+    {
+      "symptomKeyword": "increased appetite",
+      "causingDrugCategory": "antipsychotic",
+      "description": "Severe drug-induced appetite stimulation causes rapid metabolic deterioration, predisposing to dyslipidemia and diabetes that are treated with multi-drug regimens."
+    },
+    {
+      "symptomKeyword": "itching",
+      "causingDrugCategory": "sglt2 inhibitor",
+      "description": "Glucosuria induced by SGLT2 inhibitors promotes fungal candida proliferation in the perineal region, causing recurrent vulvovaginitis and balanitis treated with repeated courses of fluconazole or clotrimazole."
+    },
+    {
+      "symptomKeyword": "genital itching",
+      "causingDrugCategory": "sglt2 inhibitor",
+      "description": "Genital mycotic infections from high urinary sugar excretion are treated with long-term antifungal therapy rather than enhanced hygiene or dosage adjustment."
+    },
+    {
+      "symptomKeyword": "nausea",
+      "causingDrugCategory": "antidepressant",
+      "description": "SSRIs frequently cause acute serotonin-mediated gastric distress and SIADH-induced hyponatremia, leading to antiemetic prescriptions (ondansetron, domperidone)."
+    },
+    {
+      "symptomKeyword": "tremor",
+      "causingDrugCategory": "antidepressant",
+      "description": "SSRIs and SNRIs frequently cause postural hand tremors, which are mistakenly treated with beta-blockers like propranolol."
+    },
+    {
+      "symptomKeyword": "daytime sleepiness",
+      "causingDrugCategory": "opioid",
+      "description": "Chronic opioid therapy suppresses respiratory drive and central arousal mechanisms, causing severe daytime hypersomnolence and central sleep apnea, sometimes treated with stimulants."
+    },
+    {
+      "symptomKeyword": "dry eyes",
+      "causingDrugCategory": "anticholinergic",
+      "description": "Blockade of lacrimal gland muscarinic receptors causes severe keratoconjunctivitis sicca (dry eyes), triggering chronic artificial tear prescriptions."
     }
   ]
 }

@@ -71,8 +71,8 @@
     {
       "herbName": "garlic",
       "drugName": "warfarin",
-      "severity": "Moderate",
-      "description": "Garlic supplements contain allicin which inhibits platelet aggregation and fibrinolysis. Multiple case reports and pharmacological studies document warfarin potentiation with garlic supplementation, resulting in elevated INR and bleeding episodes. Documented in Natural Medicines Database."
+      "severity": "Major",
+      "description": "Allicin and ajoene in high-dose garlic supplements inhibit platelet aggregation and thromboxane formation. Documented cases of spontaneous retroperitoneal and epidural hematomas when combined with warfarin."
     },
     {
       "herbName": "garlic",
@@ -84,13 +84,13 @@
       "herbName": "ginkgo biloba",
       "drugName": "warfarin",
       "severity": "Major",
-      "description": "Ginkgo biloba inhibits platelet-activating factor (PAF) and has direct antiplatelet activity. Combined with warfarin, it can significantly increase bleeding risk. Multiple case reports of spontaneous intracerebral haemorrhage in patients on concurrent warfarin and ginkgo. High-severity interaction."
+      "description": "Ginkgolide B is a potent antagonist of platelet-activating factor (PAF). Concurrent use with warfarin has produced spontaneous hyphema, subarachnoid hemorrhage, and hematoma. Severe bleeding risk."
     },
     {
       "herbName": "ginkgo biloba",
       "drugName": "aspirin",
-      "severity": "Moderate",
-      "description": "Ginkgo biloba's PAF-inhibiting antiplatelet effects combined with aspirin's COX-1 inhibition produce additive antiplatelet activity. This combination has been associated with spontaneous haemorrhage in published case reports."
+      "severity": "Major",
+      "description": "Dual antiplatelet inhibition through cyclooxygenase blockade (aspirin) and PAF antagonism (ginkgo) dramatically elevates spontaneous hemorrhagic risk, including ocular bleeding."
     },
     {
       "herbName": "ginkgo biloba",
@@ -125,14 +125,14 @@
     {
       "herbName": "ginseng",
       "drugName": "warfarin",
-      "severity": "Moderate",
-      "description": "Panax ginseng has been shown to reduce blood levels of warfarin and decrease INR response. Frequent INR surveillance recommended."
+      "severity": "Major",
+      "description": "Panax ginseng has been shown in controlled clinical trials to decrease warfarin blood levels and significantly reduce INR, raising the danger of arterial thrombosis and stroke."
     },
     {
       "herbName": "ginseng",
       "drugName": "antidiabetic",
       "severity": "Moderate",
-      "description": "Ginseng enhances insulin sensitivity and pancreatic beta-cell function. Concomitant use with insulin or sulfonylureas increases the likelihood of hypoglycemia."
+      "description": "Ginsenosides enhance pancreatic beta-cell insulin secretion and peripheral glucose uptake, which can additively cause severe hypoglycemia when combined with metformin, sulfonylureas, or insulin."
     },
     {
       "herbName": "licorice root",
@@ -162,25 +162,25 @@
       "herbName": "st. john's wort",
       "drugName": "warfarin",
       "severity": "Major",
-      "description": "Induces CYP2C9 and CYP3A4, substantially reducing plasma warfarin concentrations, causing sudden drop in INR and heightened risk of thromboembolism."
+      "description": "St. John's wort (Hypericum perforatum) strongly induces CYP3A4 and CYP2C9 enzymes as well as P-glycoprotein. Concurrent use leads to accelerated warfarin clearance, a precipitous drop in INR, and a high risk of catastrophic thromboembolic stroke or deep vein thrombosis."
     },
     {
       "herbName": "st. john's wort",
       "drugName": "digoxin",
       "severity": "Major",
-      "description": "P-glycoprotein induction decreases digoxin bioavailability by up to 25-40%, precipitating loss of heart rate and cardiac rhythm control in heart failure/atrial fibrillation."
+      "description": "St. John's wort induces intestinal P-glycoprotein, reducing digoxin bioavailability by 25-35% and causing loss of ventricular rate control or heart failure exacerbation."
     },
     {
       "herbName": "st. john's wort",
       "drugName": "cyclosporine",
       "severity": "Major",
-      "description": "Massive induction of CYP3A4 clearance reduces immunosuppressive drug levels, directly documented to cause acute organ transplant rejection."
+      "description": "Hyperforin in St. John's wort potently induces intestinal and hepatic CYP3A4 and P-glycoprotein, reducing cyclosporine or tacrolimus blood levels by 50-70%. This has caused acute organ transplant rejection in numerous documented clinical cases."
     },
     {
       "herbName": "green tea extract",
       "drugName": "warfarin",
-      "severity": "Moderate",
-      "description": "Green tea extracts contain substantial amounts of Vitamin K, directly antagonizing the anticoagulant action of warfarin and lowering therapeutic INR."
+      "severity": "Major",
+      "description": "Green tea contains significant quantities of Vitamin K1 and EGCG. Large consumption or concentrated extract intake dramatically antagonizes warfarin, dropping INR and precipitating thromboembolism."
     },
     {
       "herbName": "green tea extract",
@@ -222,13 +222,13 @@
       "herbName": "fenugreek",
       "drugName": "antidiabetic",
       "severity": "Moderate",
-      "description": "Fenugreek (Trigonella foenum-graecum / Methi) seeds contain 4-hydroxyisoleucine and galactomannan which stimulate insulin release and delay glucose absorption, causing additive hypoglycemia with metformin and sulfonylureas."
+      "description": "High soluble galactomannan fiber and 4-hydroxyisoleucine in fenugreek seeds stimulate insulin secretion and slow glucose absorption, causing acute hypoglycemia when combined with antidiabetic drugs."
     },
     {
       "herbName": "fenugreek",
       "drugName": "warfarin",
       "severity": "Moderate",
-      "description": "Fenugreek contains natural coumarin derivatives. Co-administration with warfarin or antiplatelet agents increases the risk of bleeding."
+      "description": "Fenugreek contains natural coumarin derivatives that exert additive anticoagulant properties, elevating bleeding risk and prolonging prothrombin time."
     },
     {
       "herbName": "tulsi",
@@ -259,6 +259,426 @@
       "drugName": "ibuprofen",
       "severity": "Moderate",
       "description": "Ginkgolide B is a potent platelet-activating factor (PAF) antagonist. When co-administered with NSAIDs like ibuprofen, multiple clinical reports document spontaneous hyphema and subdural hematomas."
+    },
+    {
+      "herbName": "st. john's wort",
+      "drugName": "tacrolimus",
+      "severity": "Major",
+      "description": "Marked induction of CYP3A4 and P-glycoprotein by St. John's wort leads to subtherapeutic immunosuppressant levels and catastrophic allograft rejection in renal, liver, and cardiac transplant recipients."
+    },
+    {
+      "herbName": "st. john's wort",
+      "drugName": "oral contraceptives",
+      "severity": "Major",
+      "description": "Enzyme induction by St. John's wort accelerates the hepatic metabolism of ethinyl estradiol and progestins, causing breakthrough bleeding and documented unintended pregnancies."
+    },
+    {
+      "herbName": "st. john's wort",
+      "drugName": "ssri",
+      "severity": "Major",
+      "description": "St. John's wort inhibits synaptosomal reuptake of serotonin, dopamine, and norepinephrine. When combined with SSRIs (fluoxetine, sertraline, escitalopram) or SNRIs, it precipitates severe, potentially fatal Serotonin Syndrome (hyperthermia, clonus, autonomic instability)."
+    },
+    {
+      "herbName": "st. john's wort",
+      "drugName": "sertraline",
+      "severity": "Major",
+      "description": "Additive central serotonergic stimulation can trigger Serotonin Syndrome characterized by agitation, tremor, hyperreflexia, diaphoresis, and altered mental status."
+    },
+    {
+      "herbName": "st. john's wort",
+      "drugName": "fluoxetine",
+      "severity": "Major",
+      "description": "Severe risk of Serotonin Syndrome due to combined synaptic serotonin reuptake inhibition and long active metabolite half-lives."
+    },
+    {
+      "herbName": "st. john's wort",
+      "drugName": "escitalopram",
+      "severity": "Major",
+      "description": "Synergistic serotonergic toxicity resulting in dangerous hyperthermia, myoclonus, and autonomic collapse."
+    },
+    {
+      "herbName": "st. john's wort",
+      "drugName": "triptans",
+      "severity": "Major",
+      "description": "Combined 5-HT1B/1D receptor agonism from triptans (sumatriptan, zolmitriptan) and serotonergic elevation from St. John's wort substantially raises the risk of coronary vasoconstriction and serotonin syndrome."
+    },
+    {
+      "herbName": "st. john's wort",
+      "drugName": "tramadol",
+      "severity": "Major",
+      "description": "Both tramadol and St. John's wort inhibit serotonin and norepinephrine reuptake; combining them greatly elevates risk of seizures and life-threatening Serotonin Syndrome."
+    },
+    {
+      "herbName": "st. john's wort",
+      "drugName": "atorvastatin",
+      "severity": "Moderate",
+      "description": "CYP3A4 induction by St. John's wort reduces atorvastatin and simvastatin plasma concentrations, compromising cardiovascular LDL reduction."
+    },
+    {
+      "herbName": "st. john's wort",
+      "drugName": "simvastatin",
+      "severity": "Moderate",
+      "description": "St. John's wort significantly increases hepatic clearance of simvastatin, reducing lipid-lowering efficacy and arterial plaque stabilization."
+    },
+    {
+      "herbName": "st. john's wort",
+      "drugName": "theophylline",
+      "severity": "Major",
+      "description": "Induction of CYP1A2 and CYP3A4 by St. John's wort lowers theophylline plasma levels by up to 50%, precipitating severe bronchospasm in asthma and COPD."
+    },
+    {
+      "herbName": "st. john's wort",
+      "drugName": "anticonvulsants",
+      "severity": "Major",
+      "description": "Induces clearance of carbamazepine, phenytoin, and phenobarbital, resulting in subtherapeutic anticonvulsant levels and breakthrough epileptic seizures."
+    },
+    {
+      "herbName": "st. john's wort",
+      "drugName": "alprazolam",
+      "severity": "Moderate",
+      "description": "Induces CYP3A4 clearance of alprazolam and midazolam, significantly diminishing anxiolytic and sedative therapeutic efficacy."
+    },
+    {
+      "herbName": "ginkgo biloba",
+      "drugName": "clopidogrel",
+      "severity": "Major",
+      "description": "Combining ADP P2Y12 receptor blockade with ginkgolide PAF inhibition results in profound platelet dysfunction and increased major bleeding events."
+    },
+    {
+      "herbName": "ginkgo biloba",
+      "drugName": "rivaroxaban",
+      "severity": "Major",
+      "description": "Direct factor Xa inhibition combined with ginkgo's antiplatelet action substantially increases gastrointestinal and intracranial bleeding vulnerability."
+    },
+    {
+      "herbName": "ginkgo biloba",
+      "drugName": "apixaban",
+      "severity": "Major",
+      "description": "Additive antithrombotic mechanisms heighten the probability of major hemorrhagic complications. Co-administration is strongly discouraged."
+    },
+    {
+      "herbName": "ginkgo biloba",
+      "drugName": "nsaids",
+      "severity": "Moderate",
+      "description": "Ginkgo additively impairs hemostasis when taken with ibuprofen, diclofenac, or naproxen, increasing gastrointestinal mucosal bleeding and ulcer risk."
+    },
+    {
+      "herbName": "ginkgo biloba",
+      "drugName": "anticonvulsants",
+      "severity": "Major",
+      "description": "Ginkgo seeds and unpurified extracts contain ginkgotoxin (4-O-methylpyridoxine), an antivitamin B6 compound that impairs GABA synthesis and lowers seizure threshold, precipitating convulsions."
+    },
+    {
+      "herbName": "ginkgo biloba",
+      "drugName": "valproate",
+      "severity": "Major",
+      "description": "Ginkgotoxin antagonizes the neuroprotective action of valproic acid, leading to loss of seizure control and status epilepticus in epileptic patients."
+    },
+    {
+      "herbName": "ginkgo biloba",
+      "drugName": "trazodone",
+      "severity": "Moderate",
+      "description": "Co-administration has been reported to induce excessive sedation and reversible coma through synergistic central nervous system depression."
+    },
+    {
+      "herbName": "ginkgo biloba",
+      "drugName": "antidiabetic",
+      "severity": "Minor",
+      "description": "Ginkgo may stimulate hepatic metabolic clearance of insulin and oral hypoglycemic agents, causing erratic glycemic fluctuations in type 2 diabetic patients."
+    },
+    {
+      "herbName": "garlic",
+      "drugName": "aspirin",
+      "severity": "Moderate",
+      "description": "Additive platelet inhibition through cyclooxygenase and thromboxane pathways elevates bleeding time, bruising, and perioperative hemorrhagic risk."
+    },
+    {
+      "herbName": "garlic",
+      "drugName": "clopidogrel",
+      "severity": "Moderate",
+      "description": "Enhanced platelet anti-aggregatory activity raises vulnerability to occult gastrointestinal hemorrhage. Discontinue high-dose garlic 7-10 days before surgery."
+    },
+    {
+      "herbName": "garlic",
+      "drugName": "saquinavir",
+      "severity": "Major",
+      "description": "Garlic extract significantly reduces plasma concentrations of saquinavir and other HIV protease inhibitors by approximately 50%, predisposing to therapeutic failure and viral resistance."
+    },
+    {
+      "herbName": "garlic",
+      "drugName": "antihypertensives",
+      "severity": "Minor",
+      "description": "Garlic stimulates endothelial nitric oxide and hydrogen sulfide production, which can cause additive hypotension when combined with ACE inhibitors or calcium channel blockers."
+    },
+    {
+      "herbName": "ginseng",
+      "drugName": "maoi",
+      "severity": "Major",
+      "description": "Combining Panax ginseng with monoamine oxidase inhibitors (phenelzine, tranylcypromine) has resulted in severe headaches, tremors, insomnia, and manic-like psychomotor agitation."
+    },
+    {
+      "herbName": "ginseng",
+      "drugName": "immunosuppressants",
+      "severity": "Moderate",
+      "description": "Ginseng stimulates macrophage and natural killer cell activity, potentially antagonizing the therapeutic effects of corticosteroids, methotrexate, or tofacitinib."
+    },
+    {
+      "herbName": "ginseng",
+      "drugName": "antihypertensives",
+      "severity": "Minor",
+      "description": "Ginseng exerts biphasic cardiovascular effects (low doses increase BP, high doses decrease BP), creating erratic blood pressure control in hypertensive patients."
+    },
+    {
+      "herbName": "turmeric",
+      "drugName": "anticoagulant",
+      "severity": "Moderate",
+      "description": "Curcumin inhibits factor Xa, thrombin, and platelet aggregation. Concomitant use with DOACs (rivaroxaban, apixaban, dabigatran) increases systemic bleeding risk."
+    },
+    {
+      "herbName": "turmeric",
+      "drugName": "iron",
+      "severity": "Moderate",
+      "description": "Curcumin is an active iron chelator that binds ferric iron in the gut, significantly reducing dietary and supplemental iron absorption and worsening iron-deficiency anemia."
+    },
+    {
+      "herbName": "turmeric",
+      "drugName": "tacrolimus",
+      "severity": "Moderate",
+      "description": "Curcumin inhibits CYP3A4 and P-glycoprotein, causing unpredictable spikes in tacrolimus blood levels and heightened nephrotoxicity risk."
+    },
+    {
+      "herbName": "curcumin",
+      "drugName": "aspirin",
+      "severity": "Moderate",
+      "description": "Curcumin suppresses cyclooxygenase-2 and thromboxane synthesis; combined with aspirin, this synergistic antiplatelet effect raises bleeding and GI irritation risk."
+    },
+    {
+      "herbName": "curcumin",
+      "drugName": "metformin",
+      "severity": "Minor",
+      "description": "Curcumin activates AMPK pathways similarly to metformin, leading to additive glycemic reduction and potential mild hypoglycemia."
+    },
+    {
+      "herbName": "licorice",
+      "drugName": "diuretics",
+      "severity": "Major",
+      "description": "Glycyrrhizin inhibits renal 11-beta-hydroxysteroid dehydrogenase type 2, resulting in mineralocorticoid excess with severe potassium wasting. Combined with furosemide or hydrochlorothiazide, it causes life-threatening hypokalemia and cardiac arrhythmias."
+    },
+    {
+      "herbName": "licorice",
+      "drugName": "furosemide",
+      "severity": "Major",
+      "description": "Severe synergistic potassium depletion resulting in muscle paralysis, QT interval prolongation, and torsades de pointes ventricular tachycardia."
+    },
+    {
+      "herbName": "licorice",
+      "drugName": "antihypertensives",
+      "severity": "Major",
+      "description": "Licorice-induced pseudoaldosteronism triggers massive renal sodium retention and hypervolemia, directly counteracting ACE inhibitors, ARBs, and calcium channel blockers and causing severe refractory hypertension."
+    },
+    {
+      "herbName": "licorice",
+      "drugName": "digoxin",
+      "severity": "Major",
+      "description": "Licorice-induced hypokalemia sensitizes the myocardial Na/K-ATPase to digoxin, precipitating lethal digoxin toxicity, heart block, and ventricular arrhythmias even at normal digoxin serum levels."
+    },
+    {
+      "herbName": "licorice",
+      "drugName": "corticosteroids",
+      "severity": "Moderate",
+      "description": "Licorice impairs the metabolic conversion of cortisol to inactive cortisone, potentiating systemic corticosteroid exposure, hypertension, fluid retention, and adrenal suppression."
+    },
+    {
+      "herbName": "licorice",
+      "drugName": "warfarin",
+      "severity": "Moderate",
+      "description": "Licorice accelerates hepatic clearance of warfarin via CYP2C9 induction, resulting in subtherapeutic INR and thrombosis risk."
+    },
+    {
+      "herbName": "kava",
+      "drugName": "sedatives",
+      "severity": "Major",
+      "description": "Kavalactones potentiate GABA-A receptor binding. Concurrent use with benzodiazepines, Z-drugs, or barbiturates causes severe stupor, prolonged lethargy, and respiratory depression."
+    },
+    {
+      "herbName": "kava",
+      "drugName": "alprazolam",
+      "severity": "Major",
+      "description": "Synergistic central nervous system depression. Documented clinical cases of semicomatose lethargy requiring emergency hospitalization."
+    },
+    {
+      "herbName": "kava",
+      "drugName": "acetaminophen",
+      "severity": "Major",
+      "description": "Kava extracts deplete hepatic glutathione and inhibit multiple P450 enzymes. Combined with paracetamol, this dramatically increases NAPQI-mediated acute liver necrosis."
+    },
+    {
+      "herbName": "kava",
+      "drugName": "statins",
+      "severity": "Moderate",
+      "description": "Additive hepatotoxic burden. Concomitant use increases serum transaminases and predisposing to drug-induced liver injury (DILI)."
+    },
+    {
+      "herbName": "kava",
+      "drugName": "levodopa",
+      "severity": "Major",
+      "description": "Kavalactones antagonize central dopamine receptors, directly reversing the therapeutic effects of levodopa and acutely worsening Parkinsonian tremors and akinesia."
+    },
+    {
+      "herbName": "valerian",
+      "drugName": "sedatives",
+      "severity": "Moderate",
+      "description": "Valerenic acid stimulates GABA synthesis and inhibits GABA reuptake. Combined with benzodiazepines (diazepam, lorazepam) or zolpidem, it causes pronounced daytime somnolence and cognitive slowing."
+    },
+    {
+      "herbName": "valerian",
+      "drugName": "zolpidem",
+      "severity": "Moderate",
+      "description": "Additive sedative-hypnotic CNS depression resulting in severe motor incoordination, sleepwalking, and daytime psychomotor impairment."
+    },
+    {
+      "herbName": "valerian",
+      "drugName": "alcohol",
+      "severity": "Moderate",
+      "description": "Profound additive CNS depression and impaired reaction time. Patients must avoid alcohol when taking valerian supplements."
+    },
+    {
+      "herbName": "valerian",
+      "drugName": "muscle relaxants",
+      "severity": "Moderate",
+      "description": "Additive muscle relaxation and central somnolence with baclofen, thiocolchicoside, or tizanidine, increasing fall risk."
+    },
+    {
+      "herbName": "green tea extract",
+      "drugName": "nadolol",
+      "severity": "Major",
+      "description": "Epigallocatechin gallate (EGCG) potently inhibits intestinal OATP1A2 uptake transporters, reducing nadolol bioavailability by up to 85% and causing complete loss of beta-blocker efficacy."
+    },
+    {
+      "herbName": "green tea extract",
+      "drugName": "bortezomib",
+      "severity": "Major",
+      "description": "EGCG directly binds the boronic acid moiety of bortezomib (Velcade), completely neutralizing its proteasome inhibitory anti-myeloma activity in clinical oncology."
+    },
+    {
+      "herbName": "green tea extract",
+      "drugName": "atorvastatin",
+      "severity": "Moderate",
+      "description": "High-dose green tea extract has been linked to idiosyncratic hepatotoxicity; concurrent statin therapy increases risk of elevated hepatic transaminases."
+    },
+    {
+      "herbName": "green tea extract",
+      "drugName": "iron",
+      "severity": "Moderate",
+      "description": "Tea catechins bind non-heme iron to form insoluble complexes, reducing iron bioavailability by over 70% and aggravating microcytic anemia."
+    },
+    {
+      "herbName": "milk thistle",
+      "drugName": "antidiabetic",
+      "severity": "Moderate",
+      "description": "Silymarin improves hepatic insulin sensitivity and decreases gluconeogenesis. When combined with metformin or sulfonylureas, close glucose monitoring is recommended to prevent hypoglycemia."
+    },
+    {
+      "herbName": "milk thistle",
+      "drugName": "metronidazole",
+      "severity": "Moderate",
+      "description": "Silymarin stimulates CYP-mediated metabolism, accelerating clearance of metronidazole and potentially compromising treatment of anaerobic bacterial infections."
+    },
+    {
+      "herbName": "saw palmetto",
+      "drugName": "finasteride",
+      "severity": "Moderate",
+      "description": "Dual 5-alpha-reductase inhibition without clinical additive efficacy; increases likelihood of antiandrogenic adverse effects including erectile dysfunction and gynecomastia."
+    },
+    {
+      "herbName": "saw palmetto",
+      "drugName": "warfarin",
+      "severity": "Minor",
+      "description": "Isolated clinical reports of prolonged bleeding time and INR elevation. Monitor coagulation parameters during initiation or discontinuation."
+    },
+    {
+      "herbName": "echinacea",
+      "drugName": "immunosuppressants",
+      "severity": "Moderate",
+      "description": "Echinacea stimulates macrophage, tumor necrosis factor, and interleukin activity, directly counteracting the therapeutic intentions of immunosuppressants (tacrolimus, cyclosporine, tofacitinib, systemic steroids)."
+    },
+    {
+      "herbName": "echinacea",
+      "drugName": "caffeine",
+      "severity": "Minor",
+      "description": "Inhibits CYP1A2, increasing caffeine half-life and predisposing to palpitations, jitteriness, and insomnia."
+    },
+    {
+      "herbName": "cranberry",
+      "drugName": "warfarin",
+      "severity": "Moderate",
+      "description": "Cranberry juice and concentrated capsules inhibit CYP2C9 metabolism of S-warfarin. Multiple cases of marked INR elevation and fatal bleeding have been documented."
+    },
+    {
+      "herbName": "goldenseal",
+      "drugName": "digoxin",
+      "severity": "Major",
+      "description": "Berberine in goldenseal strongly inhibits P-glycoprotein, dramatically reducing digoxin efflux and causing potentially lethal digitalis toxicity."
+    },
+    {
+      "herbName": "goldenseal",
+      "drugName": "midazolam",
+      "severity": "Major",
+      "description": "Potent inhibition of CYP3A4 increases midazolam and triazolam exposure by more than 150%, inducing prolonged sedation and respiratory depression."
+    },
+    {
+      "herbName": "goldenseal",
+      "drugName": "metformin",
+      "severity": "Moderate",
+      "description": "Berberine and metformin both act on AMPK pathways and organic cation transporters (OCT); combined use may cause additive gastrointestinal distress and hypoglycemia."
+    },
+    {
+      "herbName": "feverfew",
+      "drugName": "warfarin",
+      "severity": "Moderate",
+      "description": "Parthenolide in feverfew inhibits platelet aggregation and serotonin release from platelets, adding to the anticoagulant hazard of warfarin."
+    },
+    {
+      "herbName": "feverfew",
+      "drugName": "aspirin",
+      "severity": "Moderate",
+      "description": "Synergistic inhibition of prostaglandin and thromboxane synthesis elevates mucosal and surgical bleeding risks."
+    },
+    {
+      "herbName": "senna",
+      "drugName": "digoxin",
+      "severity": "Major",
+      "description": "Chronic or excessive use of senna anthraquinone laxatives causes severe potassium wasting. Hypokalemia greatly sensitizes the myocardium to fatal digoxin-induced arrhythmias."
+    },
+    {
+      "herbName": "senna",
+      "drugName": "diuretics",
+      "severity": "Major",
+      "description": "Additive renal and intestinal potassium loss creates profound hypokalemia, cardiac conduction abnormalities, and neuromuscular weakness."
+    },
+    {
+      "herbName": "yohimbe",
+      "drugName": "antihypertensives",
+      "severity": "Major",
+      "description": "Yohimbine is a potent central and peripheral alpha-2 adrenergic antagonist that releases massive norepinephrine surges, causing dangerous spikes in blood pressure and tachyarrhythmias."
+    },
+    {
+      "herbName": "yohimbe",
+      "drugName": "antidepressants",
+      "severity": "Major",
+      "description": "Combined use with tricyclic antidepressants or MAOIs triggers severe hypertensive crisis, tremors, panic agitation, and cardiac arrhythmias."
+    },
+    {
+      "herbName": "melatonin",
+      "drugName": "sedatives",
+      "severity": "Moderate",
+      "description": "Additive central hypnotic effect with benzodiazepines, Z-drugs, or sedating antihistamines, causing marked daytime drowsiness, dizziness, and cognitive impairment."
+    },
+    {
+      "herbName": "melatonin",
+      "drugName": "warfarin",
+      "severity": "Minor",
+      "description": "Melatonin may have mild antiplatelet effects and immune-modulating actions that can occasionally alter coagulation parameters in anticoagulated patients."
     }
   ]
 }
