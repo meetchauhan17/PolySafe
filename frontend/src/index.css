@@ -761,3 +761,51 @@ details.ps-accordion > summary::-webkit-details-marker { display: none; }
   box-shadow: var(--shadow-sm);
 }
 
+/* ── PS-CARD (Elevated surface container) ───────────────────────────── */
+.ps-card {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  padding: 1.25rem;
+  transition: all var(--dur-base) var(--ease-standard);
+}
+
+/* ── PS-MED-CARD (Medication List Item Card) ────────────────────────── */
+.ps-med-card {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  padding: 1.25rem;
+  transition: all var(--dur-base) var(--ease-standard);
+  position: relative;
+}
+.ps-med-card:hover {
+  box-shadow: var(--shadow-md);
+  border-color: var(--border-strong);
+}
+
+/* ── PS-STAT-CARD (Metrics & KPI Card) ──────────────────────────────── */
+.ps-stat-card {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  padding: 1rem 1.25rem;
+  transition: all var(--dur-base) var(--ease-standard);
+}
+.ps-stat-card:hover {
+  background-color: var(--surface-2);
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-md);
+}
+
+/* ── PS-NAVBAR ──────────────────────────────────────────────────────── */
+.ps-navbar {
+  background-color: var(--surface);
+  border-bottom: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+}
+
+
