@@ -149,7 +149,7 @@ function DoctorSafetyCheckModal({ isOpen, onClose, patientId, patientAge, onPres
 				initial={{ opacity: 0, scale: 0.95, y: 10 }}
 				animate={{ opacity: 1, scale: 1, y: 0 }}
 				exit={{ opacity: 0, scale: 0.95, y: 10 }}
-				className="w-full max-w-2xl bg-[var(--surface)] border border-white/80 shadow-2xl rounded-2xl p-6 sm:p-8 space-y-6 max-h-[86vh] my-auto overflow-y-auto"
+				className="w-full max-w-2xl bg-[var(--surface)] border border-[var(--border)] shadow-2xl rounded-2xl p-6 sm:p-8 space-y-6 max-h-[86vh] my-auto overflow-y-auto"
 			>
 				{/* Header */}
 				<div className="flex items-start justify-between gap-4 border-b border-[var(--border)] pb-4">
@@ -469,7 +469,7 @@ function DrugSubstituteModal({ isOpen, onClose, patientId, medicines, onSuccess 
 				initial={{ opacity: 0, scale: 0.96, y: 10 }}
 				animate={{ opacity: 1, scale: 1, y: 0 }}
 				exit={{ opacity: 0, scale: 0.96, y: 10 }}
-				className="w-full max-w-lg bg-[var(--surface)] border border-white/80 shadow-2xl rounded-2xl p-6 sm:p-7 space-y-5 max-h-[86vh] my-auto overflow-y-auto"
+				className="w-full max-w-lg bg-[var(--surface)] border border-[var(--border)] shadow-2xl rounded-2xl p-6 sm:p-7 space-y-5 max-h-[86vh] my-auto overflow-y-auto"
 			>
 				<div className="flex items-center justify-between border-b border-[var(--border)] pb-4">
 					<div className="flex items-center gap-2.5">
@@ -880,7 +880,7 @@ function ClinicalConsultationReportModal({ isOpen, onClose, patientId }) {
 				initial={{ opacity: 0, scale: 0.95 }}
 				animate={{ opacity: 1, scale: 1 }}
 				exit={{ opacity: 0, scale: 0.95 }}
-				className="w-full max-w-4xl bg-[var(--surface)] border border-white/80 shadow-2xl rounded-2xl p-6 sm:p-8 space-y-6 max-h-[86vh] my-auto overflow-y-auto print:max-h-none print:p-0 print:border-none print:shadow-none"
+				className="w-full max-w-4xl bg-[var(--surface)] border border-[var(--border)] shadow-2xl rounded-2xl p-6 sm:p-8 space-y-6 max-h-[86vh] my-auto overflow-y-auto print:max-h-none print:p-0 print:border-none print:shadow-none"
 			>
 				{/* Modal Top Bar (Hidden in Print) */}
 				<div className="flex items-center justify-between gap-4 print:hidden border-b border-[var(--border)] pb-4">

@@ -117,8 +117,12 @@ export default function App() {
                   <Route element={<PatientLayout />}>
                     <Route path="/home" element={<HomePage />} />
                     <Route path="/add-medicine" element={<AddMedicinePage />} />
+                    <Route path="/add" element={<AddMedicinePage />} />
                     <Route path="/risk/:id" element={<RiskAnalysisPage />} />
+                    <Route path="/risk" element={<RiskAnalysisPage />} />
+                    <Route path="/risk-analysis" element={<RiskAnalysisPage />} />
                     <Route path="/log-symptom" element={<LogSymptomPage />} />
+                    <Route path="/symptoms" element={<LogSymptomPage />} />
                     <Route path="/symptom-result" element={<SymptomResultPage />} />
                     <Route path="/timeline" element={<TimelinePage />} />
                     <Route path="/insights" element={<InsightsPage />} />
@@ -134,6 +138,7 @@ export default function App() {
                 <Route element={<ProtectedRoute allowedRoles={['DOCTOR']} />}>
                   <Route element={<DoctorLayout />}>
                     <Route path="/doctor-dashboard" element={<DoctorDashboardPage />} />
+                    <Route path="/doctor" element={<DoctorDashboardPage />} />
                   </Route>
                 </Route>
 
@@ -141,6 +146,7 @@ export default function App() {
                 <Route element={<ProtectedRoute allowedRoles={['CAREGIVER']} />}>
                   <Route element={<CaregiverLayout />}>
                     <Route path="/caregiver-view" element={<CaregiverViewPage />} />
+                    <Route path="/caregiver" element={<CaregiverViewPage />} />
                   </Route>
                 </Route>
 

@@ -11,11 +11,21 @@ import { clsx } from 'clsx';
  */
 export default function Card({
   children,
+  title,
+  subtitle,
+  icon,
+  action,
   variant = 'flat',
   status,      // 'safe' | 'caution' | 'critical' | 'unknown'
   className,
   as: Component = 'div',
   onClick,
+  // Filter out legacy and custom props
+  hideScrews,
+  glow,
+  statusColor,
+  elevation,
+  accent,
   ...props
 }) {
   const statusBorder = {
@@ -24,6 +34,8 @@ export default function Card({
     critical: 'border-l-4 border-l-[var(--critical-fg)]',
     unknown:  'border-l-4 border-l-[var(--unknown-fg)]',
   };
+
+  const hasHeader = Boolean(title || subtitle || icon || action);
 
   return (
     <Component
@@ -45,6 +57,22 @@ export default function Card({
       }
       {...props}
     >
+      {hasHeader && (
+        <CardHeader
+          title={
+            icon ? (
+              <div className="flex items-center gap-2">
+                <span className="flex-shrink-0">{icon}</span>
+                <span>{title}</span>
+              </div>
+            ) : (
+              title
+            )
+          }
+          subtitle={subtitle}
+          action={action}
+        />
+      )}
       {children}
     </Component>
   );

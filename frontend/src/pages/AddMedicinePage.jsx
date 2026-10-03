@@ -2341,7 +2341,7 @@ export default function AddMedicinePage() {
                 {showSuggestions && suggestions.length > 0 && (
                   <div
                     ref={suggestionsRef}
-                    className="absolute z-50 left-0 right-0 top-full mt-2 bg-[var(--canvas)] border border-white/50 rounded-2xl shadow-[var(--shadow-lg)] overflow-hidden max-h-72 overflow-y-auto"
+                    className="absolute z-50 left-0 right-0 top-full mt-2 bg-[var(--canvas)] border border-[var(--border)] rounded-2xl shadow-[var(--shadow-lg)] overflow-hidden max-h-72 overflow-y-auto"
                   >
                     {suggestions.map((sug, idx) => {
                       const isSelected = idx === selectedIdx;
@@ -2462,7 +2462,7 @@ export default function AddMedicinePage() {
  <button
  type="button"
  onClick={() => setSelectedDrugInfo(null)}
- className="w-7 h-7 rounded-lg bg-[var(--canvas)] shadow-[var(--shadow-sm)] hover:shadow-[var(--shadow-sm)] active:shadow-[var(--shadow-inner)] flex items-center justify-center text-[var(--ink-3)] hover:text-[var(--ink)] cursor-pointer transition-all border border-white/40"
+ className="w-7 h-7 rounded-lg bg-[var(--canvas)] shadow-[var(--shadow-sm)] hover:shadow-[var(--shadow-sm)] active:shadow-[var(--shadow-inner)] flex items-center justify-center text-[var(--ink-3)] hover:text-[var(--ink)] cursor-pointer transition-all border border-[var(--border)]"
  >
  <X className="w-3.5 h-3.5" />
  </button>

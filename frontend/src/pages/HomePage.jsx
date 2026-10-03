@@ -1114,7 +1114,7 @@ function EditMedicineModal({ med, isOpen, onClose, onSave, isPending }) {
  animate={{ opacity: 1, scale: 1, y: 0 }}
  exit={{ opacity: 0, scale: 0.95, y: 12 }}
  transition={{ duration: 0.22, ease: [0.25, 1, 0.5, 1] }}
- className="w-full max-w-lg bg-[var(--canvas)] rounded-[32px] shadow-[var(--shadow-lg)] border border-white/50 overflow-hidden"
+ className="w-full max-w-lg bg-[var(--canvas)] rounded-[32px] shadow-[var(--shadow-lg)] border border-[var(--border)] overflow-hidden"
  >
  {/* Header */}
  <div className="flex items-center justify-between px-6 pt-5 pb-4 border-b border-[var(--border)]">
@@ -1313,7 +1313,7 @@ function EditMedicineModal({ med, isOpen, onClose, onSave, isPending }) {
  >
  <motion.span
  layout
- className="w-5 h-5 rounded-full bg-[var(--canvas)] shadow-md border border-white/60"
+ className="w-5 h-5 rounded-full bg-[var(--canvas)] shadow-md border border-[var(--border)]"
  />
  </button>
  </div>
@@ -1440,7 +1440,7 @@ function DiscontinueMedicineModal({ med, isOpen, onClose, onConfirm, isPending }
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 12 }}
         transition={{ type: 'spring', damping: 25, stiffness: 350 }}
-        className="p-6 max-w-md w-full bg-[var(--canvas)] space-y-5 shadow-[var(--shadow-lg)] border border-white/60 rounded-[28px] relative overflow-hidden"
+        className="p-6 max-w-md w-full bg-[var(--canvas)] space-y-5 shadow-[var(--shadow-lg)] border border-[var(--border)] rounded-[28px] relative overflow-hidden"
       >
         {/* Top Danger Accent Strip */}
         <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-rose-500 via-rose-600 to-amber-500" />

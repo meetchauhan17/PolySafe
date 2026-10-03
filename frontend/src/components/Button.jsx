@@ -25,10 +25,15 @@ export default function Button({
   disabled = false,
   icon,
   iconRight,
+  leftIcon,
+  rightIcon,
   className,
   as: Component = 'button',
   ...props
 }) {
+  const finalIcon = icon || leftIcon;
+  const finalIconRight = iconRight || rightIcon;
+
   return (
     <Component
       className={clsx(
@@ -42,12 +47,12 @@ export default function Button({
     >
       {loading ? (
         <Loader2 className="w-4 h-4 animate-spin flex-shrink-0" aria-hidden />
-      ) : icon ? (
-        <span className="flex-shrink-0" aria-hidden>{icon}</span>
+      ) : finalIcon ? (
+        <span className="flex-shrink-0" aria-hidden>{finalIcon}</span>
       ) : null}
       {children && <span>{children}</span>}
-      {iconRight && !loading && (
-        <span className="flex-shrink-0" aria-hidden>{iconRight}</span>
+      {finalIconRight && !loading && (
+        <span className="flex-shrink-0" aria-hidden>{finalIconRight}</span>
       )}
     </Component>
   );
