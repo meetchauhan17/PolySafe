@@ -77,35 +77,43 @@ export const HARM_LEVELS = {
 };
 
 const CLASS_RISK_MAP = {
-  // L5 Critical
-  'anticoagulant': 5, 'blood thinner': 5, 'warfarin': 5, 'factor xa': 5, 'heparin': 5, 'apixaban': 5,
+  // L5 Critical (Narrow Therapeutic Index & High-Alert)
+  'anticoagulant': 5, 'blood thinner': 5, 'warfarin': 5, 'factor xa': 5, 'heparin': 5, 'apixaban': 5, 'rivaroxaban': 5, 'dabigatran': 5,
   'insulin': 5, 'basal insulin': 5, 'anticonvulsant': 5, 'antiseizure': 5, 'phenytoin': 5, 'carbamazepine': 5,
   'valproate': 5, 'lithium': 5, 'chemotherapy': 5, 'cytotoxic': 5, 'immunosuppressant': 5,
   'tofacitinib': 5, 'tfct': 5, 'jak inhibitor': 5, 'targeted dmard': 5,
+  'digoxin': 5, 'antiarrhythmic': 5, 'amiodarone': 5, 'methotrexate': 5, 'cyclosporine': 5, 'tacrolimus': 5, 'colchicine': 5,
 
-  // L4 High
+  // L4 High (Cardiovascular, CNS & Metabolic High-Risk)
   'statin': 4, 'atorvastatin': 4, 'rosuvastatin': 4, 'simvastatin': 4, 'opioid': 4, 'narcotic': 4,
   'tramadol': 4, 'ssri': 4, 'snri': 4, 'tca': 4, 'sertraline': 4, 'fluoxetine': 4, 'escitalopram': 4,
   'duloxetine': 4, 'amitriptyline': 4, 'arb': 4, 'acei': 4, 'telmisartan': 4, 'losartan': 4, 'ramipril': 4,
   'oral antidiabetic': 4, 'metformin': 4, 'glimepiride': 4, 'gliclazide': 4, 'sitagliptin': 4, 'dapagliflozin': 4,
-  'benzodiazepine': 4, 'antipsychotic': 4,
+  'benzodiazepine': 4, 'antipsychotic': 4, 'sedative': 4, 'hypnotic': 4, 'clonazepam': 4, 'alprazolam': 4, 'zolpidem': 4,
+  'antiplatelet': 4, 'clopidogrel': 4, 'ticagrelor': 4, 'prasugrel': 4,
 
-  // L3 Moderate
-  'nsaid': 3, 'paracetamol': 3, 'acetaminophen': 3, 'ibuprofen': 3, 'naproxen': 3, 'diclofenac': 3, 'aceclofenac': 3,
-  'calcium channel blocker': 3, 'ccb': 3, 'amlodipine': 3, 'nifedipine': 3, 'diltiazem': 3,
-  'beta2 agonist': 3, 'salbutamol': 3, 'albuterol': 3, 'formoterol': 3,
+  // L3 Moderate (Organ Clearance & Standard Systemic Therapeutics)
+  'nsaid': 3, 'paracetamol': 3, 'acetaminophen': 3, 'ibuprofen': 3, 'naproxen': 3, 'diclofenac': 3, 'aceclofenac': 3, 'aspirin': 3, 'ecosprin': 3,
+  'calcium channel blocker': 3, 'ccb': 3, 'amlodipine': 3, 'nifedipine': 3, 'diltiazem': 3, 'verapamil': 3,
+  'beta2 agonist': 3, 'salbutamol': 3, 'albuterol': 3, 'formoterol': 3, 'inhaler': 3,
   'antibiotic': 3, 'amoxicillin': 3, 'augmentin': 3, 'azithromycin': 3, 'ciprofloxacin': 3, 'cefixime': 3,
   'corticosteroid': 3, 'steroid': 3, 'prednisolone': 3, 'budesonide': 3, 'dexamethasone': 3,
+  'beta blocker': 3, 'metoprolol': 3, 'atenolol': 3, 'bisoprolol': 3, 'carvedilol': 3, 'propranolol': 3,
+  'diuretic': 3, 'furosemide': 3, 'torsemide': 3, 'spironolactone': 3, 'hydrochlorothiazide': 3,
+  'thyroid': 3, 'levothyroxine': 3, 'thyronorm': 3, 'eltroxin': 3,
+  'pregabalin': 3, 'gabapentin': 3, 'antifungal': 3, 'fluconazole': 3, 'itraconazole': 3,
+  'muscle relaxant': 3, 'baclofen': 3, 'thiocolchicoside': 3, 'chlorzoxazone': 3,
+  'antigout': 3, 'allopurinol': 3, 'febuxostat': 3,
 
-  // L2 Mild
+  // L2 Mild (Symptomatic & Gastroprotective)
   'antacid': 2, 'h2 blocker': 2, 'ppi': 2, 'pantoprazole': 2, 'omeprazole': 2, 'rabeprazole': 2, 'famotidine': 2, 'ranitidine': 2,
   'antihistamine': 2, 'cetirizine': 2, 'levocetirizine': 2, 'loratadine': 2, 'fexofenadine': 2, 'diphenhydramine': 2,
-  'prokinetic': 2, 'domperidone': 2, 'metoclopramide': 2, 'itopride': 2, 'sucralfate': 2,
+  'prokinetic': 2, 'domperidone': 2, 'metoclopramide': 2, 'itopride': 2, 'sucralfate': 2, 'laxative': 2, 'lactulose': 2,
 
-  // L1 Low
+  // L1 Low (Nutritional, Vitamins & Botanical Supplements)
   'multivitamin': 1, 'vitamin': 1, 'mineral': 1, 'calcium': 1, 'zinc': 1, 'iron': 1, 'folic acid': 1,
   'probiotic': 1, 'herb': 1, 'herbal': 1, 'turmeric': 1, 'curcumin': 1, 'ginkgo': 1, 'ashwagandha': 1,
-  'garlic': 1, 'ginseng': 1, 'ginger': 1, 'omega-3': 1,
+  'garlic': 1, 'ginseng': 1, 'ginger': 1, 'omega-3': 1, 'cod liver oil': 1,
 };
 
 // ─── Mathematical Average Regimen Burden Scale ───────────────────────────────
@@ -436,20 +444,167 @@ export function getDrugHarmReason(drugOrName, category = '', composition = '') {
     };
   }
 
-  // 21. Vitamins, Minerals & Botanicals (Level 1)
-  if (/vitamin|mineral|calcium|zinc|iron|folic acid|herb|turmeric|curcumin|probiotic|omega-3/i.test(combined)) {
+  // 22. Antiplatelets (Level 3-4)
+  if (/clopidogrel|plavix|deplatt|ticagrelor|prasugrel|aspirin|ecosprin|antiplatelet/i.test(combined)) {
+    const isPotentP2Y12 = /clopidogrel|ticagrelor|prasugrel/i.test(combined);
     return {
-      level: 1,
-      tier: 'L1',
-      className: 'Nutritional Supplement / Botanical / Micronutrient',
-      summary: 'Essential micronutrient or botanical with minimal intrinsic cytotoxicity at recommended doses.',
-      reason: 'Classified as Level 1 Low Risk. In polypharmacy, considerations primarily involve avoiding excessive fat-soluble vitamin accumulation or specific botanical metabolic interactions (e.g., high-dose concentrated curcumin mildly inhibiting CYP2C9).',
-      monitoring: 'Periodic reassessment of ongoing need and adherence to standard recommended daily allowances.',
+      level: isPotentP2Y12 ? 4 : 3,
+      tier: isPotentP2Y12 ? 'L4' : 'L3',
+      className: isPotentP2Y12 ? 'P2Y12 Platelet Inhibitor (Antiplatelet)' : 'Platelet Aggregation Inhibitor (Antiplatelet)',
+      summary: 'Antiplatelet agent with bleeding liabilities, especially when combined with NSAIDs or anticoagulants.',
+      reason: 'Irreversibly inhibits platelet aggregation via P2Y12 ADP receptor blockade or COX-1 acetylation. Key polypharmacy liability is synergistic bleeding risk (GI hemorrhage, hematoma, purpura) when co-prescribed with NSAIDs, anticoagulants, SSRIs, or herbal antiplatelets.',
+      monitoring: 'Signs of overt or occult hemorrhage (dark stools, petechiae, gingival bleeding) and complete blood count.',
       sentinel: false,
     };
   }
 
-  // Default fallback based on harm level without recursion
+  // 23. Beta-Blockers (Level 3)
+  if (/metoprolol|atenolol|bisoprolol|carvedilol|propranolol|labetalol|nebivolol|betaloc|beta blocker/i.test(combined)) {
+    return {
+      level: 3,
+      tier: 'L3',
+      className: 'Beta-Adrenergic Receptor Blocker (Beta-Blocker)',
+      summary: 'Cardiovascular agent requiring vigilance for bradycardia, hypotension, and bronchospasm.',
+      reason: 'Selectively or non-selectively blocks beta-1/beta-2 adrenergic receptors, reducing cardiac contractility and chronotropy. Classified as Level 3 Moderate Risk: requires clinical monitoring for symptomatic bradycardia (<50 bpm), AV nodal conduction delay, hypotension, blunting of hypoglycemia warning signs in diabetics, and bronchospasm in reactive airway disease.',
+      monitoring: 'Resting pulse rate, resting blood pressure, blood glucose awareness in diabetics, and avoid abrupt discontinuation.',
+      sentinel: false,
+    };
+  }
+
+  // 24. Diuretics (Level 3)
+  if (/furosemide|lasix|torsemide|hydrochlorothiazide|chlorthalidone|spironolactone|aldactone|dytor|diuretic/i.test(combined)) {
+    return {
+      level: 3,
+      tier: 'L3',
+      className: 'Diuretic (Loop / Thiazide / Potassium-Sparing)',
+      summary: 'Renal electrolyte-modulating agent with hypokalemia, hyponatremia, and acute dehydration liabilities.',
+      reason: 'Promotes renal sodium and water excretion. Classified as Level 3 Moderate Risk due to rapid fluid and electrolyte shifts: loop/thiazide diuretics carry high risks of hypokalemia, hyponatremia, volume depletion, and hyperuricemia; spironolactone carries severe hyperkalemia risk when combined with ACEIs/ARBs or potassium supplements.',
+      monitoring: 'Serum electrolytes (sodium, potassium), renal function (serum creatinine/BUN), daily weight, and orthostatic blood pressure.',
+      sentinel: false,
+    };
+  }
+
+  // 25. Thyroid Hormone Replacement (Level 3)
+  if (/levothyroxine|thyronorm|eltroxin|synthroid|thyroxine|thyroid/i.test(combined)) {
+    return {
+      level: 3,
+      tier: 'L3',
+      className: 'Exogenous Thyroid Hormone Replacement (T4)',
+      summary: 'Narrow therapeutic endocrine agent requiring precise fasting administration and TSH titration.',
+      reason: 'Replaces endogenous synthetic T4. Classified as Level 3 Moderate Risk: narrow therapeutic titration window where overreplacement risks iatrogenic hyperthyroidism, atrial fibrillation, and osteopenia, while underreplacement causes persistent hypometabolism. Absorption is severely compromised by calcium, iron, PPIs, or food.',
+      monitoring: 'Serum Thyroid Stimulating Hormone (TSH) and free T4 every 6-12 weeks; strict morning fasting administration 30-60 mins before food.',
+      sentinel: false,
+    };
+  }
+
+  // 26. Cardiac Glycosides & Antiarrhythmics (Level 5)
+  if (/digoxin|lanoxin|amiodarone|cordarone|sotalol|flecainide|antiarrhythmic/i.test(combined)) {
+    return {
+      level: 5,
+      tier: 'L5',
+      className: 'Cardiac Glycoside / Antiarrhythmic Agent (Narrow Therapeutic Index)',
+      summary: 'Narrow therapeutic index cardiovascular agent with severe arrhythmia and digitalis toxicity risks.',
+      reason: 'Inhibits myocardial Na+/K+-ATPase or cardiac ion channels. Classified as Level 5 Critical Risk due to an extremely narrow margin of safety. Toxic concentrations precipitate fatal ventricular arrhythmias, complete heart block, visual disturbances, and hyperkalemia. Toxicity is markedly provoked by hypokalemia (often induced by concurrent diuretics) or P-gp/CYP inhibitors.',
+      monitoring: 'Serum digoxin level, serum potassium and magnesium, ECG monitoring, and renal function.',
+      sentinel: true,
+    };
+  }
+
+  // 27. Chemotherapy & Immunosuppressants (Level 5)
+  if (/methotrexate|azathioprine|mycophenolate|cyclosporine|tacrolimus|hydroxyurea|cyclophosphamide|cytotoxic|chemotherapy/i.test(combined)) {
+    return {
+      level: 5,
+      tier: 'L5',
+      className: 'Cytotoxic / Immunosuppressive Chemotherapeutic Agent',
+      summary: 'High-alert cytotoxic agent with myelosuppression, hepatotoxicity, and opportunistic infection hazards.',
+      reason: 'Inhibits cellular DNA synthesis, purine metabolism, or calcineurin pathways. Classified as Level 5 Critical Risk due to severe systemic liabilities: life-threatening bone marrow suppression (leukopenia, thrombocytopenia), acute and chronic hepatotoxicity, nephrotoxicity, and profound opportunistic infection vulnerability.',
+      monitoring: 'CBC with differential, comprehensive liver function tests, serum creatinine/eGFR, and pulmonary assessment.',
+      sentinel: true,
+    };
+  }
+
+  // 28. Benzodiazepines & Sedative-Hypnotics (Level 4)
+  if (/clonazepam|alprazolam|diazepam|lorazepam|zolpidem|zolfresh|alprax|restyl|benzodiazepine|sedative|hypnotic/i.test(combined)) {
+    return {
+      level: 4,
+      tier: 'L4',
+      className: 'Benzodiazepine / Non-Benzodiazepine Hypnotic (GABA-A Modulator)',
+      summary: 'Central GABA-A modulator with excessive sedation, fall/fracture liability, and cognitive blunting.',
+      reason: 'Potentiates central inhibitory GABAergic neurotransmission. Classified as Level 4 High Risk: high polypharmacy risk of severe respiratory depression and death if combined with opioids or alcohol; high risk of daytime cognitive impairment, ataxia, motor vehicle accidents, and hip fractures in elderly patients (Beers Criteria high-alert).',
+      monitoring: 'Sedation depth, cognitive status, gait stability/fall risk, and strictly avoid concurrent central depressants or abrupt cessation.',
+      sentinel: false,
+    };
+  }
+
+  // 29. Neuropathic Agents (Level 3)
+  if (/pregabalin|gabapentin|lyrica|pregalin/i.test(combined)) {
+    return {
+      level: 3,
+      tier: 'L3',
+      className: 'Voltage-Gated Calcium Channel Alpha-2-Delta Modulator',
+      summary: 'Neuropathic agent with additive sedation, dizziness, peripheral edema, and renal clearance dependence.',
+      reason: 'Binds alpha-2-delta auxiliary subunits of voltage-gated calcium channels in the CNS. Classified as Level 3 Moderate Risk: causes dose-dependent somnolence, dizziness, ataxia, and peripheral dependent edema. Highly synergistic CNS depression when combined with opioids, antihistamines, or alcohol.',
+      monitoring: 'Daytime sedation, fall risk, renal function (exclusively renally cleared), and mood/suicidality monitoring.',
+      sentinel: false,
+    };
+  }
+
+  // 30. Muscle Relaxants (Level 3)
+  if (/baclofen|thiocolchicoside|chlorzoxazone|tizanidine|myoril|muscle relaxant/i.test(combined)) {
+    return {
+      level: 3,
+      tier: 'L3',
+      className: 'Centrally-Acting Skeletal Muscle Relaxant',
+      summary: 'Central antispasmodic requiring caution for marked drowsiness, hypotension, and muscle weakness.',
+      reason: 'Acts at spinal or supraspinal GABA-B receptors or polysynaptic reflex pathways. Moderate risk due to sedation, lightheadedness, hepatic load (thiocolchicoside/chlorzoxazone), and additive central depression in multi-drug regimens.',
+      monitoring: 'Daytime alertness, motor coordination, liver enzymes, and avoidance of other sedating compounds.',
+      sentinel: false,
+    };
+  }
+
+  // 31. Antifungals (Level 3-4)
+  if (/fluconazole|itraconazole|ketoconazole|voriconazole|forcan|canditral|antifungal/i.test(combined)) {
+    return {
+      level: 3,
+      tier: 'L3',
+      className: 'Triazole Antifungal · Potent Cytochrome P450 Inhibitor',
+      summary: 'Potent cytochrome P450 inhibitor creating dramatic elevation in co-administered drug plasma levels.',
+      reason: 'Inhibits fungal lanosterol 14-alpha-demethylase, but also potently inhibits human CYP3A4, CYP2C9, and CYP2C19. Classified as Level 3-4 Risk: causes dramatic, potentially lethal plasma spikes in co-administered statins (rhabdomyolysis), warfarin (catastrophic hemorrhage), and calcium channel blockers (severe hypotension).',
+      monitoring: 'Liver function tests, cardiac QTc interval, and comprehensive metabolic interaction check before concurrent prescription.',
+      sentinel: false,
+    };
+  }
+
+  // 32. Gout & Uric Acid Reducers (Level 3-4)
+  if (/allopurinol|febuxostat|colchicine|zyloric|febutaz|antigout/i.test(combined)) {
+    const isColchicine = /colchicine/i.test(combined);
+    return {
+      level: isColchicine ? 4 : 3,
+      tier: isColchicine ? 'L4' : 'L3',
+      className: isColchicine ? 'Mitotic Spindle Inhibitor (Narrow Index Antigout)' : 'Xanthine Oxidase Inhibitor (Antigout)',
+      summary: isColchicine ? 'Narrow therapeutic index antigout agent with severe toxicity risk in renal impairment.' : 'Urate-lowering agent requiring vigilance for hypersensitivity (SCAR/SJS) and renal clearance.',
+      reason: isColchicine
+        ? 'Binds tubulin to suppress microtubule polymerization. Classified as Level 4-5 High-Alert due to an extremely narrow margin of safety: severe gastrointestinal cramping, bone marrow suppression, and fatal toxicity if co-prescribed with strong CYP3A4 or P-gp inhibitors.'
+        : 'Inhibits uric acid synthesis. Classified as Level 3 Moderate Risk: allopurinol carries risk of severe allopurinol hypersensitivity syndrome (AHS/SJS, particularly in HLA-B*5801 carriers).',
+      monitoring: 'Renal function, serum uric acid, liver enzymes, and immediate reporting of any cutaneous rash or gastrointestinal symptoms.',
+      sentinel: isColchicine,
+    };
+  }
+
+  // 33. Respiratory Bronchodilators & Inhalers (Level 3)
+  if (/salbutamol|albuterol|formoterol|salmeterol|ipratropium|tiotropium|asthalin|foracort|inhaler/i.test(combined)) {
+    return {
+      level: 3,
+      tier: 'L3',
+      className: 'Bronchodilator (Beta2 Agonist / Antimuscarinic Inhaler)',
+      summary: 'Respiratory agent requiring monitoring for tremor, reflex tachycardia, and hypokalemia.',
+      reason: 'Stimulates pulmonary beta-2 adrenergic receptors or blocks muscarinic M3 receptors, inducing bronchial smooth muscle relaxation. Classified as Level 3 Moderate Risk: systemic absorption can cause tachycardia, palpitations, skeletal muscle tremors, and transient hypokalemia.',
+      monitoring: 'Resting pulse rate, tremor evaluation, serum potassium in high-dose therapy, and proper inhaler technique.',
+      sentinel: false,
+    };
+  }
+
+  // ─── Dynamic Fallback Generator for Any Other Unrecognized Medicine ────────
   let fallbackLevel = drugOrName?.harmLevel;
   if (!fallbackLevel) {
     const text = `${cat} ${name}`.toLowerCase();
@@ -463,13 +618,20 @@ export function getDrugHarmReason(drugOrName, category = '', composition = '') {
   if (!fallbackLevel) fallbackLevel = 3;
   const cfg = HARM_LEVELS[fallbackLevel] || HARM_LEVELS[3];
 
+  const customSafetyTip = drugOrName?.safetyTip;
+  const dynamicClassName = cat || (fallbackLevel === 5 ? 'High-Alert Sentinel Medication' : fallbackLevel === 4 ? 'High-Risk Systemic Agent' : fallbackLevel === 3 ? 'Standard Systemic Medication' : fallbackLevel === 2 ? 'Symptomatic / Gastroprotective Medication' : 'Nutritional / Supportive Formulation');
+
   return {
     level: fallbackLevel,
     tier: cfg.tier,
-    className: cat || 'Prescription Medication',
-    summary: `${cfg.label} agent under WHO/NCI clinical pharmacological scale.`,
-    reason: `${cfg.label} medication requiring clinical monitoring for organ clearance, dose tolerance, and potential pharmacokinetic interactions in polypharmacy.`,
-    monitoring: 'Routine clinical evaluation, symptom tolerance, and adherence checks.',
+    className: dynamicClassName,
+    summary: customSafetyTip || `${cfg.label} agent under WHO/NCI clinical pharmacological scale.`,
+    reason: customSafetyTip
+      ? `${cfg.label} medication. Clinical safety directive: ${customSafetyTip} Requires routine monitoring for organ clearance, metabolic tolerance, and potential pharmacokinetic interactions in multi-drug polypharmacy.`
+      : `${cfg.label} medication classified under international WHO/NCI pharmacological standards. Requires regular clinical monitoring for organ clearance, metabolic tolerance, and potential pairwise pharmacokinetic interactions in multi-drug regimens.`,
+    monitoring: fallbackLevel >= 4
+      ? 'Periodic hepatic/renal function testing, blood pressure, symptom tolerance, and physician follow-up.'
+      : 'Routine clinical evaluation, symptom tolerance, and adherence checks.',
     sentinel: fallbackLevel === 5,
   };
 }
