@@ -353,7 +353,7 @@ function PatientSummaryCard({ patientId, patientAge, patientName }) {
                     animate={{ opacity: 1, y: 0 }}
                     exit={shouldReduceMotion ? undefined : { opacity: 0, scale: 0.95 }}
                     transition={{ duration: 0.2 }}
-                    className="p-3.5 rounded-2xl bg-[var(--canvas)] shadow-[var(--shadow-sm)] flex items-center justify-between gap-3 border border-[rgba(255,255,255,0.4)]"
+                    className="p-3.5 rounded-2xl bg-[var(--canvas)] shadow-[var(--shadow-sm)] flex items-center justify-between gap-3 border border-[var(--border)]"
                   >
                     {/* Time Badge */}
                     <div className="flex items-center gap-3 min-w-0">

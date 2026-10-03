@@ -113,6 +113,95 @@ function MedicineTypeBadge({ type }) {
  );
 }
 
+// ─── Structured Medication Details Parser ─────────────────────────────
+function renderMedicationDetails(med) {
+  if (!med.dosage) return null;
+  const raw = med.dosage;
+
+  if (raw.includes('•')) {
+    const parts = raw.split('•').map((p) => p.trim()).filter(Boolean);
+    let strengthAndForm = [];
+    let schedule = null;
+    let timing = null;
+    let salts = null;
+    let manufacturer = null;
+    let others = [];
+
+    parts.forEach((part) => {
+      if (/^salts:/i.test(part)) {
+        salts = part.replace(/^salts:\s*/i, '');
+      } else if (/^mfr:/i.test(part)) {
+        manufacturer = part.replace(/^mfr:\s*/i, '');
+      } else if (/once daily|twice daily|thrice daily|every|daily/i.test(part)) {
+        schedule = part;
+      } else if (/before food|after food|with food|without food/i.test(part)) {
+        timing = part.replace(/_/g, ' ');
+      } else if (/tablet|capsule|syrup|injection|drops|cream|gel|suspension|\d+\s*(mg|mcg|ml|g)/i.test(part)) {
+        strengthAndForm.push(part);
+      } else if (part.toLowerCase() !== 'not specified') {
+        others.push(part.replace(/_/g, ' '));
+      }
+    });
+
+    return (
+      <div className="space-y-2 my-2 text-xs">
+        {/* Pills row */}
+        <div className="flex flex-wrap items-center gap-1.5">
+          {strengthAndForm.length > 0 && (
+            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg font-semibold bg-teal-500/10 text-teal-800 border border-teal-500/20 text-[11px]">
+              {strengthAndForm.join(' · ')}
+            </span>
+          )}
+          {schedule && (
+            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg font-medium bg-[var(--surface-2)] text-[var(--ink-2)] border border-[var(--border)] text-[11px]">
+              <Clock className="w-3 h-3 text-[var(--brand-600)]" />
+              {schedule}
+            </span>
+          )}
+          {timing && timing.toLowerCase() !== 'not specified' && (
+            <span className="inline-flex items-center px-2 py-0.5 rounded-lg text-[10px] font-medium bg-[var(--canvas)] text-[var(--ink-3)] border border-[var(--border)] capitalize">
+              {timing}
+            </span>
+          )}
+          {others.map((o, idx) => (
+            <span key={idx} className="inline-flex items-center px-2 py-0.5 rounded-lg text-[10px] bg-[var(--canvas)] text-[var(--ink-3)] border border-[var(--border)] capitalize">
+              {o}
+            </span>
+          ))}
+        </div>
+
+        {/* Chemical Salts / Active Formula */}
+        {salts && (
+          <div className="flex items-start gap-1.5 text-[11px] text-[var(--ink-2)] bg-[var(--canvas)]/80 px-2.5 py-1.5 rounded-xl border border-[var(--border)]">
+            <FlaskConical className="w-3.5 h-3.5 text-[var(--brand-600)] flex-shrink-0 mt-0.5" />
+            <span className="leading-snug">
+              <span className="text-[var(--ink-3)] font-medium">Composition: </span>
+              <strong className="font-semibold text-[var(--ink)]">{salts}</strong>
+            </span>
+          </div>
+        )}
+
+        {/* Manufacturer */}
+        {manufacturer && (
+          <p className="text-[10px] text-[var(--ink-3)] tracking-tight">
+            Mfr: <span className="font-medium text-[var(--ink-2)]">{manufacturer}</span>
+          </p>
+        )}
+      </div>
+    );
+  }
+
+  // Simple string fallback
+  return (
+    <div className="flex items-center gap-1.5 my-1.5 text-xs">
+      <span className="inline-flex items-center px-2.5 py-0.5 rounded-lg font-semibold bg-teal-500/10 text-teal-800 border border-teal-500/20 text-[11px]">
+        {raw}
+      </span>
+    </div>
+  );
+}
+
+
 // ─── Demo/mock data shown when not logged in (no token) ─────────────────────
 const DEMO_DATA = {
  status: 'CAUTION',
@@ -721,7 +810,7 @@ export default function HomePage() {
                     {/* Medicine info */}
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-bold text-[var(--ink)] truncate">{item.name}</p>
-                      <p className="text-xs text-[var(--ink-3)] font-mono mt-0.5 leading-relaxed">{item.dosage}</p>
+                      <p className="text-xs text-[var(--ink-2)] font-medium mt-0.5 leading-relaxed">{item.dosage}</p>
                     </div>
 
                     <MedicineTypeBadge type={item.type} />
@@ -793,9 +882,7 @@ export default function HomePage() {
                       </div>
                     </div>
 
-                    {med.dosage && (
-                      <p className="text-xs text-[var(--ink-3)] font-mono mt-0.5">{med.dosage}</p>
-                    )}
+                    {renderMedicationDetails(med)}
 
                     {/* Interactive Drug Harm & Side Effects Panel */}
                     <DrugHarmPanel medicine={med} flags={flags} className="mt-1" />

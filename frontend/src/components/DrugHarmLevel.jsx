@@ -155,7 +155,7 @@ export function KnownSideEffectsPanel({ medicineId, medicineName, defaultOpen = 
   const hasHerbs = data?.herbInteractions && data.herbInteractions.length > 0;
 
   return (
-    <div className={`rounded-xl overflow-hidden shadow-[var(--shadow-sm)] bg-[var(--canvas)] border border-[rgba(255,255,255,0.3)] ${className}`}>
+    <div className={`rounded-xl overflow-hidden shadow-[var(--shadow-sm)] bg-[var(--canvas)] border border-[var(--border)] ${className}`}>
       {/* Header bar */}
       <button
         type="button"
@@ -357,20 +357,20 @@ export function DrugHarmPanel({ medicine, flags = [], className = '' }) {
   );
 
   return (
-    <div className={`rounded-2xl overflow-hidden shadow-[var(--shadow-sm)] border border-[rgba(255,255,255,0.4)] ${className}`}>
+    <div className={`rounded-2xl overflow-hidden shadow-[var(--shadow-sm)] border border-[var(--border)] ${className}`}>
       {/* Accordion header */}
       <button
         type="button"
         onClick={() => setOpen(o => !o)}
-        className="w-full flex items-center justify-between px-3.5 py-2.5 bg-[var(--canvas)] hover:bg-[var(--border)] transition-all cursor-pointer"
+        className="w-full flex items-center justify-between px-3.5 py-2.5 bg-[var(--surface-2)] hover:bg-[var(--border)]/70 transition-all cursor-pointer"
       >
         <div className="flex items-center gap-2">
           <LedIndicator status={cfg.ledStatus} size="sm" />
-          <span className="text-xs font-mono font-bold" style={{ color: cfg.color }}>
+          <span className="text-xs font-bold font-[var(--font-heading)] tracking-tight" style={{ color: cfg.color }}>
             {cfg.tier} · {cfg.label}
           </span>
           {myFlags.length > 0 && (
-            <span className="text-[10px] font-mono bg-rose-100 text-rose-800 border border-rose-300 px-1.5 py-0.2 rounded-full font-bold">
+            <span className="text-[10px] bg-rose-100 text-rose-800 border border-rose-300 px-2 py-0.5 rounded-full font-bold">
               {myFlags.length} flag{myFlags.length !== 1 ? 's' : ''}
             </span>
           )}
@@ -521,82 +521,80 @@ export function PolypharmacyHarmDashboard({ medicines = [], flags = [], regimenR
         </div>
 
         {/* 5-Tier Spectrum Meter with Crisp Embedded Active Indicator */}
-        <div className="space-y-2.5 p-3.5 sm:p-4 rounded-2xl bg-[var(--canvas)] border border-[var(--border)] shadow-xs">
-        <div className="flex items-center justify-between text-xs font-mono font-bold text-[var(--ink)]">
-          <div className="flex items-center gap-2">
-            <span className="tracking-wider uppercase">WHO/NCI 5-Tier Spectrum</span>
-            <span className="text-[10px] px-2 py-0.5 rounded-full bg-[var(--surface-2)] text-[var(--ink-2)] border border-[var(--border)] shadow-2xs">
-              Clinical Scale
+        <div className="space-y-3 p-4 rounded-2xl bg-[var(--canvas)] border border-[var(--border)] shadow-xs">
+          <div className="flex items-center justify-between text-xs font-bold text-[var(--ink)]">
+            <div className="flex items-center gap-2">
+              <span className="tracking-wide uppercase font-[var(--font-heading)]">WHO/NCI 5-Tier Spectrum</span>
+              <span className="text-[10px] px-2 py-0.5 rounded-full bg-[var(--surface-2)] text-[var(--ink-2)] border border-[var(--border)]">
+                Clinical Harm Scale
+              </span>
+            </div>
+            <span
+              className="px-2.5 py-0.5 rounded-lg border text-xs font-extrabold shadow-2xs bg-[var(--surface)]"
+              style={{
+                borderColor: currentTierCfg.color,
+                color: currentTierCfg.color,
+              }}
+            >
+              Regimen: {currentTierCfg.tier} ({currentTierCfg.label})
             </span>
           </div>
-          <span
-            className="px-2.5 py-0.5 rounded-lg border text-xs font-extrabold shadow-2xs bg-[var(--surface)]"
-            style={{
-              borderColor: currentTierCfg.color,
-              color: currentTierCfg.color,
-            }}
-          >
-            Regimen: {currentTierCfg.tier} ({currentTierCfg.label})
-          </span>
-        </div>
 
-        {/* 5 Segmented Color Blocks */}
-        <div className="grid grid-cols-5 gap-1.5 p-1 rounded-xl bg-[var(--surface-2)] border border-[var(--border)]">
-          {[1, 2, 3, 4, 5].map((lvl, index) => {
-            const cfg = HARM_LEVELS[lvl];
-            const isCurrent = lvl === currentTierLevel;
-            return (
-              <motion.div
-                key={lvl}
-                initial={shouldReduceMotion ? false : { opacity: 0, scale: 0.95 }}
-                animate={{
-                  opacity: isCurrent ? 1 : 0.4,
-                  scale: isCurrent ? 1.0 : 0.98,
-                }}
-                transition={
-                  shouldReduceMotion
-                    ? { duration: 0 }
-                    : { delay: index * 0.05, duration: 0.2, ease: 'easeOut' }
-                }
-                className={`h-4.5 rounded-lg transition-all relative flex items-center justify-center ${cfg.barColor} ${
-                  isCurrent
-                    ? 'ring-2 ring-white/90 dark:ring-black/70 shadow-sm z-10'
-                    : 'hover:opacity-70'
-                }`}
-                title={`Level ${lvl}: ${cfg.label} ${isCurrent ? '(Current Regimen)' : ''}`}
-              >
-                {isCurrent && (
-                  <div className="w-1.5 h-1.5 rounded-full bg-white shadow-xs animate-pulse" />
-                )}
-              </motion.div>
-            );
-          })}
-        </div>
+          {/* 5 Segmented Color Blocks */}
+          <div className="grid grid-cols-5 gap-1.5 p-1 rounded-xl bg-[var(--surface-2)] border border-[var(--border)]">
+            {[1, 2, 3, 4, 5].map((lvl, index) => {
+              const cfg = HARM_LEVELS[lvl];
+              const isCurrent = lvl === currentTierLevel;
+              return (
+                <motion.div
+                  key={lvl}
+                  initial={shouldReduceMotion ? false : { opacity: 0, scale: 0.95 }}
+                  animate={{
+                    opacity: isCurrent ? 1 : 0.45,
+                    scale: isCurrent ? 1.0 : 0.98,
+                  }}
+                  transition={
+                    shouldReduceMotion
+                      ? { duration: 0 }
+                      : { delay: index * 0.05, duration: 0.2, ease: 'easeOut' }
+                  }
+                  className={`h-4 rounded-lg transition-all relative flex items-center justify-center ${cfg.barColor} ${
+                    isCurrent
+                      ? 'ring-2 ring-white/90 shadow-sm z-10'
+                      : 'hover:opacity-75'
+                  }`}
+                  title={`Level ${lvl}: ${cfg.label} ${isCurrent ? '(Current Regimen)' : ''}`}
+                >
+                  {isCurrent && (
+                    <div className="w-1.5 h-1.5 rounded-full bg-white shadow-xs animate-pulse" />
+                  )}
+                </motion.div>
+              );
+            })}
+          </div>
 
-        {/* 5 Uniformly Aligned Labels on Same Baseline */}
-        <div className="grid grid-cols-5 gap-1.5 text-center font-mono items-center">
-          {[1, 2, 3, 4, 5].map((lvl) => {
-            const cfg = HARM_LEVELS[lvl];
-            const isCurrent = lvl === currentTierLevel;
-            return (
-              <div key={lvl} className="flex justify-center">
-                {isCurrent ? (
+          {/* 5 Uniformly Aligned Labels on Same Baseline */}
+          <div className="grid grid-cols-5 gap-1.5 text-center items-center">
+            {[1, 2, 3, 4, 5].map((lvl) => {
+              const cfg = HARM_LEVELS[lvl];
+              const isCurrent = lvl === currentTierLevel;
+              return (
+                <div key={lvl} className="flex justify-center">
                   <span
-                    className="w-full py-0.5 px-1 rounded-md text-[10px] sm:text-[11px] font-black tracking-wider bg-[var(--canvas)] border shadow-[var(--shadow-sm)] truncate"
-                    style={{ borderColor: cfg.color, color: cfg.color }}
+                    className={`w-full py-1 px-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-wider truncate border transition-all ${
+                      isCurrent
+                        ? 'bg-[var(--surface)] shadow-xs font-extrabold'
+                        : 'bg-transparent border-transparent text-[var(--ink-3)]'
+                    }`}
+                    style={isCurrent ? { borderColor: cfg.color, color: cfg.color } : {}}
                   >
                     {cfg.shortLabel}
                   </span>
-                ) : (
-                  <span className="text-[10px] font-bold text-[var(--ink-3)] opacity-60 py-0.5 truncate">
-                    {cfg.shortLabel}
-                  </span>
-                )}
-              </div>
-            );
-          })}
+                </div>
+              );
+            })}
+          </div>
         </div>
-      </div>
       </div>
     </Card>
   );

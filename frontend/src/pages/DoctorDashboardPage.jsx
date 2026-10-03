@@ -1879,7 +1879,7 @@ function ConnectionsList({ onSelect, selectedId }) {
                 className={`p-3 rounded-2xl cursor-pointer transition-all border ${
                   isSelected
                     ? 'bg-[var(--surface)] border-[var(--doctor-600)] shadow-[var(--shadow-sm)] ring-2 ring-[var(--doctor-600)]/20'
-                    : 'bg-[var(--surface)]/70 hover:bg-[var(--surface)] border-[rgba(255,255,255,0.6)] hover:border-[var(--doctor-600)]/30 hover:shadow-[var(--shadow-xs)]'
+                    : 'bg-[var(--surface)]/70 hover:bg-[var(--surface)] border-[var(--border)] hover:border-[var(--doctor-600)]/30 hover:shadow-[var(--shadow-xs)]'
                 }`}
               >
                 <div className="flex items-center gap-3">

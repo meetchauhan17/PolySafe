@@ -267,7 +267,7 @@ export default function Navbar() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.95, y: 10 }}
               transition={{ type: 'spring', damping: 30, stiffness: 400 }}
-              className="relative z-10 w-full max-w-sm bg-[var(--canvas)] rounded-[28px] p-6 shadow-[var(--shadow-lg)] border border-[rgba(255,255,255,0.4)] text-left space-y-4"
+              className="relative z-10 w-full max-w-sm bg-[var(--canvas)] rounded-[28px] p-6 shadow-[var(--shadow-lg)] border border-[var(--border)] text-left space-y-4"
               role="dialog"
               aria-modal="true"
             >

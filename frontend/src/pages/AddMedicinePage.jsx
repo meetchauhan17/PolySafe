@@ -477,7 +477,7 @@ function LiveCameraModal({ isOpen, onClose, onCapture }) {
 
  return (
  <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
- <div className="bg-[var(--canvas)] rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl border border-[rgba(255,255,255,0.4)] flex flex-col animate-fadeIn">
+ <div className="bg-[var(--canvas)] rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl border border-[var(--border)] flex flex-col animate-fadeIn">
  <div className="p-4 flex items-center justify-between border-b border-[var(--border)]">
  <div className="flex items-center space-x-2">
  <Camera className="w-5 h-5 text-[var(--brand-600)]" />
@@ -573,7 +573,7 @@ function BarcodeModal({ isOpen, onClose, onSelect }) {
 
  return (
  <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
- <div className="bg-[var(--canvas)] rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl border border-[rgba(255,255,255,0.4)] animate-fadeIn">
+ <div className="bg-[var(--canvas)] rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl border border-[var(--border)] animate-fadeIn">
  <div className="flex items-center justify-between">
  <div className="flex items-center space-x-2">
  <QrCode className="w-5 h-5 text-[var(--brand-600)]" />
@@ -883,7 +883,7 @@ function ScanResultsReviewCard({ scanResult, onDismiss, onBatchAdd }) {
 
  {/* ── Active Constituent Chemical Salts Decomposition Badges ── */}
  {salts.length > 0 && (
- <div className="p-3 bg-[var(--border)]/80 rounded-xl border border-[rgba(255,255,255,0.4)] space-y-1.5 shadow-[var(--shadow-sm)]">
+ <div className="p-3 bg-[var(--border)]/80 rounded-xl border border-[var(--border)] space-y-1.5 shadow-[var(--shadow-sm)]">
  <div className="flex items-center space-x-1.5 text-[11px] font-bold text-[var(--brand-600)]">
  <FlaskConical className="w-3.5 h-3.5" />
  <span>Active Chemical Salts Breakdown:</span>
@@ -1749,7 +1749,7 @@ export default function AddMedicinePage() {
  className="space-y-4"
  >
  {/* Mode Switcher: Single Photo vs Two-Sided Scan */}
-					<div className="flex items-center gap-1.5 p-1.5 bg-[var(--canvas)] border border-[rgba(255,255,255,0.4)] rounded-2xl shadow-[var(--shadow-inner)] mb-4">
+					<div className="flex items-center gap-1.5 p-1.5 bg-[var(--canvas)] border border-[var(--border)] rounded-2xl shadow-[var(--shadow-inner)] mb-4">
 						<button
 							type="button"
 							onClick={() => setScanMode('single')}
@@ -1803,7 +1803,7 @@ export default function AddMedicinePage() {
  if (isGuest) { requireAuth('use the live camera scanner'); return; }
  setIsLiveCameraOpen(true);
  }}
- className="p-4 rounded-2xl border border-[rgba(255,255,255,0.4)] bg-[var(--canvas)] shadow-[var(--shadow-sm)] hover:border-[var(--brand-600)] hover:-translate-y-0.5 active:translate-y-0.5 transition-all text-center flex flex-col items-center justify-center gap-2 cursor-pointer group"
+ className="p-4 rounded-2xl border border-[var(--border)] bg-[var(--canvas)] shadow-[var(--shadow-sm)] hover:border-[var(--brand-600)] hover:-translate-y-0.5 active:translate-y-0.5 transition-all text-center flex flex-col items-center justify-center gap-2 cursor-pointer group"
  >
  <div className="p-3 rounded-xl bg-[var(--brand-600)]/10 text-[var(--brand-600)] group-hover:bg-[var(--brand-600)] group-hover:text-white transition-colors">
  <Camera className="w-5 h-5" />
@@ -1818,7 +1818,7 @@ export default function AddMedicinePage() {
  <button
  type="button"
  onClick={() => fileInputRef.current?.click()}
- className="p-4 rounded-2xl border border-[rgba(255,255,255,0.4)] bg-[var(--canvas)] shadow-[var(--shadow-sm)] hover:border-[var(--brand-600)] hover:-translate-y-0.5 active:translate-y-0.5 transition-all text-center flex flex-col items-center justify-center gap-2 cursor-pointer group"
+ className="p-4 rounded-2xl border border-[var(--border)] bg-[var(--canvas)] shadow-[var(--shadow-sm)] hover:border-[var(--brand-600)] hover:-translate-y-0.5 active:translate-y-0.5 transition-all text-center flex flex-col items-center justify-center gap-2 cursor-pointer group"
  >
  <div className="p-3 rounded-xl bg-[var(--brand-600)]/10 text-[var(--brand-600)] group-hover:bg-[var(--brand-600)] group-hover:text-white transition-colors">
  <FileImage className="w-5 h-5" />
@@ -1836,7 +1836,7 @@ export default function AddMedicinePage() {
  if (isGuest) { requireAuth('scan barcodes'); return; }
  setIsBarcodeModalOpen(true);
  }}
- className="p-4 rounded-2xl border border-[rgba(255,255,255,0.4)] bg-[var(--canvas)] shadow-[var(--shadow-sm)] hover:border-[var(--brand-600)] hover:-translate-y-0.5 active:translate-y-0.5 transition-all text-center flex flex-col items-center justify-center gap-2 cursor-pointer group"
+ className="p-4 rounded-2xl border border-[var(--border)] bg-[var(--canvas)] shadow-[var(--shadow-sm)] hover:border-[var(--brand-600)] hover:-translate-y-0.5 active:translate-y-0.5 transition-all text-center flex flex-col items-center justify-center gap-2 cursor-pointer group"
  >
  <div className="p-3 rounded-xl bg-[var(--brand-600)]/10 text-[var(--brand-600)] group-hover:bg-[var(--brand-600)] group-hover:text-white transition-colors">
  <QrCode className="w-5 h-5" />
@@ -1980,7 +1980,7 @@ export default function AddMedicinePage() {
  <div className="space-y-3">
  {previewUrl && (
  <div className="relative">
- <img src={previewUrl} alt="Prescription" className="w-full max-h-44 object-contain rounded-xl border border-[rgba(255,255,255,0.4)] bg-[var(--canvas)] p-1 shadow-[var(--shadow-sm)]" />
+ <img src={previewUrl} alt="Prescription" className="w-full max-h-44 object-contain rounded-xl border border-[var(--border)] bg-[var(--canvas)] p-1 shadow-[var(--shadow-sm)]" />
  <span className="absolute top-2 right-2 inline-flex items-center gap-1 text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-[var(--brand-600)]/15 text-[var(--brand-600)] border border-[var(--brand-600)]/30 backdrop-blur-xs shadow-xs">
  <Camera className="w-3 h-3 text-[var(--brand-600)]" /> From scan
  </span>
@@ -2282,7 +2282,7 @@ export default function AddMedicinePage() {
  SECTION 1: MEDICINE IDENTITY & ACTIVE CHEMICAL COMPOSITION
  ════════════════════════════════════════════════════════════════════ */}
  <div className="space-y-4">
- <div className="flex items-center justify-between pb-2 border-b border-[rgba(255,255,255,0.4)]">
+ <div className="flex items-center justify-between pb-2 border-b border-[var(--border)]">
  <div className="flex items-center gap-2">
  <span className="flex items-center justify-center w-5 h-5 rounded-full bg-[var(--brand-600)]/10 text-[var(--brand-600)] text-xs font-black">
  1
@@ -2428,7 +2428,7 @@ export default function AddMedicinePage() {
 
  {/* Decomposed Active Chemical Salts Badges */}
  {compositionSalts.length > 0 && (
- <div className="p-3 bg-[var(--canvas)] rounded-xl border border-[rgba(255,255,255,0.4)] shadow-[var(--shadow-sm)] space-y-1.5">
+ <div className="p-3 bg-[var(--canvas)] rounded-xl border border-[var(--border)] shadow-[var(--shadow-sm)] space-y-1.5">
  <span className="text-[10px] font-bold text-[var(--ink-3)] uppercase tracking-wider block">
  Decomposed Chemical Salts ({compositionSalts.length}):
  </span>
@@ -2841,7 +2841,7 @@ export default function AddMedicinePage() {
  SECTION 2: PACKAGING & MANUFACTURER DETAILS (STRIP / BOX)
  ════════════════════════════════════════════════════════════════════ */}
  <div className="space-y-4 pt-2">
- <div className="flex items-center justify-between pb-2 border-b border-[rgba(255,255,255,0.4)]">
+ <div className="flex items-center justify-between pb-2 border-b border-[var(--border)]">
  <div className="flex items-center gap-2">
  <span className="flex items-center justify-center w-5 h-5 rounded-full bg-[var(--brand-600)]/10 text-[var(--brand-600)] text-xs font-black">
  2
@@ -2919,7 +2919,7 @@ export default function AddMedicinePage() {
  SECTION 3: ⏰ DOSAGE SCHEDULE & ADMINISTRATION (PRESCRIPTION)
  ════════════════════════════════════════════════════════════════════ */}
  <div className="space-y-4 pt-2">
- <div className="flex items-center justify-between pb-2 border-b border-[rgba(255,255,255,0.4)]">
+ <div className="flex items-center justify-between pb-2 border-b border-[var(--border)]">
  <div className="flex items-center gap-2">
  <span className="flex items-center justify-center w-5 h-5 rounded-full bg-[var(--brand-600)]/10 text-[var(--brand-600)] text-xs font-black">
  3
@@ -3101,7 +3101,7 @@ export default function AddMedicinePage() {
             </div>
 
             {/* Medicine Name & Indication Bar */}
-            <div className="p-3.5 rounded-xl bg-[var(--border)]/50 border border-[rgba(255,255,255,0.06)] space-y-2">
+            <div className="p-3.5 rounded-xl bg-[var(--border)]/50 border border-[var(--border)] space-y-2">
               <div className="flex flex-wrap items-baseline justify-between gap-2">
                 <div className="flex items-center gap-2">
                   <Pill className="w-4 h-4 text-[var(--brand-600)]" />
@@ -3156,7 +3156,7 @@ export default function AddMedicinePage() {
 
             {/* Dose Frequency & Timing Schedule Strip */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs">
-              <div className="p-2.5 rounded-xl bg-[var(--canvas)] border border-[rgba(255,255,255,0.06)] space-y-1">
+              <div className="p-2.5 rounded-xl bg-[var(--canvas)] border border-[var(--border)] space-y-1">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--ink-3)] flex items-center gap-1">
                   <Clock className="w-3 h-3 text-[var(--brand-600)]" />
                   Frequency
@@ -3170,7 +3170,7 @@ export default function AddMedicinePage() {
                 </p>
               </div>
 
-              <div className="p-2.5 rounded-xl bg-[var(--canvas)] border border-[rgba(255,255,255,0.06)] space-y-1">
+              <div className="p-2.5 rounded-xl bg-[var(--canvas)] border border-[var(--border)] space-y-1">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--ink-3)] flex items-center gap-1">
                   <Sun className="w-3 h-3 text-[var(--brand-600)]" />
                   Active Timing Slots
@@ -3191,7 +3191,7 @@ export default function AddMedicinePage() {
                 </div>
               </div>
 
-              <div className="p-2.5 rounded-xl bg-[var(--canvas)] border border-[rgba(255,255,255,0.06)] space-y-1">
+              <div className="p-2.5 rounded-xl bg-[var(--canvas)] border border-[var(--border)] space-y-1">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--ink-3)] flex items-center gap-1">
                   <CalendarDays className="w-3 h-3 text-[var(--brand-600)]" />
                   Meal Instruction

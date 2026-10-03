@@ -312,7 +312,7 @@ function ConnectionRow({ conn, onRevoke, revoking, onApprove, approving, customL
               {conn.shareCode.split('').map((digit, idx) => (
                 <span
                   key={idx}
-                  className="w-8 h-10 sm:w-10 sm:h-12 rounded-xl bg-[var(--surface-2)] border border-[rgba(255,255,255,0.8)]  shadow-sm flex items-center justify-center font-mono font-black text-base sm:text-xl text-[var(--brand-600)] transition-transform hover:scale-105"
+                  className="w-8 h-10 sm:w-10 sm:h-12 rounded-xl bg-[var(--surface-2)] border border-[var(--border)]  shadow-sm flex items-center justify-center font-mono font-black text-base sm:text-xl text-[var(--brand-600)] transition-transform hover:scale-105"
                 >
                   {digit}
                 </span>
@@ -332,7 +332,7 @@ function ConnectionRow({ conn, onRevoke, revoking, onApprove, approving, customL
 
               <Link
                 to="/share-with-doctor"
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-[var(--canvas)] hover:bg-[var(--border)] text-[var(--ink)] border border-[rgba(255,255,255,0.7)]  shadow-xs transition-all active:scale-95"
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-[var(--canvas)] hover:bg-[var(--border)] text-[var(--ink)] border border-[var(--border)]  shadow-xs transition-all active:scale-95"
               >
                 <QrCode className="w-3.5 h-3.5 text-[var(--brand-600)]" />
                 <span>Show QR</span>
@@ -343,7 +343,7 @@ function ConnectionRow({ conn, onRevoke, revoking, onApprove, approving, customL
       ) : null}
 
       {/* ── Footer Row: Security Metadata + Cancel / Revoke Action ── */}
-      <div className="pt-2 border-t border-[rgba(255,255,255,0.4)]  flex items-center justify-between gap-3">
+      <div className="pt-2 border-t border-[var(--border)]  flex items-center justify-between gap-3">
         <div className="flex items-center gap-1.5 text-[11px] font-mono text-[var(--ink-3)]">
           <Lock className="w-3 h-3 text-[var(--brand-600)]" />
           <span>{isPending ? 'Single-use physician authorization' : 'HIPAA compliant read-only link'}</span>
@@ -500,7 +500,7 @@ function AddCaregiverPanel({ onSuccess }) {
       className="space-y-4"
     >
       {/* Method Selection Tabs */}
-      <div className="flex rounded-xl bg-[var(--canvas)] p-1 border border-[rgba(255,255,255,0.4)]  gap-1">
+      <div className="flex rounded-xl bg-[var(--canvas)] p-1 border border-[var(--border)]  gap-1">
         <button
           type="button"
           onClick={() => { setInviteMethod('PHONE'); setError(''); }}
@@ -556,7 +556,7 @@ function AddCaregiverPanel({ onSuccess }) {
             <span>Invite Created for {invitedData.name ? `${invitedData.name} (${invitedData.relation})` : (invitedData.phone || invitedData.email)}</span>
           </div>
 
-          <div className="p-3 rounded-xl bg-[var(--canvas)] border border-[rgba(255,255,255,0.4)]  space-y-1.5">
+          <div className="p-3 rounded-xl bg-[var(--canvas)] border border-[var(--border)]  space-y-1.5">
             <p className="text-[10px] font-mono uppercase tracking-wider text-[var(--ink-3)] font-bold">
               Ready-to-send Invite Message:
             </p>
@@ -643,7 +643,7 @@ function AddCaregiverPanel({ onSuccess }) {
               </div>
 
               {/* QR Code and 6-Digit PIN Side-by-Side Layout */}
-              <div className="flex flex-col sm:flex-row items-center gap-4 bg-[var(--canvas)] p-4 rounded-xl border border-[rgba(255,255,255,0.4)]  shadow-xs">
+              <div className="flex flex-col sm:flex-row items-center gap-4 bg-[var(--canvas)] p-4 rounded-xl border border-[var(--border)]  shadow-xs">
                 {/* QR Code Image */}
                 {generatedPinData.qrCode && (
                   <div className="p-2 bg-[var(--canvas)] rounded-xl shadow-xs border border-teal-500/30 flex-shrink-0">
@@ -665,7 +665,7 @@ function AddCaregiverPanel({ onSuccess }) {
                     {generatedPinData.shareCode.split('').map((digit, idx) => (
                       <span
                         key={idx}
-                        className="w-8 h-10 sm:w-9 sm:h-11 rounded-xl bg-[var(--surface-2)] border border-[rgba(255,255,255,0.6)]  shadow-xs flex items-center justify-center font-mono font-extrabold text-base sm:text-lg text-[var(--brand-600)]"
+                        className="w-8 h-10 sm:w-9 sm:h-11 rounded-xl bg-[var(--surface-2)] border border-[var(--border)]  shadow-xs flex items-center justify-center font-mono font-extrabold text-base sm:text-lg text-[var(--brand-600)]"
                       >
                         {digit}
                       </span>
@@ -793,7 +793,7 @@ function AddCaregiverPanel({ onSuccess }) {
                   className={`px-3 py-1 rounded-full text-xs font-semibold transition-all cursor-pointer ${
                     relation === opt
                       ? 'bg-[var(--brand-600)] text-white shadow-xs scale-102 font-bold'
-                      : 'bg-[var(--canvas)] text-[var(--ink-3)] hover:text-[var(--ink)] border border-[rgba(255,255,255,0.4)] '
+                      : 'bg-[var(--canvas)] text-[var(--ink-3)] hover:text-[var(--ink)] border border-[var(--border)] '
                   }`}
                 >
                   {opt}
@@ -824,7 +824,7 @@ function AddCaregiverPanel({ onSuccess }) {
       )}
 
       {/* Privacy reassurance note */}
-      <div className="p-3 rounded-xl bg-[var(--canvas)] border border-[rgba(255,255,255,0.4)]  flex items-start gap-2">
+      <div className="p-3 rounded-xl bg-[var(--canvas)] border border-[var(--border)]  flex items-start gap-2">
         <ShieldCheck className="w-4 h-4 text-emerald-600  flex-shrink-0 mt-0.5" />
         <p className="text-[11px] text-[var(--ink-3)] leading-relaxed">
           <strong>Privacy Safeguard:</strong> Caregivers only see adherence compliance status (Safe / Caution / Critical) and today's schedule reminder times. No sensitive symptoms or medical notes are exposed.

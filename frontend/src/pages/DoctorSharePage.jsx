@@ -230,7 +230,7 @@ export default function DoctorSharePage() {
  {/* QR Code */}
  {codeData.qrCode && (
  <div className="flex justify-center">
- <div className="p-3 bg-[var(--border)] shadow-[var(--shadow-inner)] rounded-2xl border border-[rgba(255,255,255,0.4)]">
+ <div className="p-3 bg-[var(--border)] shadow-[var(--shadow-inner)] rounded-2xl border border-[var(--border)]">
  <img
  src={codeData.qrCode}
  alt="QR code for doctor"
