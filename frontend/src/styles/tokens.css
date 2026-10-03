@@ -1,305 +1,168 @@
 /**
- * PolySafe Design System — v6.0
- * Lavender Periwinkle × Indigo-Violet
- * Background: soft lavender-periwinkle gradient (#e8eaf6 → #dde1f5)
- * Primary: Indigo (#6366f1) · Secondary: Violet (#7c3aed)
+ * PolySafe Design System — "Clinical Calm" v7.0
+ * Palette: Deep Teal × Slate × Clean White
+ * Direction: Flat, airy, high-contrast, trustworthy.
+ * Depth from layered surfaces and 1px borders, never neumorphism.
  */
 
+/* ═══════════════════════════════════════════════════════════════
+   BASE TOKENS (Light theme — default)
+   ═══════════════════════════════════════════════════════════════ */
 :root {
-  /* ── CHASSIS & SURFACES — Soft Lavender-Periwinkle ── */
-  --chassis:       #e8eaf6;        /* Page canvas — matches screenshot */
-  --chassis-dark:  #d4d8ee;        /* Divider / border */
-  --chassis-panel: #f0f1fa;        /* Inner panel surface */
-  --chassis-light: #f7f8ff;        /* Card surface — near-white with violet tint */
-  --panel:         #f0f1fa;
+  /* ── CANVAS & SURFACES ── */
+  --canvas:       #F6F8FB;
+  --surface:      #FFFFFF;
+  --surface-2:    #EEF2F7;
+  --border:       #E2E8F0;
+  --border-strong:#CBD5E1;
 
-  /* ── TEXT ── */
-  --text-primary:   #1e1b4b;       /* Indigo 950 — authoritative, warm dark */
-  --text-secondary: #3730a3;       /* Indigo 800 — subtitle & secondary text */
-  --text-muted:     #6366f1;       /* Indigo 500 — muted details */
-  --text-inverse:   #ffffff;
+  /* ── INK (Text) ── */
+  --ink:          #0B1B2B;
+  --ink-2:        #334155;
+  --ink-3:        #64748B;
 
-  /* ── PRIMARY ACCENT — Indigo ── */
-  --accent-primary:       #6366f1;   /* Indigo 500 */
-  --accent-primary-dark:  #4f46e5;   /* Indigo 600 */
-  --accent-primary-light: #e0e7ff;   /* Indigo 100 */
-  --accent-primary-glow:  rgba(99, 102, 241, 0.28);
+  /* ── BRAND (Teal) ── */
+  --brand-50:     #ECFEFF;
+  --brand-100:    #CFFAFE;
+  --brand-600:    #0E7490;
+  --brand-700:    #0B5E75;
 
-  /* ── SECONDARY ACCENT — Violet ── */
-  --accent-secondary:      #7c3aed;  /* Violet 600 */
-  --accent-secondary-dark: #6d28d9;  /* Violet 700 */
-  --accent-secondary-light:#ede9fe;  /* Violet 100 */
-  --accent-secondary-glow: rgba(124, 58, 237, 0.25);
+  /* ── ROLE COLORS ── */
+  --doctor-600:   #2563EB;
+  --doctor-50:    #EFF6FF;
+  --doctor-100:   #DBEAFE;
+  --caregiver-600:#0D9488;
+  --caregiver-50: #F0FDFA;
+  --caregiver-100:#CCFBF1;
 
-  /* ── ROLE IDENTITY ── */
-  --role-patient:      #6366f1;      /* Indigo — patient */
-  --role-patient-dark: #4f46e5;
-  --role-patient-glow: rgba(99, 102, 241, 0.28);
+  /* ── CLINICAL STATUS ── */
+  --safe-fg:      #15803D;
+  --safe-bg:      #DCFCE7;
+  --caution-fg:   #B45309;
+  --caution-bg:   #FEF3C7;
+  --critical-fg:  #B91C1C;
+  --critical-bg:  #FEE2E2;
+  --unknown-fg:   #475569;
+  --unknown-bg:   #E2E8F0;
 
-  --role-doctor:       #7c3aed;      /* Violet — doctor */
-  --role-doctor-dark:  #6d28d9;
-  --role-doctor-glow:  rgba(124, 58, 237, 0.25);
+  /* ── HARM TIERS (L1–L5) ── */
+  --harm-l1:      #15803D;
+  --harm-l1-bg:   #DCFCE7;
+  --harm-l2:      #65A30D;
+  --harm-l2-bg:   #ECFCCB;
+  --harm-l3:      #CA8A04;
+  --harm-l3-bg:   #FEF9C3;
+  --harm-l4:      #EA580C;
+  --harm-l4-bg:   #FFEDD5;
+  --harm-l5:      #B91C1C;
+  --harm-l5-bg:   #FEE2E2;
 
-  --role-caregiver:    #0891b2;      /* Teal — caregiver (contrast color) */
-  --role-caregiver-dark: #0670a0;
-  --role-caregiver-glow: rgba(8, 145, 178, 0.25);
-
-  /* ── CLINICAL LED INDICATORS (kept distinct for safety clarity) ── */
-  --led-safe:          #16a34a;
-  --led-safe-glow:     rgba(22, 163, 74, 0.45);
-  --led-caution:       #d97706;
-  --led-caution-glow:  rgba(217, 119, 6, 0.45);
-  --led-critical:      #dc2626;
-  --led-critical-glow: rgba(220, 38, 38, 0.45);
-  --led-online:        #6366f1;      /* Indigo online indicator */
-  --led-online-glow:   rgba(99, 102, 241, 0.45);
-  --led-offline:       #a5b4fc;      /* Light indigo offline */
-  --led-offline-glow:  rgba(165, 180, 252, 0.35);
-
-  /* ── SHADOW COLOURS ── */
-  --shadow-light: rgba(255, 255, 255, 0.90);
-  --shadow-dark:  rgba(49, 46, 129, 0.08);  /* indigo-tinted shadow */
-
-  /* ── SHADOW SYSTEM ── */
-  --shadow-card:          0 1px 3px 0 rgba(99,102,241,0.06), 0 1px 2px -1px rgba(49,46,129,0.05), 0 0 0 1px rgba(196,201,239,0.90);
-  --shadow-card-hover:    0 6px 18px -3px rgba(99,102,241,0.14), 0 2px 6px -2px rgba(49,46,129,0.08), 0 0 0 1px rgba(165,180,252,0.80);
-  --shadow-floating:      0 12px 32px -6px rgba(99,102,241,0.18), 0 4px 12px -3px rgba(49,46,129,0.10), 0 0 0 1px rgba(196,201,239,0.90);
-  --shadow-pressed:       inset 0 1px 3px 0 rgba(49, 46, 129, 0.10);
-  --shadow-recessed:      inset 0 1px 2px 0 rgba(49, 46, 129, 0.08);
-  --shadow-recessed-deep: inset 0 2px 5px 0 rgba(49, 46, 129, 0.12);
-  --shadow-sm:            0 1px 2px 0 rgba(99,102,241,0.07), 0 0 0 1px rgba(196,201,239,0.85);
-  --shadow-accent-primary: 0 4px 14px -2px rgba(99, 102, 241, 0.35);
-  --shadow-accent-pressed: inset 0 2px 4px rgba(79, 70, 229, 0.30);
-  --shadow-accent-teal:    0 4px 14px -2px rgba(124, 58, 237, 0.30);
-  --shadow-accent-teal-pressed: inset 0 2px 4px rgba(109, 40, 217, 0.28);
-
-  /* ── BRAND SUB-SURFACES & BORDERS ── */
-  --brand-surface:        #f7f8ff;
-  --brand-paper:          #f0f1fa;
-  --brand-clay:           #e8eaf6;
-  --brand-sub-surface:    #eef0f9;
-  --brand-surface-subtle: #f0f1fa;
-  --brand-card:           #f7f8ff;
-  --brand-border:         #d4d8ee;
-  --brand-border-visible: #c4c9e8;
-  --brand-border-subtle:  #dce0f4;
-  --brand-text:           var(--text-primary);
-  --brand-muted:          var(--text-muted);
-  --brand-subtle:         var(--text-secondary);
-  --brand-primary:        var(--accent-primary);
-  --brand-primary-hover:  var(--accent-primary-dark);
-  --brand-primary-active: var(--accent-primary-dark);
-  --brand-primary-light:  var(--accent-primary-light);
-  --brand-primary-muted:  rgba(99, 102, 241, 0.12);
-
-  /* ── BORDER RADIUS ── */
-  --radius-sm:   4px;
-  --radius-md:   8px;
-  --radius-lg:   12px;
-  --radius-xl:   16px;
-  --radius-2xl:  20px;
-  --radius-full: 9999px;
+  /* ── SHADOWS ── */
+  --shadow-sm:    0 1px 2px rgba(11,27,43,.06);
+  --shadow-md:    0 4px 12px -2px rgba(11,27,43,.08);
+  --shadow-lg:    0 16px 32px -8px rgba(11,27,43,.16);
+  --shadow-focus: 0 0 0 3px rgba(14,116,144,.35);
+  --shadow-inner: inset 0 1px 3px rgba(11,27,43,.06);
 
   /* ── TYPOGRAPHY ── */
-  --font-display: 'Outfit', 'Inter', sans-serif;
-  --font-body:    'Inter', sans-serif;
-  --font-mono:    'JetBrains Mono', 'Roboto Mono', monospace;
+  --font-heading: 'Plus Jakarta Sans Variable', 'Plus Jakarta Sans', system-ui, sans-serif;
+  --font-body:    'Source Sans 3 Variable', 'Source Sans 3', system-ui, sans-serif;
+  --font-mono:    'JetBrains Mono Variable', 'JetBrains Mono', 'Roboto Mono', monospace;
+  --font-size-base: 17px;
 
-  /* ── NEUMORPHIC ALIASES ── */
-  --neu-extruded:         var(--shadow-card);
-  --neu-extruded-hover:   var(--shadow-card-hover);
-  --neu-extruded-sm:      var(--shadow-sm);
-  --neu-inset:            var(--shadow-pressed);
-  --neu-inset-deep:       var(--shadow-recessed-deep);
-  --neu-inset-sm:         var(--shadow-recessed);
-  --status-safe:          var(--led-safe);
-  --status-safe-bg:       #dcfce7;
-  --status-safe-border:   var(--led-safe);
-  --status-safe-text:     #14532d;
-  --status-caution:       var(--led-caution);
-  --status-caution-bg:    #fef3c7;
-  --status-caution-border: var(--led-caution);
-  --status-caution-text:  #78350f;
-  --status-danger:        var(--led-critical);
-  --status-danger-bg:     #fee2e2;
-  --status-danger-border: var(--led-critical);
-  --status-danger-text:   #7f1d1d;
-  --role-doctor-bg:       #ede9fe;
-  --role-doctor-border:   rgba(124, 58, 237, 0.30);
-  --role-caregiver-bg:    #cffafe;
-  --role-caregiver-border: rgba(8, 145, 178, 0.30);
-  --font-heading:         var(--font-display);
-  --radius-card:          var(--radius-2xl);
-  --radius-interactive:   var(--radius-2xl);
-  --radius-button:        var(--radius-lg);
-  --radius-input:         var(--radius-md);
-  --radius-inner:         var(--radius-md);
-  --radius-chip:          var(--radius-md);
-  --radius-well:          var(--radius-full);
-  --radius-pill:          var(--radius-full);
+  /* ── BORDER RADIUS ── */
+  --radius-sm:    8px;
+  --radius-md:    12px;
+  --radius-lg:    16px;
+  --radius-xl:    24px;
+  --radius-full:  9999px;
+
+  /* ── MOTION ── */
+  --ease-standard:   cubic-bezier(.2,0,0,1);
+  --ease-emphasized: cubic-bezier(.16,1,.3,1);
+  --dur-fast:   120ms;
+  --dur-base:   200ms;
+  --dur-slow:   320ms;
+  --dur-slower: 600ms;
 }
 
-/* ══════════════════════════════════════════════════════════════════════════
-   LIGHT MODE TOKENS — Lavender Periwinkle palette
-   ══════════════════════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════════
+   LIGHT THEME (explicit)
+   ═══════════════════════════════════════════════════════════════ */
 [data-theme="light"] {
-  --chassis:       #e8eaf6;
-  --chassis-dark:  #d4d8ee;
-  --chassis-panel: #f0f1fa;
-  --chassis-light: #f7f8ff;
-  --panel:         #f0f1fa;
-  --brand-surface: #f7f8ff;
-  --brand-card:    #f7f8ff;
-
-  --text-primary:   #1e1b4b;
-  --text-secondary: #3730a3;
-  --text-muted:     #6366f1;
-  --text-inverse:   #ffffff;
-
-  --accent-primary:       #6366f1;
-  --accent-primary-dark:  #4f46e5;
-  --accent-primary-light: #e0e7ff;
-  --accent-primary-glow:  rgba(99, 102, 241, 0.28);
-
-  --accent-secondary:      #7c3aed;
-  --accent-secondary-dark: #6d28d9;
-  --accent-secondary-light:#ede9fe;
-  --accent-secondary-glow: rgba(124, 58, 237, 0.25);
-
-  --role-patient:      #6366f1;
-  --role-doctor:       #7c3aed;
-  --role-caregiver:    #0891b2;
-
-  --led-safe:          #16a34a;
-  --led-safe-glow:     rgba(22, 163, 74, 0.45);
-  --led-caution:       #d97706;
-  --led-caution-glow:  rgba(217, 119, 6, 0.45);
-  --led-critical:      #dc2626;
-  --led-critical-glow: rgba(220, 38, 38, 0.45);
-  --led-online:        #6366f1;
-  --led-online-glow:   rgba(99, 102, 241, 0.45);
-  --led-offline:       #a5b4fc;
-  --led-offline-glow:  rgba(165, 180, 252, 0.35);
-
-  --shadow-light: rgba(255, 255, 255, 0.90);
-  --shadow-dark:  rgba(49, 46, 129, 0.08);
-  --brand-border:         #d4d8ee;
-  --brand-border-visible: #c4c9e8;
-  --brand-border-subtle:  #dce0f4;
+  --canvas:       #F6F8FB;
+  --surface:      #FFFFFF;
+  --surface-2:    #EEF2F7;
+  --border:       #E2E8F0;
+  --border-strong:#CBD5E1;
+  --ink:          #0B1B2B;
+  --ink-2:        #334155;
+  --ink-3:        #64748B;
+  --brand-600:    #0E7490;
+  --brand-700:    #0B5E75;
+  --safe-fg:      #15803D;
+  --safe-bg:      #DCFCE7;
+  --caution-fg:   #B45309;
+  --caution-bg:   #FEF3C7;
+  --critical-fg:  #B91C1C;
+  --critical-bg:  #FEE2E2;
+  --unknown-fg:   #475569;
+  --unknown-bg:   #E2E8F0;
 }
 
-
-/* ══════════════════════════════════════════════════════════════════════════
-   DARK MODE TOKENS
-   Applied via [data-theme="dark"] on <html> or <body>.
-   ══════════════════════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════════
+   DARK THEME
+   ═══════════════════════════════════════════════════════════════ */
 [data-theme="dark"] {
-  /* ── CHASSIS (Midnight Blue-Slate) ── */
-  --chassis:       #0f172a;
-  --chassis-dark:  #1e293b;
-  --chassis-panel: #1e293b;
-  --chassis-light: #263045;
-  --panel:         #1e293b;
-  --brand-surface: #1a2540;
-  --brand-card:    #1a2540;
-  --brand-paper:   #1e293b;
-  --brand-clay:    #0f172a;
-  --brand-sub-surface: #1e293b;
-  --brand-surface-subtle: #1e293b;
+  --canvas:       #0B1220;
+  --surface:      #111A2C;
+  --surface-2:    #172338;
+  --border:       #24324B;
+  --border-strong:#344F6B;
+  --ink:          #E6EDF7;
+  --ink-2:        #B6C2D4;
+  --ink-3:        #8393AB;
 
-  /* ── TEXT ── */
-  --text-primary:   #f1f5f9;
-  --text-secondary: #94a3b8;
-  --text-muted:     #64748b;
-  --text-inverse:   #0f172a;
+  /* Brand */
+  --brand-50:     rgba(14,116,144,.12);
+  --brand-100:    rgba(14,116,144,.18);
+  --brand-600:    #22D3EE;
+  --brand-700:    #0891B2;
 
-  /* ── PRIMARY ACCENT — Medical Cyan (brighter for dark) ── */
-  --accent-primary:       #22d3ee;
-  --accent-primary-dark:  #0891b2;
-  --accent-primary-light: #0c4a6e;
-  --accent-primary-glow:  rgba(34, 211, 238, 0.32);
+  /* Roles */
+  --doctor-600:   #60A5FA;
+  --doctor-50:    rgba(37,99,235,.12);
+  --doctor-100:   rgba(37,99,235,.20);
+  --caregiver-600:#2DD4BF;
+  --caregiver-50: rgba(13,148,136,.12);
+  --caregiver-100:rgba(13,148,136,.20);
 
-  /* ── SECONDARY ACCENT — Blue ── */
-  --accent-secondary:      #60a5fa;
-  --accent-secondary-dark: #3b82f6;
-  --accent-secondary-light:#1e3a5f;
-  --accent-secondary-glow: rgba(96, 165, 250, 0.32);
+  /* Status */
+  --safe-fg:      #4ADE80;
+  --safe-bg:      rgba(74,222,128,.12);
+  --caution-fg:   #FBBF24;
+  --caution-bg:   rgba(251,191,36,.12);
+  --critical-fg:  #F87171;
+  --critical-bg:  rgba(248,113,113,.12);
+  --unknown-fg:   #94A3B8;
+  --unknown-bg:   rgba(148,163,184,.10);
 
-  /* ── ROLE IDENTITY ── */
-  --role-patient:      #22d3ee;
-  --role-patient-dark: #0891b2;
-  --role-patient-glow: rgba(34, 211, 238, 0.32);
+  /* Harm tiers */
+  --harm-l1:      #4ADE80;
+  --harm-l1-bg:   rgba(74,222,128,.12);
+  --harm-l2:      #A3E635;
+  --harm-l2-bg:   rgba(163,230,53,.10);
+  --harm-l3:      #FBBF24;
+  --harm-l3-bg:   rgba(251,191,36,.12);
+  --harm-l4:      #FB923C;
+  --harm-l4-bg:   rgba(251,146,60,.12);
+  --harm-l5:      #F87171;
+  --harm-l5-bg:   rgba(248,113,113,.12);
 
-  --role-doctor:       #60a5fa;
-  --role-doctor-dark:  #3b82f6;
-  --role-doctor-glow:  rgba(96, 165, 250, 0.32);
-
-  --role-caregiver:      #34d399;
-  --role-caregiver-dark: #10b981;
-  --role-caregiver-glow: rgba(52, 211, 153, 0.32);
-
-  /* ── CLINICAL LED INDICATORS ── */
-  --led-safe:          #22c55e;
-  --led-safe-glow:     rgba(34, 197, 94, 0.60);
-  --led-caution:       #f59e0b;
-  --led-caution-glow:  rgba(245, 158, 11, 0.60);
-  --led-critical:      #f87171;
-  --led-critical-glow: rgba(248, 113, 113, 0.60);
-  --led-online:        #22d3ee;
-  --led-online-glow:   rgba(34, 211, 238, 0.55);
-  --led-offline:       #475569;
-  --led-offline-glow:  rgba(71, 85, 105, 0.35);
-
-  /* ── SHADOW COLOURS ── */
-  --shadow-light: rgba(255, 255, 255, 0.06);
-  --shadow-dark:  rgba(0, 0, 0, 0.45);
-  --shadow-card:           0 1px 3px 0 rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.05);
-  --shadow-card-hover:     0 6px 20px -3px rgba(0,0,0,0.50), 0 0 0 1px rgba(255,255,255,0.08);
-  --shadow-floating:       0 16px 48px -8px rgba(0,0,0,0.60), 0 0 0 1px rgba(255,255,255,0.07);
-  --shadow-pressed:        inset 0 2px 4px 0 rgba(0,0,0,0.55);
-  --shadow-recessed:       inset 0 1px 3px 0 rgba(0,0,0,0.45);
-  --shadow-recessed-deep:  inset 0 2px 6px 0 rgba(0,0,0,0.55);
-  --shadow-sm:             0 1px 2px 0 rgba(0,0,0,0.30), 0 0 0 1px rgba(255,255,255,0.05);
-  --shadow-accent-primary: 0 4px 14px -2px rgba(34, 211, 238, 0.45);
-  --shadow-accent-pressed: inset 0 2px 5px rgba(0,0,0,0.45);
-  --shadow-accent-teal:    0 4px 14px -2px rgba(96, 165, 250, 0.40);
-  --shadow-accent-teal-pressed: inset 0 2px 5px rgba(0,0,0,0.45);
-
-  /* ── BRAND BORDERS ── */
-  --brand-border:         rgba(255,255,255,0.09);
-  --brand-border-visible: rgba(255,255,255,0.13);
-  --brand-border-subtle:  rgba(255,255,255,0.06);
-  --brand-primary:        var(--accent-primary);
-  --brand-primary-hover:  var(--accent-primary-dark);
-  --brand-primary-active: var(--accent-primary-dark);
-  --brand-primary-light:  var(--accent-primary-light);
-  --brand-primary-muted:  rgba(34, 211, 238, 0.14);
-  --brand-text:           var(--text-primary);
-  --brand-muted:          var(--text-muted);
-  --brand-subtle:         var(--text-secondary);
-
-  /* ── STATUS BACKGROUNDS ── */
-  --status-safe:          var(--led-safe);
-  --status-safe-bg:       rgba(34, 197, 94, 0.12);
-  --status-safe-border:   var(--led-safe);
-  --status-safe-text:     #86efac;
-  --status-caution:       var(--led-caution);
-  --status-caution-bg:    rgba(245, 158, 11, 0.12);
-  --status-caution-border: var(--led-caution);
-  --status-caution-text:  #fcd34d;
-  --status-danger:        var(--led-critical);
-  --status-danger-bg:     rgba(248, 113, 113, 0.12);
-  --status-danger-border: var(--led-critical);
-  --status-danger-text:   #fca5a5;
-  --role-doctor-bg:       rgba(96, 165, 250, 0.12);
-  --role-doctor-border:   rgba(96, 165, 250, 0.35);
-  --role-caregiver-bg:    rgba(52, 211, 153, 0.10);
-  --role-caregiver-border: rgba(52, 211, 153, 0.35);
-
-  /* ── RADIUS (unchanged) ── */
-  --radius-card:        var(--radius-2xl);
-  --radius-interactive: var(--radius-2xl);
-  --radius-button:      var(--radius-lg);
-  --radius-input:       var(--radius-md);
-  --radius-inner:       var(--radius-md);
+  /* Shadows */
+  --shadow-sm:    0 1px 3px rgba(0,0,0,.25);
+  --shadow-md:    0 4px 14px -2px rgba(0,0,0,.35);
+  --shadow-lg:    0 20px 40px -8px rgba(0,0,0,.50);
+  --shadow-focus: 0 0 0 3px rgba(34,211,238,.35);
+  --shadow-inner: inset 0 1px 3px rgba(0,0,0,.30);
 }

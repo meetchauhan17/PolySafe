@@ -92,7 +92,7 @@ export default function LogSymptomPage() {
  };
 
  return (
- <div className="min-h-[88vh] bg-[var(--chassis)] pb-12">
+ <div className="min-h-[88vh] bg-[var(--canvas)] pb-12">
  <div className="max-w-2xl mx-auto px-4 py-8 space-y-5">
 
         {/* ── Modern Hero Header ── */}
@@ -115,21 +115,21 @@ export default function LogSymptomPage() {
             </div>
 
             <div className="space-y-2">
-              <h1 className="text-2xl md:text-3xl font-extrabold text-[var(--text-primary)] tracking-tight font-display">
+              <h1 className="text-2xl md:text-3xl font-extrabold text-[var(--ink)] tracking-tight font-[var(--font-heading)]">
                 Log a{' '}
                 <span style={{ background: 'linear-gradient(135deg, #f43f5e, #6366f1)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>New Symptom</span>
               </h1>
-              <p className="text-sm text-[var(--text-secondary)] max-w-xl leading-relaxed">
+              <p className="text-sm text-[var(--ink-2)] max-w-xl leading-relaxed">
                 PolySafe automatically cross-references newly emerged symptoms against your prescription timeline to check for drug-induced prescribing cascades.
               </p>
 
               <div className="flex flex-wrap items-center gap-2 pt-1">
-                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[var(--brand-surface)]/80 border border-[var(--brand-border)] text-xs font-medium text-[var(--text-secondary)]">
+                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[var(--surface)]/80 border border-[var(--border)] text-xs font-medium text-[var(--ink-2)]">
                   <HeartPulse className="w-3.5 h-3.5 text-rose-500" />
                   <span>Symptom Timeline Check</span>
                 </div>
-                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[var(--brand-surface)]/80 border border-[var(--brand-border)] text-xs font-medium text-[var(--text-secondary)]">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-[var(--accent-primary)]" />
+                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[var(--surface)]/80 border border-[var(--border)] text-xs font-medium text-[var(--ink-2)]">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-[var(--brand-600)]" />
                   <span>Clinical Evidence</span>
                 </div>
               </div>
@@ -138,7 +138,7 @@ export default function LogSymptomPage() {
         </div>
 
   {/* ── Info card ────────────────────────────────────────────────────── */}
-  <div className="flex items-start space-x-3 p-3.5 bg-[var(--accent-primary)]/8 border border-[var(--accent-primary)]/20 rounded-xl text-xs text-[var(--accent-primary)]">
+  <div className="flex items-start space-x-3 p-3.5 bg-[var(--brand-600)]/8 border border-[var(--brand-600)]/20 rounded-xl text-xs text-[var(--brand-600)]">
     <Info className="w-4 h-4 flex-shrink-0 mt-0.5" />
     <p className="leading-relaxed">
       <strong>A prescribing cascade</strong> happens when a medicine causes a side effect that looks like a new illness, 
@@ -151,7 +151,7 @@ export default function LogSymptomPage() {
  <Card
  title="What are you experiencing?"
  subtitle="Describe in your own words — no medical terms needed."
- icon={<HeartPulse className="w-5 h-5 text-[var(--accent-primary)]" />}
+ icon={<HeartPulse className="w-5 h-5 text-[var(--brand-600)]" />}
  className="space-y-6"
  >
  <form onSubmit={handleSubmit} className="space-y-5">
@@ -171,12 +171,12 @@ export default function LogSymptomPage() {
  error={Boolean(error && !description.trim())}
  className="resize-none leading-relaxed"
  />
- <p className="text-[10px] text-[var(--text-muted)] font-mono text-right">{description.length} characters</p>
+ <p className="text-[10px] text-[var(--ink-3)] font-mono text-right">{description.length} characters</p>
  </div>
 
  {/* Quick-select symptom chips */}
  <div className="space-y-2">
- <p className="text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)]">
+ <p className="text-[10px] font-bold uppercase tracking-wider text-[var(--ink-3)]">
  Common symptoms to tap and add
  </p>
  <div className="flex flex-wrap gap-2.5">
@@ -187,10 +187,10 @@ export default function LogSymptomPage() {
  key={sym}
  type="button"
  onClick={() => handleQuickSelect(sym)}
- className={`polysafe-interactive text-xs px-3.5 py-1.5 rounded-full font-semibold cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--chassis)] active:shadow-[inset_3px_3px_6px_var(--shadow-dark),inset_-3px_-3px_6px_rgba(255,255,255,0.65)] active:translate-y-px ${
+ className={`polysafe-interactive text-xs px-3.5 py-1.5 rounded-full font-semibold cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--canvas)] active:shadow-[inset_3px_3px_6px_rgba(11,27,43,.12),inset_-3px_-3px_6px_rgba(255,255,255,0.65)] active:translate-y-px ${
  isSelected
- ? 'bg-[var(--accent-primary)] text-white shadow-sm'
- : 'bg-[var(--chassis)] text-[var(--text-primary)] shadow-[var(--shadow-sm)] hover:shadow-[var(--shadow-card)] hover:text-[var(--accent-primary)]'
+ ? 'bg-[var(--brand-600)] text-white shadow-sm'
+ : 'bg-[var(--canvas)] text-[var(--ink)] shadow-[var(--shadow-sm)] hover:shadow-[var(--shadow-sm)] hover:text-[var(--brand-600)]'
  }`}
  >
  {isSelected && <CheckCircle2 className="inline w-3 h-3 mr-1" />}
@@ -203,7 +203,7 @@ export default function LogSymptomPage() {
 
  {/* Date picker */}
  <div className="space-y-2">
- <label htmlFor="date-logged" className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)]">
+ <label htmlFor="date-logged" className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-[var(--ink-3)]">
  <CalendarDays className="w-3.5 h-3.5" />
  When did it start?
  </label>
@@ -233,7 +233,7 @@ export default function LogSymptomPage() {
  type="submit"
  id="log-symptom-submit"
  disabled={isSubmitting || (!description.trim() && !isGuest)}
- className="btn-primary w-full py-3.5 flex items-center justify-center gap-2 relative"
+ className="ps-btn ps-btn-primary w-full py-3.5 flex items-center justify-center gap-2 relative"
  >
  {isSubmitting ? (
  <>
@@ -244,7 +244,7 @@ export default function LogSymptomPage() {
  <>
  <span>Check for Prescribing Cascades</span>
  <ArrowRight className="w-4 h-4" />
- {isGuest && <Lock className="w-4 h-4 text-[var(--brand-border-subtle)] ml-1" />}
+ {isGuest && <Lock className="w-4 h-4 text-[var(--border)] ml-1" />}
  </>
  )}
  </button>

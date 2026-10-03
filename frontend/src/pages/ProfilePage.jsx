@@ -154,24 +154,24 @@ export default function ProfilePage() {
       title: 'Patient Safety Profile',
       subtitle: 'Manage your age, diagnosed conditions, and drug allergies',
       icon: User,
-      color: 'var(--role-patient)',
-      accentBg: 'bg-[var(--role-patient)]/10 text-[var(--role-patient)]',
+      color: 'var(--brand-600)',
+      accentBg: 'bg-[var(--brand-600)]/10 text-[var(--brand-600)]',
       badge: 'PATIENT PORTAL',
     },
     CAREGIVER: {
       title: 'Caregiver Oversight Profile',
       subtitle: 'Manage family contact info and safety alert preferences',
       icon: HeartHandshake,
-      color: 'var(--role-caregiver)',
-      accentBg: 'bg-[var(--role-caregiver)]/10 text-[var(--role-caregiver)]',
+      color: 'var(--caregiver-600)',
+      accentBg: 'bg-[var(--caregiver-600)]/10 text-[var(--caregiver-600)]',
       badge: 'VERIFIED CAREGIVER',
     },
     DOCTOR: {
       title: 'Physician Clinical Profile',
       subtitle: 'Manage your medical license, specialty, and clinical settings',
       icon: Stethoscope,
-      color: 'var(--role-doctor)',
-      accentBg: 'bg-[var(--role-doctor)]/10 text-[var(--role-doctor)]',
+      color: 'var(--doctor-600)',
+      accentBg: 'bg-[var(--doctor-600)]/10 text-[var(--doctor-600)]',
       badge: 'LICENSED CLINICIAN',
     },
   };
@@ -196,10 +196,10 @@ export default function ProfilePage() {
               <BackButton to={getBackPath()} label={backLabel} />
 
               <div className="flex items-center gap-2">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] border border-[var(--accent-primary)]/20">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-[var(--brand-600)]/10 text-[var(--brand-600)] border border-[var(--brand-600)]/20">
                   <span className="relative flex h-2 w-2">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--accent-primary)] opacity-60" />
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-[var(--accent-primary)]" />
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--brand-600)] opacity-60" />
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-[var(--brand-600)]" />
                   </span>
                   <span className="font-mono text-[11px]">{cfg.badge}</span>
                 </div>
@@ -208,7 +208,7 @@ export default function ProfilePage() {
                     setEditing(!editing);
                     setErrorMsg(null);
                   }}
-                  className="ps-btn-shine btn-primary py-2 px-4 text-xs font-mono font-bold uppercase tracking-wider flex items-center gap-2 cursor-pointer"
+                  className="ps-btn-shine ps-btn ps-btn-primary py-2 px-4 text-xs font-mono font-bold uppercase tracking-wider flex items-center gap-2 cursor-pointer"
                 >
                   <Edit3 className="w-4 h-4" />
                   <span>{editing ? 'Cancel Editing' : 'Edit Profile'}</span>
@@ -217,25 +217,25 @@ export default function ProfilePage() {
             </div>
 
             <div className="space-y-2">
-              <h1 className="text-2xl md:text-3xl font-extrabold text-[var(--text-primary)] tracking-tight font-display">
+              <h1 className="text-2xl md:text-3xl font-extrabold text-[var(--ink)] tracking-tight font-[var(--font-heading)]">
                 {cfg.title.split(' ')[0]}{' '}
                 <span className="ps-glow-text">{cfg.title.split(' ').slice(1).join(' ')}</span>
               </h1>
-              <p className="text-sm text-[var(--text-secondary)] max-w-xl leading-relaxed">
+              <p className="text-sm text-[var(--ink-2)] max-w-xl leading-relaxed">
                 {cfg.subtitle}
               </p>
 
               <div className="flex flex-wrap items-center gap-2 pt-1">
-                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[var(--brand-surface)]/80 border border-[var(--brand-border)] text-xs font-medium text-[var(--text-secondary)]">
-                  <ShieldCheck className="w-3.5 h-3.5 text-[var(--accent-primary)]" />
+                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[var(--surface)]/80 border border-[var(--border)] text-xs font-medium text-[var(--ink-2)]">
+                  <ShieldCheck className="w-3.5 h-3.5 text-[var(--brand-600)]" />
                   <span>256-Bit Encrypted Vault</span>
                 </div>
-                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[var(--brand-surface)]/80 border border-[var(--brand-border)] text-xs font-medium text-[var(--text-secondary)]">
-                  <Activity className="w-3.5 h-3.5 text-[var(--accent-secondary)]" />
+                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[var(--surface)]/80 border border-[var(--border)] text-xs font-medium text-[var(--ink-2)]">
+                  <Activity className="w-3.5 h-3.5 text-[var(--doctor-600)]" />
                   <span>Real-Time Audit</span>
                 </div>
-                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[var(--brand-surface)]/80 border border-[var(--brand-border)] text-xs font-medium text-[var(--text-secondary)]">
-                  <Zap className="w-3.5 h-3.5 text-[var(--led-safe)]" />
+                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[var(--surface)]/80 border border-[var(--border)] text-xs font-medium text-[var(--ink-2)]">
+                  <Zap className="w-3.5 h-3.5 text-[var(--safe-fg)]" />
                   <span>HIPAA Compliant</span>
                 </div>
               </div>
@@ -245,8 +245,8 @@ export default function ProfilePage() {
 
         {/* ── Global Error Banner ───────────────────────────────────────── */}
         {errorMsg && (
-          <div className="p-4 bg-[var(--chassis)] border-2 border-[var(--led-critical)]/30 rounded-2xl flex items-start space-x-3 text-[var(--led-critical)] text-sm shadow-xs font-mono">
-            <AlertCircle className="w-5 h-5 text-[var(--led-critical)] flex-shrink-0 mt-0.5" />
+          <div className="p-4 bg-[var(--canvas)] border-2 border-[var(--critical-fg)]/30 rounded-2xl flex items-start space-x-3 text-[var(--critical-fg)] text-sm shadow-xs font-mono">
+            <AlertCircle className="w-5 h-5 text-[var(--critical-fg)] flex-shrink-0 mt-0.5" />
             <div className="flex-1">
               <p className="font-semibold">{errorMsg}</p>
             </div>
@@ -254,7 +254,7 @@ export default function ProfilePage() {
         )}
 
         {/* ── Account Information Card (Common across all 3 roles) ─────── */}
-        <Card className="p-6 space-y-4 shadow-[var(--shadow-card)]">
+        <Card className="p-6 space-y-4 shadow-[var(--shadow-sm)]">
           <div className="flex items-center space-x-3.5">
             <div
               className="w-12 h-12 rounded-2xl flex items-center justify-center text-white font-bold text-lg shadow-[var(--shadow-sm)]"
@@ -263,24 +263,24 @@ export default function ProfilePage() {
               <RoleIcon className="w-6 h-6" />
             </div>
             <div className="flex-1 min-w-0">
-              <h2 className="text-base font-bold text-[var(--text-primary)] font-display truncate">
+              <h2 className="text-base font-bold text-[var(--ink)] font-[var(--font-heading)] truncate">
                 {user?.name || 'PolySafe User'}
               </h2>
-              <p className="text-xs text-[var(--text-muted)] font-mono flex items-center gap-1.5 mt-0.5">
+              <p className="text-xs text-[var(--ink-3)] font-mono flex items-center gap-1.5 mt-0.5">
                 <Mail className="w-3.5 h-3.5" />
                 <span>{user?.email || '—'}</span>
               </p>
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-3 pt-3 border-t border-[var(--chassis-dark)] text-xs font-mono">
-            <div className="p-2.5 rounded-xl bg-[var(--chassis)] shadow-[var(--shadow-recessed)]">
-              <span className="text-[10px] text-[var(--text-muted)] uppercase block">Account Role</span>
-              <strong className="text-[var(--text-primary)] font-bold">{currentRole}</strong>
+          <div className="grid grid-cols-2 gap-3 pt-3 border-t border-[var(--border)] text-xs font-mono">
+            <div className="p-2.5 rounded-xl bg-[var(--canvas)] shadow-[var(--shadow-inner)]">
+              <span className="text-[10px] text-[var(--ink-3)] uppercase block">Account Role</span>
+              <strong className="text-[var(--ink)] font-bold">{currentRole}</strong>
             </div>
-            <div className="p-2.5 rounded-xl bg-[var(--chassis)] shadow-[var(--shadow-recessed)]">
-              <span className="text-[10px] text-[var(--text-muted)] uppercase block">Status</span>
-              <strong className="text-[var(--led-safe)] font-bold flex items-center gap-1">
+            <div className="p-2.5 rounded-xl bg-[var(--canvas)] shadow-[var(--shadow-inner)]">
+              <span className="text-[10px] text-[var(--ink-3)] uppercase block">Status</span>
+              <strong className="text-[var(--safe-fg)] font-bold flex items-center gap-1">
                 <CheckCircle2 className="w-3.5 h-3.5" />
                 Active & Verified
               </strong>
@@ -294,14 +294,14 @@ export default function ProfilePage() {
         {currentRole === 'PATIENT' && (
           loadingPatientProfile ? (
             <Card className="p-8 flex items-center justify-center gap-3">
-              <Loader2 className="w-5 h-5 animate-spin text-[var(--accent-primary)]" />
-              <span className="text-xs font-mono text-[var(--text-muted)]">Loading clinical profile...</span>
+              <Loader2 className="w-5 h-5 animate-spin text-[var(--brand-600)]" />
+              <span className="text-xs font-mono text-[var(--ink-3)]">Loading clinical profile...</span>
             </Card>
           ) : (
-            <Card className="p-6 space-y-6 shadow-[var(--shadow-card)]">
-              <div className="flex items-center justify-between pb-3 border-b border-[var(--chassis-dark)]">
-                <h3 className="text-sm font-bold text-[var(--text-primary)] font-display flex items-center gap-2">
-                  <Activity className="w-4 h-4 text-[var(--role-patient)]" />
+            <Card className="p-6 space-y-6 shadow-[var(--shadow-sm)]">
+              <div className="flex items-center justify-between pb-3 border-b border-[var(--border)]">
+                <h3 className="text-sm font-bold text-[var(--ink)] font-[var(--font-heading)] flex items-center gap-2">
+                  <Activity className="w-4 h-4 text-[var(--brand-600)]" />
                   Clinical & Safety Demographics
                 </h3>
               </div>
@@ -310,7 +310,7 @@ export default function ProfilePage() {
                 <form onSubmit={handlePatientSave} className="space-y-5">
                   {/* Age Field */}
                   <div className="space-y-1">
-                    <label className="block text-xs font-bold text-[var(--text-primary)] uppercase tracking-wider font-mono">
+                    <label className="block text-xs font-bold text-[var(--ink)] uppercase tracking-wider font-mono">
                       Patient Age (Years)
                     </label>
                     <PolySafeInput
@@ -322,14 +322,14 @@ export default function ProfilePage() {
                       onChange={(e) => setAge(e.target.value)}
                       placeholder="e.g. 68"
                     />
-                    <p className="text-[11px] text-[var(--text-muted)] font-mono">
+                    <p className="text-[11px] text-[var(--ink-3)] font-mono">
                       Used for Beers Criteria 2023 anticholinergic risk and renal clearance threshold calculations.
                     </p>
                   </div>
 
                   {/* Conditions Pills */}
                   <div className="space-y-2">
-                    <label className="block text-xs font-bold text-[var(--text-primary)] uppercase tracking-wider font-mono">
+                    <label className="block text-xs font-bold text-[var(--ink)] uppercase tracking-wider font-mono">
                       Diagnosed Conditions
                     </label>
                     <div className="flex flex-wrap gap-2">
@@ -342,8 +342,8 @@ export default function ProfilePage() {
                             onClick={() => toggleCondition(cond.label)}
                             className={`px-3 py-1.5 rounded-xl text-xs font-mono font-bold transition-all cursor-pointer ${
                               isSelected
-                                ? 'bg-[var(--role-patient)] text-white shadow-xs'
-                                : 'bg-[var(--chassis)] text-[var(--text-muted)] shadow-[var(--shadow-sm)] hover:text-[var(--text-primary)]'
+                                ? 'bg-[var(--brand-600)] text-white shadow-xs'
+                                : 'bg-[var(--canvas)] text-[var(--ink-3)] shadow-[var(--shadow-sm)] hover:text-[var(--ink)]'
                             }`}
                           >
                             {cond.label}
@@ -355,7 +355,7 @@ export default function ProfilePage() {
 
                   {/* Known Drug Allergies */}
                   <div className="space-y-1">
-                    <label className="block text-xs font-bold text-[var(--text-primary)] uppercase tracking-wider font-mono">
+                    <label className="block text-xs font-bold text-[var(--ink)] uppercase tracking-wider font-mono">
                       Known Drug Allergies (Comma-separated)
                     </label>
                     <PolySafeInput
@@ -371,7 +371,7 @@ export default function ProfilePage() {
                     <button
                       type="submit"
                       disabled={patientSaveMutation.isPending}
-                      className="btn-primary flex-1 py-3 text-xs font-mono font-bold flex items-center justify-center gap-1.5 cursor-pointer"
+                      className="ps-btn ps-btn-primary flex-1 py-3 text-xs font-mono font-bold flex items-center justify-center gap-1.5 cursor-pointer"
                     >
                       {patientSaveMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
                       <span>Save Changes</span>
@@ -379,7 +379,7 @@ export default function ProfilePage() {
                     <button
                       type="button"
                       onClick={() => setEditing(false)}
-                      className="btn-secondary py-3 px-5 text-xs font-mono font-bold cursor-pointer"
+                      className="ps-btn ps-btn-secondary py-3 px-5 text-xs font-mono font-bold cursor-pointer"
                     >
                       Cancel
                     </button>
@@ -387,29 +387,29 @@ export default function ProfilePage() {
                 </form>
               ) : (
                 <div className="space-y-4 text-xs font-mono">
-                  <div className="p-3.5 rounded-2xl bg-[var(--chassis)] shadow-[var(--shadow-recessed)] space-y-1">
-                    <span className="text-[10px] text-[var(--text-muted)] uppercase block">Age</span>
-                    <p className="text-sm font-bold text-[var(--text-primary)]">{age || 'Not configured'} years</p>
+                  <div className="p-3.5 rounded-2xl bg-[var(--canvas)] shadow-[var(--shadow-inner)] space-y-1">
+                    <span className="text-[10px] text-[var(--ink-3)] uppercase block">Age</span>
+                    <p className="text-sm font-bold text-[var(--ink)]">{age || 'Not configured'} years</p>
                   </div>
 
-                  <div className="p-3.5 rounded-2xl bg-[var(--chassis)] shadow-[var(--shadow-recessed)] space-y-1.5">
-                    <span className="text-[10px] text-[var(--text-muted)] uppercase block">Active Medical Conditions</span>
+                  <div className="p-3.5 rounded-2xl bg-[var(--canvas)] shadow-[var(--shadow-inner)] space-y-1.5">
+                    <span className="text-[10px] text-[var(--ink-3)] uppercase block">Active Medical Conditions</span>
                     <div className="flex flex-wrap gap-1.5">
                       {conditions.length > 0 ? (
                         conditions.map((c, i) => (
-                          <span key={i} className="px-2 py-0.5 rounded-md bg-[var(--role-patient)]/15 text-[var(--role-patient)] font-bold text-[11px]">
+                          <span key={i} className="px-2 py-0.5 rounded-md bg-[var(--brand-600)]/15 text-[var(--brand-600)] font-bold text-[11px]">
                             {c}
                           </span>
                         ))
                       ) : (
-                        <p className="text-xs text-[var(--text-muted)] italic">None listed</p>
+                        <p className="text-xs text-[var(--ink-3)] italic">None listed</p>
                       )}
                     </div>
                   </div>
 
-                  <div className="p-3.5 rounded-2xl bg-[var(--chassis)] shadow-[var(--shadow-recessed)] space-y-1">
-                    <span className="text-[10px] text-[var(--text-muted)] uppercase block">Documented Drug Allergies</span>
-                    <p className="text-xs font-bold text-[var(--text-primary)]">{allergiesText || 'No known drug allergies'}</p>
+                  <div className="p-3.5 rounded-2xl bg-[var(--canvas)] shadow-[var(--shadow-inner)] space-y-1">
+                    <span className="text-[10px] text-[var(--ink-3)] uppercase block">Documented Drug Allergies</span>
+                    <p className="text-xs font-bold text-[var(--ink)]">{allergiesText || 'No known drug allergies'}</p>
                   </div>
                 </div>
               )}
@@ -421,10 +421,10 @@ export default function ProfilePage() {
             ROLE 2: CAREGIVER PROFILE FORM
         ══════════════════════════════════════════════════════════════════ */}
         {currentRole === 'CAREGIVER' && (
-          <Card className="p-6 space-y-6 shadow-[var(--shadow-card)]">
-            <div className="flex items-center justify-between pb-3 border-b border-[var(--chassis-dark)]">
-              <h3 className="text-sm font-bold text-[var(--text-primary)] font-display flex items-center gap-2">
-                <HeartHandshake className="w-4 h-4 text-[var(--role-caregiver)]" />
+          <Card className="p-6 space-y-6 shadow-[var(--shadow-sm)]">
+            <div className="flex items-center justify-between pb-3 border-b border-[var(--border)]">
+              <h3 className="text-sm font-bold text-[var(--ink)] font-[var(--font-heading)] flex items-center gap-2">
+                <HeartHandshake className="w-4 h-4 text-[var(--caregiver-600)]" />
                 Caregiver Preferences & Contact Info
               </h3>
             </div>
@@ -433,7 +433,7 @@ export default function ProfilePage() {
               <form onSubmit={handleCaregiverSave} className="space-y-5">
                 {/* Emergency Contact Phone */}
                 <div className="space-y-1">
-                  <label className="block text-xs font-bold text-[var(--text-primary)] uppercase tracking-wider font-mono">
+                  <label className="block text-xs font-bold text-[var(--ink)] uppercase tracking-wider font-mono">
                     Emergency Contact Number
                   </label>
                   <PolySafeInput
@@ -448,7 +448,7 @@ export default function ProfilePage() {
 
                 {/* Relationship to Patient */}
                 <div className="space-y-1">
-                  <label className="block text-xs font-bold text-[var(--text-primary)] uppercase tracking-wider font-mono">
+                  <label className="block text-xs font-bold text-[var(--ink)] uppercase tracking-wider font-mono">
                     Relationship to Patient
                   </label>
                   <PolySafeInput
@@ -462,7 +462,7 @@ export default function ProfilePage() {
 
                 {/* Notification Settings */}
                 <div className="space-y-3 pt-2">
-                  <label className="block text-xs font-bold text-[var(--text-primary)] uppercase tracking-wider font-mono">
+                  <label className="block text-xs font-bold text-[var(--ink)] uppercase tracking-wider font-mono">
                     Notification Preferences
                   </label>
                   <div className="space-y-2">
@@ -471,7 +471,7 @@ export default function ProfilePage() {
                         type="checkbox"
                         checked={notifyDoseReminders}
                         onChange={(e) => setNotifyDoseReminders(e.target.checked)}
-                        className="w-4 h-4 rounded text-[var(--role-caregiver)]"
+                        className="w-4 h-4 rounded text-[var(--caregiver-600)]"
                       />
                       <span>Receive Daily Dose Check-in Confirmations</span>
                     </label>
@@ -480,7 +480,7 @@ export default function ProfilePage() {
                         type="checkbox"
                         checked={notifyCriticalAlerts}
                         onChange={(e) => setNotifyCriticalAlerts(e.target.checked)}
-                        className="w-4 h-4 rounded text-[var(--role-caregiver)]"
+                        className="w-4 h-4 rounded text-[var(--caregiver-600)]"
                       />
                       <span>Immediate SMS / Email for Critical Drug Flags</span>
                     </label>
@@ -491,7 +491,7 @@ export default function ProfilePage() {
                 <div className="flex gap-3 pt-3">
                   <button
                     type="submit"
-                    className="btn-primary flex-1 py-3 text-xs font-mono font-bold flex items-center justify-center gap-1.5 cursor-pointer"
+                    className="ps-btn ps-btn-primary flex-1 py-3 text-xs font-mono font-bold flex items-center justify-center gap-1.5 cursor-pointer"
                   >
                     <Save className="w-4 h-4" />
                     <span>Save Preferences</span>
@@ -499,7 +499,7 @@ export default function ProfilePage() {
                   <button
                     type="button"
                     onClick={() => setEditing(false)}
-                    className="btn-secondary py-3 px-5 text-xs font-mono font-bold cursor-pointer"
+                    className="ps-btn ps-btn-secondary py-3 px-5 text-xs font-mono font-bold cursor-pointer"
                   >
                     Cancel
                   </button>
@@ -507,23 +507,23 @@ export default function ProfilePage() {
               </form>
             ) : (
               <div className="space-y-4 text-xs font-mono">
-                <div className="p-3.5 rounded-2xl bg-[var(--chassis)] shadow-[var(--shadow-recessed)] space-y-1">
-                  <span className="text-[10px] text-[var(--text-muted)] uppercase block">Emergency Contact Phone</span>
-                  <p className="text-sm font-bold text-[var(--text-primary)]">{caregiverPhone}</p>
+                <div className="p-3.5 rounded-2xl bg-[var(--canvas)] shadow-[var(--shadow-inner)] space-y-1">
+                  <span className="text-[10px] text-[var(--ink-3)] uppercase block">Emergency Contact Phone</span>
+                  <p className="text-sm font-bold text-[var(--ink)]">{caregiverPhone}</p>
                 </div>
 
-                <div className="p-3.5 rounded-2xl bg-[var(--chassis)] shadow-[var(--shadow-recessed)] space-y-1">
-                  <span className="text-[10px] text-[var(--text-muted)] uppercase block">Relationship to Dependent</span>
-                  <p className="text-sm font-bold text-[var(--text-primary)]">{relationship}</p>
+                <div className="p-3.5 rounded-2xl bg-[var(--canvas)] shadow-[var(--shadow-inner)] space-y-1">
+                  <span className="text-[10px] text-[var(--ink-3)] uppercase block">Relationship to Dependent</span>
+                  <p className="text-sm font-bold text-[var(--ink)]">{relationship}</p>
                 </div>
 
-                <div className="p-3.5 rounded-2xl bg-[var(--chassis)] shadow-[var(--shadow-recessed)] space-y-2">
-                  <span className="text-[10px] text-[var(--text-muted)] uppercase block">Alert Channels</span>
+                <div className="p-3.5 rounded-2xl bg-[var(--canvas)] shadow-[var(--shadow-inner)] space-y-2">
+                  <span className="text-[10px] text-[var(--ink-3)] uppercase block">Alert Channels</span>
                   <div className="space-y-1">
-                    <p className="text-xs text-[var(--text-primary)]">
+                    <p className="text-xs text-[var(--ink)]">
                       • Daily Dose Reminders: <strong>{notifyDoseReminders ? 'Enabled' : 'Disabled'}</strong>
                     </p>
-                    <p className="text-xs text-[var(--text-primary)]">
+                    <p className="text-xs text-[var(--ink)]">
                       • Critical Interaction Alerts: <strong>{notifyCriticalAlerts ? 'Enabled' : 'Disabled'}</strong>
                     </p>
                   </div>
@@ -532,9 +532,9 @@ export default function ProfilePage() {
                 <button
                   type="button"
                   onClick={() => navigate('/caregiver-view')}
-                  className="w-full btn-secondary py-2.5 text-xs font-bold font-mono flex items-center justify-center gap-2 cursor-pointer"
+                  className="w-full ps-btn ps-btn-secondary py-2.5 text-xs font-bold font-mono flex items-center justify-center gap-2 cursor-pointer"
                 >
-                  <Users className="w-4 h-4 text-[var(--role-caregiver)]" />
+                  <Users className="w-4 h-4 text-[var(--caregiver-600)]" />
                   <span>View Monitored Patients ({cfg.badge})</span>
                 </button>
               </div>
@@ -546,10 +546,10 @@ export default function ProfilePage() {
             ROLE 3: DOCTOR PROFILE FORM
         ══════════════════════════════════════════════════════════════════ */}
         {currentRole === 'DOCTOR' && (
-          <Card className="p-6 space-y-6 shadow-[var(--shadow-card)]">
-            <div className="flex items-center justify-between pb-3 border-b border-[var(--chassis-dark)]">
-              <h3 className="text-sm font-bold text-[var(--text-primary)] font-display flex items-center gap-2">
-                <Stethoscope className="w-4 h-4 text-[var(--role-doctor)]" />
+          <Card className="p-6 space-y-6 shadow-[var(--shadow-sm)]">
+            <div className="flex items-center justify-between pb-3 border-b border-[var(--border)]">
+              <h3 className="text-sm font-bold text-[var(--ink)] font-[var(--font-heading)] flex items-center gap-2">
+                <Stethoscope className="w-4 h-4 text-[var(--doctor-600)]" />
                 Medical License & Clinical Credentials
               </h3>
             </div>
@@ -558,7 +558,7 @@ export default function ProfilePage() {
               <form onSubmit={handleDoctorSave} className="space-y-5">
                 {/* Medical Registration Number */}
                 <div className="space-y-1">
-                  <label className="block text-xs font-bold text-[var(--text-primary)] uppercase tracking-wider font-mono">
+                  <label className="block text-xs font-bold text-[var(--ink)] uppercase tracking-wider font-mono">
                     Medical Council / License Registration No.
                   </label>
                   <PolySafeInput
@@ -573,7 +573,7 @@ export default function ProfilePage() {
 
                 {/* Specialty */}
                 <div className="space-y-1">
-                  <label className="block text-xs font-bold text-[var(--text-primary)] uppercase tracking-wider font-mono">
+                  <label className="block text-xs font-bold text-[var(--ink)] uppercase tracking-wider font-mono">
                     Clinical Specialty
                   </label>
                   <PolySafeInput
@@ -587,7 +587,7 @@ export default function ProfilePage() {
 
                 {/* Hospital Affiliation */}
                 <div className="space-y-1">
-                  <label className="block text-xs font-bold text-[var(--text-primary)] uppercase tracking-wider font-mono">
+                  <label className="block text-xs font-bold text-[var(--ink)] uppercase tracking-wider font-mono">
                     Hospital / Clinic Affiliation
                   </label>
                   <PolySafeInput
@@ -602,7 +602,7 @@ export default function ProfilePage() {
 
                 {/* Beers Criteria & ACB Automation */}
                 <div className="space-y-3 pt-2">
-                  <label className="block text-xs font-bold text-[var(--text-primary)] uppercase tracking-wider font-mono">
+                  <label className="block text-xs font-bold text-[var(--ink)] uppercase tracking-wider font-mono">
                     Clinical Decision Support Engine Settings
                   </label>
                   <label className="flex items-center gap-2 text-xs font-mono cursor-pointer">
@@ -610,7 +610,7 @@ export default function ProfilePage() {
                       type="checkbox"
                       checked={autoBeersCheck}
                       onChange={(e) => setAutoBeersCheck(e.target.checked)}
-                      className="w-4 h-4 rounded text-[var(--role-doctor)]"
+                      className="w-4 h-4 rounded text-[var(--doctor-600)]"
                     />
                     <span>Automate Beers 2023 & ACB Score Telemetry during Pre-Prescribing</span>
                   </label>
@@ -620,7 +620,7 @@ export default function ProfilePage() {
                 <div className="flex gap-3 pt-3">
                   <button
                     type="submit"
-                    className="btn-primary flex-1 py-3 text-xs font-mono font-bold flex items-center justify-center gap-1.5 cursor-pointer"
+                    className="ps-btn ps-btn-primary flex-1 py-3 text-xs font-mono font-bold flex items-center justify-center gap-1.5 cursor-pointer"
                   >
                     <Save className="w-4 h-4" />
                     <span>Save Credentials</span>
@@ -628,7 +628,7 @@ export default function ProfilePage() {
                   <button
                     type="button"
                     onClick={() => setEditing(false)}
-                    className="btn-secondary py-3 px-5 text-xs font-mono font-bold cursor-pointer"
+                    className="ps-btn ps-btn-secondary py-3 px-5 text-xs font-mono font-bold cursor-pointer"
                   >
                     Cancel
                   </button>
@@ -636,24 +636,24 @@ export default function ProfilePage() {
               </form>
             ) : (
               <div className="space-y-4 text-xs font-mono">
-                <div className="p-3.5 rounded-2xl bg-[var(--chassis)] shadow-[var(--shadow-recessed)] space-y-1">
-                  <span className="text-[10px] text-[var(--text-muted)] uppercase block">Medical License Registration</span>
-                  <p className="text-sm font-bold text-[var(--role-doctor)] font-mono">{doctorRegNo}</p>
+                <div className="p-3.5 rounded-2xl bg-[var(--canvas)] shadow-[var(--shadow-inner)] space-y-1">
+                  <span className="text-[10px] text-[var(--ink-3)] uppercase block">Medical License Registration</span>
+                  <p className="text-sm font-bold text-[var(--doctor-600)] font-mono">{doctorRegNo}</p>
                 </div>
 
-                <div className="p-3.5 rounded-2xl bg-[var(--chassis)] shadow-[var(--shadow-recessed)] space-y-1">
-                  <span className="text-[10px] text-[var(--text-muted)] uppercase block">Specialization</span>
-                  <p className="text-sm font-bold text-[var(--text-primary)]">{specialty}</p>
+                <div className="p-3.5 rounded-2xl bg-[var(--canvas)] shadow-[var(--shadow-inner)] space-y-1">
+                  <span className="text-[10px] text-[var(--ink-3)] uppercase block">Specialization</span>
+                  <p className="text-sm font-bold text-[var(--ink)]">{specialty}</p>
                 </div>
 
-                <div className="p-3.5 rounded-2xl bg-[var(--chassis)] shadow-[var(--shadow-recessed)] space-y-1">
-                  <span className="text-[10px] text-[var(--text-muted)] uppercase block">Hospital / Practice Affiliation</span>
-                  <p className="text-sm font-bold text-[var(--text-primary)]">{hospital}</p>
+                <div className="p-3.5 rounded-2xl bg-[var(--canvas)] shadow-[var(--shadow-inner)] space-y-1">
+                  <span className="text-[10px] text-[var(--ink-3)] uppercase block">Hospital / Practice Affiliation</span>
+                  <p className="text-sm font-bold text-[var(--ink)]">{hospital}</p>
                 </div>
 
-                <div className="p-3.5 rounded-2xl bg-[var(--chassis)] shadow-[var(--shadow-recessed)] space-y-1">
-                  <span className="text-[10px] text-[var(--text-muted)] uppercase block">Clinical Engine Telemetry</span>
-                  <p className="text-xs text-[var(--text-primary)]">
+                <div className="p-3.5 rounded-2xl bg-[var(--canvas)] shadow-[var(--shadow-inner)] space-y-1">
+                  <span className="text-[10px] text-[var(--ink-3)] uppercase block">Clinical Engine Telemetry</span>
+                  <p className="text-xs text-[var(--ink)]">
                     • AGS Beers 2023 & DDInter AI Check: <strong>{autoBeersCheck ? 'Active' : 'Manual'}</strong>
                   </p>
                 </div>
@@ -661,9 +661,9 @@ export default function ProfilePage() {
                 <button
                   type="button"
                   onClick={() => navigate('/doctor-dashboard')}
-                  className="w-full btn-secondary py-2.5 text-xs font-bold font-mono flex items-center justify-center gap-2 cursor-pointer"
+                  className="w-full ps-btn ps-btn-secondary py-2.5 text-xs font-bold font-mono flex items-center justify-center gap-2 cursor-pointer"
                 >
-                  <Stethoscope className="w-4 h-4 text-[var(--role-doctor)]" />
+                  <Stethoscope className="w-4 h-4 text-[var(--doctor-600)]" />
                   <span>Open Doctor Clinical Station</span>
                 </button>
               </div>

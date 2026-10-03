@@ -203,31 +203,31 @@ async function fetchFlagDetail(flagId) {
 // ─── Severity config ──────────────────────────────────────────────────────────
 const SEVERITY_CONFIG = {
  Contraindicated: {
- headerBg: 'var(--chassis)',
- headerBorder: 'var(--led-critical)',
- pillBg: 'var(--led-critical)',
+ headerBg: 'var(--canvas)',
+ headerBorder: 'var(--critical-fg)',
+ pillBg: 'var(--critical-fg)',
  pillText: '#fff',
  icon: <AlertOctagon className="w-5 h-5" />,
  label: 'CONTRAINDICATED',
- barColor: 'var(--led-critical)',
+ barColor: 'var(--critical-fg)',
  },
  Major: {
- headerBg: 'var(--chassis)',
- headerBorder: 'var(--led-critical)',
- pillBg: 'var(--led-critical)',
+ headerBg: 'var(--canvas)',
+ headerBorder: 'var(--critical-fg)',
+ pillBg: 'var(--critical-fg)',
  pillText: '#fff',
  icon: <AlertOctagon className="w-5 h-5" />,
  label: 'MAJOR',
- barColor: 'var(--led-critical)',
+ barColor: 'var(--critical-fg)',
  },
  Moderate: {
- headerBg: 'var(--chassis)',
- headerBorder: 'var(--led-caution)',
- pillBg: 'var(--led-caution)',
+ headerBg: 'var(--canvas)',
+ headerBorder: 'var(--caution-fg)',
+ pillBg: 'var(--caution-fg)',
  pillText: '#fff',
  icon: <AlertTriangle className="w-5 h-5" />,
  label: 'MODERATE',
- barColor: 'var(--led-caution)',
+ barColor: 'var(--caution-fg)',
  },
  Minor: {
  headerBg: '#FEF9C3',
@@ -251,9 +251,9 @@ const SEVERITY_CONFIG = {
 
 // ─── Burden level config ──────────────────────────────────────────────────────
 const BURDEN_LEVEL = {
- Normal: { color: 'var(--accent-primary)', bg: 'var(--chassis)', border: 'var(--led-safe)', text: 'Low — No significant burden detected' },
- Moderate: { color: 'var(--led-caution)', bg: 'var(--chassis)', border: 'var(--led-caution)', text: 'Moderate — Monitor for sedation and cognitive effects' },
- Critical: { color: 'var(--led-critical)', bg: 'var(--chassis)', border: 'var(--led-critical)', text: 'Critical — High risk of delirium, falls, and cognitive impairment' },
+ Normal: { color: 'var(--brand-600)', bg: 'var(--canvas)', border: 'var(--safe-fg)', text: 'Low — No significant burden detected' },
+ Moderate: { color: 'var(--caution-fg)', bg: 'var(--canvas)', border: 'var(--caution-fg)', text: 'Moderate — Monitor for sedation and cognitive effects' },
+ Critical: { color: 'var(--critical-fg)', bg: 'var(--canvas)', border: 'var(--critical-fg)', text: 'Critical — High risk of delirium, falls, and cognitive impairment' },
 };
 
 // Clamp burden score to a 0–100% bar fill; score of 6+ = 100%
@@ -264,10 +264,10 @@ function burdenBarPct(score) {
 // ─── Drug type badge ──────────────────────────────────────────────────────────
 function TypeBadge({ type }) {
  const cfg = {
- PRESCRIPTION: { bg: 'bg-[var(--accent-secondary)]/10 text-[var(--accent-secondary)] border-[var(--accent-secondary)]/20', label: 'Rx' },
- OTC: { bg: 'bg-[var(--role-caregiver)]/10 text-[var(--role-caregiver)] border-[var(--role-caregiver)]/20', label: 'OTC' },
- HERBAL: { bg: 'bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] border-[var(--accent-primary)]/20', label: 'Herbal' },
- }[type] ?? { bg: 'bg-[var(--chassis)] text-[var(--text-muted)] border-[var(--brand-border-subtle)]', label: type };
+ PRESCRIPTION: { bg: 'bg-[var(--doctor-600)]/10 text-[var(--doctor-600)] border-[var(--doctor-600)]/20', label: 'Rx' },
+ OTC: { bg: 'bg-[var(--caregiver-600)]/10 text-[var(--caregiver-600)] border-[var(--caregiver-600)]/20', label: 'OTC' },
+ HERBAL: { bg: 'bg-[var(--brand-600)]/10 text-[var(--brand-600)] border-[var(--brand-600)]/20', label: 'Herbal' },
+ }[type] ?? { bg: 'bg-[var(--canvas)] text-[var(--ink-3)] border-[var(--border)]', label: type };
  return (
  <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md border ${cfg.bg}`}>
  {cfg.label}
@@ -279,22 +279,22 @@ function TypeBadge({ type }) {
 function DrugCard({ med, score }) {
   if (!med) return null;
   return (
-    <div className="flex flex-col space-y-2.5 p-4 bg-[var(--brand-surface)] border border-[var(--brand-border)] shadow-xs hover:border-[var(--accent-primary)]/40 transition-all rounded-2xl min-w-0">
+    <div className="flex flex-col space-y-2.5 p-4 bg-[var(--surface)] border border-[var(--border)] shadow-xs hover:border-[var(--brand-600)]/40 transition-all rounded-2xl min-w-0">
       <div className="flex items-start space-x-3.5">
         <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-blue-500/10 to-indigo-500/15 text-blue-600 border border-blue-500/25 flex items-center justify-center flex-shrink-0 shadow-2xs">
           <Pill className="w-4 h-4 text-blue-600" />
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between gap-2 flex-wrap">
-            <p className="text-sm sm:text-base font-bold text-[var(--text-primary)] font-display truncate">{med.name}</p>
+            <p className="text-sm sm:text-base font-bold text-[var(--ink)] font-[var(--font-heading)] truncate">{med.name}</p>
             <div className="flex items-center gap-1.5 flex-wrap">
               <DrugHarmBadge category={med.category} name={med.name} />
               <TypeBadge type={med.type} />
             </div>
           </div>
-          {med.dosage && <p className="text-[11px] text-[var(--text-muted)] font-mono mt-0.5">{med.dosage}</p>}
+          {med.dosage && <p className="text-[11px] text-[var(--ink-3)] font-mono mt-0.5">{med.dosage}</p>}
           {score != null && (
-            <p className="text-[10px] text-[var(--text-muted)] mt-1 font-mono">
+            <p className="text-[10px] text-[var(--ink-3)] mt-1 font-mono">
               ACB burden score:{' '}
               <span className={`font-bold ${score >= 3 ? 'text-rose-600' : score >= 1 ? 'text-amber-600' : 'text-blue-600'}`}>
                 {score}
@@ -333,7 +333,7 @@ export default function RiskAnalysisPage() {
 
  if (isLoading && !activeData) {
    return (
-     <div className="min-h-[88vh] bg-[var(--chassis)] pb-16">
+     <div className="min-h-[88vh] bg-[var(--canvas)] pb-16">
        <RiskAnalysisSkeleton />
      </div>
    );
@@ -341,11 +341,11 @@ export default function RiskAnalysisPage() {
 
  if (!flag) {
  return (
- <div className="min-h-[80vh] bg-[var(--chassis)] flex items-center justify-center p-4">
+ <div className="min-h-[80vh] bg-[var(--canvas)] flex items-center justify-center p-4">
  <div className="polysafe-card p-8 max-w-md w-full text-center space-y-4">
- <AlertCircle className="w-12 h-12 text-[var(--led-critical)] mx-auto" />
- <h2 className="text-xl font-bold text-[var(--text-primary)]">Risk flag not found</h2>
- <p className="text-sm text-[var(--text-muted)]">
+ <AlertCircle className="w-12 h-12 text-[var(--critical-fg)] mx-auto" />
+ <h2 className="text-xl font-bold text-[var(--ink)]">Risk flag not found</h2>
+ <p className="text-sm text-[var(--ink-3)]">
  {error?.response?.data?.error || 'Could not load details for this interaction.'}
  </p>
  <BackButton to="/home" label="Back to Home" className="mx-auto" />
@@ -364,7 +364,7 @@ export default function RiskAnalysisPage() {
       <div className="max-w-2xl mx-auto px-4 py-8 space-y-6">
 
         {/* ── Modern Hero Header ── */}
-        <div className="ps-hero ps-fade-up" style={{ '--hero-accent': cfg.headerBorder || 'var(--led-critical)', borderColor: 'rgba(239, 68, 68, 0.25)', background: 'linear-gradient(135deg, rgba(239, 68, 68, 0.08) 0%, rgba(245, 158, 11, 0.05) 50%, rgba(239, 68, 68, 0.03) 100%)' }}>
+        <div className="ps-hero ps-fade-up" style={{ '--hero-accent': cfg.headerBorder || 'var(--critical-fg)', borderColor: 'rgba(239, 68, 68, 0.25)', background: 'linear-gradient(135deg, rgba(239, 68, 68, 0.08) 0%, rgba(245, 158, 11, 0.05) 50%, rgba(239, 68, 68, 0.03) 100%)' }}>
           <div className="relative z-10 space-y-4">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <BackButton to="/home" label="Back to Dashboard" />
@@ -387,22 +387,22 @@ export default function RiskAnalysisPage() {
                 </span>
               </div>
 
-              <h1 className="text-2xl sm:text-3xl font-extrabold text-[var(--text-primary)] font-display tracking-tight">
+              <h1 className="text-2xl sm:text-3xl font-extrabold text-[var(--ink)] font-[var(--font-heading)] tracking-tight">
                 {flag.medicineA?.name} + {flag.medicineB?.name}
               </h1>
-              <p className="text-sm text-[var(--text-secondary)] leading-relaxed max-w-2xl">
+              <p className="text-sm text-[var(--ink-2)] leading-relaxed max-w-2xl">
                 {flag.plainExplanation?.split('(This is an informational')[0].trim() || 'An interaction has been detected between these two medicines.'}
               </p>
             </div>
 
             {/* Drug chips */}
             <div className="flex items-center gap-2.5 pt-1 flex-wrap">
-              <span className="flex items-center gap-2 bg-[var(--chassis)] border border-[var(--brand-border)] shadow-2xs px-3.5 py-1.5 rounded-2xl text-xs font-bold text-[var(--text-primary)]">
+              <span className="flex items-center gap-2 bg-[var(--canvas)] border border-[var(--border)] shadow-2xs px-3.5 py-1.5 rounded-2xl text-xs font-bold text-[var(--ink)]">
                 <Pill className="w-3.5 h-3.5 text-blue-600" />
                 {flag.medicineA?.name}
               </span>
               <span className="text-lg text-slate-400 font-bold">+</span>
-              <span className="flex items-center gap-2 bg-[var(--chassis)] border border-[var(--brand-border)] shadow-2xs px-3.5 py-1.5 rounded-2xl text-xs font-bold text-[var(--text-primary)]">
+              <span className="flex items-center gap-2 bg-[var(--canvas)] border border-[var(--border)] shadow-2xs px-3.5 py-1.5 rounded-2xl text-xs font-bold text-[var(--ink)]">
                 <Pill className="w-3.5 h-3.5 text-blue-600" />
                 {flag.medicineB?.name}
               </span>
@@ -440,10 +440,10 @@ export default function RiskAnalysisPage() {
           }
           className="space-y-3"
         >
-          <div className="p-4 bg-[var(--brand-surface)] border border-[var(--brand-border)] shadow-xs rounded-2xl">
+          <div className="p-4 bg-[var(--surface)] border border-[var(--border)] shadow-xs rounded-2xl">
             {flag.generatedBy === 'timeout' ? (
               <div className="space-y-2">
-                <p className="text-sm text-[var(--text-primary)] leading-relaxed font-medium">
+                <p className="text-sm text-[var(--ink)] leading-relaxed font-medium">
                   {flag.clinicalExplanation || `Interaction identified between ${flag.medicineA?.name} and ${flag.medicineB?.name} (${flag.severity}).`}
                 </p>
                 <p className="text-[11px] text-amber-600 italic">
@@ -451,7 +451,7 @@ export default function RiskAnalysisPage() {
                 </p>
               </div>
             ) : (
-              <p className="text-sm text-[var(--text-primary)] leading-relaxed font-medium">
+              <p className="text-sm text-[var(--ink)] leading-relaxed font-medium">
                 {flag.clinicalExplanation || 'Clinical explanation not available.'}
               </p>
             )}
@@ -460,7 +460,7 @@ export default function RiskAnalysisPage() {
           {flag.patient?.conditions?.length > 0 && (
             <div className="flex flex-wrap gap-2 pt-1">
               {flag.patient.conditions.map((c) => (
-                <span key={c} className="text-[10px] px-3 py-1 bg-[var(--chassis)] border border-[var(--brand-border)] rounded-xl text-[var(--text-secondary)] font-semibold">
+                <span key={c} className="text-[10px] px-3 py-1 bg-[var(--canvas)] border border-[var(--border)] rounded-xl text-[var(--ink-2)] font-semibold">
                   {c}
                 </span>
               ))}
@@ -485,7 +485,7 @@ export default function RiskAnalysisPage() {
         >
           {flag.generatedBy === 'timeout' ? (
             <div className="space-y-2">
-              <p className="text-[15px] text-[var(--text-primary)] leading-relaxed">
+              <p className="text-[15px] text-[var(--ink)] leading-relaxed">
                 {flag.plainExplanation?.split('(This is an informational')[0].trim()
                   || `An interaction was detected between ${flag.medicineA?.name} and ${flag.medicineB?.name}. Severity: ${flag.severity}.`}
               </p>
@@ -494,14 +494,14 @@ export default function RiskAnalysisPage() {
               </p>
             </div>
           ) : (
-            <p className="text-[15px] text-[var(--text-primary)] leading-relaxed">
+            <p className="text-[15px] text-[var(--ink)] leading-relaxed">
               {flag.plainExplanation?.split('(This is an informational')[0].trim() || 'Plain explanation not available.'}
             </p>
           )}
 
-          <div className="flex items-start space-x-2.5 p-3.5 bg-[var(--chassis)] border border-[var(--brand-border)] rounded-2xl">
+          <div className="flex items-start space-x-2.5 p-3.5 bg-[var(--canvas)] border border-[var(--border)] rounded-2xl">
             <ShieldCheck className="w-4 h-4 text-slate-400 flex-shrink-0 mt-0.5" />
-            <p className="text-[11px] text-[var(--text-muted)] italic">
+            <p className="text-[11px] text-[var(--ink-3)] italic">
               This is an informational safety alert, not a medical diagnosis. Always consult your doctor before changing medicines.
             </p>
           </div>
@@ -511,7 +511,7 @@ export default function RiskAnalysisPage() {
  <Card
  title="Combined Sedative / Pressure Load"
  subtitle="Anticholinergic Cognitive Burden (ACB) Index"
- icon={<Activity className="w-4 h-4 text-[var(--led-caution)]" />}
+ icon={<Activity className="w-4 h-4 text-[var(--caution-fg)]" />}
  className="space-y-4"
  >
 
@@ -524,7 +524,7 @@ export default function RiskAnalysisPage() {
  >
  {burdenScore}
  </span>
- <span className="text-sm text-[var(--text-muted)] ml-2">/ 6+ scale</span>
+ <span className="text-sm text-[var(--ink-3)] ml-2">/ 6+ scale</span>
  </div>
  <span
  className="text-xs font-extrabold px-3.5 py-1.5 rounded-full"
@@ -536,7 +536,7 @@ export default function RiskAnalysisPage() {
 
  {/* Horizontal progress bar with Inset Well Track & High-Contrast Fill */}
  <div className="space-y-1.5">
- <div className="h-3.5 bg-[var(--chassis)] shadow-[var(--shadow-recessed)] rounded-full overflow-hidden p-0.5">
+ <div className="h-3.5 bg-[var(--canvas)] shadow-[var(--shadow-inner)] rounded-full overflow-hidden p-0.5">
  <motion.div
  className="h-full rounded-full"
  initial={shouldReduceMotion ? { width: `${burdenPct}%` } : { width: '0%' }}
@@ -548,10 +548,10 @@ export default function RiskAnalysisPage() {
  }
  style={{
  background: burdenPct >= 70
- ? `linear-gradient(90deg, var(--led-caution), var(--led-critical))`
+ ? `linear-gradient(90deg, var(--caution-fg), var(--critical-fg))`
  : burdenPct >= 35
- ? `linear-gradient(90deg, var(--accent-primary), var(--led-caution))`
- : 'var(--accent-primary)',
+ ? `linear-gradient(90deg, var(--brand-600), var(--caution-fg))`
+ : 'var(--brand-600)',
  }}
  />
  </div>
@@ -564,14 +564,14 @@ export default function RiskAnalysisPage() {
  </div>
 
  {/* Level description */}
- <p className="text-xs text-[var(--text-muted)] leading-relaxed">
+ <p className="text-xs text-[var(--ink-3)] leading-relaxed">
  {cumulativeBurden?.explanation || burdenCfg.text}
  </p>
 
  {/* Disclaimer note */}
- <div className="flex items-start space-x-2.5 p-3.5 rounded-2xl bg-[var(--chassis)] shadow-[var(--shadow-card)]">
- <Info className="w-3.5 h-3.5 text-[var(--text-muted)] flex-shrink-0 mt-0.5" />
- <p className="text-[11px] text-[var(--text-muted)] leading-relaxed">
+ <div className="flex items-start space-x-2.5 p-3.5 rounded-2xl bg-[var(--canvas)] shadow-[var(--shadow-sm)]">
+ <Info className="w-3.5 h-3.5 text-[var(--ink-3)] flex-shrink-0 mt-0.5" />
+ <p className="text-[11px] text-[var(--ink-3)] leading-relaxed">
  <strong>No single medicine is unsafe alone</strong> — but together, cumulative anticholinergic and sedative load may increase risk of drowsiness, falls, and cognitive effects.
  </p>
  </div>
@@ -580,7 +580,7 @@ export default function RiskAnalysisPage() {
         {/* ── Footer actions ──────────────────────────────────────────────────── */}
         <div className="flex flex-col gap-2.5 pt-2">
           <BackButton to="/home" label="Back to Dashboard" className="w-full py-3.5 justify-center text-sm" />
-          <Link to="/add-medicine" className="btn-secondary py-3 flex items-center justify-center gap-2 text-sm">
+          <Link to="/add-medicine" className="ps-btn ps-btn-secondary py-3 flex items-center justify-center gap-2 text-sm">
             <Pill className="w-4 h-4" />
             <span>Manage My Medicines</span>
           </Link>

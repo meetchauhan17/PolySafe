@@ -1,103 +1,122 @@
+// src/layouts/CaregiverLayout.jsx — "Clinical Calm" caregiver shell
 import React from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
-import { Heart, User, ShieldCheck } from 'lucide-react';
+import { Heart, UserCircle, ShieldCheck, Eye } from 'lucide-react';
 import PageTransition from '../components/PageTransition';
 import SignOutConfirmButton from '../components/SignOutConfirmButton';
 import { useAuth } from '../context/AuthContext';
+import { clsx } from 'clsx';
 
 export default function CaregiverLayout() {
   const location = useLocation();
   const { user } = useAuth() || {};
 
-  const isProfile = location.pathname === '/profile';
-  const isDashboard = location.pathname === '/caregiver-view';
+  const navItems = [
+    {
+      label: 'Care Hub',
+      path: '/caregiver-view',
+      icon: Heart,
+      match: (p) => p === '/caregiver-view',
+    },
+    {
+      label: 'Profile',
+      path: '/profile',
+      icon: UserCircle,
+      match: (p) => p === '/profile',
+    },
+  ];
 
   return (
-    <div className="relative min-h-screen bg-[var(--chassis)] text-[var(--text-primary)] flex flex-col font-sans selection:bg-teal-500 selection:text-white overflow-x-hidden">
-      {/* ── Background Precision Dot Matrix ── */}
-      <div className="fixed inset-0 bg-[radial-gradient(#c7d2fe_1px,transparent_1px)] [background-size:24px_24px] opacity-25 pointer-events-none z-0" />
+    <div className="min-h-screen bg-[var(--canvas)] text-[var(--ink)] flex flex-col">
+      {/* ── Privacy Notice Banner ── */}
+      <div
+        className="px-4 py-2 border-b text-sm font-medium text-center font-[var(--font-heading)]"
+        style={{
+          background: 'var(--caregiver-50)',
+          borderColor: 'var(--caregiver-600)',
+          color: 'var(--caregiver-600)',
+        }}
+      >
+        <div className="flex items-center justify-center gap-2">
+          <Eye className="w-3.5 h-3.5" aria-hidden />
+          Caregiver view — dosage reminders only · Clinical history protected
+        </div>
+      </div>
 
-      {/* ── Atmospheric Ambient Lighting Orbs ── */}
-      <div className="fixed -top-36 left-1/2 -translate-x-1/2 w-[850px] h-[450px] bg-gradient-to-b from-emerald-600/12 via-teal-500/8 to-transparent rounded-full blur-3xl pointer-events-none z-0" />
-      <div className="fixed top-1/4 -left-48 w-[450px] h-[450px] bg-teal-500/8 rounded-full blur-3xl pointer-events-none z-0" />
-      <div className="fixed bottom-10 -right-48 w-[450px] h-[450px] bg-blue-600/8 rounded-full blur-3xl pointer-events-none z-0" />
-
-      {/* ─── Top Bar ─── */}
-      <header className="sticky top-0 z-40 bg-[var(--brand-surface)]/90 backdrop-blur-md border-b border-[var(--brand-border)] px-4 sm:px-6 py-3.5 shadow-[var(--shadow-sm)] relative">
-        <div className="max-w-5xl mx-auto flex items-center justify-between gap-3">
-          <Link to="/caregiver-view" className="flex items-center gap-3 group">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-emerald-600 via-teal-600 to-cyan-500 p-0.5 shadow-lg shadow-emerald-500/20 flex items-center justify-center text-white group-hover:scale-105 transition-transform">
-              <Heart className="w-5 h-5" />
+      {/* ── Header ── */}
+      <header className="sticky top-[40px] z-50 bg-[var(--surface)]/95 backdrop-blur-sm border-b border-[var(--border)]">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between gap-4">
+          {/* Brand */}
+          <Link to="/caregiver-view" className="flex items-center gap-2.5 group flex-shrink-0">
+            <div
+              className="w-8 h-8 rounded-[var(--radius-sm)] flex items-center justify-center group-hover:opacity-90 transition-opacity"
+              style={{ backgroundColor: 'var(--caregiver-600)' }}
+            >
+              <Heart className="w-4.5 h-4.5 text-white" aria-hidden />
             </div>
             <div>
-              <div className="flex items-center gap-2">
-                <span className="text-xl font-extrabold tracking-tight text-[var(--text-primary)] font-display">
-                  Poly<span className="bg-gradient-to-r from-emerald-600 to-teal-500 bg-clip-text text-transparent">Safe</span>
-                </span>
-                <span className="text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-700 border border-emerald-500/20 shadow-2xs">
-                  Family Proxy
-                </span>
-              </div>
-              <span className="text-[10px] font-mono text-[var(--text-muted)] font-semibold uppercase tracking-wider hidden sm:inline">
-                Family & Care Companion
+              <span className="text-base font-extrabold text-[var(--ink)] font-[var(--font-heading)] tracking-tight">
+                Poly<span style={{ color: 'var(--caregiver-600)' }}>Safe</span>
+              </span>
+              <span
+                className="ml-2 text-[11px] font-semibold px-1.5 py-0.5 rounded-[var(--radius-sm)] border"
+                style={{
+                  color: 'var(--caregiver-600)',
+                  background: 'var(--caregiver-50)',
+                  borderColor: 'var(--caregiver-100)',
+                  fontFamily: 'var(--font-heading)',
+                }}
+              >
+                Caregiver
               </span>
             </div>
           </Link>
 
-          {/* Navigation Items (Hub + Profile) */}
-          <div className="flex items-center gap-1.5 p-1 bg-[var(--brand-surface)] border border-[var(--brand-border)] shadow-2xs rounded-2xl">
-            <Link
-              to="/caregiver-view"
-              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all ${
-                isDashboard
-                  ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold shadow-sm'
-                  : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--chassis)]'
-              }`}
-            >
-              <ShieldCheck className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Caregiver Hub</span>
-            </Link>
+          {/* Nav */}
+          <nav className="flex items-center gap-1" aria-label="Caregiver navigation">
+            {navItems.map((item) => {
+              const Icon = item.icon;
+              const active = item.match(location.pathname);
+              return (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  className={clsx(
+                    'flex items-center gap-1.5 px-3.5 py-2 rounded-[var(--radius-sm)] text-sm font-semibold',
+                    'font-[var(--font-heading)] transition-all duration-150',
+                    active
+                      ? 'text-white'
+                      : 'text-[var(--ink-3)] hover:text-[var(--ink)] hover:bg-[var(--surface-2)] border border-transparent'
+                  )}
+                  style={active ? { backgroundColor: 'var(--caregiver-600)' } : {}}
+                  aria-current={active ? 'page' : undefined}
+                >
+                  <Icon className="w-4 h-4 flex-shrink-0" aria-hidden />
+                  {item.label}
+                </Link>
+              );
+            })}
+          </nav>
 
+          {/* Right */}
+          <div className="flex items-center gap-2 flex-shrink-0">
             <Link
               to="/profile"
-              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all ${
-                isProfile
-                  ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold shadow-sm'
-                  : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--chassis)]'
-              }`}
-            >
-              <User className="w-3.5 h-3.5" />
-              <span>Profile</span>
-            </Link>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <Link
-              to="/profile"
-              className="hidden sm:inline-block text-xs font-mono font-bold text-[var(--text-primary)] px-3 py-1.5 rounded-xl hover:bg-[var(--chassis)] border border-transparent hover:border-[var(--brand-border)] transition-colors"
-              title="View Caregiver Profile"
+              className="hidden sm:block text-sm font-semibold text-[var(--ink-2)] font-[var(--font-heading)] px-2 py-1 rounded-[var(--radius-sm)] hover:bg-[var(--surface-2)] transition-colors"
             >
               {user?.name || user?.email || 'Caregiver'}
             </Link>
-            <SignOutConfirmButton buttonText="Sign Out" />
+            <SignOutConfirmButton />
           </div>
         </div>
       </header>
 
-      {/* ─── Content ─── */}
-      <main className="relative z-10 flex-1 max-w-5xl mx-auto w-full px-4 py-6">
+      {/* ── Content ── */}
+      <main className="flex-1 max-w-5xl mx-auto w-full px-4 sm:px-6 py-6">
         <PageTransition key={location.pathname}>
           <Outlet />
         </PageTransition>
       </main>
-
-      {/* ─── Footer ─── */}
-      <footer className="relative z-10 bg-[var(--brand-surface)]/90 border-t border-[var(--brand-border)] py-4 text-center text-xs font-mono text-[var(--text-muted)] shadow-xs">
-        <div className="max-w-5xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-1">
-          <span className="font-bold text-emerald-700">CAREGIVER PRIVACY FILTER ACTIVE</span>
-          <span>Dosage reminders only · Clinical history protected</span>
-        </div>
-      </footer>
     </div>
   );
 }

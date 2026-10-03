@@ -29,7 +29,7 @@ export function HomeSkeleton() {
       </div>
 
       {/* Status Card Skeleton */}
-      <div className="p-6 rounded-[32px] bg-[var(--chassis)] shadow-[var(--shadow-card)] space-y-4">
+      <div className="p-6 rounded-[32px] bg-[var(--canvas)] shadow-[var(--shadow-sm)] space-y-4">
         <div className="flex items-center gap-3">
           <Skeleton className="h-12 w-12 rounded-2xl flex-shrink-0" />
           <div className="space-y-2 flex-1">
@@ -41,7 +41,7 @@ export function HomeSkeleton() {
       </div>
 
       {/* Schedule Card Skeleton */}
-      <div className="p-6 rounded-[32px] bg-[var(--chassis)] shadow-[var(--shadow-card)] space-y-4">
+      <div className="p-6 rounded-[32px] bg-[var(--canvas)] shadow-[var(--shadow-sm)] space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Skeleton className="h-5 w-5 rounded-md" />
@@ -52,7 +52,7 @@ export function HomeSkeleton() {
 
         <div className="space-y-3 pt-1">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="p-3.5 rounded-xl bg-[var(--chassis)] shadow-[var(--shadow-recessed)] flex items-center justify-between">
+            <div key={i} className="p-3.5 rounded-xl bg-[var(--canvas)] shadow-[var(--shadow-inner)] flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <Skeleton className="h-7 w-16 rounded-lg" />
                 <div className="space-y-1.5">
@@ -83,17 +83,17 @@ export function TimelineSkeleton() {
         <Skeleton className="h-10 w-24 rounded-xl" />
       </div>
 
-      <div className="p-4 rounded-[32px] bg-[var(--chassis)] shadow-[var(--shadow-card)] flex items-center justify-between">
+      <div className="p-4 rounded-[32px] bg-[var(--canvas)] shadow-[var(--shadow-sm)] flex items-center justify-between">
         <div className="space-y-1.5">
           <Skeleton className="h-3 w-20" />
           <Skeleton className="h-6 w-12" />
         </div>
-        <div className="h-8 w-[2px] bg-[var(--chassis-dark)]" />
+        <div className="h-8 w-[2px] bg-[var(--border)]" />
         <div className="space-y-1.5">
           <Skeleton className="h-3 w-20" />
           <Skeleton className="h-6 w-12" />
         </div>
-        <div className="h-8 w-[2px] bg-[var(--chassis-dark)]" />
+        <div className="h-8 w-[2px] bg-[var(--border)]" />
         <div className="space-y-1.5">
           <Skeleton className="h-3 w-20" />
           <Skeleton className="h-6 w-12" />
@@ -101,11 +101,11 @@ export function TimelineSkeleton() {
       </div>
 
       <div className="relative pl-6 space-y-5">
-        <div className="absolute left-[7px] top-2 bottom-4 w-[3px] bg-[var(--accent-secondary)]" />
+        <div className="absolute left-[7px] top-2 bottom-4 w-[3px] bg-[var(--doctor-600)]" />
         {[1, 2, 3, 4].map((i) => (
           <div key={i} className="relative">
-            <div className="absolute -left-6 top-5 w-3.5 h-3.5 rounded-full border-2 border-white bg-[var(--accent-secondary)]" />
-            <div className="p-4 rounded-[24px] bg-[var(--chassis)] shadow-[var(--shadow-card)] space-y-3">
+            <div className="absolute -left-6 top-5 w-3.5 h-3.5 rounded-full border-2 border-white bg-[var(--doctor-600)]" />
+            <div className="p-4 rounded-[24px] bg-[var(--canvas)] shadow-[var(--shadow-sm)] space-y-3">
               <div className="flex items-center justify-between">
                 <Skeleton className="h-5 w-36" />
                 <Skeleton className="h-4 w-16 rounded-md" />
@@ -136,7 +136,7 @@ export function RiskAnalysisSkeleton() {
         </div>
       </div>
 
-      <div className="p-6 rounded-[32px] bg-[var(--chassis)] shadow-[var(--shadow-card)] space-y-4">
+      <div className="p-6 rounded-[32px] bg-[var(--canvas)] shadow-[var(--shadow-sm)] space-y-4">
         <div className="flex items-center gap-3">
           <Skeleton className="h-10 w-10 rounded-xl flex-shrink-0" />
           <div className="space-y-2 flex-1">
@@ -148,11 +148,11 @@ export function RiskAnalysisSkeleton() {
       </div>
 
       <div className="grid grid-cols-2 gap-3">
-        <div className="p-4 rounded-[24px] bg-[var(--chassis)] shadow-[var(--shadow-card)] space-y-2">
+        <div className="p-4 rounded-[24px] bg-[var(--canvas)] shadow-[var(--shadow-sm)] space-y-2">
           <Skeleton className="h-4 w-20" />
           <Skeleton className="h-6 w-28" />
         </div>
-        <div className="p-4 rounded-[24px] bg-[var(--chassis)] shadow-[var(--shadow-card)] space-y-2">
+        <div className="p-4 rounded-[24px] bg-[var(--canvas)] shadow-[var(--shadow-sm)] space-y-2">
           <Skeleton className="h-4 w-20" />
           <Skeleton className="h-6 w-28" />
         </div>
@@ -168,7 +168,7 @@ export function DoctorPatientListSkeleton() {
   return (
     <div className="space-y-2.5">
       {[1, 2, 3, 4].map((i) => (
-        <div key={i} className="p-3.5 rounded-xl bg-[var(--chassis)] shadow-[var(--shadow-sm)] space-y-2">
+        <div key={i} className="p-3.5 rounded-xl bg-[var(--canvas)] shadow-[var(--shadow-sm)] space-y-2">
           <div className="flex items-center justify-between">
             <Skeleton className="h-4 w-28" />
             <Skeleton className="h-4 w-12 rounded-full" />
@@ -189,7 +189,7 @@ export function DoctorPatientListSkeleton() {
 export function DoctorPatientDetailSkeleton() {
   return (
     <div className="space-y-6">
-      <div className="p-6 rounded-[32px] bg-[var(--chassis)] shadow-[var(--shadow-card)] flex items-center justify-between">
+      <div className="p-6 rounded-[32px] bg-[var(--canvas)] shadow-[var(--shadow-sm)] flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Skeleton className="h-12 w-12 rounded-full flex-shrink-0" />
           <div className="space-y-2">
@@ -218,15 +218,15 @@ export function InsightsSkeleton() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="p-4 rounded-[24px] bg-[var(--chassis)] shadow-[var(--shadow-card)] space-y-2">
+        <div className="p-4 rounded-[24px] bg-[var(--canvas)] shadow-[var(--shadow-sm)] space-y-2">
           <Skeleton className="h-4 w-24" />
           <Skeleton className="h-8 w-16" />
         </div>
-        <div className="p-4 rounded-[24px] bg-[var(--chassis)] shadow-[var(--shadow-card)] space-y-2">
+        <div className="p-4 rounded-[24px] bg-[var(--canvas)] shadow-[var(--shadow-sm)] space-y-2">
           <Skeleton className="h-4 w-24" />
           <Skeleton className="h-8 w-16" />
         </div>
-        <div className="p-4 rounded-[24px] bg-[var(--chassis)] shadow-[var(--shadow-card)] space-y-2">
+        <div className="p-4 rounded-[24px] bg-[var(--canvas)] shadow-[var(--shadow-sm)] space-y-2">
           <Skeleton className="h-4 w-24" />
           <Skeleton className="h-8 w-16" />
         </div>

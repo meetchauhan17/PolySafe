@@ -144,24 +144,24 @@ function DoctorSafetyCheckModal({ isOpen, onClose, patientId, patientAge, onPres
 	if (!isOpen) return null;
 
 	return (
-		<div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-[#0f172a]/75 backdrop-blur-md overflow-y-auto animate-fade-in">
+		<div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-[var(--canvas)]/75 backdrop-blur-md overflow-y-auto animate-fade-in">
 			<motion.div
 				initial={{ opacity: 0, scale: 0.95, y: 10 }}
 				animate={{ opacity: 1, scale: 1, y: 0 }}
 				exit={{ opacity: 0, scale: 0.95, y: 10 }}
-				className="w-full max-w-2xl bg-[var(--brand-surface)] border border-white/80 shadow-2xl rounded-2xl p-6 sm:p-8 space-y-6 max-h-[86vh] my-auto overflow-y-auto"
+				className="w-full max-w-2xl bg-[var(--surface)] border border-white/80 shadow-2xl rounded-2xl p-6 sm:p-8 space-y-6 max-h-[86vh] my-auto overflow-y-auto"
 			>
 				{/* Header */}
-				<div className="flex items-start justify-between gap-4 border-b border-[var(--brand-border-subtle)] pb-4">
+				<div className="flex items-start justify-between gap-4 border-b border-[var(--border)] pb-4">
 					<div className="flex items-center gap-3">
-						<div className="p-3 bg-[var(--role-doctor)]/10 border border-[var(--role-doctor)]/20 rounded-xl text-[var(--role-doctor)]">
+						<div className="p-3 bg-[var(--doctor-600)]/10 border border-[var(--doctor-600)]/20 rounded-xl text-[var(--doctor-600)]">
 							<Stethoscope className="w-6 h-6" />
 						</div>
 						<div>
-							<h2 className="text-xl font-bold text-[var(--text-primary)] font-display">
+							<h2 className="text-xl font-bold text-[var(--ink)] font-[var(--font-heading)]">
 								Pre-Prescribing Safety Check
 							</h2>
-							<p className="text-xs text-[var(--text-muted)] mt-0.5">
+							<p className="text-xs text-[var(--ink-3)] mt-0.5">
 								Patient (Age {patientAge || '—'}) · Real-time DDInter & Regimen Risk Simulator
 							</p>
 						</div>
@@ -169,17 +169,17 @@ function DoctorSafetyCheckModal({ isOpen, onClose, patientId, patientAge, onPres
 					<button
 						type="button"
 						onClick={onClose}
-						className="p-2 rounded-xl text-[var(--text-muted)] hover:bg-[var(--chassis)] transition-colors cursor-pointer"
+						className="p-2 rounded-xl text-[var(--ink-3)] hover:bg-[var(--canvas)] transition-colors cursor-pointer"
 					>
 						<X className="w-5 h-5" />
 					</button>
 				</div>
 
 				{/* Clear Framing Notice */}
-				<div className="flex items-start gap-2.5 p-3.5 bg-teal-500/10 border border-teal-500/25 rounded-xl text-xs text-[var(--text-primary)] leading-relaxed">
+				<div className="flex items-start gap-2.5 p-3.5 bg-teal-500/10 border border-teal-500/25 rounded-xl text-xs text-[var(--ink)] leading-relaxed">
 					<Info className="w-4 h-4 text-teal-600 flex-shrink-0 mt-0.5" />
 					<p>
-						<strong className="text-[var(--role-doctor)]">Clinical Simulator:</strong> Cross-checks the proposed drug against the patient's active medicines for direct DDInter flags and WHO/NCI tiered polypharmacy score changes before issuing a prescription.
+						<strong className="text-[var(--doctor-600)]">Clinical Simulator:</strong> Cross-checks the proposed drug against the patient's active medicines for direct DDInter flags and WHO/NCI tiered polypharmacy score changes before issuing a prescription.
 					</p>
 				</div>
 
@@ -188,7 +188,7 @@ function DoctorSafetyCheckModal({ isOpen, onClose, patientId, patientAge, onPres
 					<div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
 						{/* Drug Name with Autocomplete */}
 						<div className="sm:col-span-2 space-y-1.5 relative">
-							<label className="block text-xs font-bold uppercase tracking-wider text-[var(--text-muted)]">
+							<label className="block text-xs font-bold uppercase tracking-wider text-[var(--ink-3)]">
 								Proposed Drug / Indian Brand
 							</label>
 							<div className="relative">
@@ -203,17 +203,17 @@ function DoctorSafetyCheckModal({ isOpen, onClose, patientId, patientAge, onPres
 									}}
 									onFocus={() => setShowSuggestions(true)}
 									placeholder="e.g. D3B12 PLUS, Pan-D, Warfarin, Metformin…"
-									className="w-full text-sm py-2.5 px-3.5 rounded-xl bg-[var(--chassis)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)]/70 border border-[var(--chassis-dark)] shadow-inner focus:outline-none focus:ring-2 focus:ring-[var(--role-doctor)]/40 transition-all font-sans"
+									className="w-full text-sm py-2.5 px-3.5 rounded-xl bg-[var(--canvas)] text-[var(--ink)] placeholder:text-[var(--ink-3)]/70 border border-[var(--border)] shadow-inner focus:outline-none focus:ring-2 focus:ring-[var(--doctor-600)]/40 transition-all font-sans"
 									autoFocus
 								/>
 								{checking && (
-									<Loader2 className="w-4 h-4 text-[var(--role-doctor)] animate-spin absolute right-3 top-3" />
+									<Loader2 className="w-4 h-4 text-[var(--doctor-600)] animate-spin absolute right-3 top-3" />
 								)}
 							</div>
 
 							{/* Autocomplete Dropdown */}
 							{showSuggestions && suggestions.length > 0 && (
-								<div className="absolute top-full left-0 right-0 mt-1.5 bg-[var(--brand-surface)] border border-[var(--brand-border-subtle)] shadow-xl rounded-xl overflow-hidden z-20 max-h-48 overflow-y-auto">
+								<div className="absolute top-full left-0 right-0 mt-1.5 bg-[var(--surface)] border border-[var(--border)] shadow-xl rounded-xl overflow-hidden z-20 max-h-48 overflow-y-auto">
 									{suggestions.map((s, idx) => (
 										<button
 											key={idx}
@@ -222,7 +222,7 @@ function DoctorSafetyCheckModal({ isOpen, onClose, patientId, patientAge, onPres
 												setDrug(s.name);
 												setShowSuggestions(false);
 											}}
-											className="w-full px-3.5 py-2.5 text-left text-xs font-medium text-[var(--text-primary)] hover:bg-[var(--chassis)] flex items-center justify-between border-b border-[var(--brand-border-subtle)] last:border-0 cursor-pointer transition-colors"
+											className="w-full px-3.5 py-2.5 text-left text-xs font-medium text-[var(--ink)] hover:bg-[var(--canvas)] flex items-center justify-between border-b border-[var(--border)] last:border-0 cursor-pointer transition-colors"
 										>
 											<span>{s.name}</span>
 											{s.harmLevel && <DrugHarmBadge harmLevel={s.harmLevel} size="sm" />}
@@ -234,7 +234,7 @@ function DoctorSafetyCheckModal({ isOpen, onClose, patientId, patientAge, onPres
 
 						{/* Dosage input */}
 						<div className="space-y-1.5">
-							<label className="block text-xs font-bold uppercase tracking-wider text-[var(--text-muted)]">
+							<label className="block text-xs font-bold uppercase tracking-wider text-[var(--ink-3)]">
 								Dosage (Optional)
 							</label>
 							<input
@@ -242,7 +242,7 @@ function DoctorSafetyCheckModal({ isOpen, onClose, patientId, patientAge, onPres
 								value={dosage}
 								onChange={(e) => setDosage(e.target.value)}
 								placeholder="e.g. 500mg, 1 tab"
-								className="w-full text-sm py-2.5 px-3.5 rounded-xl bg-[var(--chassis)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)]/70 border border-[var(--chassis-dark)] shadow-inner focus:outline-none focus:ring-2 focus:ring-[var(--role-doctor)]/40 transition-all font-sans"
+								className="w-full text-sm py-2.5 px-3.5 rounded-xl bg-[var(--canvas)] text-[var(--ink)] placeholder:text-[var(--ink-3)]/70 border border-[var(--border)] shadow-inner focus:outline-none focus:ring-2 focus:ring-[var(--doctor-600)]/40 transition-all font-sans"
 							/>
 						</div>
 					</div>
@@ -251,14 +251,14 @@ function DoctorSafetyCheckModal({ isOpen, onClose, patientId, patientAge, onPres
 						<button
 							type="button"
 							onClick={onClose}
-							className="btn-secondary px-5 py-2.5 text-xs rounded-xl"
+							className="ps-btn ps-btn-secondary px-5 py-2.5 text-xs rounded-xl"
 						>
 							Cancel
 						</button>
 						<button
 							type="submit"
 							disabled={!drug.trim() || checking}
-							className="btn-primary px-6 py-2.5 text-xs flex items-center gap-2 rounded-xl font-bold"
+							className="ps-btn ps-btn-primary px-6 py-2.5 text-xs flex items-center gap-2 rounded-xl font-bold"
 						>
 							{checking ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
 							<span>Simulate Safety Check</span>
@@ -279,7 +279,7 @@ function DoctorSafetyCheckModal({ isOpen, onClose, patientId, patientAge, onPres
 					<motion.div
 						initial={{ opacity: 0, y: 8 }}
 						animate={{ opacity: 1, y: 0 }}
-						className="space-y-4 pt-3 border-t border-[var(--brand-border-subtle)]"
+						className="space-y-4 pt-3 border-t border-[var(--border)]"
 					>
 						{/* Top Decision Banner */}
 						<div
@@ -300,7 +300,7 @@ function DoctorSafetyCheckModal({ isOpen, onClose, patientId, patientAge, onPres
 									<CheckCircle2 className="w-6 h-6 text-teal-600 flex-shrink-0" />
 								)}
 								<div>
-									<p className="text-sm font-bold uppercase tracking-wider font-display">
+									<p className="text-sm font-bold uppercase tracking-wider font-[var(--font-heading)]">
 										Prescribing Decision: {result.decision}
 									</p>
 									<p className="text-xs opacity-90 mt-0.5 leading-relaxed">
@@ -329,18 +329,18 @@ function DoctorSafetyCheckModal({ isOpen, onClose, patientId, patientAge, onPres
 						{/* Drug Resolution & Regimen Impact Cards */}
 						<div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
 							{/* Proposed Drug Details */}
-							<div className="p-4 rounded-xl bg-[var(--chassis)] border border-[var(--chassis-dark)]/80 space-y-2 shadow-xs">
+							<div className="p-4 rounded-xl bg-[var(--canvas)] border border-[var(--border)]/80 space-y-2 shadow-xs">
 								<div className="flex items-center justify-between">
-									<span className="text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)]">Proposed Drug</span>
+									<span className="text-[10px] font-bold uppercase tracking-wider text-[var(--ink-3)]">Proposed Drug</span>
 									<DrugHarmBadge harmLevel={result.proposedDrug?.harmLevel} size="sm" />
 								</div>
 								<div>
-									<p className="text-sm font-bold text-[var(--text-primary)] font-display">{result.proposedDrug?.name}</p>
-									<p className="text-xs text-[var(--text-muted)] mt-0.5">
-										Active Composition: <strong className="text-[var(--text-primary)]">{result.proposedDrug?.genericName}</strong>
+									<p className="text-sm font-bold text-[var(--ink)] font-[var(--font-heading)]">{result.proposedDrug?.name}</p>
+									<p className="text-xs text-[var(--ink-3)] mt-0.5">
+										Active Composition: <strong className="text-[var(--ink)]">{result.proposedDrug?.genericName}</strong>
 									</p>
 									{result.proposedDrug?.class && (
-										<p className="text-[11px] text-[var(--text-muted)] mt-0.5">
+										<p className="text-[11px] text-[var(--ink-3)] mt-0.5">
 											Class: {result.proposedDrug.class}
 										</p>
 									)}
@@ -348,24 +348,24 @@ function DoctorSafetyCheckModal({ isOpen, onClose, patientId, patientAge, onPres
 							</div>
 
 							{/* Projected Regimen Impact */}
-							<div className="p-4 rounded-xl bg-[var(--chassis)] border border-[var(--chassis-dark)]/80 space-y-2 shadow-xs">
+							<div className="p-4 rounded-xl bg-[var(--canvas)] border border-[var(--border)]/80 space-y-2 shadow-xs">
 								<div className="flex items-center justify-between">
-									<span className="text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)]">Projected Regimen Risk</span>
-									<span className="text-[10px] font-bold text-[var(--role-doctor)]">
+									<span className="text-[10px] font-bold uppercase tracking-wider text-[var(--ink-3)]">Projected Regimen Risk</span>
+									<span className="text-[10px] font-bold text-[var(--doctor-600)]">
 										{result.currentRegimenCount + 1} total medicines
 									</span>
 								</div>
 								<div className="flex items-baseline gap-2">
-									<span className="text-xl font-black text-[var(--text-primary)] font-display">
+									<span className="text-xl font-black text-[var(--ink)] font-[var(--font-heading)]">
 										{result.projectedRegimenRisk}
 									</span>
 									{result.projectedAverageScore && (
-										<span className="text-xs font-semibold text-[var(--text-muted)]">
+										<span className="text-xs font-semibold text-[var(--ink-3)]">
 											({result.projectedAverageScore} / 5.0 score)
 										</span>
 									)}
 								</div>
-								<p className="text-[11px] text-[var(--text-muted)] leading-tight">
+								<p className="text-[11px] text-[var(--ink-3)] leading-tight">
 									Calculated using WHO/NCI tiered polypharmacy index.
 								</p>
 							</div>
@@ -382,10 +382,10 @@ function DoctorSafetyCheckModal({ isOpen, onClose, patientId, patientAge, onPres
 									{result.flags.map((flag, idx) => (
 										<div
 											key={idx}
-											className="p-3.5 rounded-xl bg-[var(--chassis)] border border-[var(--chassis-dark)] shadow-xs space-y-1"
+											className="p-3.5 rounded-xl bg-[var(--canvas)] border border-[var(--border)] shadow-xs space-y-1"
 										>
 											<div className="flex items-center justify-between gap-2">
-												<p className="text-xs font-bold text-[var(--text-primary)]">
+												<p className="text-xs font-bold text-[var(--ink)]">
 													{result.proposedDrug?.name} ↔ {flag.counterpart || flag.interactingDrug}
 												</p>
 												<span
@@ -398,7 +398,7 @@ function DoctorSafetyCheckModal({ isOpen, onClose, patientId, patientAge, onPres
 													{flag.severity}
 												</span>
 											</div>
-											<p className="text-[11px] text-[var(--text-muted)] leading-relaxed">
+											<p className="text-[11px] text-[var(--ink-3)] leading-relaxed">
 												{flag.plainExplanation || flag.note}
 											</p>
 										</div>
@@ -408,15 +408,15 @@ function DoctorSafetyCheckModal({ isOpen, onClose, patientId, patientAge, onPres
 						)}
 
 						{/* Action Bar: Prescribe Directly Button */}
-						<div className="pt-4 flex items-center justify-between gap-3 border-t border-[var(--brand-border-subtle)]">
-							<span className="text-xs text-[var(--text-muted)]">
+						<div className="pt-4 flex items-center justify-between gap-3 border-t border-[var(--border)]">
+							<span className="text-xs text-[var(--ink-3)]">
 								Ready to prescribe for this patient?
 							</span>
 							<button
 								type="button"
 								onClick={handlePrescribeDirectly}
 								disabled={prescribing}
-								className="btn-primary py-2.5 px-5 text-xs flex items-center gap-2 rounded-xl font-bold"
+								className="ps-btn ps-btn-primary py-2.5 px-5 text-xs flex items-center gap-2 rounded-xl font-bold"
 							>
 								{prescribing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
 								<span>Prescribe & Add to Regimen</span>
@@ -464,26 +464,26 @@ function DrugSubstituteModal({ isOpen, onClose, patientId, medicines, onSuccess 
 	};
 
 	return (
-		<div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-[#0f172a]/75 backdrop-blur-md overflow-y-auto animate-fade-in">
+		<div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-[var(--canvas)]/75 backdrop-blur-md overflow-y-auto animate-fade-in">
 			<motion.div
 				initial={{ opacity: 0, scale: 0.96, y: 10 }}
 				animate={{ opacity: 1, scale: 1, y: 0 }}
 				exit={{ opacity: 0, scale: 0.96, y: 10 }}
-				className="w-full max-w-lg bg-[var(--brand-surface)] border border-white/80 shadow-2xl rounded-2xl p-6 sm:p-7 space-y-5 max-h-[86vh] my-auto overflow-y-auto"
+				className="w-full max-w-lg bg-[var(--surface)] border border-white/80 shadow-2xl rounded-2xl p-6 sm:p-7 space-y-5 max-h-[86vh] my-auto overflow-y-auto"
 			>
-				<div className="flex items-center justify-between border-b border-[var(--brand-border-subtle)] pb-4">
+				<div className="flex items-center justify-between border-b border-[var(--border)] pb-4">
 					<div className="flex items-center gap-2.5">
 						<div className="p-2 rounded-xl bg-blue-500/10 text-blue-600 border border-blue-500/20">
 							<ArrowLeftRight className="w-5 h-5" />
 						</div>
 						<div>
-							<h3 className="text-base font-bold text-[var(--text-primary)] font-display">Drug Substitution Order</h3>
-							<p className="text-xs text-[var(--text-muted)] mt-0.5">Switch an active prescription with automated deprescribing</p>
+							<h3 className="text-base font-bold text-[var(--ink)] font-[var(--font-heading)]">Drug Substitution Order</h3>
+							<p className="text-xs text-[var(--ink-3)] mt-0.5">Switch an active prescription with automated deprescribing</p>
 						</div>
 					</div>
 					<button
 						onClick={onClose}
-						className="p-1.5 rounded-xl text-[var(--text-muted)] hover:bg-[var(--chassis)] transition-colors cursor-pointer"
+						className="p-1.5 rounded-xl text-[var(--ink-3)] hover:bg-[var(--canvas)] transition-colors cursor-pointer"
 					>
 						<X className="w-5 h-5" />
 					</button>
@@ -498,11 +498,11 @@ function DrugSubstituteModal({ isOpen, onClose, patientId, medicines, onSuccess 
 
 				<form onSubmit={handleSubmit} className="space-y-4">
 					<div className="space-y-1.5">
-						<label className="text-xs font-bold uppercase tracking-wider text-[var(--text-muted)]">Discontinue (Current Medicine)</label>
+						<label className="text-xs font-bold uppercase tracking-wider text-[var(--ink-3)]">Discontinue (Current Medicine)</label>
 						<select
 							value={oldMedId}
 							onChange={e => setOldMedId(e.target.value)}
-							className="w-full text-sm py-2.5 px-3.5 rounded-xl bg-[var(--chassis)] text-[var(--text-primary)] border border-[var(--chassis-dark)] shadow-inner focus:outline-none focus:ring-2 focus:ring-[var(--role-doctor)]/40 transition-all font-sans"
+							className="w-full text-sm py-2.5 px-3.5 rounded-xl bg-[var(--canvas)] text-[var(--ink)] border border-[var(--border)] shadow-inner focus:outline-none focus:ring-2 focus:ring-[var(--doctor-600)]/40 transition-all font-sans"
 						>
 							<option value="">Select medicine to replace…</option>
 							{medicines.map(m => (
@@ -512,35 +512,35 @@ function DrugSubstituteModal({ isOpen, onClose, patientId, medicines, onSuccess 
 					</div>
 
 					<div className="space-y-1.5">
-						<label className="text-xs font-bold uppercase tracking-wider text-[var(--text-muted)]">Replacement Drug Name</label>
+						<label className="text-xs font-bold uppercase tracking-wider text-[var(--ink-3)]">Replacement Drug Name</label>
 						<input
 							type="text"
 							placeholder="e.g. Ramipril, Amlodipine…"
 							value={newDrug}
 							onChange={e => setNewDrug(e.target.value)}
-							className="w-full text-sm py-2.5 px-3.5 rounded-xl bg-[var(--chassis)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)]/70 border border-[var(--chassis-dark)] shadow-inner focus:outline-none focus:ring-2 focus:ring-[var(--role-doctor)]/40 transition-all font-sans"
+							className="w-full text-sm py-2.5 px-3.5 rounded-xl bg-[var(--canvas)] text-[var(--ink)] placeholder:text-[var(--ink-3)]/70 border border-[var(--border)] shadow-inner focus:outline-none focus:ring-2 focus:ring-[var(--doctor-600)]/40 transition-all font-sans"
 						/>
 					</div>
 
 					<div className="space-y-1.5">
-						<label className="text-xs font-bold uppercase tracking-wider text-[var(--text-muted)]">Dosage (optional)</label>
+						<label className="text-xs font-bold uppercase tracking-wider text-[var(--ink-3)]">Dosage (optional)</label>
 						<input
 							type="text"
 							placeholder="e.g. 5mg once daily"
 							value={newDosage}
 							onChange={e => setNewDosage(e.target.value)}
-							className="w-full text-sm py-2.5 px-3.5 rounded-xl bg-[var(--chassis)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)]/70 border border-[var(--chassis-dark)] shadow-inner focus:outline-none focus:ring-2 focus:ring-[var(--role-doctor)]/40 transition-all font-sans"
+							className="w-full text-sm py-2.5 px-3.5 rounded-xl bg-[var(--canvas)] text-[var(--ink)] placeholder:text-[var(--ink-3)]/70 border border-[var(--border)] shadow-inner focus:outline-none focus:ring-2 focus:ring-[var(--doctor-600)]/40 transition-all font-sans"
 						/>
 					</div>
 
 					<div className="space-y-1.5">
-						<label className="text-xs font-bold uppercase tracking-wider text-[var(--text-muted)]">Clinical Rationale (optional)</label>
+						<label className="text-xs font-bold uppercase tracking-wider text-[var(--ink-3)]">Clinical Rationale (optional)</label>
 						<textarea
 							placeholder="Reason for substitution…"
 							value={rationale}
 							onChange={e => setRationale(e.target.value)}
 							rows={2}
-							className="w-full text-sm py-2.5 px-3.5 rounded-xl bg-[var(--chassis)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)]/70 border border-[var(--chassis-dark)] shadow-inner focus:outline-none focus:ring-2 focus:ring-[var(--role-doctor)]/40 transition-all font-sans resize-none"
+							className="w-full text-sm py-2.5 px-3.5 rounded-xl bg-[var(--canvas)] text-[var(--ink)] placeholder:text-[var(--ink-3)]/70 border border-[var(--border)] shadow-inner focus:outline-none focus:ring-2 focus:ring-[var(--doctor-600)]/40 transition-all font-sans resize-none"
 						/>
 					</div>
 
@@ -548,14 +548,14 @@ function DrugSubstituteModal({ isOpen, onClose, patientId, medicines, onSuccess 
 						<button
 							type="button"
 							onClick={onClose}
-							className="btn-secondary px-5 py-2.5 text-xs rounded-xl"
+							className="ps-btn ps-btn-secondary px-5 py-2.5 text-xs rounded-xl"
 						>
 							Cancel
 						</button>
 						<button
 							type="submit"
 							disabled={substituteMutation.isPending}
-							className="btn-primary px-6 py-2.5 text-xs flex items-center justify-center gap-2 rounded-xl font-bold shadow-md"
+							className="ps-btn ps-btn-primary px-6 py-2.5 text-xs flex items-center justify-center gap-2 rounded-xl font-bold shadow-md"
 						>
 							{substituteMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <ArrowLeftRight className="w-4 h-4" />}
 							<span>Confirm Substitution</span>
@@ -603,18 +603,18 @@ function WriteDirectivePanel({ patientId, onClose }) {
 	];
 
 	return (
-		<Card className="space-y-4 border-l-4 border-[var(--role-doctor)] p-5 rounded-2xl bg-[var(--brand-surface)]">
-			<div className="flex items-center justify-between border-b border-[var(--brand-border-subtle)] pb-3">
+		<Card className="space-y-4 border-l-4 border-[var(--doctor-600)] p-5 rounded-2xl bg-[var(--surface)]">
+			<div className="flex items-center justify-between border-b border-[var(--border)] pb-3">
 				<div className="flex items-center gap-2.5">
 					<div className="p-2 rounded-xl bg-purple-500/10 text-purple-600 border border-purple-500/20">
 						<MessageSquare className="w-4 h-4" />
 					</div>
 					<div>
-						<p className="text-sm font-bold text-[var(--text-primary)] font-display">Write Clinical Directive</p>
-						<p className="text-xs text-[var(--text-muted)]">Sends a physician note directly to the patient's care dashboard</p>
+						<p className="text-sm font-bold text-[var(--ink)] font-[var(--font-heading)]">Write Clinical Directive</p>
+						<p className="text-xs text-[var(--ink-3)]">Sends a physician note directly to the patient's care dashboard</p>
 					</div>
 				</div>
-				<button onClick={onClose} className="p-1.5 rounded-xl text-[var(--text-muted)] hover:bg-[var(--chassis)] transition-colors"><X className="w-4 h-4" /></button>
+				<button onClick={onClose} className="p-1.5 rounded-xl text-[var(--ink-3)] hover:bg-[var(--canvas)] transition-colors"><X className="w-4 h-4" /></button>
 			</div>
 			{err && <p className="text-xs text-rose-700 bg-rose-500/10 border border-rose-500/20 rounded-xl p-3">{err}</p>}
 			<form onSubmit={handleSubmit} className="space-y-3.5">
@@ -623,25 +623,25 @@ function WriteDirectivePanel({ patientId, onClose }) {
 					placeholder="e.g. Avoid grapefruit juice while on Atorvastatin. Take with food. INR check in 7 days…"
 					value={text}
 					onChange={e => setText(e.target.value)}
-					className="w-full text-sm py-2.5 px-3.5 rounded-xl bg-[var(--chassis)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)]/70 border border-[var(--chassis-dark)] shadow-inner focus:outline-none focus:ring-2 focus:ring-purple-500/40 transition-all font-sans resize-none"
+					className="w-full text-sm py-2.5 px-3.5 rounded-xl bg-[var(--canvas)] text-[var(--ink)] placeholder:text-[var(--ink-3)]/70 border border-[var(--border)] shadow-inner focus:outline-none focus:ring-2 focus:ring-purple-500/40 transition-all font-sans resize-none"
 				/>
 				<div className="grid grid-cols-2 gap-3">
 					<div className="space-y-1.5">
-						<label className="text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)]">Category</label>
+						<label className="text-[10px] font-bold uppercase tracking-wider text-[var(--ink-3)]">Category</label>
 						<select
 							value={category}
 							onChange={e => setCategory(e.target.value)}
-							className="w-full text-xs py-2 px-3 rounded-xl bg-[var(--chassis)] text-[var(--text-primary)] border border-[var(--chassis-dark)] shadow-inner focus:outline-none focus:ring-2 focus:ring-purple-500/40 transition-all font-sans"
+							className="w-full text-xs py-2 px-3 rounded-xl bg-[var(--canvas)] text-[var(--ink)] border border-[var(--border)] shadow-inner focus:outline-none focus:ring-2 focus:ring-purple-500/40 transition-all font-sans"
 						>
 							{CATEGORIES.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
 						</select>
 					</div>
 					<div className="space-y-1.5">
-						<label className="text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)]">Priority</label>
+						<label className="text-[10px] font-bold uppercase tracking-wider text-[var(--ink-3)]">Priority</label>
 						<select
 							value={priority}
 							onChange={e => setPriority(e.target.value)}
-							className="w-full text-xs py-2 px-3 rounded-xl bg-[var(--chassis)] text-[var(--text-primary)] border border-[var(--chassis-dark)] shadow-inner focus:outline-none focus:ring-2 focus:ring-purple-500/40 transition-all font-sans"
+							className="w-full text-xs py-2 px-3 rounded-xl bg-[var(--canvas)] text-[var(--ink)] border border-[var(--border)] shadow-inner focus:outline-none focus:ring-2 focus:ring-purple-500/40 transition-all font-sans"
 						>
 							<option value="URGENT">Urgent</option>
 							<option value="HIGH">High</option>
@@ -653,14 +653,14 @@ function WriteDirectivePanel({ patientId, onClose }) {
 					<button
 						type="button"
 						onClick={onClose}
-						className="btn-secondary px-4 py-2 text-xs rounded-xl"
+						className="ps-btn ps-btn-secondary px-4 py-2 text-xs rounded-xl"
 					>
 						Cancel
 					</button>
 					<button
 						type="submit"
 						disabled={directiveMutation.isPending}
-						className="btn-primary px-5 py-2 text-xs flex items-center justify-center gap-2 rounded-xl font-bold shadow-md"
+						className="ps-btn ps-btn-primary px-5 py-2 text-xs flex items-center justify-center gap-2 rounded-xl font-bold shadow-md"
 					>
 						{directiveMutation.isPending ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Send className="w-3.5 h-3.5" />}
 						<span>Publish Directive</span>
@@ -714,12 +714,12 @@ function OrganToxicityPanel({ patientId, medicines }) {
       <Card className="p-6">
         <div className="space-y-4">
           <div className="flex items-center gap-2">
-            <BarChart2 className="w-4 h-4 text-[var(--role-doctor)]" />
-            <p className="text-xs font-bold uppercase tracking-wider text-[var(--text-primary)]">Organ Toxicity Radar</p>
+            <BarChart2 className="w-4 h-4 text-[var(--doctor-600)]" />
+            <p className="text-xs font-bold uppercase tracking-wider text-[var(--ink)]">Organ Toxicity Radar</p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="h-28 bg-[var(--chassis)] rounded-2xl animate-pulse" />
+              <div key={i} className="h-28 bg-[var(--canvas)] rounded-2xl animate-pulse" />
             ))}
           </div>
         </div>
@@ -731,17 +731,17 @@ function OrganToxicityPanel({ patientId, medicines }) {
     <Card className="p-6">
       <div className="space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between gap-3 flex-wrap border-b border-[var(--brand-border-subtle)] pb-4">
+        <div className="flex items-center justify-between gap-3 flex-wrap border-b border-[var(--border)] pb-4">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-[var(--role-doctor)]/10 text-[var(--role-doctor)] border border-[var(--role-doctor)]/20 shadow-xs">
+            <div className="p-2.5 rounded-xl bg-[var(--doctor-600)]/10 text-[var(--doctor-600)] border border-[var(--doctor-600)]/20 shadow-xs">
               <BarChart2 className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-base font-bold text-[var(--text-primary)] font-display">Organ & System Toxicity Radar</h3>
-              <p className="text-xs text-[var(--text-muted)] mt-0.5">Calculated from patient active prescriptions, OTC, and herbal interactions</p>
+              <h3 className="text-base font-bold text-[var(--ink)] font-[var(--font-heading)]">Organ & System Toxicity Radar</h3>
+              <p className="text-xs text-[var(--ink-3)] mt-0.5">Calculated from patient active prescriptions, OTC, and herbal interactions</p>
             </div>
           </div>
-          <span className="text-[11px] font-mono font-medium px-3 py-1 rounded-full bg-[var(--chassis)] text-[var(--text-muted)] border border-[var(--chassis-dark)] shadow-xs">
+          <span className="text-[11px] font-mono font-medium px-3 py-1 rounded-full bg-[var(--canvas)] text-[var(--ink-3)] border border-[var(--border)] shadow-xs">
             Real-Time Burden Model
           </span>
         </div>
@@ -777,14 +777,14 @@ function OrganToxicityPanel({ patientId, medicines }) {
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.2, ease: 'easeOut' }}
-                className="p-4.5 rounded-2xl bg-[var(--chassis)] border border-[var(--chassis-dark)]/80 shadow-[var(--shadow-sm)] hover:shadow-md transition-all space-y-3.5"
+                className="p-4.5 rounded-2xl bg-[var(--canvas)] border border-[var(--border)]/80 shadow-[var(--shadow-sm)] hover:shadow-md transition-all space-y-3.5"
               >
                 <div className="flex items-center justify-between gap-2">
                   <div className="flex items-center gap-2.5">
-                    <div className="p-2 rounded-xl bg-[var(--brand-surface)] border border-[var(--chassis-dark)]/50 shadow-xs">
+                    <div className="p-2 rounded-xl bg-[var(--surface)] border border-[var(--border)]/50 shadow-xs">
                       {organ.icon}
                     </div>
-                    <span className="text-xs font-bold text-[var(--text-primary)] font-display">{organ.label}</span>
+                    <span className="text-xs font-bold text-[var(--ink)] font-[var(--font-heading)]">{organ.label}</span>
                   </div>
                   <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full border shadow-2xs uppercase tracking-wider ${badgeClasses}`}>
                     {level}
@@ -793,7 +793,7 @@ function OrganToxicityPanel({ patientId, medicines }) {
 
                 {/* Score bar */}
                 <div className="space-y-1.5 pt-1">
-                  <div className="h-2 bg-[var(--brand-surface)] rounded-full overflow-hidden border border-[var(--chassis-dark)] shadow-inner">
+                  <div className="h-2 bg-[var(--surface)] rounded-full overflow-hidden border border-[var(--border)] shadow-inner">
                     <motion.div
                       className={`h-full rounded-full bg-gradient-to-r ${barGradient}`}
                       initial={{ width: 0 }}
@@ -802,20 +802,20 @@ function OrganToxicityPanel({ patientId, medicines }) {
                     />
                   </div>
                   <div className="flex items-center justify-between text-[10px]">
-                    <span className="text-[var(--text-muted)] line-clamp-1 flex-1 pr-2">{organ.description}</span>
-                    <span className="font-mono font-bold text-[var(--text-primary)]">{score}/100</span>
+                    <span className="text-[var(--ink-3)] line-clamp-1 flex-1 pr-2">{organ.description}</span>
+                    <span className="font-mono font-bold text-[var(--ink)]">{score}/100</span>
                   </div>
                 </div>
 
                 {flaggedMeds.length > 0 && (
-                  <div className="flex flex-wrap gap-1.5 pt-2 border-t border-[var(--brand-border-subtle)]">
+                  <div className="flex flex-wrap gap-1.5 pt-2 border-t border-[var(--border)]">
                     {flaggedMeds.slice(0, 3).map((m, i) => (
-                      <span key={i} className="text-[10px] px-2.5 py-0.5 bg-[var(--brand-surface)] border border-[var(--chassis-dark)] rounded-full font-medium text-[var(--text-primary)] shadow-2xs">
+                      <span key={i} className="text-[10px] px-2.5 py-0.5 bg-[var(--surface)] border border-[var(--border)] rounded-full font-medium text-[var(--ink)] shadow-2xs">
                         {m}
                       </span>
                     ))}
                     {flaggedMeds.length > 3 && (
-                      <span className="text-[10px] px-2.5 py-0.5 bg-[var(--brand-surface)] border border-[var(--chassis-dark)] rounded-full text-[var(--text-muted)]">
+                      <span className="text-[10px] px-2.5 py-0.5 bg-[var(--surface)] border border-[var(--border)] rounded-full text-[var(--ink-3)]">
                         +{flaggedMeds.length - 3} more
                       </span>
                     )}
@@ -828,27 +828,27 @@ function OrganToxicityPanel({ patientId, medicines }) {
 
         {/* ACB detail banner */}
         {data?.anticholinergicBurden && (
-          <div className="p-4.5 rounded-2xl bg-[var(--chassis)] border border-[var(--chassis-dark)]/80 shadow-[var(--shadow-sm)] flex items-center justify-between gap-4 flex-wrap">
+          <div className="p-4.5 rounded-2xl bg-[var(--canvas)] border border-[var(--border)]/80 shadow-[var(--shadow-sm)] flex items-center justify-between gap-4 flex-wrap">
             <div className="flex items-center gap-3.5">
               <div className="p-3 rounded-2xl bg-purple-500/10 text-purple-600 border border-purple-500/20 shadow-xs flex-shrink-0">
                 <Brain className="w-5 h-5" />
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <h4 className="text-xs font-bold text-[var(--text-primary)] font-display">Anticholinergic Cognitive Burden (ACB Scale)</h4>
+                  <h4 className="text-xs font-bold text-[var(--ink)] font-[var(--font-heading)]">Anticholinergic Cognitive Burden (ACB Scale)</h4>
                   <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-teal-500/10 text-teal-800 border border-teal-500/20 shadow-2xs">
                     {data.anticholinergicBurden.level || 'Normal'}
                   </span>
                 </div>
-                <p className="text-[11px] text-[var(--text-muted)] mt-1 leading-relaxed">
+                <p className="text-[11px] text-[var(--ink-3)] mt-1 leading-relaxed">
                   {data.anticholinergicBurden.explanation || 'No significant anticholinergic or central sedative burden detected in current active regimen.'}
                 </p>
               </div>
             </div>
             <div className="text-right flex-shrink-0 flex items-center gap-2">
-              <div className="px-4 py-2 rounded-xl bg-[var(--brand-surface)] border border-[var(--chassis-dark)] shadow-xs text-center">
-                <span className="text-[10px] font-mono text-[var(--text-muted)] uppercase tracking-wider block">Score</span>
-                <span className="text-2xl font-black text-[var(--text-primary)] font-display">
+              <div className="px-4 py-2 rounded-xl bg-[var(--surface)] border border-[var(--border)] shadow-xs text-center">
+                <span className="text-[10px] font-mono text-[var(--ink-3)] uppercase tracking-wider block">Score</span>
+                <span className="text-2xl font-black text-[var(--ink)] font-[var(--font-heading)]">
                   {data.anticholinergicBurden.totalScore ?? 0}
                 </span>
               </div>
@@ -875,32 +875,32 @@ function ClinicalConsultationReportModal({ isOpen, onClose, patientId }) {
 	};
 
 	return (
-		<div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-[#0f172a]/75 backdrop-blur-md overflow-y-auto animate-fade-in">
+		<div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-[var(--canvas)]/75 backdrop-blur-md overflow-y-auto animate-fade-in">
 			<motion.div
 				initial={{ opacity: 0, scale: 0.95 }}
 				animate={{ opacity: 1, scale: 1 }}
 				exit={{ opacity: 0, scale: 0.95 }}
-				className="w-full max-w-4xl bg-[var(--brand-surface)] border border-white/80 shadow-2xl rounded-2xl p-6 sm:p-8 space-y-6 max-h-[86vh] my-auto overflow-y-auto print:max-h-none print:p-0 print:border-none print:shadow-none"
+				className="w-full max-w-4xl bg-[var(--surface)] border border-white/80 shadow-2xl rounded-2xl p-6 sm:p-8 space-y-6 max-h-[86vh] my-auto overflow-y-auto print:max-h-none print:p-0 print:border-none print:shadow-none"
 			>
 				{/* Modal Top Bar (Hidden in Print) */}
-				<div className="flex items-center justify-between gap-4 print:hidden border-b border-[var(--brand-border-subtle)] pb-4">
+				<div className="flex items-center justify-between gap-4 print:hidden border-b border-[var(--border)] pb-4">
 					<div className="flex items-center gap-2.5">
-						<div className="p-2 rounded-xl bg-[var(--role-doctor)]/10 text-[var(--role-doctor)] border border-[var(--role-doctor)]/20">
+						<div className="p-2 rounded-xl bg-[var(--doctor-600)]/10 text-[var(--doctor-600)] border border-[var(--doctor-600)]/20">
 							<FileText className="w-5 h-5" />
 						</div>
-						<h3 className="text-base font-bold text-[var(--text-primary)] font-display">Clinical Consultation & Risk Assessment Report</h3>
+						<h3 className="text-base font-bold text-[var(--ink)] font-[var(--font-heading)]">Clinical Consultation & Risk Assessment Report</h3>
 					</div>
 					<div className="flex items-center gap-2">
 						<button
 							onClick={handlePrint}
-							className="btn-primary py-2 px-4 text-xs flex items-center gap-2 rounded-xl font-bold"
+							className="ps-btn ps-btn-primary py-2 px-4 text-xs flex items-center gap-2 rounded-xl font-bold"
 						>
 							<Printer className="w-3.5 h-3.5" />
 							<span>Print / Save PDF</span>
 						</button>
 						<button
 							onClick={onClose}
-							className="p-2 rounded-xl text-[var(--text-muted)] hover:bg-[var(--chassis)] transition-colors"
+							className="p-2 rounded-xl text-[var(--ink-3)] hover:bg-[var(--canvas)] transition-colors"
 						>
 							<X className="w-5 h-5" />
 						</button>
@@ -909,62 +909,62 @@ function ClinicalConsultationReportModal({ isOpen, onClose, patientId }) {
 
 				{isLoading ? (
 					<div className="py-16 text-center space-y-3">
-						<Loader2 className="w-8 h-8 text-[var(--role-doctor)] animate-spin mx-auto" />
-						<p className="text-sm font-semibold text-[var(--text-muted)]">Compiling clinical pharmacovigilance data…</p>
+						<Loader2 className="w-8 h-8 text-[var(--doctor-600)] animate-spin mx-auto" />
+						<p className="text-sm font-semibold text-[var(--ink-3)]">Compiling clinical pharmacovigilance data…</p>
 					</div>
 				) : !data ? (
 					<div className="p-6 text-center text-sm text-rose-700">Failed to load clinical summary.</div>
 				) : (
-					<div className="space-y-6 text-[var(--text-primary)]">
+					<div className="space-y-6 text-[var(--ink)]">
 						{/* Header Document Banner */}
-						<div className="flex items-start justify-between border-b-2 border-[var(--role-doctor)] pb-4 flex-wrap gap-4">
+						<div className="flex items-start justify-between border-b-2 border-[var(--doctor-600)] pb-4 flex-wrap gap-4">
 							<div>
-								<h1 className="text-2xl font-black text-[var(--role-doctor)] font-display">
+								<h1 className="text-2xl font-black text-[var(--doctor-600)] font-[var(--font-heading)]">
 									PolySafe Clinical Polypharmacy Report
 								</h1>
-								<p className="text-xs text-[var(--text-muted)] mt-0.5">
+								<p className="text-xs text-[var(--ink-3)] mt-0.5">
 									Automated Pharmacovigilance, Interaction Risk Matrix & Deprescribing Recommendations
 								</p>
 							</div>
-							<div className="text-right text-xs text-[var(--text-muted)]">
-								<p className="font-bold text-[var(--text-primary)]">Date: {new Date(data.generatedAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+							<div className="text-right text-xs text-[var(--ink-3)]">
+								<p className="font-bold text-[var(--ink)]">Date: {new Date(data.generatedAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
 								<p className="mt-0.5">Status: <strong className="text-teal-700">Verified Clinical Record</strong></p>
 							</div>
 						</div>
 
 						{/* Patient Demographics & Profile Grid */}
-						<div className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-4.5 bg-[var(--chassis)] rounded-2xl border border-[var(--chassis-dark)] shadow-xs">
+						<div className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-4.5 bg-[var(--canvas)] rounded-2xl border border-[var(--border)] shadow-xs">
 							<div>
-								<span className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-wider">Patient</span>
-								<p className="text-sm font-bold text-[var(--text-primary)] font-display mt-0.5">{data.patient.contact}</p>
-								<p className="text-xs text-[var(--text-muted)] mt-0.5">Age: {data.patient.age || '—'} years</p>
+								<span className="text-[10px] font-bold text-[var(--ink-3)] uppercase tracking-wider">Patient</span>
+								<p className="text-sm font-bold text-[var(--ink)] font-[var(--font-heading)] mt-0.5">{data.patient.contact}</p>
+								<p className="text-xs text-[var(--ink-3)] mt-0.5">Age: {data.patient.age || '—'} years</p>
 							</div>
 							<div>
-								<span className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-wider">Diagnosed Conditions</span>
-								<p className="text-xs font-semibold text-[var(--text-primary)] mt-0.5">
+								<span className="text-[10px] font-bold text-[var(--ink-3)] uppercase tracking-wider">Diagnosed Conditions</span>
+								<p className="text-xs font-semibold text-[var(--ink)] mt-0.5">
 									{data.patient.conditions?.length ? data.patient.conditions.join(', ') : 'None documented'}
 								</p>
 							</div>
 							<div>
-								<span className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-wider">Regimen Risk Score</span>
+								<span className="text-[10px] font-bold text-[var(--ink-3)] uppercase tracking-wider">Regimen Risk Score</span>
 								<div className="flex items-center gap-2 mt-0.5">
-									<span className="text-base font-black text-rose-700 font-display">
+									<span className="text-base font-black text-rose-700 font-[var(--font-heading)]">
 										{data.regimenRisk?.tier || 'L3'} ({data.regimenRisk?.label || 'Moderate'})
 									</span>
-									<span className="text-xs font-mono text-[var(--text-muted)]">Score: {data.regimenRisk?.averageRisk?.toFixed(1) || '3.0'}/5.0</span>
+									<span className="text-xs font-mono text-[var(--ink-3)]">Score: {data.regimenRisk?.averageRisk?.toFixed(1) || '3.0'}/5.0</span>
 								</div>
 							</div>
 						</div>
 
 						{/* Active Regimen Table */}
 						<div className="space-y-2.5">
-							<h4 className="text-xs font-bold uppercase tracking-wider text-[var(--role-doctor)] flex items-center gap-2 font-display">
+							<h4 className="text-xs font-bold uppercase tracking-wider text-[var(--doctor-600)] flex items-center gap-2 font-[var(--font-heading)]">
 								<Pill className="w-4 h-4" />
 								<span>1. Active Medication Regimen ({data.activeMedicines?.length || 0})</span>
 							</h4>
-							<div className="border border-[var(--chassis-dark)] rounded-2xl overflow-hidden bg-[var(--brand-surface)] shadow-xs">
+							<div className="border border-[var(--border)] rounded-2xl overflow-hidden bg-[var(--surface)] shadow-xs">
 								<table className="w-full text-xs text-left">
-									<thead className="bg-[var(--chassis)] text-[var(--text-muted)] font-bold border-b border-[var(--chassis-dark)]">
+									<thead className="bg-[var(--canvas)] text-[var(--ink-3)] font-bold border-b border-[var(--border)]">
 										<tr>
 											<th className="p-3 font-semibold">Medication Name</th>
 											<th className="p-3 font-semibold">Dosage</th>
@@ -974,15 +974,15 @@ function ClinicalConsultationReportModal({ isOpen, onClose, patientId }) {
 											<th className="p-3 font-semibold">Initiated Date</th>
 										</tr>
 									</thead>
-									<tbody className="divide-y divide-[var(--brand-border-subtle)]">
+									<tbody className="divide-y divide-[var(--border)]">
 										{data.activeMedicines?.map((m, i) => (
-											<tr key={i} className="hover:bg-[var(--chassis)]/40 transition-colors">
-												<td className="p-3 font-bold text-[var(--text-primary)]">{m.name}</td>
-												<td className="p-3 text-[var(--text-muted)] font-mono">{m.dosage || 'Standard'}</td>
-												<td className="p-3"><span className="px-2.5 py-0.5 rounded-full bg-[var(--chassis)] border border-[var(--chassis-dark)] text-[10px] font-bold text-[var(--text-muted)]">{m.type}</span></td>
+											<tr key={i} className="hover:bg-[var(--canvas)]/40 transition-colors">
+												<td className="p-3 font-bold text-[var(--ink)]">{m.name}</td>
+												<td className="p-3 text-[var(--ink-3)] font-mono">{m.dosage || 'Standard'}</td>
+												<td className="p-3"><span className="px-2.5 py-0.5 rounded-full bg-[var(--canvas)] border border-[var(--border)] text-[10px] font-bold text-[var(--ink-3)]">{m.type}</span></td>
 												<td className="p-3"><DrugHarmBadge harmLevel={m.harmLevel} size="sm" /></td>
-												<td className="p-3 text-[var(--text-muted)]">{m.prescribedBy}</td>
-												<td className="p-3 text-[var(--text-muted)] font-mono">{fmt(m.dateAdded)}</td>
+												<td className="p-3 text-[var(--ink-3)]">{m.prescribedBy}</td>
+												<td className="p-3 text-[var(--ink-3)] font-mono">{fmt(m.dateAdded)}</td>
 											</tr>
 										))}
 									</tbody>
@@ -992,7 +992,7 @@ function ClinicalConsultationReportModal({ isOpen, onClose, patientId }) {
 
 						{/* Drug Interactions Matrix */}
 						<div className="space-y-2.5">
-							<h4 className="text-xs font-bold uppercase tracking-wider text-rose-700 flex items-center gap-2 font-display">
+							<h4 className="text-xs font-bold uppercase tracking-wider text-rose-700 flex items-center gap-2 font-[var(--font-heading)]">
 								<AlertOctagon className="w-4 h-4" />
 								<span>2. DDInter Drug Interaction Risk Matrix ({data.flags?.length || 0} Flags)</span>
 							</h4>
@@ -1018,9 +1018,9 @@ function ClinicalConsultationReportModal({ isOpen, onClose, patientId }) {
 						</div>
 
 						{/* Anticholinergic & Cognitive Burden Index */}
-						<div className="p-4.5 bg-[var(--chassis)] border border-[var(--chassis-dark)] rounded-2xl space-y-2 shadow-xs">
+						<div className="p-4.5 bg-[var(--canvas)] border border-[var(--border)] rounded-2xl space-y-2 shadow-xs">
 							<div className="flex items-center justify-between flex-wrap gap-2">
-								<h4 className="text-xs font-bold uppercase tracking-wider text-[var(--role-doctor)] flex items-center gap-2 font-display">
+								<h4 className="text-xs font-bold uppercase tracking-wider text-[var(--doctor-600)] flex items-center gap-2 font-[var(--font-heading)]">
 									<Brain className="w-4 h-4 text-purple-600" />
 									<span>3. Cumulative Anticholinergic & Sedative Cognitive Burden</span>
 								</h4>
@@ -1028,7 +1028,7 @@ function ClinicalConsultationReportModal({ isOpen, onClose, patientId }) {
 									ACB Score: {data.anticholinergicBurden?.totalScore || 0} ({data.anticholinergicBurden?.level || 'Normal'})
 								</span>
 							</div>
-							<p className="text-xs text-[var(--text-muted)] leading-relaxed">
+							<p className="text-xs text-[var(--ink-3)] leading-relaxed">
 								{data.anticholinergicBurden?.explanation || 'Regimen evaluated against validated Anticholinergic Cognitive Burden (ACB) scales.'}
 							</p>
 						</div>
@@ -1036,13 +1036,13 @@ function ClinicalConsultationReportModal({ isOpen, onClose, patientId }) {
 						{/* Deprescribing & Optimization Recommendations */}
 						{data.deprescribingCandidates?.length > 0 && (
 							<div className="p-4.5 bg-amber-500/10 border border-amber-500/20 rounded-2xl space-y-3">
-								<h4 className="text-xs font-bold uppercase tracking-wider text-amber-900 flex items-center gap-2 font-display">
+								<h4 className="text-xs font-bold uppercase tracking-wider text-amber-900 flex items-center gap-2 font-[var(--font-heading)]">
 									<Sparkles className="w-4 h-4 text-amber-600" />
 									<span>4. Clinical Deprescribing & Optimization Recommendations</span>
 								</h4>
 								<div className="space-y-2">
 									{data.deprescribingCandidates.map((c, i) => (
-										<div key={i} className="p-3.5 bg-[var(--brand-surface)] border border-amber-500/30 rounded-xl text-xs space-y-1.5 shadow-2xs">
+										<div key={i} className="p-3.5 bg-[var(--surface)] border border-amber-500/30 rounded-xl text-xs space-y-1.5 shadow-2xs">
 											<div className="flex items-center justify-between font-bold text-amber-950">
 												<span>{c.name} ({c.dosage || 'Active'})</span>
 												<DrugHarmBadge harmLevel={c.harmLevel} size="sm" />
@@ -1056,12 +1056,12 @@ function ClinicalConsultationReportModal({ isOpen, onClose, patientId }) {
 						)}
 
 						{/* Doctor Sign-off */}
-						<div className="pt-8 border-t border-[var(--brand-border-subtle)] flex items-end justify-between text-xs text-[var(--text-muted)]">
+						<div className="pt-8 border-t border-[var(--border)] flex items-end justify-between text-xs text-[var(--ink-3)]">
 							<div>
-								<p>Reviewed by: <strong className="text-[var(--text-primary)]">Attending Physician</strong></p>
-								<p className="text-[10px] text-[var(--text-muted)] mt-0.5">PolySafe AI Clinical Decision Support Engine v2.0</p>
+								<p>Reviewed by: <strong className="text-[var(--ink)]">Attending Physician</strong></p>
+								<p className="text-[10px] text-[var(--ink-3)] mt-0.5">PolySafe AI Clinical Decision Support Engine v2.0</p>
 							</div>
-							<div className="border-t border-[var(--text-primary)] w-48 text-center pt-1">
+							<div className="border-t border-[var(--ink)] w-48 text-center pt-1">
 								<span className="text-[10px]">Physician Signature & Date</span>
 							</div>
 						</div>
@@ -1109,8 +1109,8 @@ function DeprescribingAssistantPanel({ patientId, onTaperSuccess }) {
  if (isLoading) {
  return (
  <Card className="p-8 text-center space-y-3">
- <Loader2 className="w-6 h-6 text-[var(--role-doctor)] animate-spin mx-auto" />
- <p className="text-xs text-[var(--text-muted)]">Evaluating patient regimen against Beers Criteria & STOPP/START rules…</p>
+ <Loader2 className="w-6 h-6 text-[var(--doctor-600)] animate-spin mx-auto" />
+ <p className="text-xs text-[var(--ink-3)]">Evaluating patient regimen against Beers Criteria & STOPP/START rules…</p>
  </Card>
  );
  }
@@ -1120,22 +1120,22 @@ function DeprescribingAssistantPanel({ patientId, onTaperSuccess }) {
  return (
  <div className="space-y-4">
  {/* Overview Banner */}
- <Card className="p-5 space-y-3 bg-[var(--chassis)] border border-[var(--brand-border)]">
+ <Card className="p-5 space-y-3 bg-[var(--canvas)] border border-[var(--border)]">
  <div className="flex items-center justify-between gap-2">
  <div className="flex items-center gap-2.5">
- <div className="p-2.5 rounded-2xl bg-[var(--role-doctor)]/15 text-[var(--role-doctor)]">
+ <div className="p-2.5 rounded-2xl bg-[var(--doctor-600)]/15 text-[var(--doctor-600)]">
  <Sparkles className="w-5 h-5" />
  </div>
  <div>
- <h3 className="text-sm font-bold text-[var(--text-primary)]">Regimen Optimization & Deprescribing Engine</h3>
- <p className="text-xs text-[var(--text-muted)]">Beers Criteria 2023 · STOPP/START v3 · Anticholinergic Cognitive Burden</p>
+ <h3 className="text-sm font-bold text-[var(--ink)]">Regimen Optimization & Deprescribing Engine</h3>
+ <p className="text-xs text-[var(--ink-3)]">Beers Criteria 2023 · STOPP/START v3 · Anticholinergic Cognitive Burden</p>
  </div>
  </div>
- <span className="text-xs font-black px-3 py-1 rounded-xl bg-[var(--role-doctor)] text-white">
+ <span className="text-xs font-black px-3 py-1 rounded-xl bg-[var(--doctor-600)] text-white">
  {candidates.length} Candidate{candidates.length !== 1 ? 's' : ''} Identified
  </span>
  </div>
- <p className="text-xs text-[var(--text-muted)] leading-relaxed">
+ <p className="text-xs text-[var(--ink-3)] leading-relaxed">
  PolySafe scans active medications for high-risk geriatric pharmacotherapy, excessive anticholinergic burden, and duplicate therapeutic classes to assist physicians in safe deprescribing and taper protocols.
  </p>
  </Card>
@@ -1158,8 +1158,8 @@ function DeprescribingAssistantPanel({ patientId, onTaperSuccess }) {
  <div className="flex items-start justify-between gap-3 flex-wrap">
  <div>
  <div className="flex items-center gap-2">
- <span className="text-sm font-bold text-[var(--text-primary)]">{cand.name}</span>
- {cand.dosage && <span className="text-xs text-[var(--text-muted)]">({cand.dosage})</span>}
+ <span className="text-sm font-bold text-[var(--ink)]">{cand.name}</span>
+ {cand.dosage && <span className="text-xs text-[var(--ink-3)]">({cand.dosage})</span>}
  </div>
  <div className="mt-1">
  <DrugHarmBadge harmLevel={cand.harmLevel} size="sm" />
@@ -1170,7 +1170,7 @@ function DeprescribingAssistantPanel({ patientId, onTaperSuccess }) {
  type="button"
  disabled={taperingId === cand.medicineId}
  onClick={() => handleDeprescribe(cand)}
- className="btn-secondary py-2 px-3.5 text-xs text-rose-800 border-rose-300 hover:bg-rose-50 flex items-center gap-1.5 cursor-pointer"
+ className="ps-btn ps-btn-secondary py-2 px-3.5 text-xs text-rose-800 border-rose-300 hover:bg-rose-50 flex items-center gap-1.5 cursor-pointer"
  >
  {taperingId === cand.medicineId ? (
  <Loader2 className="w-3.5 h-3.5 animate-spin text-rose-600" />
@@ -1210,8 +1210,8 @@ function PatientSymptomsPanel({ patientId }) {
  if (isLoading) {
  return (
  <Card className="p-8 text-center space-y-3">
- <Loader2 className="w-6 h-6 text-[var(--role-doctor)] animate-spin mx-auto" />
- <p className="text-xs text-[var(--text-muted)]">Loading patient logged symptoms & cascade correlations…</p>
+ <Loader2 className="w-6 h-6 text-[var(--doctor-600)] animate-spin mx-auto" />
+ <p className="text-xs text-[var(--ink-3)]">Loading patient logged symptoms & cascade correlations…</p>
  </Card>
  );
  }
@@ -1220,12 +1220,12 @@ function PatientSymptomsPanel({ patientId }) {
 
  return (
  <div className="space-y-4">
- <Card className="p-4 bg-[var(--chassis)] border border-[var(--brand-border)]">
+ <Card className="p-4 bg-[var(--canvas)] border border-[var(--border)]">
  <div className="flex items-center gap-2.5">
  <Activity className="w-5 h-5 text-rose-600" />
  <div>
- <h3 className="text-sm font-bold text-[var(--text-primary)]">Patient Logged Symptoms & Prescribing Cascades</h3>
- <p className="text-xs text-[var(--text-muted)]">Real-time patient telemetry cross-referenced with medication initiation dates</p>
+ <h3 className="text-sm font-bold text-[var(--ink)]">Patient Logged Symptoms & Prescribing Cascades</h3>
+ <p className="text-xs text-[var(--ink-3)]">Real-time patient telemetry cross-referenced with medication initiation dates</p>
  </div>
  </div>
  </Card>
@@ -1233,8 +1233,8 @@ function PatientSymptomsPanel({ patientId }) {
  {symptoms.length === 0 ? (
  <Card className="p-8 text-center space-y-2">
  <CheckCircle2 className="w-8 h-8 text-emerald-600 mx-auto" />
- <p className="text-sm font-bold text-[var(--text-primary)]">No Patient Symptoms Logged</p>
- <p className="text-xs text-[var(--text-muted)]">The patient has not logged any adverse events or discomfort reports.</p>
+ <p className="text-sm font-bold text-[var(--ink)]">No Patient Symptoms Logged</p>
+ <p className="text-xs text-[var(--ink-3)]">The patient has not logged any adverse events or discomfort reports.</p>
  </Card>
  ) : (
  <div className="space-y-2.5">
@@ -1242,9 +1242,9 @@ function PatientSymptomsPanel({ patientId }) {
  <Card key={idx} className="p-3.5 flex items-start justify-between gap-3">
  <div className="space-y-1">
  <div className="flex items-center gap-2">
- <span className="text-xs font-bold text-[var(--text-primary)]">{s.description}</span>
+ <span className="text-xs font-bold text-[var(--ink)]">{s.description}</span>
  {s.bodyPart && (
- <span className="px-2 py-0.5 rounded-full bg-[var(--chassis-panel)] text-[10px] font-semibold text-[var(--text-muted)]">
+ <span className="px-2 py-0.5 rounded-full bg-[var(--surface-2)] text-[10px] font-semibold text-[var(--ink-3)]">
  {s.bodyPart}
  </span>
  )}
@@ -1256,7 +1256,7 @@ function PatientSymptomsPanel({ patientId }) {
  </span>
  )}
  </div>
- <p className="text-[11px] text-[var(--text-muted)]">
+ <p className="text-[11px] text-[var(--ink-3)]">
  Logged on {fmt(s.date)}
  </p>
  </div>
@@ -1312,12 +1312,12 @@ function PatientView({ patientId }) {
 				{/* Top Section: Patient Identity & Primary Action */}
 				<div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
 					<div className="flex items-center gap-3.5 min-w-0">
-						<div className="w-12 h-12 rounded-2xl bg-[var(--role-doctor)]/10 text-[var(--role-doctor)] border border-[var(--role-doctor)]/20 flex items-center justify-center flex-shrink-0 shadow-xs">
+						<div className="w-12 h-12 rounded-2xl bg-[var(--doctor-600)]/10 text-[var(--doctor-600)] border border-[var(--doctor-600)]/20 flex items-center justify-center flex-shrink-0 shadow-xs">
 							<Users className="w-6 h-6" />
 						</div>
 						<div className="min-w-0">
 							<div className="flex items-center gap-2.5 flex-wrap">
-								<h2 className="text-lg font-bold text-[var(--text-primary)] font-display">
+								<h2 className="text-lg font-bold text-[var(--ink)] font-[var(--font-heading)]">
 									{patient.name || patient.patientName || (patient.age ? `Patient (Age ${patient.age})` : 'Patient Record')}
 								</h2>
 								<span className="inline-flex items-center gap-1 text-[10px] font-mono font-bold text-[#0f766e] bg-teal-500/10 border border-teal-500/30 px-2.5 py-0.5 rounded-full shadow-2xs">
@@ -1325,7 +1325,7 @@ function PatientView({ patientId }) {
 									CONSENT APPROVED
 								</span>
 							</div>
-							<p className="text-xs text-[var(--text-muted)] mt-0.5">
+							<p className="text-xs text-[var(--ink-3)] mt-0.5">
 								Connected clinical health record & active pharmacological telemetry
 							</p>
 						</div>
@@ -1334,7 +1334,7 @@ function PatientView({ patientId }) {
 					<button
 						type="button"
 						onClick={() => setShowSafetyCheckModal(true)}
-						className="btn-primary py-2.5 px-4 text-xs flex items-center justify-center gap-2 shadow-md cursor-pointer rounded-xl font-bold flex-shrink-0"
+						className="ps-btn ps-btn-primary py-2.5 px-4 text-xs flex items-center justify-center gap-2 shadow-md cursor-pointer rounded-xl font-bold flex-shrink-0"
 					>
 						<Stethoscope className="w-4 h-4" />
 						<span>Safety Check / Prescribe</span>
@@ -1342,19 +1342,19 @@ function PatientView({ patientId }) {
 				</div>
 
 				{/* Middle Section: Metadata Chips & Secondary Action Tools */}
-				<div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 pt-3 border-t border-[var(--brand-border-subtle)]">
+				<div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 pt-3 border-t border-[var(--border)]">
 					{/* Clinical Chips */}
 					<div className="flex items-center gap-2 flex-wrap text-xs">
 						{patient.age && (
-							<span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-[var(--chassis)] border border-[var(--chassis-dark)] text-xs text-[var(--text-muted)] font-medium shadow-2xs">
+							<span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-[var(--canvas)] border border-[var(--border)] text-xs text-[var(--ink-3)] font-medium shadow-2xs">
 								<span>Age:</span>
-								<strong className="text-[var(--text-primary)] font-semibold">{patient.age} yrs</strong>
+								<strong className="text-[var(--ink)] font-semibold">{patient.age} yrs</strong>
 							</span>
 						)}
 						{patient.conditions?.length > 0 && (
-							<span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-[var(--chassis)] border border-[var(--chassis-dark)] text-xs text-[var(--text-muted)] font-medium shadow-2xs">
+							<span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-[var(--canvas)] border border-[var(--border)] text-xs text-[var(--ink-3)] font-medium shadow-2xs">
 								<span>Conditions:</span>
-								<strong className="text-[var(--text-primary)] font-semibold">{patient.conditions.join(', ')}</strong>
+								<strong className="text-[var(--ink)] font-semibold">{patient.conditions.join(', ')}</strong>
 							</span>
 						)}
 						{patient.allergies?.length > 0 && (
@@ -1371,25 +1371,25 @@ function PatientView({ patientId }) {
 						<button
 							type="button"
 							onClick={() => setShowReportModal(true)}
-							className="btn-secondary py-2 px-3 text-xs flex items-center gap-1.5 cursor-pointer shadow-xs rounded-xl"
+							className="ps-btn ps-btn-secondary py-2 px-3 text-xs flex items-center gap-1.5 cursor-pointer shadow-xs rounded-xl"
 						>
-							<FileText className="w-3.5 h-3.5 text-[var(--role-doctor)]" />
+							<FileText className="w-3.5 h-3.5 text-[var(--doctor-600)]" />
 							<span>Clinical Report</span>
 						</button>
 
 						<button
 							type="button"
 							onClick={() => setShowSubstituteModal(true)}
-							className="btn-secondary py-2 px-3 text-xs flex items-center gap-1.5 cursor-pointer shadow-xs rounded-xl"
+							className="ps-btn ps-btn-secondary py-2 px-3 text-xs flex items-center gap-1.5 cursor-pointer shadow-xs rounded-xl"
 						>
-							<ArrowLeftRight className="w-3.5 h-3.5 text-[var(--role-doctor)]" />
+							<ArrowLeftRight className="w-3.5 h-3.5 text-[var(--doctor-600)]" />
 							<span>Substitute Drug</span>
 						</button>
 
 						<button
 							type="button"
 							onClick={() => setShowDirectivePanel(prev => !prev)}
-							className="btn-secondary py-2 px-3 text-xs flex items-center gap-1.5 cursor-pointer shadow-xs rounded-xl"
+							className="ps-btn ps-btn-secondary py-2 px-3 text-xs flex items-center gap-1.5 cursor-pointer shadow-xs rounded-xl"
 						>
 							<MessageSquare className="w-3.5 h-3.5 text-purple-600" />
 							<span>Write Directive</span>
@@ -1403,20 +1403,20 @@ function PatientView({ patientId }) {
 				)}
 
 				{/* Tab Navigation */}
-				<div className="flex items-center gap-1.5 p-1.5 bg-[var(--chassis)] border border-[var(--chassis-dark)]/80 shadow-[var(--shadow-recessed)] rounded-2xl overflow-x-auto mt-2">
+				<div className="flex items-center gap-1.5 p-1.5 bg-[var(--canvas)] border border-[var(--border)]/80 shadow-[var(--shadow-inner)] rounded-2xl overflow-x-auto mt-2">
 					<button
 						type="button"
 						onClick={() => setActiveTab('timeline')}
 						className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer whitespace-nowrap flex items-center gap-2 ${
 							activeTab === 'timeline'
 								? 'bg-gradient-to-r from-[#0d9488] to-[#0f766e] text-white font-bold shadow-sm'
-								: 'text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--chassis-dark)]/50'
+								: 'text-[var(--ink-3)] hover:text-[var(--ink)] hover:bg-[var(--border)]/50'
 						}`}
 					>
 						<Layers className="w-3.5 h-3.5" />
 						<span>Regimen Timeline</span>
 						<span className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold ${
-							activeTab === 'timeline' ? 'bg-white/20 text-white' : 'bg-[var(--chassis-dark)] text-[var(--text-muted)]'
+							activeTab === 'timeline' ? 'bg-white/20 text-white' : 'bg-[var(--border)] text-[var(--ink-3)]'
 						}`}>
 							{activeMeds.length}
 						</span>
@@ -1428,7 +1428,7 @@ function PatientView({ patientId }) {
 						className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer whitespace-nowrap flex items-center gap-2 ${
 							activeTab === 'deprescribing'
 								? 'bg-gradient-to-r from-[#0d9488] to-[#0f766e] text-white font-bold shadow-sm'
-								: 'text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--chassis-dark)]/50'
+								: 'text-[var(--ink-3)] hover:text-[var(--ink)] hover:bg-[var(--border)]/50'
 						}`}
 					>
 						<Sparkles className="w-3.5 h-3.5" />
@@ -1441,7 +1441,7 @@ function PatientView({ patientId }) {
 						className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer whitespace-nowrap flex items-center gap-2 ${
 							activeTab === 'symptoms'
 								? 'bg-gradient-to-r from-[#0d9488] to-[#0f766e] text-white font-bold shadow-sm'
-								: 'text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--chassis-dark)]/50'
+								: 'text-[var(--ink-3)] hover:text-[var(--ink)] hover:bg-[var(--border)]/50'
 						}`}
 					>
 						<Activity className="w-3.5 h-3.5" />
@@ -1454,7 +1454,7 @@ function PatientView({ patientId }) {
 						className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer whitespace-nowrap flex items-center gap-2 ${
 							activeTab === 'toxicity'
 								? 'bg-gradient-to-r from-[#0d9488] to-[#0f766e] text-white font-bold shadow-sm'
-								: 'text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--chassis-dark)]/50'
+								: 'text-[var(--ink-3)] hover:text-[var(--ink)] hover:bg-[var(--border)]/50'
 						}`}
 					>
 						<BarChart2 className="w-3.5 h-3.5" />
@@ -1519,11 +1519,11 @@ function PatientView({ patientId }) {
  </span>
  <span className="text-xs text-[#9CA3AF]">{fmt(f.dateFlagged)}</span>
  </div>
- <p className="text-sm font-bold text-[var(--text-primary)]">
+ <p className="text-sm font-bold text-[var(--ink)]">
  {f.medicineA?.name} ↔ {f.medicineB?.name}
  </p>
  {f.clinicalExplanation && (
- <p className="text-xs text-[var(--text-muted)] leading-relaxed">{f.clinicalExplanation}</p>
+ <p className="text-xs text-[var(--ink-3)] leading-relaxed">{f.clinicalExplanation}</p>
  )}
  </Card>
  );
@@ -1533,15 +1533,15 @@ function PatientView({ patientId }) {
 
  {/* Medication Timeline */}
 					<div className="space-y-3">
-						<h3 className="text-xs font-extrabold uppercase tracking-wider text-[var(--text-primary)]">
+						<h3 className="text-xs font-extrabold uppercase tracking-wider text-[var(--ink)]">
 							Medication History & Timeline ({activeMeds.length} Active{discontinuedMeds.length > 0 ? `, ${discontinuedMeds.length} Discontinued` : ''})
 						</h3>
 
 						{medicines.length === 0 ? (
 							<Card className="p-8 text-center space-y-3">
 								<EmptyMedicinesIllustration className="w-28 h-28 mx-auto" />
-								<p className="text-sm font-bold text-[var(--text-primary)] font-display">No medicines on record</p>
-								<p className="text-xs text-[var(--text-muted)] max-w-xs mx-auto">
+								<p className="text-sm font-bold text-[var(--ink)] font-[var(--font-heading)]">No medicines on record</p>
+								<p className="text-xs text-[var(--ink-3)] max-w-xs mx-auto">
 									This patient has not logged any prescription, OTC, or herbal medicines yet.
 								</p>
 							</Card>
@@ -1549,7 +1549,7 @@ function PatientView({ patientId }) {
 							<div className="relative pl-2 py-2">
 								<motion.div
 									className="absolute left-[19px] top-4 bottom-6 w-[3px] z-0 rounded-full origin-top"
-									style={{ backgroundColor: 'var(--role-doctor)' }}
+									style={{ backgroundColor: 'var(--doctor-600)' }}
 									initial={shouldReduceMotion ? { scaleY: 1 } : { scaleY: 0 }}
 									animate={{ scaleY: 1 }}
 									transition={{ duration: shouldReduceMotion ? 0 : 0.45, ease: 'easeOut' }}
@@ -1560,10 +1560,10 @@ function PatientView({ patientId }) {
 											const isDiscontinued = !!med.discontinued || !!med.removedAt;
 											const isFlagged = !isDiscontinued && med.flagged && med.flags?.length > 0;
 											const typeIcon = med.type === 'HERBAL'
-												? <Leaf className="w-3.5 h-3.5 text-[var(--accent-primary)]" />
+												? <Leaf className="w-3.5 h-3.5 text-[var(--brand-600)]" />
 												: med.type === 'OTC'
-												? <ShoppingBag className="w-3.5 h-3.5 text-[var(--role-caregiver)]" />
-												: <Pill className="w-3.5 h-3.5 text-[var(--role-doctor)]" />;
+												? <ShoppingBag className="w-3.5 h-3.5 text-[var(--caregiver-600)]" />
+												: <Pill className="w-3.5 h-3.5 text-[var(--doctor-600)]" />;
 
 											return (
 												<motion.div
@@ -1581,9 +1581,9 @@ function PatientView({ patientId }) {
 												>
 													{/* Dot */}
 													<div
-														className="w-10 h-10 rounded-full bg-[var(--chassis)] shadow-xs border-[3px] flex items-center justify-center flex-shrink-0"
+														className="w-10 h-10 rounded-full bg-[var(--canvas)] shadow-xs border-[3px] flex items-center justify-center flex-shrink-0"
 														style={{
-															borderColor: isDiscontinued ? 'var(--brand-border)' : isFlagged ? 'var(--led-critical)' : 'var(--role-doctor)',
+															borderColor: isDiscontinued ? 'var(--border)' : isFlagged ? 'var(--critical-fg)' : 'var(--doctor-600)',
 														}}
 													>
 														{typeIcon}
@@ -1594,23 +1594,23 @@ function PatientView({ patientId }) {
 														hideScrews={true}
 														className={`flex-1 space-y-3 transition-all ${
 															isDiscontinued
-																? '!bg-[var(--brand-surface)]/70 opacity-75 !border-[var(--brand-border)]'
+																? '!bg-[var(--surface)]/70 opacity-75 !border-[var(--border)]'
 																: isFlagged
 																? '!bg-[#fef2f2] !border-rose-400/50 shadow-[0_2px_14px_rgba(225,29,72,0.08)]'
-																: 'bg-[var(--brand-surface)] border-[var(--brand-border)] hover:shadow-[var(--shadow-card)]'
+																: 'bg-[var(--surface)] border-[var(--border)] hover:shadow-[var(--shadow-sm)]'
 														}`}
 													>
-														<div className="flex items-center justify-between gap-2 flex-wrap pb-1 border-b border-[var(--brand-border)]">
+														<div className="flex items-center justify-between gap-2 flex-wrap pb-1 border-b border-[var(--border)]">
 															<span
 																className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold uppercase tracking-wider ${
 																	isDiscontinued
-																		? 'bg-[var(--chassis)] text-[var(--text-muted)] border border-[var(--brand-border)]'
+																		? 'bg-[var(--canvas)] text-[var(--ink-3)] border border-[var(--border)]'
 																		: isFlagged
-																		? 'bg-[var(--brand-surface)] text-[var(--role-doctor)] border border-rose-300/40 shadow-xs'
-																		: 'bg-[var(--role-doctor)]/10 text-[var(--role-doctor)] border border-[var(--role-doctor)]/25 shadow-xs'
+																		? 'bg-[var(--surface)] text-[var(--doctor-600)] border border-rose-300/40 shadow-xs'
+																		: 'bg-[var(--doctor-600)]/10 text-[var(--doctor-600)] border border-[var(--doctor-600)]/25 shadow-xs'
 																}`}
 															>
-																<span className={`w-1.5 h-1.5 rounded-full ${isDiscontinued ? 'bg-[var(--text-muted)]' : 'bg-[var(--role-doctor)]'}`} />
+																<span className={`w-1.5 h-1.5 rounded-full ${isDiscontinued ? 'bg-[var(--ink-3)]' : 'bg-[var(--doctor-600)]'}`} />
 																{med.addedByUser?.role === 'DOCTOR' ? 'Prescribed by Physician' : 'Self-logged'} · {med.type}
 															</span>
 
@@ -1620,8 +1620,8 @@ function PatientView({ patientId }) {
 																		Discontinued {med.removedAt ? `on ${fmt(med.removedAt)}` : ''}
 																	</span>
 																)}
-																<span className="inline-flex items-center gap-1 text-xs text-[var(--text-muted)] font-medium">
-																	<CalendarDays className="w-3.5 h-3.5 text-[var(--text-muted)]" />
+																<span className="inline-flex items-center gap-1 text-xs text-[var(--ink-3)] font-medium">
+																	<CalendarDays className="w-3.5 h-3.5 text-[var(--ink-3)]" />
 																	Started {fmt(med.dateAdded)}
 																</span>
 															</div>
@@ -1629,7 +1629,7 @@ function PatientView({ patientId }) {
 
 														<div className="flex items-center justify-between gap-2 flex-wrap">
 															<div className="flex items-center gap-2.5 flex-wrap">
-																<h4 className={`text-base font-bold font-display ${isDiscontinued ? 'text-[var(--text-muted)] line-through' : 'text-[var(--text-primary)]'}`}>
+																<h4 className={`text-base font-bold font-[var(--font-heading)] ${isDiscontinued ? 'text-[var(--ink-3)] line-through' : 'text-[var(--ink)]'}`}>
 																	{med.name}
 																</h4>
 																<DrugHarmBadge harmLevel={med.harmLevel} size="sm" />
@@ -1642,7 +1642,7 @@ function PatientView({ patientId }) {
 														</div>
 
 														{med.dosage && (
-															<p className="text-xs text-[var(--text-muted)] font-mono">
+															<p className="text-xs text-[var(--ink-3)] font-mono">
 																Dose: {med.dosage}
 															</p>
 														)}
@@ -1736,14 +1736,14 @@ function ClaimPanel({ onSuccess }) {
  <Card className="max-w-md mx-auto space-y-6 p-6 sm:p-8">
  {/* Icon header */}
  <div className="flex flex-col items-center gap-3 text-center">
- <div className="w-16 h-16 rounded-full bg-[var(--brand-surface)] border-2 border-[var(--role-doctor)]/30 flex items-center justify-center">
- <Stethoscope className="w-8 h-8 text-[var(--role-doctor)]" />
+ <div className="w-16 h-16 rounded-full bg-[var(--surface)] border-2 border-[var(--doctor-600)]/30 flex items-center justify-center">
+ <Stethoscope className="w-8 h-8 text-[var(--doctor-600)]" />
  </div>
  <div>
- <h2 className="text-xl font-bold text-[var(--text-primary)]" style={{ fontFamily: "var(--font-display)" }}>
+ <h2 className="text-xl font-bold text-[var(--ink)]" style={{ fontFamily: "var(--font-heading)" }}>
  Enter Patient Access PIN
  </h2>
- <p className="text-xs text-[var(--text-muted)] mt-1">
+ <p className="text-xs text-[var(--ink-3)] mt-1">
  Ask your patient to open PolySafe to "Share with Doctor" and provide their 6-digit access code.
  </p>
  </div>
@@ -1760,7 +1760,7 @@ function ClaimPanel({ onSuccess }) {
  {/* Code input */}
  <form onSubmit={handleSubmit} className="space-y-4">
  <div className="space-y-2">
- <label className="block text-xs font-extrabold uppercase tracking-widest text-[var(--text-muted)]">
+ <label className="block text-xs font-extrabold uppercase tracking-widest text-[var(--ink-3)]">
  Patient 6-digit PIN
  </label>
  <input
@@ -1781,7 +1781,7 @@ function ClaimPanel({ onSuccess }) {
  <button
  type="submit"
  disabled={code.length < 6 || mutation.isPending}
- className="btn-primary w-full py-4 text-base"
+ className="ps-btn ps-btn-primary w-full py-4 text-base"
  >
  {mutation.isPending ? (
  <><Loader2 className="w-5 h-5 animate-spin" /><span>Connecting…</span></>
@@ -1792,9 +1792,9 @@ function ClaimPanel({ onSuccess }) {
  </form>
 
  {/* Info */}
- <div className="flex items-start gap-2 p-3.5 bg-[var(--chassis)] border border-[var(--brand-border-subtle)] rounded-2xl">
- <Info className="w-4 h-4 text-[var(--text-muted)] flex-shrink-0 mt-0.5" />
- <p className="text-[11px] text-[var(--text-muted)] leading-relaxed">
+ <div className="flex items-start gap-2 p-3.5 bg-[var(--canvas)] border border-[var(--border)] rounded-2xl">
+ <Info className="w-4 h-4 text-[var(--ink-3)] flex-shrink-0 mt-0.5" />
+ <p className="text-[11px] text-[var(--ink-3)] leading-relaxed">
  Once entered, the patient will receive a secure prompt to approve access. You will gain clinical access to their active medication timeline, interaction matrix, and prescribing tools.
  </p>
  </div>
@@ -1837,10 +1837,10 @@ function ConnectionsList({ onSelect, selectedId }) {
 
   if (connections.length === 0) {
     return (
-      <div className="p-6 text-center text-xs text-[var(--text-muted)] bg-[var(--chassis)] border border-[var(--brand-border-subtle)] shadow-[var(--shadow-recessed)] rounded-2xl space-y-2">
+      <div className="p-6 text-center text-xs text-[var(--ink-3)] bg-[var(--canvas)] border border-[var(--border)] shadow-[var(--shadow-inner)] rounded-2xl space-y-2">
         <EmptyDoctorListIllustration className="w-16 h-16 mx-auto" />
         <div>
-          <p className="font-bold text-[var(--text-primary)]">No approved patients yet</p>
+          <p className="font-bold text-[var(--ink)]">No approved patients yet</p>
           <p className="mt-1 leading-relaxed text-[11px]">
             Click "+ Enter Patient Code" above to link a patient via their 6-digit access code.
           </p>
@@ -1853,13 +1853,13 @@ function ConnectionsList({ onSelect, selectedId }) {
     <div className="space-y-3">
       {/* Quick Search */}
       <div className="relative flex items-center">
-        <Search className="w-4 h-4 text-[var(--text-muted)] absolute left-3 pointer-events-none" />
+        <Search className="w-4 h-4 text-[var(--ink-3)] absolute left-3 pointer-events-none" />
         <input
           type="text"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           placeholder="Filter connected patients…"
-          className="w-full text-xs py-2.5 pl-9 pr-3.5 rounded-xl bg-[var(--brand-surface)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)]/70 border border-[var(--chassis-dark)] shadow-[var(--shadow-recessed)] focus:outline-none focus:ring-2 focus:ring-[var(--role-doctor)]/40 transition-all font-sans"
+          className="w-full text-xs py-2.5 pl-9 pr-3.5 rounded-xl bg-[var(--surface)] text-[var(--ink)] placeholder:text-[var(--ink-3)]/70 border border-[var(--border)] shadow-[var(--shadow-inner)] focus:outline-none focus:ring-2 focus:ring-[var(--doctor-600)]/40 transition-all font-sans"
         />
       </div>
 
@@ -1878,25 +1878,25 @@ function ConnectionsList({ onSelect, selectedId }) {
                 onClick={() => onSelect(c.patientId, c.connectionId)}
                 className={`p-3 rounded-2xl cursor-pointer transition-all border ${
                   isSelected
-                    ? 'bg-[var(--brand-surface)] border-[var(--role-doctor)] shadow-[var(--shadow-sm)] ring-2 ring-[var(--role-doctor)]/20'
-                    : 'bg-[var(--brand-surface)]/70 hover:bg-[var(--brand-surface)] border-[rgba(255,255,255,0.6)] hover:border-[var(--role-doctor)]/30 hover:shadow-[var(--shadow-xs)]'
+                    ? 'bg-[var(--surface)] border-[var(--doctor-600)] shadow-[var(--shadow-sm)] ring-2 ring-[var(--doctor-600)]/20'
+                    : 'bg-[var(--surface)]/70 hover:bg-[var(--surface)] border-[rgba(255,255,255,0.6)] hover:border-[var(--doctor-600)]/30 hover:shadow-[var(--shadow-xs)]'
                 }`}
               >
                 <div className="flex items-center gap-3">
                   <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 transition-colors ${
-                    isSelected ? 'bg-gradient-to-r from-[#0d9488] to-[#0f766e] text-white shadow-xs' : 'bg-[var(--role-doctor)]/10 text-[var(--role-doctor)]'
+                    isSelected ? 'bg-gradient-to-r from-[#0d9488] to-[#0f766e] text-white shadow-xs' : 'bg-[var(--doctor-600)]/10 text-[var(--doctor-600)]'
                   }`}>
                     <Users className="w-4 h-4" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs font-bold text-[var(--text-primary)] truncate font-display">
+                    <p className="text-xs font-bold text-[var(--ink)] truncate font-[var(--font-heading)]">
                       {c.patientName || c.name || (c.patientAge ? `Patient (Age ${c.patientAge})` : 'Connected Patient')}
                     </p>
-                    <p className="text-[11px] text-[var(--text-muted)] mt-0.5">
+                    <p className="text-[11px] text-[var(--ink-3)] mt-0.5">
                       Age {c.patientAge || '—'} · {c.recentMeds?.length ?? 0} active meds
                     </p>
                   </div>
-                  <ChevronRight className={`w-4 h-4 transition-transform ${isSelected ? 'text-[var(--role-doctor)] translate-x-0.5' : 'text-[#9CA3AF]'}`} />
+                  <ChevronRight className={`w-4 h-4 transition-transform ${isSelected ? 'text-[var(--doctor-600)] translate-x-0.5' : 'text-[#9CA3AF]'}`} />
                 </div>
               </motion.div>
             );
@@ -1928,9 +1928,9 @@ export default function DoctorDashboardPage() {
   return (
     <div className="py-6 px-4 md:px-6 max-w-7xl mx-auto space-y-6">
       {/* ── Modern Hero Header ── */}
-      <div className="ps-hero ps-fade-up" style={{ '--hero-accent': 'var(--role-doctor)', borderColor: 'rgba(13,148,136,0.25)', background: 'linear-gradient(135deg, rgba(13,148,136,0.10) 0%, rgba(5,150,105,0.07) 50%, rgba(13,148,136,0.05) 100%)' }}>
+      <div className="ps-hero ps-fade-up" style={{ '--hero-accent': 'var(--doctor-600)', borderColor: 'rgba(13,148,136,0.25)', background: 'linear-gradient(135deg, rgba(13,148,136,0.10) 0%, rgba(5,150,105,0.07) 50%, rgba(13,148,136,0.05) 100%)' }}>
         {/* Ambient orbs */}
-        <div className="ps-orb" style={{ background: 'var(--role-doctor)', width: 200, height: 200, top: -70, right: -50, opacity: 0.13, filter: 'blur(50px)', position: 'absolute', borderRadius: '50%' }} />
+        <div className="ps-orb" style={{ background: 'var(--doctor-600)', width: 200, height: 200, top: -70, right: -50, opacity: 0.13, filter: 'blur(50px)', position: 'absolute', borderRadius: '50%' }} />
         <div className="ps-orb" style={{ background: '#0f766e', width: 130, height: 130, bottom: -50, left: 50, opacity: 0.10, filter: 'blur(40px)', position: 'absolute', borderRadius: '50%' }} />
 
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 relative z-10">
@@ -1943,27 +1943,27 @@ export default function DoctorDashboardPage() {
               <Stethoscope className="w-3 h-3 text-teal-600" />
               <span className="font-mono">Physician Clinical Workstation</span>
             </div>
-            <h1 className="text-2xl md:text-3xl font-extrabold text-[var(--text-primary)] tracking-tight font-display">
+            <h1 className="text-2xl md:text-3xl font-extrabold text-[var(--ink)] tracking-tight font-[var(--font-heading)]">
               Clinical{' '}
               <span style={{ background: 'linear-gradient(135deg, #0d9488, #059669, #06b6d4)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Prescriber Hub</span>
             </h1>
-            <p className="text-sm text-[var(--text-secondary)] max-w-2xl leading-relaxed">
+            <p className="text-sm text-[var(--ink-2)] max-w-2xl leading-relaxed">
               Real-time cross-prescribing cascade analysis, drug-drug interaction surveillance, and instant patient directive transmission.
             </p>
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[var(--brand-surface)]/80 border border-[var(--brand-border)] text-xs font-medium text-[var(--text-secondary)]">
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[var(--surface)]/80 border border-[var(--border)] text-xs font-medium text-[var(--ink-2)]">
               <Shield className="w-3.5 h-3.5 text-teal-600" />
               <span>End-to-End Consent</span>
             </div>
-            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[var(--brand-surface)]/80 border border-[var(--brand-border)] text-xs font-medium text-[var(--text-secondary)]">
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[var(--surface)]/80 border border-[var(--border)] text-xs font-medium text-[var(--ink-2)]">
               <Activity className="w-3.5 h-3.5 text-emerald-600" />
               <span>FHIR Audit Log</span>
             </div>
             <button
               onClick={() => setStep('claim')}
-              className="ps-btn-shine btn-primary py-2 px-4 text-xs font-mono font-bold uppercase tracking-wider flex items-center gap-2"
+              className="ps-btn-shine ps-btn ps-btn-primary py-2 px-4 text-xs font-mono font-bold uppercase tracking-wider flex items-center gap-2"
               style={{ background: 'linear-gradient(135deg, #0d9488, #059669)', boxShadow: '0 4px 16px -4px rgba(13,148,136,0.35)' }}
             >
               <Plus className="w-4 h-4" />
@@ -1977,12 +1977,12 @@ export default function DoctorDashboardPage() {
       {step === 'claim' && (
         <div className="max-w-xl mx-auto space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-xl font-bold text-[var(--text-primary)]" style={{ fontFamily: "var(--font-display)" }}>
+            <h2 className="text-xl font-bold text-[var(--ink)]" style={{ fontFamily: "var(--font-heading)" }}>
               Link Patient Record
             </h2>
             <button
               onClick={() => setStep('list')}
-              className="btn-secondary py-1.5 px-3 text-xs"
+              className="ps-btn ps-btn-secondary py-1.5 px-3 text-xs"
             >
               Cancel
             </button>
@@ -1995,13 +1995,13 @@ export default function DoctorDashboardPage() {
       {step === 'claimed' && (
         <Card className="max-w-md mx-auto text-center space-y-5 p-8">
           <div className="w-16 h-16 rounded-full bg-amber-50 border-2 border-amber-200 flex items-center justify-center mx-auto">
-            <Clock className="w-8 h-8 text-[var(--led-caution)]" />
+            <Clock className="w-8 h-8 text-[var(--caution-fg)]" />
           </div>
           <div>
-            <h2 className="text-xl font-bold text-[var(--text-primary)]" style={{ fontFamily: "var(--font-display)" }}>
+            <h2 className="text-xl font-bold text-[var(--ink)]" style={{ fontFamily: "var(--font-heading)" }}>
               Waiting for Patient Approval
             </h2>
-            <p className="text-sm text-[var(--text-muted)] mt-2 leading-relaxed">
+            <p className="text-sm text-[var(--ink-3)] mt-2 leading-relaxed">
               Your connection request has been sent. The patient will receive an approval prompt in their PolySafe app. Once approved, their record will appear in your clinical list.
             </p>
           </div>
@@ -2009,14 +2009,14 @@ export default function DoctorDashboardPage() {
             {[0, 1, 2].map((i) => (
               <div
                 key={i}
-                className="w-2.5 h-2.5 rounded-full bg-[var(--role-doctor)]"
+                className="w-2.5 h-2.5 rounded-full bg-[var(--doctor-600)]"
                 style={{ animation: `pulse-dot 1.4s ease-in-out ${i * 0.16}s infinite` }}
               />
             ))}
           </div>
           <button
             onClick={() => { setStep('list'); queryClient.invalidateQueries(['doctor-connections']); }}
-            className="btn-primary w-full py-3"
+            className="ps-btn ps-btn-primary w-full py-3"
           >
             <Users className="w-4 h-4" />
             <span>View Connected Patients</span>
@@ -2032,20 +2032,20 @@ export default function DoctorDashboardPage() {
             <Card
               title="Clinical Patients"
               subtitle="Consent-approved records"
-              icon={<Users className="w-4 h-4 text-[var(--role-doctor)]" />}
+              icon={<Users className="w-4 h-4 text-[var(--doctor-600)]" />}
               className="p-5"
             >
               <div className="space-y-4">
                 {/* Pinned "+ Enter Code" Button */}
                 <button
                   onClick={() => setStep('claim')}
-                  className="btn-primary w-full py-2.5 text-xs flex items-center justify-center gap-2"
+                  className="ps-btn ps-btn-primary w-full py-2.5 text-xs flex items-center justify-center gap-2"
                 >
                   <Plus className="w-4 h-4" />
                   <span>Enter Patient Code</span>
                 </button>
 
-                <div className="border-t border-[var(--brand-border-subtle)] pt-3">
+                <div className="border-t border-[var(--border)] pt-3">
                   <ConnectionsList
                     onSelect={handleSelectPatient}
                     selectedId={selectedPatient?.connectionId}
@@ -2080,12 +2080,12 @@ export default function DoctorDashboardPage() {
  <EmptyDoctorPatientIllustration className="w-36 h-36 mx-auto mb-1" />
  <div>
  <h3
- className="text-xl font-bold text-[var(--text-primary)]"
- style={{ fontFamily: "var(--font-display)" }}
+ className="text-xl font-bold text-[var(--ink)]"
+ style={{ fontFamily: "var(--font-heading)" }}
  >
  Select a Patient Record
  </h3>
- <p className="text-sm text-[var(--text-muted)] mt-1.5 max-w-sm mx-auto leading-relaxed">
+ <p className="text-sm text-[var(--ink-3)] mt-1.5 max-w-sm mx-auto leading-relaxed">
  Choose an approved patient from the left panel to review their complete medication timeline, active pharmacology risk flags, and cross-prescribing cascade insights.
  </p>
  </div>

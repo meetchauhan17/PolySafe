@@ -397,7 +397,7 @@ export default function LoginPage() {
   };
 
   return (
-    <PageTransition className="relative min-h-screen bg-[var(--chassis)] text-[var(--text-primary)] flex flex-col justify-between overflow-x-hidden selection:bg-indigo-500 selection:text-white">
+    <PageTransition className="relative min-h-screen bg-[var(--canvas)] text-[var(--ink)] flex flex-col justify-between overflow-x-hidden selection:bg-indigo-500 selection:text-white">
       
       {/* ── Background Precision Dot Matrix ── */}
       <div className="absolute inset-0 bg-[radial-gradient(#c7d2fe_1px,transparent_1px)] [background-size:24px_24px] opacity-25 pointer-events-none" />
@@ -414,10 +414,10 @@ export default function LoginPage() {
             <ShieldCheck className="w-5 h-5" />
           </div>
           <div className="flex flex-col">
-            <span className="text-base font-extrabold tracking-tight text-[var(--text-primary)] font-display">
-              Poly<span className="bg-gradient-to-r from-[var(--accent-primary)] to-[var(--accent-secondary)] bg-clip-text text-transparent">Safe</span>
+            <span className="text-base font-extrabold tracking-tight text-[var(--ink)] font-[var(--font-heading)]">
+              Poly<span className="bg-gradient-to-r from-[var(--brand-600)] to-[var(--doctor-600)] bg-clip-text text-transparent">Safe</span>
             </span>
-            <span className="text-[10px] font-mono text-[var(--text-muted)] uppercase tracking-widest -mt-0.5">
+            <span className="text-[10px] font-mono text-[var(--ink-3)] uppercase tracking-widest -mt-0.5">
               Clinical Polypharmacy AI
             </span>
           </div>
@@ -425,7 +425,7 @@ export default function LoginPage() {
 
         <div className="flex items-center gap-2.5 sm:gap-3">
           {/* Live System Indicator */}
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[var(--brand-surface)]/80 backdrop-blur-md border border-[var(--brand-border)] text-[11px] font-semibold text-[var(--text-secondary)] shadow-xs">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[var(--surface)]/80 backdrop-blur-md border border-[var(--border)] text-[11px] font-semibold text-[var(--ink-2)] shadow-xs">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75" />
               <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
@@ -446,34 +446,34 @@ export default function LoginPage() {
             <div className="text-center space-y-3 mb-8 sm:mb-10">
               
               {/* Top Pill Status */}
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[var(--brand-surface)]/90 backdrop-blur-md border border-[var(--brand-border)] shadow-xs">
-                <Zap className="w-3.5 h-3.5 text-[var(--accent-primary)]" />
-                <span className="text-[11px] font-bold tracking-wider uppercase text-[var(--text-secondary)] font-mono">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[var(--surface)]/90 backdrop-blur-md border border-[var(--border)] shadow-xs">
+                <Zap className="w-3.5 h-3.5 text-[var(--brand-600)]" />
+                <span className="text-[11px] font-bold tracking-wider uppercase text-[var(--ink-2)] font-mono">
                   Continuous Clinical Safety Architecture
                 </span>
               </div>
 
               {/* Main Headline */}
-              <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-[var(--text-primary)] font-display">
-                Select Your <span className="bg-gradient-to-r from-[var(--accent-primary)] via-indigo-600 to-[var(--accent-secondary)] bg-clip-text text-transparent">Access Portal</span>
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-[var(--ink)] font-[var(--font-heading)]">
+                Select Your <span className="bg-gradient-to-r from-[var(--brand-600)] via-indigo-600 to-[var(--doctor-600)] bg-clip-text text-transparent">Access Portal</span>
               </h1>
 
-              <p className="text-xs sm:text-sm text-[var(--text-secondary)] max-w-xl mx-auto leading-relaxed">
+              <p className="text-xs sm:text-sm text-[var(--ink-2)] max-w-xl mx-auto leading-relaxed">
                 AI-powered multi-drug interaction intelligence, Beers deprescribing guidance, and cognitive anticholinergic burden monitoring.
               </p>
 
               {/* Trust Metrics Chips */}
               <div className="flex flex-wrap items-center justify-center gap-2 pt-1">
-                <span className="inline-flex items-center gap-1.5 bg-[var(--brand-surface)]/80 backdrop-blur-xs px-3.5 py-1 rounded-full border border-[var(--brand-border)] text-[11px] font-semibold text-[var(--text-secondary)] shadow-2xs">
-                  <Shield className="w-3.5 h-3.5 text-[var(--accent-primary)]" />
+                <span className="inline-flex items-center gap-1.5 bg-[var(--surface)]/80 backdrop-blur-xs px-3.5 py-1 rounded-full border border-[var(--border)] text-[11px] font-semibold text-[var(--ink-2)] shadow-2xs">
+                  <Shield className="w-3.5 h-3.5 text-[var(--brand-600)]" />
                   222K+ Interaction Rules
                 </span>
-                <span className="inline-flex items-center gap-1.5 bg-[var(--brand-surface)]/80 backdrop-blur-xs px-3.5 py-1 rounded-full border border-[var(--brand-border)] text-[11px] font-semibold text-[var(--text-secondary)] shadow-2xs">
-                  <Activity className="w-3.5 h-3.5 text-[var(--led-safe)]" />
+                <span className="inline-flex items-center gap-1.5 bg-[var(--surface)]/80 backdrop-blur-xs px-3.5 py-1 rounded-full border border-[var(--border)] text-[11px] font-semibold text-[var(--ink-2)] shadow-2xs">
+                  <Activity className="w-3.5 h-3.5 text-[var(--safe-fg)]" />
                   Real-Time ACB Radar
                 </span>
-                <span className="inline-flex items-center gap-1.5 bg-[var(--brand-surface)]/80 backdrop-blur-xs px-3.5 py-1 rounded-full border border-[var(--brand-border)] text-[11px] font-semibold text-[var(--text-secondary)] shadow-2xs">
-                  <Lock className="w-3.5 h-3.5 text-[var(--accent-secondary)]" />
+                <span className="inline-flex items-center gap-1.5 bg-[var(--surface)]/80 backdrop-blur-xs px-3.5 py-1 rounded-full border border-[var(--border)] text-[11px] font-semibold text-[var(--ink-2)] shadow-2xs">
+                  <Lock className="w-3.5 h-3.5 text-[var(--doctor-600)]" />
                   Zero-Trust RBAC
                 </span>
               </div>
@@ -506,7 +506,7 @@ export default function LoginPage() {
                     setAuthMode('login');
                     resetFormState();
                   }}
-                  className="group relative bg-[var(--brand-surface)]/95 backdrop-blur-xl rounded-3xl p-6 sm:p-7 flex flex-col justify-between border border-[var(--brand-border)] hover:border-sky-500/60 shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-card-hover)] hover:-translate-y-1.5 active:scale-[0.99] cursor-pointer transition-all duration-300"
+                  className="group relative bg-[var(--surface)]/95 backdrop-blur-xl rounded-3xl p-6 sm:p-7 flex flex-col justify-between border border-[var(--border)] hover:border-sky-500/60 shadow-[var(--shadow-sm)] hover:shadow-[var(--shadow-md)] hover:-translate-y-1.5 active:scale-[0.99] cursor-pointer transition-all duration-300"
                 >
                   {/* Glowing Top Accent Line */}
                   <div className="absolute top-0 left-6 right-6 h-1 bg-gradient-to-r from-sky-400 via-cyan-400 to-blue-500 rounded-b-full opacity-70 group-hover:opacity-100 transition-opacity" />
@@ -523,16 +523,16 @@ export default function LoginPage() {
                     </div>
 
                     <div>
-                      <h3 className="text-xl font-bold text-[var(--text-primary)] group-hover:text-sky-600 transition-colors font-display">
+                      <h3 className="text-xl font-bold text-[var(--ink)] group-hover:text-sky-600 transition-colors font-[var(--font-heading)]">
                         Patient Portal
                       </h3>
-                      <p className="text-xs text-[var(--text-secondary)] mt-1.5 leading-relaxed">
+                      <p className="text-xs text-[var(--ink-2)] mt-1.5 leading-relaxed">
                         Track daily prescriptions, OTC & herbal remedies, and receive instant interaction warnings.
                       </p>
                     </div>
 
                     {/* Feature Checklist */}
-                    <div className="space-y-2.5 pt-3 border-t border-[var(--brand-border)] text-xs text-[var(--text-secondary)]">
+                    <div className="space-y-2.5 pt-3 border-t border-[var(--border)] text-xs text-[var(--ink-2)]">
                       <div className="flex items-center gap-2.5">
                         <CheckCircle2 className="w-4 h-4 text-sky-500 flex-shrink-0" />
                         <span>222K Drug-Drug interaction flags</span>
@@ -549,7 +549,7 @@ export default function LoginPage() {
                   </div>
 
                   {/* Card Action Button */}
-                  <div className="mt-6 pt-3 border-t border-[var(--brand-border)]">
+                  <div className="mt-6 pt-3 border-t border-[var(--border)]">
                     <div className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-sky-600 to-blue-600 hover:from-sky-500 hover:to-blue-500 text-white font-semibold text-xs flex items-center justify-between shadow-md shadow-sky-600/20 group-hover:shadow-lg group-hover:shadow-sky-600/30 transition-all">
                       <span>Enter Patient Portal</span>
                       <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -564,7 +564,7 @@ export default function LoginPage() {
                     setAuthMode('login');
                     resetFormState();
                   }}
-                  className="group relative bg-[var(--brand-surface)]/95 backdrop-blur-xl rounded-3xl p-6 sm:p-7 flex flex-col justify-between border border-[var(--brand-border)] hover:border-emerald-500/60 shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-card-hover)] hover:-translate-y-1.5 active:scale-[0.99] cursor-pointer transition-all duration-300"
+                  className="group relative bg-[var(--surface)]/95 backdrop-blur-xl rounded-3xl p-6 sm:p-7 flex flex-col justify-between border border-[var(--border)] hover:border-emerald-500/60 shadow-[var(--shadow-sm)] hover:shadow-[var(--shadow-md)] hover:-translate-y-1.5 active:scale-[0.99] cursor-pointer transition-all duration-300"
                 >
                   {/* Glowing Top Accent Line */}
                   <div className="absolute top-0 left-6 right-6 h-1 bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-500 rounded-b-full opacity-70 group-hover:opacity-100 transition-opacity" />
@@ -581,16 +581,16 @@ export default function LoginPage() {
                     </div>
 
                     <div>
-                      <h3 className="text-xl font-bold text-[var(--text-primary)] group-hover:text-emerald-600 transition-colors font-display">
+                      <h3 className="text-xl font-bold text-[var(--ink)] group-hover:text-emerald-600 transition-colors font-[var(--font-heading)]">
                         Family / Caregiver
                       </h3>
-                      <p className="text-xs text-[var(--text-secondary)] mt-1.5 leading-relaxed">
+                      <p className="text-xs text-[var(--ink-2)] mt-1.5 leading-relaxed">
                         Monitor loved ones' daily dose schedules and safety statuses without intrusive clinical notes.
                       </p>
                     </div>
 
                     {/* Feature Checklist */}
-                    <div className="space-y-2.5 pt-3 border-t border-[var(--brand-border)] text-xs text-[var(--text-secondary)]">
+                    <div className="space-y-2.5 pt-3 border-t border-[var(--border)] text-xs text-[var(--ink-2)]">
                       <div className="flex items-center gap-2.5">
                         <CheckCircle2 className="w-4 h-4 text-emerald-500 flex-shrink-0" />
                         <span>Daily dosage timing & schedule</span>
@@ -607,7 +607,7 @@ export default function LoginPage() {
                   </div>
 
                   {/* Card Action Button */}
-                  <div className="mt-6 pt-3 border-t border-[var(--brand-border)]">
+                  <div className="mt-6 pt-3 border-t border-[var(--border)]">
                     <div className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-semibold text-xs flex items-center justify-between shadow-md shadow-emerald-600/20 group-hover:shadow-lg group-hover:shadow-emerald-600/30 transition-all">
                       <span>Enter Caregiver Portal</span>
                       <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -622,7 +622,7 @@ export default function LoginPage() {
                     setAuthMode('login');
                     resetFormState();
                   }}
-                  className="group relative bg-[var(--brand-surface)]/95 backdrop-blur-xl rounded-3xl p-6 sm:p-7 flex flex-col justify-between border border-[var(--brand-border)] hover:border-indigo-500/60 shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-card-hover)] hover:-translate-y-1.5 active:scale-[0.99] cursor-pointer transition-all duration-300"
+                  className="group relative bg-[var(--surface)]/95 backdrop-blur-xl rounded-3xl p-6 sm:p-7 flex flex-col justify-between border border-[var(--border)] hover:border-indigo-500/60 shadow-[var(--shadow-sm)] hover:shadow-[var(--shadow-md)] hover:-translate-y-1.5 active:scale-[0.99] cursor-pointer transition-all duration-300"
                 >
                   {/* Glowing Top Accent Line */}
                   <div className="absolute top-0 left-6 right-6 h-1 bg-gradient-to-r from-blue-500 via-indigo-500 to-violet-600 rounded-b-full opacity-70 group-hover:opacity-100 transition-opacity" />
@@ -639,16 +639,16 @@ export default function LoginPage() {
                     </div>
 
                     <div>
-                      <h3 className="text-xl font-bold text-[var(--text-primary)] group-hover:text-indigo-600 transition-colors font-display">
+                      <h3 className="text-xl font-bold text-[var(--ink)] group-hover:text-indigo-600 transition-colors font-[var(--font-heading)]">
                         Doctor / Clinician
                       </h3>
-                      <p className="text-xs text-[var(--text-secondary)] mt-1.5 leading-relaxed">
+                      <p className="text-xs text-[var(--ink-2)] mt-1.5 leading-relaxed">
                         Longitudinal timelines, pre-prescribing safety simulations, and Beers deprescribing tools.
                       </p>
                     </div>
 
                     {/* Feature Checklist */}
-                    <div className="space-y-2.5 pt-3 border-t border-[var(--brand-border)] text-xs text-[var(--text-secondary)]">
+                    <div className="space-y-2.5 pt-3 border-t border-[var(--border)] text-xs text-[var(--ink-2)]">
                       <div className="flex items-center gap-2.5">
                         <CheckCircle2 className="w-4 h-4 text-indigo-500 flex-shrink-0" />
                         <span>Pre-prescribing risk simulator</span>
@@ -665,7 +665,7 @@ export default function LoginPage() {
                   </div>
 
                   {/* Card Action Button */}
-                  <div className="mt-6 pt-3 border-t border-[var(--brand-border)]">
+                  <div className="mt-6 pt-3 border-t border-[var(--border)]">
                     <div className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-semibold text-xs flex items-center justify-between shadow-md shadow-indigo-600/20 group-hover:shadow-lg group-hover:shadow-indigo-600/30 transition-all">
                       <span>Enter Clinician Portal</span>
                       <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -690,7 +690,7 @@ export default function LoginPage() {
                   </div>
                   <div>
                     <div className="flex flex-wrap items-center gap-2">
-                      <h4 className="text-base font-bold text-[var(--text-primary)] group-hover:text-amber-700 transition-colors font-display">
+                      <h4 className="text-base font-bold text-[var(--ink)] group-hover:text-amber-700 transition-colors font-[var(--font-heading)]">
                         Explore Live Without Registration
                       </h4>
                       <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-amber-700 bg-amber-100 px-2.5 py-0.5 rounded-full border border-amber-300/80 font-mono">
@@ -698,7 +698,7 @@ export default function LoginPage() {
                         Instant Sandbox
                       </span>
                     </div>
-                    <p className="text-xs text-[var(--text-muted)] mt-1 leading-relaxed">
+                    <p className="text-xs text-[var(--ink-3)] mt-1 leading-relaxed">
                       Test multi-drug interactions, cascade timelines, and 4-organ toxicity radar using pre-loaded geriatric polypharmacy profiles.
                     </p>
                   </div>
@@ -717,10 +717,10 @@ export default function LoginPage() {
               ROLE AUTH CARD (SIGN IN VS SIGN UP FORM MODAL VIEW)
           ══════════════════════════════════════════════════════════════════ */}
           {selectedRole && (
-            <div className="bg-[var(--brand-surface)]/95 backdrop-blur-2xl border border-[var(--brand-border)] rounded-3xl p-6 sm:p-8 space-y-6 shadow-[var(--shadow-floating)]">
+            <div className="bg-[var(--surface)]/95 backdrop-blur-2xl border border-[var(--border)] rounded-3xl p-6 sm:p-8 space-y-6 shadow-[var(--shadow-lg)]">
               
               {/* Card Header: Back button + Role pill */}
-              <div className="flex items-center justify-between pb-4 border-b border-[var(--brand-border)]">
+              <div className="flex items-center justify-between pb-4 border-b border-[var(--border)]">
                 <button
                   type="button"
                   onClick={() => {
@@ -732,9 +732,9 @@ export default function LoginPage() {
                       resetFormState();
                     }
                   }}
-                  className="group text-xs font-bold text-[var(--text-muted)] hover:text-[var(--accent-primary)] flex items-center space-x-2 transition-colors cursor-pointer font-mono"
+                  className="group text-xs font-bold text-[var(--ink-3)] hover:text-[var(--brand-600)] flex items-center space-x-2 transition-colors cursor-pointer font-mono"
                 >
-                  <div className="w-7 h-7 rounded-lg bg-[var(--chassis)] flex items-center justify-center group-hover:bg-[var(--accent-primary)]/10 transition-colors">
+                  <div className="w-7 h-7 rounded-lg bg-[var(--canvas)] flex items-center justify-center group-hover:bg-[var(--brand-600)]/10 transition-colors">
                     <ArrowLeft className="w-4 h-4" />
                   </div>
                   <span>{authMode === 'otp' ? 'Back to Form' : 'All Portals'}</span>
@@ -747,7 +747,7 @@ export default function LoginPage() {
 
               {/* Segmented Switcher: Sign In vs Sign Up */}
               {authMode !== 'otp' && (
-                <div className="flex items-center gap-1.5 p-1.5 bg-[var(--chassis)] border border-[var(--brand-border)] rounded-2xl w-full">
+                <div className="flex items-center gap-1.5 p-1.5 bg-[var(--canvas)] border border-[var(--border)] rounded-2xl w-full">
                   <button
                     type="button"
                     onClick={() => {
@@ -756,8 +756,8 @@ export default function LoginPage() {
                     }}
                     className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                       authMode === 'login'
-                        ? 'bg-gradient-to-r from-[var(--accent-primary)] to-[var(--accent-secondary)] text-white shadow-sm'
-                        : 'bg-transparent text-[var(--text-muted)] hover:text-[var(--text-primary)]'
+                        ? 'bg-gradient-to-r from-[var(--brand-600)] to-[var(--doctor-600)] text-white shadow-sm'
+                        : 'bg-transparent text-[var(--ink-3)] hover:text-[var(--ink)]'
                     }`}
                   >
                     <LogIn className="w-4 h-4 flex-shrink-0" />
@@ -771,8 +771,8 @@ export default function LoginPage() {
                     }}
                     className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                       authMode === 'signup'
-                        ? 'bg-gradient-to-r from-[var(--accent-primary)] to-[var(--accent-secondary)] text-white shadow-sm'
-                        : 'bg-transparent text-[var(--text-muted)] hover:text-[var(--text-primary)]'
+                        ? 'bg-gradient-to-r from-[var(--brand-600)] to-[var(--doctor-600)] text-white shadow-sm'
+                        : 'bg-transparent text-[var(--ink-3)] hover:text-[var(--ink)]'
                     }`}
                   >
                     <UserPlus className="w-4 h-4 flex-shrink-0" />
@@ -785,24 +785,24 @@ export default function LoginPage() {
               {authMode === 'login' && (
                 <form onSubmit={handleSignInSubmit} className="space-y-4">
                   <div className="space-y-1">
-                    <h2 className="text-2xl text-[var(--text-primary)] font-bold font-display">
+                    <h2 className="text-2xl text-[var(--ink)] font-bold font-[var(--font-heading)]">
                       {roleLabels[selectedRole]?.title} Sign In
                     </h2>
-                    <p className="text-xs text-[var(--text-muted)] font-mono">
+                    <p className="text-xs text-[var(--ink-3)] font-mono">
                       Enter your email and password to access your clinical dashboard.
                     </p>
                   </div>
 
                   {/* Lockout banner */}
                   {lockoutSecsLeft > 0 && (
-                    <div className="p-4 bg-amber-500/10 border-2 border-amber-500/40 rounded-2xl text-sm text-[var(--text-primary)] space-y-1 shadow-sm font-mono">
+                    <div className="p-4 bg-amber-500/10 border-2 border-amber-500/40 rounded-2xl text-sm text-[var(--ink)] space-y-1 shadow-sm font-mono">
                       <div className="flex items-center gap-2 font-bold text-amber-700">
                         <AlertCircle className="w-4 h-4 text-amber-500 flex-shrink-0" />
                         Account temporarily locked
                       </div>
-                      <p className="text-xs text-[var(--text-secondary)] pl-6">
+                      <p className="text-xs text-[var(--ink-2)] pl-6">
                         Too many failed attempts. Try again in{' '}
-                        <strong className="font-bold font-mono text-[var(--text-primary)]">
+                        <strong className="font-bold font-mono text-[var(--ink)]">
                           {lockoutSecsLeft} second{lockoutSecsLeft !== 1 ? 's' : ''}
                         </strong>.
                       </p>
@@ -811,7 +811,7 @@ export default function LoginPage() {
 
                   {/* Email Address */}
                   <div className="space-y-1">
-                    <label className="block text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider font-mono">
+                    <label className="block text-xs font-bold text-[var(--ink-2)] uppercase tracking-wider font-mono">
                       Email Address
                     </label>
                     <PolySafeInput
@@ -835,7 +835,7 @@ export default function LoginPage() {
 
                   {/* Password */}
                   <div className="space-y-1">
-                    <label className="block text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider font-mono">
+                    <label className="block text-xs font-bold text-[var(--ink-2)] uppercase tracking-wider font-mono">
                       Password
                     </label>
                     <PolySafeInput
@@ -864,9 +864,9 @@ export default function LoginPage() {
                         type="checkbox"
                         checked={remindMe}
                         onChange={(e) => { setRemindMe(e.target.checked); localStorage.setItem('polysafe_remind_me', String(e.target.checked)); }}
-                        className="w-4 h-4 rounded text-[var(--accent-primary)] focus:ring-[var(--accent-primary)] border-[var(--brand-border)] cursor-pointer"
+                        className="w-4 h-4 rounded text-[var(--brand-600)] focus:ring-[var(--brand-600)] border-[var(--border)] cursor-pointer"
                       />
-                      <span className="font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">
+                      <span className="font-medium text-[var(--ink-2)] hover:text-[var(--ink)] transition-colors">
                         Remember email on this device
                       </span>
                     </label>
@@ -875,7 +875,7 @@ export default function LoginPage() {
                   <button
                     type="submit"
                     disabled={loginMutation.isPending || lockoutSecsLeft > 0}
-                    className={`w-full py-3.5 px-4 rounded-xl bg-gradient-to-r ${roleLabels[selectedRole]?.btnGradient || 'from-[var(--accent-primary)] to-[var(--accent-secondary)]'} text-white font-bold text-sm shadow-md hover:shadow-lg flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-[0.99] disabled:opacity-50`}
+                    className={`w-full py-3.5 px-4 rounded-xl bg-gradient-to-r ${roleLabels[selectedRole]?.btnGradient || 'from-[var(--brand-600)] to-[var(--doctor-600)]'} text-white font-bold text-sm shadow-md hover:shadow-lg flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-[0.99] disabled:opacity-50`}
                   >
                     {loginMutation.isPending ? (
                       <><Loader2 className="w-5 h-5 animate-spin" /><span>Signing In...</span></>
@@ -885,12 +885,12 @@ export default function LoginPage() {
                   </button>
 
                   {/* Switch to sign up */}
-                  <p className="text-center text-xs text-[var(--text-muted)] font-mono pt-2">
+                  <p className="text-center text-xs text-[var(--ink-3)] font-mono pt-2">
                     New to PolySafe?{' '}
                     <button
                       type="button"
                       onClick={() => { setAuthMode('signup'); setErrorMsg(null); }}
-                      className="font-bold text-[var(--accent-primary)] hover:underline cursor-pointer"
+                      className="font-bold text-[var(--brand-600)] hover:underline cursor-pointer"
                     >
                       Create a new account
                     </button>
@@ -902,17 +902,17 @@ export default function LoginPage() {
               {authMode === 'signup' && (
                 <form onSubmit={handleSignUpSubmit} className="space-y-4">
                   <div className="space-y-1">
-                    <h2 className="text-2xl text-[var(--text-primary)] font-bold font-display">
+                    <h2 className="text-2xl text-[var(--ink)] font-bold font-[var(--font-heading)]">
                       Create {roleLabels[selectedRole]?.title} Account
                     </h2>
-                    <p className="text-xs text-[var(--text-muted)] font-mono">
+                    <p className="text-xs text-[var(--ink-3)] font-mono">
                       A 6-digit verification code will be sent to your email to verify your identity.
                     </p>
                   </div>
 
                   {/* Full Name */}
                   <div className="space-y-1">
-                    <label className="block text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider font-mono">
+                    <label className="block text-xs font-bold text-[var(--ink-2)] uppercase tracking-wider font-mono">
                       {selectedRole === 'DOCTOR' ? 'Physician Full Name' : 'Full Name'}
                     </label>
                     <PolySafeInput
@@ -1005,12 +1005,12 @@ export default function LoginPage() {
                     )}
                     {/* Password strength meter */}
                     {password && (
-                      <div className="mt-2 space-y-1.5 p-3 bg-[var(--chassis)] border border-[var(--brand-border)] rounded-xl text-xs">
+                      <div className="mt-2 space-y-1.5 p-3 bg-[var(--canvas)] border border-[var(--border)] rounded-xl text-xs">
                         <div className="flex items-center justify-between font-mono">
                           <span className="text-slate-500">Password Strength:</span>
                           <span className="font-bold" style={{ color: passwordStrength.color }}>{passwordStrength.label}</span>
                         </div>
-                        <div className="h-1.5 w-full bg-[var(--chassis-dark)] rounded-full overflow-hidden">
+                        <div className="h-1.5 w-full bg-[var(--border)] rounded-full overflow-hidden">
                           <div
                             className="h-full rounded-full transition-all duration-300"
                             style={{ width: `${(passwordStrength.score / 3) * 100}%`, backgroundColor: passwordStrength.color }}
@@ -1019,11 +1019,11 @@ export default function LoginPage() {
                         <div className="grid grid-cols-2 gap-1 pt-1 text-[11px] text-slate-500 font-mono">
                           <div className="flex items-center gap-1">
                             {passwordStrength.hasLen ? <Check className="w-3 h-3 text-emerald-500" /> : <X className="w-3 h-3 text-slate-400" />}
-                            <span className={passwordStrength.hasLen ? 'text-[var(--text-primary)] font-medium' : ''}>8+ characters</span>
+                            <span className={passwordStrength.hasLen ? 'text-[var(--ink)] font-medium' : ''}>8+ characters</span>
                           </div>
                           <div className="flex items-center gap-1">
                             {passwordStrength.hasNum ? <Check className="w-3 h-3 text-emerald-500" /> : <X className="w-3 h-3 text-slate-400" />}
-                            <span className={passwordStrength.hasNum ? 'text-[var(--text-primary)] font-medium' : ''}>Contains number</span>
+                            <span className={passwordStrength.hasNum ? 'text-[var(--ink)] font-medium' : ''}>Contains number</span>
                           </div>
                         </div>
                       </div>
@@ -1037,9 +1037,9 @@ export default function LoginPage() {
                         type="checkbox"
                         checked={remindMe}
                         onChange={(e) => { setRemindMe(e.target.checked); localStorage.setItem('polysafe_remind_me', String(e.target.checked)); }}
-                        className="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 border-[var(--brand-border)] cursor-pointer"
+                        className="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 border-[var(--border)] cursor-pointer"
                       />
-                      <span className="font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">
+                      <span className="font-medium text-[var(--ink-2)] hover:text-[var(--ink)] transition-colors">
                         Remember email on this device
                       </span>
                     </label>
@@ -1079,19 +1079,19 @@ export default function LoginPage() {
                       <div className="p-2.5 rounded-xl bg-blue-500/10 text-blue-600 border border-blue-500/20 shadow-xs">
                         <KeyRound className="w-5 h-5" />
                       </div>
-                      <h2 className="text-2xl text-[var(--text-primary)] font-bold font-display">
+                      <h2 className="text-2xl text-[var(--ink)] font-bold font-[var(--font-heading)]">
                         Verify Your Email
                       </h2>
                     </div>
                     <p className="text-xs text-slate-500 font-mono">
-                      Enter the 6-digit code sent to <strong className="text-[var(--text-primary)]">{email}</strong>.
+                      Enter the 6-digit code sent to <strong className="text-[var(--ink)]">{email}</strong>.
                     </p>
                   </div>
 
                   {/* Dev OTP quick fill helper in dev mode */}
                   {devOtpHint && (
-                    <div className="p-3 bg-[var(--chassis)] border border-indigo-500/40 rounded-xl flex items-center justify-between text-xs font-mono">
-                      <span className="text-[var(--text-secondary)]">Dev Code: <strong className="text-blue-600 font-bold">{devOtpHint}</strong></span>
+                    <div className="p-3 bg-[var(--canvas)] border border-indigo-500/40 rounded-xl flex items-center justify-between text-xs font-mono">
+                      <span className="text-[var(--ink-2)]">Dev Code: <strong className="text-blue-600 font-bold">{devOtpHint}</strong></span>
                       <button
                         type="button"
                         onClick={() => {
@@ -1122,7 +1122,7 @@ export default function LoginPage() {
                         className={`text-center font-mono text-xl font-bold rounded-xl border ${
                           errorMsg 
                             ? 'border-rose-500 bg-rose-50/50 text-rose-600' 
-                            : 'border-[var(--brand-border)] bg-[var(--brand-surface)] text-[var(--text-primary)] focus:border-[var(--accent-primary)] focus:ring-2 focus:ring-[var(--accent-primary)]/20'
+                            : 'border-[var(--border)] bg-[var(--surface)] text-[var(--ink)] focus:border-[var(--brand-600)] focus:ring-2 focus:ring-[var(--brand-600)]/20'
                         } outline-none transition-all shadow-inner`}
                         autoFocus={index === 0}
                       />
@@ -1153,7 +1153,7 @@ export default function LoginPage() {
 
                       {countdown > 0 ? (
                         <span className="text-slate-500 font-medium">
-                          Resend in <strong className="text-[var(--text-primary)]">0:{countdown < 10 ? `0${countdown}` : countdown}</strong>
+                          Resend in <strong className="text-[var(--ink)]">0:{countdown < 10 ? `0${countdown}` : countdown}</strong>
                         </span>
                       ) : (
                         <button
@@ -1176,7 +1176,7 @@ export default function LoginPage() {
       </main>
 
       {/* ── Footer ── */}
-      <footer className="relative w-full max-w-6xl mx-auto px-4 sm:px-6 py-4 text-center text-xs text-[var(--text-muted)] border-t border-[var(--brand-border)] font-mono z-20">
+      <footer className="relative w-full max-w-6xl mx-auto px-4 sm:px-6 py-4 text-center text-xs text-[var(--ink-3)] border-t border-[var(--border)] font-mono z-20">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-2">
           <span>&copy; {new Date().getFullYear()} PolySafe AI &middot; Clinical Polypharmacy Intelligence Platform</span>
           <span className="text-[11px] text-slate-400">Zero-Trust Protected &middot; HIPAA &amp; ISO-27001 Clinical Guidelines</span>

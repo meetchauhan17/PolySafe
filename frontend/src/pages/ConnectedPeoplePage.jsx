@@ -148,10 +148,10 @@ function ConnectionRow({ conn, onRevoke, revoking, onApprove, approving, customL
         isClaimedPending
           ? 'bg-teal-50/20  border-teal-500/50 shadow-[0_6px_24px_rgba(13,148,136,0.12),-2px_-2px_12px_rgba(255,255,255,0.9)]'
           : isPending
-          ? 'bg-[var(--chassis)] border-amber-400/50 shadow-[0_6px_24px_rgba(245,158,11,0.08),-2px_-2px_12px_rgba(255,255,255,0.9)]'
+          ? 'bg-[var(--canvas)] border-amber-400/50 shadow-[0_6px_24px_rgba(245,158,11,0.08),-2px_-2px_12px_rgba(255,255,255,0.9)]'
           : isRevoked
-          ? '!bg-[var(--chassis)] opacity-60 !border-[var(--brand-border)]'
-          : 'bg-[var(--brand-surface)] border-[var(--brand-border)] shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-elevated)]'
+          ? '!bg-[var(--canvas)] opacity-60 !border-[var(--border)]'
+          : 'bg-[var(--surface)] border-[var(--border)] shadow-[var(--shadow-sm)] hover:shadow-[var(--shadow-elevated)]'
       }`}
     >
       {/* ── Top Row: Avatar + Title/Note + Status Pill ── */}
@@ -161,8 +161,8 @@ function ConnectionRow({ conn, onRevoke, revoking, onApprove, approving, customL
           <div
             className={`p-3 rounded-2xl flex-shrink-0 border shadow-xs transition-transform ${
               isDoctor
-                ? 'bg-[var(--accent-secondary)]/12 border-[var(--accent-secondary)]/30 text-[var(--accent-secondary)]'
-                : 'bg-[var(--accent-primary)]/12 border-[var(--accent-primary)]/30 text-[var(--accent-primary)]'
+                ? 'bg-[var(--doctor-600)]/12 border-[var(--doctor-600)]/30 text-[var(--doctor-600)]'
+                : 'bg-[var(--brand-600)]/12 border-[var(--brand-600)]/30 text-[var(--brand-600)]'
             }`}
           >
             {isDoctor ? (
@@ -182,11 +182,11 @@ function ConnectionRow({ conn, onRevoke, revoking, onApprove, approving, customL
                   onChange={(e) => setEditValue(e.target.value)}
                   placeholder="e.g. Dr. Mehta (Cardiologist)"
                   autoFocus
-                  className="px-3 py-1.5 text-xs font-bold rounded-xl border-2 border-[var(--accent-primary)] bg-[var(--chassis)] text-[var(--text-primary)] focus:outline-none w-full shadow-inner"
+                  className="px-3 py-1.5 text-xs font-bold rounded-xl border-2 border-[var(--brand-600)] bg-[var(--canvas)] text-[var(--ink)] focus:outline-none w-full shadow-inner"
                 />
                 <button
                   type="submit"
-                  className="px-3 py-1.5 rounded-xl bg-[var(--accent-primary)] text-white text-xs font-bold shadow-xs hover:bg-[#23584B] active:scale-95 transition-all cursor-pointer flex-shrink-0"
+                  className="px-3 py-1.5 rounded-xl bg-[var(--brand-600)] text-white text-xs font-bold shadow-xs hover:bg-[#23584B] active:scale-95 transition-all cursor-pointer flex-shrink-0"
                 >
                   Save
                 </button>
@@ -196,7 +196,7 @@ function ConnectionRow({ conn, onRevoke, revoking, onApprove, approving, customL
                     setEditValue(customLabels[conn.connectionId] || conn.label || '');
                     setIsEditing(false);
                   }}
-                  className="px-2.5 py-1.5 rounded-xl text-xs font-bold text-[var(--text-muted)] hover:text-[var(--text-primary)] cursor-pointer flex-shrink-0"
+                  className="px-2.5 py-1.5 rounded-xl text-xs font-bold text-[var(--ink-3)] hover:text-[var(--ink)] cursor-pointer flex-shrink-0"
                 >
                   Cancel
                 </button>
@@ -204,11 +204,11 @@ function ConnectionRow({ conn, onRevoke, revoking, onApprove, approving, customL
             ) : (
               <div>
                 <div className="flex items-center gap-2 flex-wrap">
-                  <h3 className="text-base font-extrabold text-[var(--text-primary)] font-display tracking-tight truncate">
+                  <h3 className="text-base font-extrabold text-[var(--ink)] font-[var(--font-heading)] tracking-tight truncate">
                     {displayTitle}
                   </h3>
                   {hasCustomLabel && (
-                    <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] border border-[var(--accent-primary)]/20">
+                    <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[var(--brand-600)]/10 text-[var(--brand-600)] border border-[var(--brand-600)]/20">
                       Custom Note
                     </span>
                   )}
@@ -216,14 +216,14 @@ function ConnectionRow({ conn, onRevoke, revoking, onApprove, approving, customL
                     type="button"
                     onClick={() => setIsEditing(true)}
                     title="Edit custom note or label"
-                    className="p-1 text-[var(--text-muted)] hover:text-[var(--accent-primary)] rounded-lg hover:bg-black/5  transition-colors cursor-pointer"
+                    className="p-1 text-[var(--ink-3)] hover:text-[var(--brand-600)] rounded-lg hover:bg-black/5  transition-colors cursor-pointer"
                   >
                     <PenLine className="w-3.5 h-3.5" />
                   </button>
                 </div>
 
                 {/* Subtitle & Date metadata */}
-                <div className="flex items-center gap-2 text-xs text-[var(--text-muted)] font-medium flex-wrap pt-0.5">
+                <div className="flex items-center gap-2 text-xs text-[var(--ink-3)] font-medium flex-wrap pt-0.5">
                   <span>
                     {isClaimedPending
                       ? 'Doctor has entered your PIN · Awaiting your 1-click authorization'
@@ -260,10 +260,10 @@ function ConnectionRow({ conn, onRevoke, revoking, onApprove, approving, customL
               <Stethoscope className="w-4 h-4" />
             </div>
             <div className="flex-1">
-              <p className="text-xs font-black text-[var(--text-primary)] font-display">
+              <p className="text-xs font-black text-[var(--ink)] font-[var(--font-heading)]">
                 {conn.doctorLabel || 'Physician'} is requesting clinical timeline access!
               </p>
-              <p className="text-[11px] text-[var(--text-muted)]">
+              <p className="text-[11px] text-[var(--ink-3)]">
                 Click "Approve Doctor Access" below to grant secure, read-only medication review permissions.
               </p>
             </div>
@@ -274,7 +274,7 @@ function ConnectionRow({ conn, onRevoke, revoking, onApprove, approving, customL
               type="button"
               onClick={() => onApprove(conn.connectionId)}
               disabled={approving || revoking}
-              className="btn-primary flex-1 py-2.5 text-xs font-bold font-mono flex items-center justify-center gap-1.5 cursor-pointer shadow-xs active:scale-95"
+              className="ps-btn ps-btn-primary flex-1 py-2.5 text-xs font-bold font-mono flex items-center justify-center gap-1.5 cursor-pointer shadow-xs active:scale-95"
             >
               {approving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <CheckCircle2 className="w-3.5 h-3.5" />}
               <span>Approve Doctor Access</span>
@@ -300,7 +300,7 @@ function ConnectionRow({ conn, onRevoke, revoking, onApprove, approving, customL
             </div>
 
             {conn.expiresAt && (
-              <span className="text-[11px] font-mono text-[var(--text-muted)] font-bold bg-[var(--chassis)] px-2.5 py-0.5 rounded-full border border-[var(--brand-border)]">
+              <span className="text-[11px] font-mono text-[var(--ink-3)] font-bold bg-[var(--canvas)] px-2.5 py-0.5 rounded-full border border-[var(--border)]">
                 ⏳ Expires: {new Date(conn.expiresAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
               </span>
             )}
@@ -312,7 +312,7 @@ function ConnectionRow({ conn, onRevoke, revoking, onApprove, approving, customL
               {conn.shareCode.split('').map((digit, idx) => (
                 <span
                   key={idx}
-                  className="w-8 h-10 sm:w-10 sm:h-12 rounded-xl bg-[var(--chassis-panel)] border border-[rgba(255,255,255,0.8)]  shadow-sm flex items-center justify-center font-mono font-black text-base sm:text-xl text-[var(--accent-primary)] transition-transform hover:scale-105"
+                  className="w-8 h-10 sm:w-10 sm:h-12 rounded-xl bg-[var(--surface-2)] border border-[rgba(255,255,255,0.8)]  shadow-sm flex items-center justify-center font-mono font-black text-base sm:text-xl text-[var(--brand-600)] transition-transform hover:scale-105"
                 >
                   {digit}
                 </span>
@@ -324,7 +324,7 @@ function ConnectionRow({ conn, onRevoke, revoking, onApprove, approving, customL
               <button
                 type="button"
                 onClick={() => handleCopyCode(conn.shareCode)}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-[var(--accent-primary)] text-white hover:bg-[#23584B] shadow-xs active:scale-95 transition-all cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-[var(--brand-600)] text-white hover:bg-[#23584B] shadow-xs active:scale-95 transition-all cursor-pointer"
               >
                 {copied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
                 <span>{copied ? 'Copied' : 'Copy PIN'}</span>
@@ -332,9 +332,9 @@ function ConnectionRow({ conn, onRevoke, revoking, onApprove, approving, customL
 
               <Link
                 to="/share-with-doctor"
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-[var(--chassis)] hover:bg-[var(--chassis-dark)] text-[var(--text-primary)] border border-[rgba(255,255,255,0.7)]  shadow-xs transition-all active:scale-95"
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-[var(--canvas)] hover:bg-[var(--border)] text-[var(--ink)] border border-[rgba(255,255,255,0.7)]  shadow-xs transition-all active:scale-95"
               >
-                <QrCode className="w-3.5 h-3.5 text-[var(--accent-primary)]" />
+                <QrCode className="w-3.5 h-3.5 text-[var(--brand-600)]" />
                 <span>Show QR</span>
               </Link>
             </div>
@@ -344,8 +344,8 @@ function ConnectionRow({ conn, onRevoke, revoking, onApprove, approving, customL
 
       {/* ── Footer Row: Security Metadata + Cancel / Revoke Action ── */}
       <div className="pt-2 border-t border-[rgba(255,255,255,0.4)]  flex items-center justify-between gap-3">
-        <div className="flex items-center gap-1.5 text-[11px] font-mono text-[var(--text-muted)]">
-          <Lock className="w-3 h-3 text-[var(--accent-primary)]" />
+        <div className="flex items-center gap-1.5 text-[11px] font-mono text-[var(--ink-3)]">
+          <Lock className="w-3 h-3 text-[var(--brand-600)]" />
           <span>{isPending ? 'Single-use physician authorization' : 'HIPAA compliant read-only link'}</span>
         </div>
 
@@ -355,7 +355,7 @@ function ConnectionRow({ conn, onRevoke, revoking, onApprove, approving, customL
               type="button"
               onClick={() => onRevoke(conn.connectionId)}
               disabled={revoking || approving}
-              className="inline-flex items-center justify-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold text-[var(--led-critical)] bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 shadow-xs active:scale-95 transition-all cursor-pointer disabled:opacity-50"
+              className="inline-flex items-center justify-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold text-[var(--critical-fg)] bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 shadow-xs active:scale-95 transition-all cursor-pointer disabled:opacity-50"
             >
               {revoking ? (
                 <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -367,7 +367,7 @@ function ConnectionRow({ conn, onRevoke, revoking, onApprove, approving, customL
           ) : (
             <Link
               to="/share-with-doctor"
-              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold text-[var(--accent-primary)] bg-[var(--accent-primary)]/10 hover:bg-[var(--accent-primary)]/20 border border-[var(--accent-primary)]/25 shadow-xs transition-all"
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold text-[var(--brand-600)] bg-[var(--brand-600)]/10 hover:bg-[var(--brand-600)]/20 border border-[var(--brand-600)]/25 shadow-xs transition-all"
             >
               <RefreshCw className="w-3.5 h-3.5" />
               <span>Re-Invite Doctor</span>
@@ -496,18 +496,18 @@ function AddCaregiverPanel({ onSuccess }) {
       hideScrews={true}
       title="Add Family Caregiver"
       subtitle="Choose how to connect: by mobile number, email, or an instant 6-digit PIN code."
-      icon={<Heart className="w-4 h-4 text-[var(--accent-primary)]" />}
+      icon={<Heart className="w-4 h-4 text-[var(--brand-600)]" />}
       className="space-y-4"
     >
       {/* Method Selection Tabs */}
-      <div className="flex rounded-xl bg-[var(--chassis)] p-1 border border-[rgba(255,255,255,0.4)]  gap-1">
+      <div className="flex rounded-xl bg-[var(--canvas)] p-1 border border-[rgba(255,255,255,0.4)]  gap-1">
         <button
           type="button"
           onClick={() => { setInviteMethod('PHONE'); setError(''); }}
           className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
             inviteMethod === 'PHONE'
-              ? 'bg-[var(--accent-primary)] text-white shadow-xs'
-              : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
+              ? 'bg-[var(--brand-600)] text-white shadow-xs'
+              : 'text-[var(--ink-3)] hover:text-[var(--ink)]'
           }`}
         >
           <Phone className="w-3.5 h-3.5" />
@@ -519,8 +519,8 @@ function AddCaregiverPanel({ onSuccess }) {
           onClick={() => { setInviteMethod('EMAIL'); setError(''); }}
           className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
             inviteMethod === 'EMAIL'
-              ? 'bg-[var(--accent-primary)] text-white shadow-xs'
-              : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
+              ? 'bg-[var(--brand-600)] text-white shadow-xs'
+              : 'text-[var(--ink-3)] hover:text-[var(--ink)]'
           }`}
         >
           <Mail className="w-3.5 h-3.5" />
@@ -532,8 +532,8 @@ function AddCaregiverPanel({ onSuccess }) {
           onClick={() => { setInviteMethod('PIN'); setError(''); }}
           className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
             inviteMethod === 'PIN'
-              ? 'bg-[var(--accent-primary)] text-white shadow-xs'
-              : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
+              ? 'bg-[var(--brand-600)] text-white shadow-xs'
+              : 'text-[var(--ink-3)] hover:text-[var(--ink)]'
           }`}
         >
           <KeyRound className="w-3.5 h-3.5" />
@@ -556,11 +556,11 @@ function AddCaregiverPanel({ onSuccess }) {
             <span>Invite Created for {invitedData.name ? `${invitedData.name} (${invitedData.relation})` : (invitedData.phone || invitedData.email)}</span>
           </div>
 
-          <div className="p-3 rounded-xl bg-[var(--chassis)] border border-[rgba(255,255,255,0.4)]  space-y-1.5">
-            <p className="text-[10px] font-mono uppercase tracking-wider text-[var(--text-muted)] font-bold">
+          <div className="p-3 rounded-xl bg-[var(--canvas)] border border-[rgba(255,255,255,0.4)]  space-y-1.5">
+            <p className="text-[10px] font-mono uppercase tracking-wider text-[var(--ink-3)] font-bold">
               Ready-to-send Invite Message:
             </p>
-            <p className="text-xs text-[var(--text-secondary)] font-mono leading-relaxed">
+            <p className="text-xs text-[var(--ink-2)] font-mono leading-relaxed">
               "{invitedData.inviteMessage}"
             </p>
           </div>
@@ -581,16 +581,16 @@ function AddCaregiverPanel({ onSuccess }) {
             <button
               type="button"
               onClick={() => handleCopyMessage(invitedData.inviteMessage)}
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold bg-[var(--chassis)] hover:bg-[var(--chassis-dark)] text-[var(--text-primary)] border border-[var(--chassis-dark)] shadow-xs active:scale-98 transition-all cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold bg-[var(--canvas)] hover:bg-[var(--border)] text-[var(--ink)] border border-[var(--border)] shadow-xs active:scale-98 transition-all cursor-pointer"
             >
-              {copiedMsg ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5 text-[var(--accent-primary)]" />}
+              {copiedMsg ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5 text-[var(--brand-600)]" />}
               <span>{copiedMsg ? 'Message Copied' : 'Copy Message'}</span>
             </button>
 
             <button
               type="button"
               onClick={() => setInvitedData(null)}
-              className="inline-flex items-center gap-1 px-3 py-2 rounded-xl text-xs font-bold text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-all cursor-pointer ml-auto"
+              className="inline-flex items-center gap-1 px-3 py-2 rounded-xl text-xs font-bold text-[var(--ink-3)] hover:text-[var(--ink)] transition-all cursor-pointer ml-auto"
             >
               <Plus className="w-3.5 h-3.5" />
               <span>Invite Another</span>
@@ -602,7 +602,7 @@ function AddCaregiverPanel({ onSuccess }) {
         <div className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="space-y-1">
-              <label className="block text-[11px] font-bold text-[var(--text-secondary)] uppercase tracking-wider">
+              <label className="block text-[11px] font-bold text-[var(--ink-2)] uppercase tracking-wider">
                 Caregiver Name (Optional)
               </label>
               <input
@@ -615,7 +615,7 @@ function AddCaregiverPanel({ onSuccess }) {
             </div>
 
             <div className="space-y-1">
-              <label className="block text-[11px] font-bold text-[var(--text-secondary)] uppercase tracking-wider">
+              <label className="block text-[11px] font-bold text-[var(--ink-2)] uppercase tracking-wider">
                 Relationship
               </label>
               <select
@@ -637,16 +637,16 @@ function AddCaregiverPanel({ onSuccess }) {
                   <KeyRound className="w-4 h-4 text-amber-600 " />
                   Caregiver Access PIN & QR (Valid 24 Hours)
                 </span>
-                <span className="text-[10px] font-mono text-[var(--text-muted)]">
+                <span className="text-[10px] font-mono text-[var(--ink-3)]">
                   Expires: {new Date(generatedPinData.expiresAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                 </span>
               </div>
 
               {/* QR Code and 6-Digit PIN Side-by-Side Layout */}
-              <div className="flex flex-col sm:flex-row items-center gap-4 bg-[var(--chassis)] p-4 rounded-xl border border-[rgba(255,255,255,0.4)]  shadow-xs">
+              <div className="flex flex-col sm:flex-row items-center gap-4 bg-[var(--canvas)] p-4 rounded-xl border border-[rgba(255,255,255,0.4)]  shadow-xs">
                 {/* QR Code Image */}
                 {generatedPinData.qrCode && (
-                  <div className="p-2 bg-[var(--chassis)] rounded-xl shadow-xs border border-teal-500/30 flex-shrink-0">
+                  <div className="p-2 bg-[var(--canvas)] rounded-xl shadow-xs border border-teal-500/30 flex-shrink-0">
                     <img
                       src={generatedPinData.qrCode}
                       alt="Caregiver Quick Scan QR"
@@ -657,7 +657,7 @@ function AddCaregiverPanel({ onSuccess }) {
 
                 {/* 6-Digit PIN Display & Copy */}
                 <div className="flex-1 text-center sm:text-left space-y-2">
-                  <p className="text-[10px] font-mono uppercase tracking-wider text-[var(--text-muted)] font-bold">
+                  <p className="text-[10px] font-mono uppercase tracking-wider text-[var(--ink-3)] font-bold">
                     6-Digit Access PIN Code:
                   </p>
                   
@@ -665,14 +665,14 @@ function AddCaregiverPanel({ onSuccess }) {
                     {generatedPinData.shareCode.split('').map((digit, idx) => (
                       <span
                         key={idx}
-                        className="w-8 h-10 sm:w-9 sm:h-11 rounded-xl bg-[var(--chassis-panel)] border border-[rgba(255,255,255,0.6)]  shadow-xs flex items-center justify-center font-mono font-extrabold text-base sm:text-lg text-[var(--accent-primary)]"
+                        className="w-8 h-10 sm:w-9 sm:h-11 rounded-xl bg-[var(--surface-2)] border border-[rgba(255,255,255,0.6)]  shadow-xs flex items-center justify-center font-mono font-extrabold text-base sm:text-lg text-[var(--brand-600)]"
                       >
                         {digit}
                       </span>
                     ))}
                   </div>
 
-                  <p className="text-[11px] text-[var(--text-muted)] pt-0.5">
+                  <p className="text-[11px] text-[var(--ink-3)] pt-0.5">
                     Caregiver can scan the QR with their camera or type this PIN in their Caregiver Hub.
                   </p>
                 </div>
@@ -683,7 +683,7 @@ function AddCaregiverPanel({ onSuccess }) {
                 <button
                   type="button"
                   onClick={() => handleCopyMessage(generatedPinData.shareCode)}
-                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold bg-[var(--accent-primary)] text-white hover:bg-[#23584B] shadow-xs active:scale-98 transition-all cursor-pointer"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold bg-[var(--brand-600)] text-white hover:bg-[#23584B] shadow-xs active:scale-98 transition-all cursor-pointer"
                 >
                   {copiedMsg ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
                   <span>{copiedMsg ? 'PIN Copied' : 'Copy 6-Digit PIN'}</span>
@@ -692,7 +692,7 @@ function AddCaregiverPanel({ onSuccess }) {
                 <button
                   type="button"
                   onClick={() => setGeneratedPinData(null)}
-                  className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-bold text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-all cursor-pointer ml-auto"
+                  className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-bold text-[var(--ink-3)] hover:text-[var(--ink)] transition-all cursor-pointer ml-auto"
                 >
                   <span>Done</span>
                 </button>
@@ -703,7 +703,7 @@ function AddCaregiverPanel({ onSuccess }) {
               type="button"
               onClick={handleGenerateCaregiverPin}
               disabled={pinLoading}
-              className="btn-primary w-full py-3 text-xs sm:text-sm font-bold flex items-center justify-center gap-2 shadow-md cursor-pointer active:scale-98 transition-all"
+              className="ps-btn ps-btn-primary w-full py-3 text-xs sm:text-sm font-bold flex items-center justify-center gap-2 shadow-md cursor-pointer active:scale-98 transition-all"
             >
               {pinLoading ? (
                 <>
@@ -726,7 +726,7 @@ function AddCaregiverPanel({ onSuccess }) {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {/* Caregiver Name */}
             <div className="space-y-1">
-              <label className="block text-[11px] font-bold text-[var(--text-secondary)] uppercase tracking-wider">
+              <label className="block text-[11px] font-bold text-[var(--ink-2)] uppercase tracking-wider">
                 Caregiver Name (Optional)
               </label>
               <input
@@ -740,13 +740,13 @@ function AddCaregiverPanel({ onSuccess }) {
 
             {/* Mobile or Email */}
             <div className="space-y-1">
-              <label className="block text-[11px] font-bold text-[var(--text-secondary)] uppercase tracking-wider">
+              <label className="block text-[11px] font-bold text-[var(--ink-2)] uppercase tracking-wider">
                 {inviteMethod === 'PHONE' ? 'Mobile Number' : 'Email Address'} <span className="text-rose-500">*</span>
               </label>
               <div className="relative">
                 {inviteMethod === 'PHONE' ? (
                   <>
-                    <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-muted)]" />
+                    <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--ink-3)]" />
                     <input
                       type="tel"
                       required
@@ -761,7 +761,7 @@ function AddCaregiverPanel({ onSuccess }) {
                   </>
                 ) : (
                   <>
-                    <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-muted)]" />
+                    <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--ink-3)]" />
                     <input
                       type="email"
                       required
@@ -781,7 +781,7 @@ function AddCaregiverPanel({ onSuccess }) {
 
           {/* Relationship Selection Chips */}
           <div className="space-y-1.5">
-            <label className="block text-[11px] font-bold text-[var(--text-secondary)] uppercase tracking-wider">
+            <label className="block text-[11px] font-bold text-[var(--ink-2)] uppercase tracking-wider">
               Relationship / Role
             </label>
             <div className="flex flex-wrap gap-1.5">
@@ -792,8 +792,8 @@ function AddCaregiverPanel({ onSuccess }) {
                   onClick={() => setRelation(opt)}
                   className={`px-3 py-1 rounded-full text-xs font-semibold transition-all cursor-pointer ${
                     relation === opt
-                      ? 'bg-[var(--accent-primary)] text-white shadow-xs scale-102 font-bold'
-                      : 'bg-[var(--chassis)] text-[var(--text-muted)] hover:text-[var(--text-primary)] border border-[rgba(255,255,255,0.4)] '
+                      ? 'bg-[var(--brand-600)] text-white shadow-xs scale-102 font-bold'
+                      : 'bg-[var(--canvas)] text-[var(--ink-3)] hover:text-[var(--ink)] border border-[rgba(255,255,255,0.4)] '
                   }`}
                 >
                   {opt}
@@ -805,7 +805,7 @@ function AddCaregiverPanel({ onSuccess }) {
           <button
             type="submit"
             disabled={((inviteMethod === 'PHONE' ? !phone.trim() : !email.trim()) && !isGuest) || mutation.isPending}
-            className="btn-primary w-full py-3 text-xs sm:text-sm font-bold flex items-center justify-center gap-2 shadow-md cursor-pointer active:scale-98 transition-all"
+            className="ps-btn ps-btn-primary w-full py-3 text-xs sm:text-sm font-bold flex items-center justify-center gap-2 shadow-md cursor-pointer active:scale-98 transition-all"
           >
             {mutation.isPending ? (
               <>
@@ -824,9 +824,9 @@ function AddCaregiverPanel({ onSuccess }) {
       )}
 
       {/* Privacy reassurance note */}
-      <div className="p-3 rounded-xl bg-[var(--chassis)] border border-[rgba(255,255,255,0.4)]  flex items-start gap-2">
+      <div className="p-3 rounded-xl bg-[var(--canvas)] border border-[rgba(255,255,255,0.4)]  flex items-start gap-2">
         <ShieldCheck className="w-4 h-4 text-emerald-600  flex-shrink-0 mt-0.5" />
-        <p className="text-[11px] text-[var(--text-muted)] leading-relaxed">
+        <p className="text-[11px] text-[var(--ink-3)] leading-relaxed">
           <strong>Privacy Safeguard:</strong> Caregivers only see adherence compliance status (Safe / Caution / Critical) and today's schedule reminder times. No sensitive symptoms or medical notes are exposed.
         </p>
       </div>
@@ -911,29 +911,29 @@ export default function ConnectedPeoplePage() {
             <div className="flex flex-wrap items-center justify-between gap-3">
               <BackButton to="/home" label="Back to Home" />
 
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] border border-[var(--accent-primary)]/20">
-                <span className="w-2 h-2 rounded-full bg-[var(--accent-primary)] animate-pulse" />
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-[var(--brand-600)]/10 text-[var(--brand-600)] border border-[var(--brand-600)]/20">
+                <span className="w-2 h-2 rounded-full bg-[var(--brand-600)] animate-pulse" />
                 <span>Consent & Security Hub</span>
-                <span className="text-[var(--accent-primary)]/60">·</span>
-                <span className="font-mono text-[11px] text-[var(--accent-primary)]">Active Authorization</span>
+                <span className="text-[var(--brand-600)]/60">·</span>
+                <span className="font-mono text-[11px] text-[var(--brand-600)]">Active Authorization</span>
               </div>
             </div>
 
             <div className="space-y-2">
-              <h1 className="text-2xl md:text-3xl font-extrabold text-[var(--text-primary)] tracking-tight font-display">
+              <h1 className="text-2xl md:text-3xl font-extrabold text-[var(--ink)] tracking-tight font-[var(--font-heading)]">
                 Connected <span className="ps-glow-text">Care Network</span>
               </h1>
-              <p className="text-sm text-[var(--text-secondary)] max-w-xl leading-relaxed">
+              <p className="text-sm text-[var(--ink-2)] max-w-xl leading-relaxed">
                 Manage clinical physician access codes, authorized family caregivers, and verified clinical sharing permissions.
               </p>
 
               <div className="flex flex-wrap items-center gap-2 pt-1">
-                <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-[var(--chassis)] border border-[var(--brand-border)] shadow-xs text-xs font-medium text-[var(--text-secondary)]">
-                  <ShieldCheck className="w-3.5 h-3.5 text-[var(--accent-primary)]" />
+                <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-[var(--canvas)] border border-[var(--border)] shadow-xs text-xs font-medium text-[var(--ink-2)]">
+                  <ShieldCheck className="w-3.5 h-3.5 text-[var(--brand-600)]" />
                   <span>Granular Consent</span>
                 </div>
-                <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-[var(--chassis)] border border-[var(--brand-border)] shadow-xs text-xs font-medium text-[var(--text-secondary)]">
-                  <Activity className="w-3.5 h-3.5 text-[var(--accent-secondary)]" />
+                <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-[var(--canvas)] border border-[var(--border)] shadow-xs text-xs font-medium text-[var(--ink-2)]">
+                  <Activity className="w-3.5 h-3.5 text-[var(--doctor-600)]" />
                   <span>Real-time Audit Trail</span>
                 </div>
               </div>
@@ -943,12 +943,12 @@ export default function ConnectedPeoplePage() {
 
         {/* Quick Status Chips */}
         <div className="flex flex-wrap gap-2 pt-0.5">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-bold bg-[var(--accent-secondary)]/10 text-[var(--accent-secondary)] border border-[var(--accent-secondary)]/25 shadow-xs">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-bold bg-[var(--doctor-600)]/10 text-[var(--doctor-600)] border border-[var(--doctor-600)]/25 shadow-xs">
             <Stethoscope className="w-3.5 h-3.5" />
             <span>{approvedDoctors} Active Doctor{approvedDoctors !== 1 ? 's' : ''}</span>
           </span>
 
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-bold bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] border border-[var(--accent-primary)]/25 shadow-xs">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-bold bg-[var(--brand-600)]/10 text-[var(--brand-600)] border border-[var(--brand-600)]/25 shadow-xs">
             <Heart className="w-3.5 h-3.5" />
             <span>{caregivers.filter(c => c.status === 'APPROVED').length} Caregiver{caregivers.filter(c => c.status === 'APPROVED').length !== 1 ? 's' : ''}</span>
           </span>
@@ -964,16 +964,16 @@ export default function ConnectedPeoplePage() {
         {/* Privacy summary */}
         <Card
           title="Access Levels & Permissions"
-          icon={<ShieldCheck className="w-4 h-4 text-[var(--accent-primary)]" />}
+          icon={<ShieldCheck className="w-4 h-4 text-[var(--brand-600)]" />}
           className="space-y-2.5"
         >
-          <div className="space-y-2 text-xs text-[var(--text-muted)]">
+          <div className="space-y-2 text-xs text-[var(--ink-3)]">
             <div className="flex items-start gap-2">
-              <Stethoscope className="w-3.5 h-3.5 text-[var(--accent-secondary)] flex-shrink-0 mt-0.5" />
+              <Stethoscope className="w-3.5 h-3.5 text-[var(--doctor-600)] flex-shrink-0 mt-0.5" />
               <span><strong>Doctor:</strong> Full read-only — timeline, interaction flags, cumulative anticholinergic burden, and prescribing cascade correlation.</span>
             </div>
             <div className="flex items-start gap-2">
-              <Heart className="w-3.5 h-3.5 text-[var(--accent-primary)] flex-shrink-0 mt-0.5" />
+              <Heart className="w-3.5 h-3.5 text-[var(--brand-600)] flex-shrink-0 mt-0.5" />
               <span><strong>Caregiver:</strong> Status overview (Safe / Caution / Critical) and today's schedule reminder times. No sensitive symptom logs.</span>
             </div>
           </div>
@@ -1013,12 +1013,12 @@ export default function ConnectedPeoplePage() {
           <>
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <h2 className="text-sm font-extrabold uppercase tracking-wider text-[var(--text-primary)]">
+                <h2 className="text-sm font-extrabold uppercase tracking-wider text-[var(--ink)]">
                   Doctors ({doctors.length})
                 </h2>
                 <Link
                   to="/share-with-doctor"
-                  className="flex items-center gap-1.5 text-xs font-bold text-[var(--accent-primary)] hover:underline"
+                  className="flex items-center gap-1.5 text-xs font-bold text-[var(--brand-600)] hover:underline"
                 >
                   <QrCode className="w-3.5 h-3.5" />
                   <span>Generate Code & QR</span>
@@ -1030,16 +1030,16 @@ export default function ConnectedPeoplePage() {
                 <Card className="p-8 text-center space-y-4">
                   <EmptyDoctorsIllustration className="w-28 h-28 mx-auto" />
                   <div>
-                    <h3 className="text-base font-bold text-[var(--text-primary)] font-display">
+                    <h3 className="text-base font-bold text-[var(--ink)] font-[var(--font-heading)]">
                       No Doctors Connected
                     </h3>
-                    <p className="text-xs text-[var(--text-muted)] mt-1 max-w-xs mx-auto">
+                    <p className="text-xs text-[var(--ink-3)] mt-1 max-w-xs mx-auto">
                       Share a temporary 6-digit access code or QR code during your clinic consultation to grant read-only medication timeline access.
                     </p>
                   </div>
                   <Link
                     to="/share-with-doctor"
-                    className="btn-primary inline-flex items-center gap-2 px-5 py-2.5 text-xs"
+                    className="ps-btn ps-btn-primary inline-flex items-center gap-2 px-5 py-2.5 text-xs"
                   >
                     <QrCode className="w-4 h-4" />
                     <span>Generate Doctor Access Code</span>
@@ -1075,7 +1075,7 @@ export default function ConnectedPeoplePage() {
 
             {/* ── Caregiver connections ─────────────────────────────────────────── */}
             <div className="space-y-3">
-              <h2 className="text-sm font-extrabold uppercase tracking-wider text-[var(--text-primary)]">
+              <h2 className="text-sm font-extrabold uppercase tracking-wider text-[var(--ink)]">
                 Caregivers ({caregivers.length})
               </h2>
 
@@ -1083,10 +1083,10 @@ export default function ConnectedPeoplePage() {
                 <Card className="p-8 text-center space-y-4">
                   <EmptyCaregiversIllustration className="w-28 h-28 mx-auto" />
                   <div>
-                    <h3 className="text-base font-bold text-[var(--text-primary)] font-display">
+                    <h3 className="text-base font-bold text-[var(--ink)] font-[var(--font-heading)]">
                       No Caregivers Connected
                     </h3>
-                    <p className="text-xs text-[var(--text-muted)] mt-1 max-w-xs mx-auto">
+                    <p className="text-xs text-[var(--ink-3)] mt-1 max-w-xs mx-auto">
                       Invite trusted family members or caregivers to view daily reminder times and overall safety status.
                     </p>
                   </div>
@@ -1125,9 +1125,9 @@ export default function ConnectedPeoplePage() {
         )}
 
         {/* Footer note */}
-        <div className="flex items-start gap-2.5 p-4 border-2 border-[var(--chassis-dark)] bg-[var(--chassis)] rounded-2xl">
-          <Info className="w-4 h-4 text-[var(--accent-primary)] flex-shrink-0 mt-0.5" />
-          <p className="text-[11px] text-[var(--text-muted)] leading-relaxed">
+        <div className="flex items-start gap-2.5 p-4 border-2 border-[var(--border)] bg-[var(--canvas)] rounded-2xl">
+          <Info className="w-4 h-4 text-[var(--brand-600)] flex-shrink-0 mt-0.5" />
+          <p className="text-[11px] text-[var(--ink-3)] leading-relaxed">
             <strong>Instant Access Control:</strong> Revoking doctor or caregiver access takes effect immediately across all sessions. Unclaimed 6-digit PIN codes can be canceled or refreshed at any time.
           </p>
         </div>

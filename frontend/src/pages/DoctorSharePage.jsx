@@ -55,8 +55,8 @@ function ExpiryCountdown({ expiresAt }) {
  }, [expiresAt]);
 
  return (
- <span className="flex items-center gap-1.5 text-xs text-[var(--text-muted)]">
- <Clock className="w-3.5 h-3.5 text-[var(--accent-primary)]" />
+ <span className="flex items-center gap-1.5 text-xs text-[var(--ink-3)]">
+ <Clock className="w-3.5 h-3.5 text-[var(--brand-600)]" />
  {label}
  </span>
  );
@@ -149,42 +149,42 @@ export default function DoctorSharePage() {
  });
 
  return (
- <div className="min-h-[88vh] bg-[var(--chassis)] pb-16">
+ <div className="min-h-[88vh] bg-[var(--canvas)] pb-16">
  <div className="max-w-lg mx-auto px-4 py-8 space-y-6">
 
         {/* ── Modern Hero Header matching design system tokens ── */}
-        <div className="ps-hero ps-fade-up" style={{ '--hero-accent': 'var(--role-doctor)', borderColor: 'rgba(13,148,136,0.25)', background: 'linear-gradient(135deg, rgba(13,148,136,0.10) 0%, rgba(5,150,105,0.06) 50%, rgba(13,148,136,0.04) 100%)' }}>
+        <div className="ps-hero ps-fade-up" style={{ '--hero-accent': 'var(--doctor-600)', borderColor: 'rgba(13,148,136,0.25)', background: 'linear-gradient(135deg, rgba(13,148,136,0.10) 0%, rgba(5,150,105,0.06) 50%, rgba(13,148,136,0.04) 100%)' }}>
           <div className="relative z-10 space-y-4">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <BackButton to="/home" label="Back to Home" />
 
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-[var(--role-doctor)]/10 text-[var(--role-doctor)] border border-[var(--role-doctor)]/20">
-                <span className="w-2 h-2 rounded-full bg-[var(--role-doctor)] animate-pulse" />
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-[var(--doctor-600)]/10 text-[var(--doctor-600)] border border-[var(--doctor-600)]/20">
+                <span className="w-2 h-2 rounded-full bg-[var(--doctor-600)] animate-pulse" />
                 <span>Physician Consultation</span>
-                <span className="text-[var(--role-doctor)]/60">·</span>
-                <span className="font-mono text-[11px] text-[var(--role-doctor)]">Instant Sync</span>
+                <span className="text-[var(--doctor-600)]/60">·</span>
+                <span className="font-mono text-[11px] text-[var(--doctor-600)]">Instant Sync</span>
               </div>
             </div>
 
             <div className="space-y-2">
-              <h1 className="text-2xl md:text-3xl font-extrabold text-[var(--text-primary)] tracking-tight font-display">
-                Share with <span className="ps-glow-text" style={{ backgroundImage: 'linear-gradient(135deg, var(--role-doctor) 0%, #059669 50%, var(--accent-secondary) 100%)' }}>Your Doctor</span>
+              <h1 className="text-2xl md:text-3xl font-extrabold text-[var(--ink)] tracking-tight font-[var(--font-heading)]">
+                Share with <span className="ps-glow-text" style={{ backgroundImage: 'linear-gradient(135deg, var(--doctor-600) 0%, #059669 50%, var(--doctor-600) 100%)' }}>Your Doctor</span>
               </h1>
-              <p className="text-sm text-[var(--text-secondary)] max-w-xl leading-relaxed">
+              <p className="text-sm text-[var(--ink-2)] max-w-xl leading-relaxed">
                 Provide your treating physician instant read-only access to your active pharmacotherapy timeline and potential cascade warnings.
               </p>
 
               <div className="flex flex-wrap items-center gap-2 pt-1">
-                <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-[var(--chassis)] border border-[var(--brand-border)] shadow-xs text-xs font-medium text-[var(--text-secondary)]">
-                  <ShieldCheck className="w-3.5 h-3.5 text-[var(--role-doctor)]" />
+                <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-[var(--canvas)] border border-[var(--border)] shadow-xs text-xs font-medium text-[var(--ink-2)]">
+                  <ShieldCheck className="w-3.5 h-3.5 text-[var(--doctor-600)]" />
                   <span>Zero-Trust Consent</span>
                 </div>
-                <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-[var(--chassis)] border border-[var(--brand-border)] shadow-xs text-xs font-medium text-[var(--text-secondary)]">
-                  <QrCode className="w-3.5 h-3.5 text-[var(--accent-primary)]" />
+                <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-[var(--canvas)] border border-[var(--border)] shadow-xs text-xs font-medium text-[var(--ink-2)]">
+                  <QrCode className="w-3.5 h-3.5 text-[var(--brand-600)]" />
                   <span>Encrypted QR</span>
                 </div>
-                <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-[var(--chassis)] border border-[var(--brand-border)] shadow-xs text-xs font-medium text-[var(--text-secondary)]">
-                  <Clock className="w-3.5 h-3.5 text-[var(--accent-secondary)]" />
+                <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-[var(--canvas)] border border-[var(--border)] shadow-xs text-xs font-medium text-[var(--ink-2)]">
+                  <Clock className="w-3.5 h-3.5 text-[var(--doctor-600)]" />
                   <span>15-Minute Expiry</span>
                 </div>
               </div>
@@ -193,11 +193,11 @@ export default function DoctorSharePage() {
         </div>
 
  {/* Explainer notice */}
- <div className="flex items-start space-x-3 p-3.5 bg-[var(--accent-primary)]/10 border border-[var(--accent-primary)]/20 rounded-xl text-xs text-[var(--accent-primary)]">
+ <div className="flex items-start space-x-3 p-3.5 bg-[var(--brand-600)]/10 border border-[var(--brand-600)]/20 rounded-xl text-xs text-[var(--brand-600)]">
  <ShieldCheck className="w-4 h-4 flex-shrink-0 mt-0.5" />
  <div>
- <p className="font-bold text-[var(--text-primary)]">Consent-based, read-only access</p>
- <p className="text-xs text-[var(--text-muted)] mt-0.5 leading-relaxed">
+ <p className="font-bold text-[var(--ink)]">Consent-based, read-only access</p>
+ <p className="text-xs text-[var(--ink-3)] mt-0.5 leading-relaxed">
  Your doctor can view your timeline and risk analysis. They cannot add or delete medicines. You can revoke access at any time.
  </p>
  </div>
@@ -223,14 +223,14 @@ export default function DoctorSharePage() {
  <Card
  title="Your Invite Code"
  subtitle="Share this QR code or 6-digit PIN with your physician"
- icon={<QrCode className="w-4 h-4 text-[var(--accent-primary)]" />}
+ icon={<QrCode className="w-4 h-4 text-[var(--brand-600)]" />}
  badge={<ExpiryCountdown expiresAt={codeData.expiresAt} />}
  className="space-y-5"
  >
  {/* QR Code */}
  {codeData.qrCode && (
  <div className="flex justify-center">
- <div className="p-3 bg-[var(--chassis-dark)] shadow-[var(--shadow-recessed)] rounded-2xl border border-[rgba(255,255,255,0.4)]">
+ <div className="p-3 bg-[var(--border)] shadow-[var(--shadow-inner)] rounded-2xl border border-[rgba(255,255,255,0.4)]">
  <img
  src={codeData.qrCode}
  alt="QR code for doctor"
@@ -242,17 +242,17 @@ export default function DoctorSharePage() {
 
  {/* 6-digit code */}
  <div className="space-y-2">
- <p className="text-[11px] font-extrabold uppercase tracking-widest text-[var(--text-muted)] text-center">
+ <p className="text-[11px] font-extrabold uppercase tracking-widest text-[var(--ink-3)] text-center">
  Or share this code manually
  </p>
  {/* Tray + Copy button: stacked on xs, side-by-side on sm+ */}
  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
  {/* 6-digit tray */}
- <div className="flex-1 flex items-center justify-center gap-2 sm:gap-3 bg-[var(--chassis-dark)] shadow-[var(--shadow-recessed)] rounded-2xl p-4 sm:p-6 border border-[var(--chassis-dark)]">
+ <div className="flex-1 flex items-center justify-center gap-2 sm:gap-3 bg-[var(--border)] shadow-[var(--shadow-inner)] rounded-2xl p-4 sm:p-6 border border-[var(--border)]">
  {codeData.shareCode.split('').map((digit, i) => (
  <span
  key={i}
- className="min-w-[44px] w-12 h-14 sm:w-14 sm:h-16 flex items-center justify-center text-xl sm:text-2xl font-black text-[var(--text-primary)] bg-[var(--chassis)] rounded-xl shadow-[var(--shadow-sm)] border border-[var(--chassis-dark)]"
+ className="min-w-[44px] w-12 h-14 sm:w-14 sm:h-16 flex items-center justify-center text-xl sm:text-2xl font-black text-[var(--ink)] bg-[var(--canvas)] rounded-xl shadow-[var(--shadow-sm)] border border-[var(--border)]"
  >
  {digit}
  </span>
@@ -263,8 +263,8 @@ export default function DoctorSharePage() {
  onClick={handleCopy}
  className={`flex sm:flex-col flex-row items-center justify-center gap-2 sm:gap-1 py-3 sm:p-3 px-4 sm:px-3 rounded-xl border transition-all duration-180 ease-out cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 text-sm font-bold ${
     copied
-      ? 'border-[var(--accent-primary)]/40 bg-[var(--accent-primary)]/15 text-[var(--accent-primary)] shadow-sm'
-      : 'border-[var(--chassis-dark)] bg-[var(--chassis)] shadow-[var(--shadow-card)] text-[var(--text-muted)] hover:text-[var(--accent-primary)]'
+      ? 'border-[var(--brand-600)]/40 bg-[var(--brand-600)]/15 text-[var(--brand-600)] shadow-sm'
+      : 'border-[var(--border)] bg-[var(--canvas)] shadow-[var(--shadow-sm)] text-[var(--ink-3)] hover:text-[var(--brand-600)]'
   }`}
  >
  <Copy className="w-4 h-4" />
@@ -277,11 +277,11 @@ export default function DoctorSharePage() {
  <button
  onClick={handleGenerate}
  disabled={generating}
- className="btn-secondary w-full py-3 text-sm relative"
+ className="ps-btn ps-btn-secondary w-full py-3 text-sm relative"
  >
  <RefreshCw className="w-4 h-4" />
  <span>Generate New Code</span>
- {isGuest && <Lock className="w-3.5 h-3.5 text-[var(--role-caregiver)] ml-1" />}
+ {isGuest && <Lock className="w-3.5 h-3.5 text-[var(--caregiver-600)] ml-1" />}
  </button>
  </Card>
  ) : null}
@@ -289,7 +289,7 @@ export default function DoctorSharePage() {
  {/* Pending doctor requests */}
  {pending.length > 0 && (
  <div className="space-y-3">
- <h2 className="text-base font-bold text-[var(--text-primary)]" >
+ <h2 className="text-base font-bold text-[var(--ink)]" >
  Awaiting Your Approval
  </h2>
  {pending.map((p) => {
@@ -303,16 +303,16 @@ export default function DoctorSharePage() {
  className="space-y-3"
  >
  <div className="flex items-center gap-3">
- <div className="p-2.5 bg-[var(--accent-secondary)]/10 rounded-xl border border-[var(--accent-secondary)]/20">
- <Stethoscope className="w-5 h-5 text-[var(--accent-secondary)]" />
+ <div className="p-2.5 bg-[var(--doctor-600)]/10 rounded-xl border border-[var(--doctor-600)]/20">
+ <Stethoscope className="w-5 h-5 text-[var(--doctor-600)]" />
  </div>
  <div className="flex-1">
- <p className="text-sm font-bold text-[var(--text-primary)]">{p.doctorLabel}</p>
- <p className="text-[11px] text-[var(--text-muted)]">Wants to view your medication records</p>
+ <p className="text-sm font-bold text-[var(--ink)]">{p.doctorLabel}</p>
+ <p className="text-[11px] text-[var(--ink-3)]">Wants to view your medication records</p>
  </div>
  </div>
 
- <p className="text-xs text-[var(--text-muted)] leading-relaxed">
+ <p className="text-xs text-[var(--ink-3)] leading-relaxed">
  This will give them <strong>read-only</strong> access to your timeline and interaction flags. You can revoke this at any time.
  </p>
 
@@ -320,7 +320,7 @@ export default function DoctorSharePage() {
  <button
  onClick={() => approveMut.mutate(p.connectionId)}
  disabled={isApproving || isRevoking}
- className="btn-primary flex-1 py-3 text-sm"
+ className="ps-btn ps-btn-primary flex-1 py-3 text-sm"
  >
  {isApproving ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}
  Approve
@@ -344,12 +344,12 @@ export default function DoctorSharePage() {
  {codeData && pending.length === 0 && !generating && (
  <Card className="p-5 space-y-2">
  <div className="flex items-center gap-2.5">
-        <div className="p-2 bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] rounded-xl border border-[var(--accent-primary)]/20">
-          <Users className="w-4 h-4 text-[var(--accent-primary)]" />
+        <div className="p-2 bg-[var(--brand-600)]/10 text-[var(--brand-600)] rounded-xl border border-[var(--brand-600)]/20">
+          <Users className="w-4 h-4 text-[var(--brand-600)]" />
         </div>
  <div>
- <p className="text-sm font-bold text-[var(--text-primary)]">Waiting for your doctor</p>
- <p className="text-xs text-[var(--text-muted)]">
+ <p className="text-sm font-bold text-[var(--ink)]">Waiting for your doctor</p>
+ <p className="text-xs text-[var(--ink-3)]">
  Share the code or QR above. This page auto-updates when they connect.
  </p>
  </div>
@@ -359,19 +359,19 @@ export default function DoctorSharePage() {
  {[0, 1, 2].map((i) => (
  <div
  key={i}
- className="w-2 h-2 rounded-full bg-[var(--accent-primary)]"
+ className="w-2 h-2 rounded-full bg-[var(--brand-600)]"
  style={{ animation: `pulse-dot 1.4s ease-in-out ${i * 0.16}s infinite` }}
  />
  ))}
- <span className="text-xs text-[var(--text-muted)]">Listening for new connection…</span>
+ <span className="text-xs text-[var(--ink-3)]">Listening for new connection…</span>
  </div>
  </Card>
  )}
 
  {/* Privacy note */}
- <div className="flex items-start gap-2.5 p-4 border-2 border-[var(--brand-border-subtle)] rounded-2xl bg-[var(--chassis)]">
- <Info className="w-4 h-4 text-[var(--text-muted)] flex-shrink-0 mt-0.5" />
- <p className="text-xs text-[var(--text-muted)] leading-relaxed">
+ <div className="flex items-start gap-2.5 p-4 border-2 border-[var(--border)] rounded-2xl bg-[var(--canvas)]">
+ <Info className="w-4 h-4 text-[var(--ink-3)] flex-shrink-0 mt-0.5" />
+ <p className="text-xs text-[var(--ink-3)] leading-relaxed">
  Codes expire after 24 hours. Each code can only be claimed once. Your doctor will see your medication list, interaction flags, and cumulative burden score — but not any personal details beyond your age and conditions.
  </p>
  </div>

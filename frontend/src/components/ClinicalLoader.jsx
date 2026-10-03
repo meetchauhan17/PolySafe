@@ -8,7 +8,7 @@ export default function ClinicalLoader({
   size = 'md',
   label = 'Processing...',
   sublabel = null,
-  color = 'var(--accent-primary)',
+  color = 'var(--brand-600)',
   className = '',
 }) {
   const sizeMap = {
@@ -60,11 +60,11 @@ export default function ClinicalLoader({
 
       {label && (
         <div className="text-center space-y-0.5">
-          <p className={`${current.text} font-mono font-bold tracking-wider uppercase text-[var(--text-primary)]`}>
+          <p className={`${current.text} font-mono font-bold tracking-wider uppercase text-[var(--ink)]`}>
             {label}
           </p>
           {sublabel && (
-            <p className="text-xs font-mono text-[var(--text-muted)]">
+            <p className="text-xs font-mono text-[var(--ink-3)]">
               {sublabel}
             </p>
           )}

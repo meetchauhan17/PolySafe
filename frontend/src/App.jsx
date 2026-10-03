@@ -61,7 +61,7 @@ const queryClient = new QueryClient({
 
 function RouteLoadingFallback() {
   return (
-    <div className="min-h-screen bg-[var(--chassis)] flex items-center justify-center">
+    <div className="min-h-screen bg-[var(--canvas)] flex items-center justify-center">
       <HomeSkeleton />
     </div>
   );

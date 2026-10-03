@@ -18,36 +18,36 @@ export const HARM_LEVELS = {
     tier: 'L1',
     label: 'Low Risk',
     shortLabel: 'L1 LOW',
-    color: 'var(--led-safe)',
+    color: 'var(--safe-fg)',
     ledStatus: 'safe',
     bg: 'bg-emerald-950/5',
-    border: 'border-[var(--led-safe)]',
-    badgeCls: 'text-[var(--led-safe)] border-[var(--led-safe)] shadow-[var(--shadow-sm)]',
-    barColor: 'bg-[var(--led-safe)]',
+    border: 'border-[var(--safe-fg)]',
+    badgeCls: 'text-[var(--safe-fg)] border-[var(--safe-fg)] shadow-[var(--shadow-sm)]',
+    barColor: 'bg-[var(--safe-fg)]',
     tip: 'Multivitamins, minerals, probiotics, herbs — minimal inherent clinical toxicity.',
   },
   2: {
     tier: 'L2',
     label: 'Mild Risk',
     shortLabel: 'L2 MILD',
-    color: 'var(--accent-secondary)',
+    color: 'var(--doctor-600)',
     ledStatus: 'online',
     bg: 'bg-sky-950/5',
-    border: 'border-[var(--accent-secondary)]',
-    badgeCls: 'text-[var(--accent-secondary)] border-[var(--accent-secondary)] shadow-[var(--shadow-sm)]',
-    barColor: 'bg-[var(--accent-secondary)]',
+    border: 'border-[var(--doctor-600)]',
+    badgeCls: 'text-[var(--doctor-600)] border-[var(--doctor-600)] shadow-[var(--shadow-sm)]',
+    barColor: 'bg-[var(--doctor-600)]',
     tip: 'Antacids, H2 blockers, PPIs, antihistamines — monitor for mild GI or drowsiness effects.',
   },
   3: {
     tier: 'L3',
     label: 'Moderate Risk',
     shortLabel: 'L3 MOD',
-    color: 'var(--led-caution)',
+    color: 'var(--caution-fg)',
     ledStatus: 'caution',
     bg: 'bg-amber-950/5',
-    border: 'border-[var(--led-caution)]',
-    badgeCls: 'text-[var(--led-caution)] border-[var(--led-caution)] shadow-[var(--shadow-sm)]',
-    barColor: 'bg-[var(--led-caution)]',
+    border: 'border-[var(--caution-fg)]',
+    badgeCls: 'text-[var(--caution-fg)] border-[var(--caution-fg)] shadow-[var(--shadow-sm)]',
+    barColor: 'bg-[var(--caution-fg)]',
     tip: 'NSAIDs, CCBs, beta2 agonists, antibiotics, steroids — routine clinical monitoring advised.',
   },
   4: {
@@ -66,12 +66,12 @@ export const HARM_LEVELS = {
     tier: 'L5',
     label: 'Critical Risk',
     shortLabel: 'L5 CRIT',
-    color: 'var(--led-critical)',
+    color: 'var(--critical-fg)',
     ledStatus: 'critical',
     bg: 'bg-rose-950/5',
-    border: 'border-[var(--led-critical)]',
-    badgeCls: 'text-[var(--led-critical)] border-[var(--led-critical)] font-black shadow-[var(--shadow-sm)]',
-    barColor: 'bg-[var(--led-critical)]',
+    border: 'border-[var(--critical-fg)]',
+    badgeCls: 'text-[var(--critical-fg)] border-[var(--critical-fg)] font-black shadow-[var(--shadow-sm)]',
+    barColor: 'bg-[var(--critical-fg)]',
     tip: 'Anticoagulants (Warfarin), insulins, anticonvulsants, lithium — narrow therapeutic index.',
   },
 };
@@ -155,19 +155,19 @@ export function KnownSideEffectsPanel({ medicineId, medicineName, defaultOpen = 
   const hasHerbs = data?.herbInteractions && data.herbInteractions.length > 0;
 
   return (
-    <div className={`rounded-xl overflow-hidden shadow-[var(--shadow-sm)] bg-[var(--chassis)] border border-[rgba(255,255,255,0.3)] ${className}`}>
+    <div className={`rounded-xl overflow-hidden shadow-[var(--shadow-sm)] bg-[var(--canvas)] border border-[rgba(255,255,255,0.3)] ${className}`}>
       {/* Header bar */}
       <button
         type="button"
         onClick={() => setOpen(o => !o)}
-        className="w-full flex items-center justify-between px-3.5 py-2.5 bg-[var(--chassis)] hover:bg-[var(--chassis-dark)] transition-colors cursor-pointer text-left"
+        className="w-full flex items-center justify-between px-3.5 py-2.5 bg-[var(--canvas)] hover:bg-[var(--border)] transition-colors cursor-pointer text-left"
       >
         <div className="flex items-center gap-2 flex-wrap">
-          <FlaskConical className="w-4 h-4 text-[var(--accent-primary)] flex-shrink-0" />
-          <span className="text-xs font-bold text-[var(--text-primary)] font-display">
+          <FlaskConical className="w-4 h-4 text-[var(--brand-600)] flex-shrink-0" />
+          <span className="text-xs font-bold text-[var(--ink)] font-[var(--font-heading)]">
             Clinical Safety Signals
           </span>
-          <span className="text-[10px] font-mono font-bold text-[var(--text-muted)] bg-[var(--chassis-dark)] px-2 py-0.5 rounded-full shadow-[var(--shadow-recessed)]">
+          <span className="text-[10px] font-mono font-bold text-[var(--ink-3)] bg-[var(--border)] px-2 py-0.5 rounded-full shadow-[var(--shadow-inner)]">
             FDA OFFSIDES
           </span>
           {hasBurden && (
@@ -176,7 +176,7 @@ export function KnownSideEffectsPanel({ medicineId, medicineName, defaultOpen = 
             </span>
           )}
         </div>
-        <div className="flex items-center gap-1 text-[11px] font-mono font-bold text-[var(--accent-primary)] flex-shrink-0">
+        <div className="flex items-center gap-1 text-[11px] font-mono font-bold text-[var(--brand-600)] flex-shrink-0">
           <span>{open ? 'COLLAPSE' : 'EXPAND'}</span>
           {open ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
         </div>
@@ -190,12 +190,12 @@ export function KnownSideEffectsPanel({ medicineId, medicineName, defaultOpen = 
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="overflow-hidden border-t border-[var(--chassis-dark)]"
+            className="overflow-hidden border-t border-[var(--border)]"
           >
-            <div className="p-3.5 space-y-3 bg-[var(--chassis)] text-xs">
+            <div className="p-3.5 space-y-3 bg-[var(--canvas)] text-xs">
               {loading ? (
-                <div className="flex items-center gap-2 py-3 text-xs text-[var(--text-muted)] font-mono">
-                  <Loader2 className="w-4 h-4 animate-spin text-[var(--accent-primary)]" />
+                <div className="flex items-center gap-2 py-3 text-xs text-[var(--ink-3)] font-mono">
+                  <Loader2 className="w-4 h-4 animate-spin text-[var(--brand-600)]" />
                   <span>Mining FDA adverse event signals & clinical data...</span>
                 </div>
               ) : (
@@ -212,7 +212,7 @@ export function KnownSideEffectsPanel({ medicineId, medicineName, defaultOpen = 
                           {data.burden.category}
                         </span>
                       </div>
-                      <p className="text-[11px] text-[var(--text-secondary)] leading-relaxed">
+                      <p className="text-[11px] text-[var(--ink-2)] leading-relaxed">
                         {data.burden.clinicalNote} — monitor for cumulative sedation, dizziness, dry mouth, or cognitive symptoms under polypharmacy.
                       </p>
                     </div>
@@ -227,8 +227,8 @@ export function KnownSideEffectsPanel({ medicineId, medicineName, defaultOpen = 
                       </div>
                       <div className="space-y-1">
                         {data.cascades.map((c, ci) => (
-                          <p key={ci} className="text-[11px] text-[var(--text-secondary)] leading-snug">
-                            • <strong className="text-[var(--text-primary)]">{c.symptomKeyword}:</strong> {c.description}
+                          <p key={ci} className="text-[11px] text-[var(--ink-2)] leading-snug">
+                            • <strong className="text-[var(--ink)]">{c.symptomKeyword}:</strong> {c.description}
                           </p>
                         ))}
                       </div>
@@ -246,7 +246,7 @@ export function KnownSideEffectsPanel({ medicineId, medicineName, defaultOpen = 
                         {data.herbInteractions.map((h, hi) => (
                           <span
                             key={hi}
-                            className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-[var(--brand-surface)] text-[var(--text-primary)] border border-emerald-400/40 shadow-xs"
+                            className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-[var(--surface)] text-[var(--ink)] border border-emerald-400/40 shadow-xs"
                             title={h.description}
                           >
                             {h.herbName} ({h.severity})
@@ -257,14 +257,14 @@ export function KnownSideEffectsPanel({ medicineId, medicineName, defaultOpen = 
                   )}
 
                   {/* FDA OFFSIDES Pharmacovigilance Header */}
-                  <div className="flex items-center justify-between text-[10px] text-[var(--text-muted)] font-mono pt-1">
+                  <div className="flex items-center justify-between text-[10px] text-[var(--ink-3)] font-mono pt-1">
                     <span className="font-bold uppercase tracking-wider">FDA Pharmacovigilance Signals (PRR ≥ 1.5)</span>
                     {data?.total ? <span>{data.total} signals identified</span> : null}
                   </div>
 
                   {/* Adverse Reactions List */}
                   {!data?.sideEffects || data.sideEffects.length === 0 ? (
-                    <p className="text-xs text-[var(--text-muted)] font-mono italic py-1">
+                    <p className="text-xs text-[var(--ink-3)] font-mono italic py-1">
                       No statistically elevated adverse signals (PRR ≥ 1.5) recorded for {medicineName || 'this medicine'}.
                     </p>
                   ) : (
@@ -274,7 +274,7 @@ export function KnownSideEffectsPanel({ medicineId, medicineName, defaultOpen = 
                         const isHigh = prr >= 10;
                         const isMedium = prr >= 5;
                         const badgeCls = isHigh
-                          ? 'text-[var(--led-critical)] border-[var(--led-critical)]/40 bg-rose-500/10'
+                          ? 'text-[var(--critical-fg)] border-[var(--critical-fg)]/40 bg-rose-500/10'
                           : isMedium
                           ? 'text-orange-600 dark:text-orange-400 border-orange-500/40 bg-orange-500/10'
                           : 'text-amber-600 dark:text-amber-400 border-amber-500/40 bg-amber-500/10';
@@ -282,11 +282,11 @@ export function KnownSideEffectsPanel({ medicineId, medicineName, defaultOpen = 
                         return (
                           <div
                             key={idx}
-                            className="flex items-center justify-between gap-2.5 p-2 rounded-lg bg-[var(--brand-surface)] border border-[var(--brand-border)] text-xs shadow-xs"
+                            className="flex items-center justify-between gap-2.5 p-2 rounded-lg bg-[var(--surface)] border border-[var(--border)] text-xs shadow-xs"
                           >
                             <div className="flex items-center gap-2 flex-1 min-w-0">
                               <Activity className="w-3.5 h-3.5 text-rose-500 flex-shrink-0" />
-                              <span className="font-medium text-[var(--text-primary)] leading-snug break-words">
+                              <span className="font-medium text-[var(--ink)] leading-snug break-words">
                                 {se.sideEffect}
                               </span>
                             </div>
@@ -304,7 +304,7 @@ export function KnownSideEffectsPanel({ medicineId, medicineName, defaultOpen = 
                     </div>
                   )}
 
-                  <div className="text-[10px] text-[var(--text-muted)] font-mono pt-1 text-right">
+                  <div className="text-[10px] text-[var(--ink-3)] font-mono pt-1 text-right">
                     Source: FDA FAERS & OFFSIDES (1.2M records)
                   </div>
                 </>
@@ -325,7 +325,7 @@ export function DrugHarmBadge({ harmLevel, category = '', name = '', flags = [],
   if (size === 'lg') {
     return (
       <span
-        className={`inline-flex items-center gap-1.5 text-xs font-mono font-bold px-3 py-1 rounded-xl border bg-[var(--chassis)] ${cfg.badgeCls} ${className}`}
+        className={`inline-flex items-center gap-1.5 text-xs font-mono font-bold px-3 py-1 rounded-xl border bg-[var(--canvas)] ${cfg.badgeCls} ${className}`}
         title={cfg.tip}
       >
         <span className="w-2 h-2 rounded-full" style={{ backgroundColor: cfg.color }} />
@@ -336,7 +336,7 @@ export function DrugHarmBadge({ harmLevel, category = '', name = '', flags = [],
 
   return (
     <span
-      className={`inline-flex items-center gap-1 text-[10px] font-mono font-bold px-2 py-0.5 rounded-lg border bg-[var(--chassis)] ${cfg.badgeCls} ${className}`}
+      className={`inline-flex items-center gap-1 text-[10px] font-mono font-bold px-2 py-0.5 rounded-lg border bg-[var(--canvas)] ${cfg.badgeCls} ${className}`}
       title={cfg.tip}
     >
       <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: cfg.color }} />
@@ -362,7 +362,7 @@ export function DrugHarmPanel({ medicine, flags = [], className = '' }) {
       <button
         type="button"
         onClick={() => setOpen(o => !o)}
-        className="w-full flex items-center justify-between px-3.5 py-2.5 bg-[var(--chassis)] hover:bg-[var(--chassis-dark)] transition-all cursor-pointer"
+        className="w-full flex items-center justify-between px-3.5 py-2.5 bg-[var(--canvas)] hover:bg-[var(--border)] transition-all cursor-pointer"
       >
         <div className="flex items-center gap-2">
           <LedIndicator status={cfg.ledStatus} size="sm" />
@@ -375,7 +375,7 @@ export function DrugHarmPanel({ medicine, flags = [], className = '' }) {
             </span>
           )}
         </div>
-        {open ? <ChevronUp className="w-3.5 h-3.5 text-[var(--text-muted)]" /> : <ChevronDown className="w-3.5 h-3.5 text-[var(--text-muted)]" />}
+        {open ? <ChevronUp className="w-3.5 h-3.5 text-[var(--ink-3)]" /> : <ChevronDown className="w-3.5 h-3.5 text-[var(--ink-3)]" />}
       </button>
 
       {/* Expanded body */}
@@ -389,14 +389,14 @@ export function DrugHarmPanel({ medicine, flags = [], className = '' }) {
             transition={{ duration: 0.2 }}
             className="overflow-hidden"
           >
-            <div className="px-3.5 pb-3.5 pt-2 space-y-3 bg-[var(--chassis)]">
+            <div className="px-3.5 pb-3.5 pt-2 space-y-3 bg-[var(--canvas)]">
               {/* Dynamic Risk Meter Bar */}
               <div className="space-y-1">
                 <div className="flex items-center justify-between text-[10px] font-mono">
-                  <span className="text-[var(--text-muted)] font-bold uppercase">WHO/NCI Harm Level</span>
+                  <span className="text-[var(--ink-3)] font-bold uppercase">WHO/NCI Harm Level</span>
                   <span className="font-bold" style={{ color: cfg.color }}>Level {level} / 5</span>
                 </div>
-                <div className="h-2 rounded-full bg-[var(--chassis)] shadow-[var(--shadow-recessed)] overflow-hidden relative">
+                <div className="h-2 rounded-full bg-[var(--canvas)] shadow-[var(--shadow-inner)] overflow-hidden relative">
                   <motion.div
                     className={`h-full rounded-full ${cfg.barColor}`}
                     initial={{ width: 0 }}
@@ -407,15 +407,15 @@ export function DrugHarmPanel({ medicine, flags = [], className = '' }) {
               </div>
 
               {/* Clinical note */}
-              <div className="flex gap-2 text-[11px] text-[var(--text-muted)] leading-snug">
-                <Info className="w-3.5 h-3.5 flex-shrink-0 mt-0.5 text-[var(--text-muted)]" />
+              <div className="flex gap-2 text-[11px] text-[var(--ink-3)] leading-snug">
+                <Info className="w-3.5 h-3.5 flex-shrink-0 mt-0.5 text-[var(--ink-3)]" />
                 <span>{cfg.tip}</span>
               </div>
 
               {/* Class & Generic info */}
               {medicine.category && (
-                <div className="flex items-center gap-2 text-[11px] text-[var(--text-muted)] font-mono">
-                  <Pill className="w-3 h-3 text-[var(--accent-primary)]" />
+                <div className="flex items-center gap-2 text-[11px] text-[var(--ink-3)] font-mono">
+                  <Pill className="w-3 h-3 text-[var(--brand-600)]" />
                   <span className="font-bold">CLASS:</span>
                   <span>{medicine.category}</span>
                 </div>
@@ -424,14 +424,14 @@ export function DrugHarmPanel({ medicine, flags = [], className = '' }) {
               {/* Active interaction flags */}
               {myFlags.length > 0 && (
                 <div className="space-y-1.5">
-                  <p className="text-[10px] font-mono font-bold text-[var(--text-muted)] uppercase tracking-wide flex items-center gap-1.5">
+                  <p className="text-[10px] font-mono font-bold text-[var(--ink-3)] uppercase tracking-wide flex items-center gap-1.5">
                     <Activity className="w-3 h-3 text-rose-600" />
                     Active Interaction Flags
                   </p>
                   {myFlags.map((flag, i) => {
                     const other = flag.medicineA?.id === medicine.id ? flag.medicineB?.name : flag.medicineA?.name;
                     return (
-                      <div key={i} className="flex items-start gap-1.5 text-[11px] font-mono leading-tight text-[var(--text-primary)]">
+                      <div key={i} className="flex items-start gap-1.5 text-[11px] font-mono leading-tight text-[var(--ink)]">
                         <AlertTriangle className="w-3 h-3 text-rose-600 flex-shrink-0 mt-0.5" />
                         <span><strong>{flag.severity}</strong> with <em>{other}</em></span>
                       </div>
@@ -472,9 +472,9 @@ export function PolypharmacyHarmDashboard({ medicines = [], flags = [], regimenR
   return (
     <Card
       title="Polypharmacy Regimen Risk"
-      icon={<Heart className="w-4 h-4 text-[var(--accent-primary)]" />}
+      icon={<Heart className="w-4 h-4 text-[var(--brand-600)]" />}
       badge={
-        <span className="text-[11px] font-mono font-bold text-[var(--text-primary)] bg-[var(--brand-surface)] border border-[var(--brand-border)] px-2.5 py-1 rounded-full shadow-2xs">
+        <span className="text-[11px] font-mono font-bold text-[var(--ink)] bg-[var(--surface)] border border-[var(--border)] px-2.5 py-1 rounded-full shadow-2xs">
           {medicines.length} ACTIVE DRUG{medicines.length !== 1 ? 'S' : ''}
         </span>
       }
@@ -484,53 +484,53 @@ export function PolypharmacyHarmDashboard({ medicines = [], flags = [], regimenR
         {/* 2 Stat Inset Wells */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {/* Average Risk Score */}
-          <div className="p-4 rounded-2xl bg-[var(--chassis)] border border-[var(--brand-border)] shadow-xs hover:border-[var(--brand-border-visible)] transition-all space-y-1.5">
+          <div className="p-4 rounded-2xl bg-[var(--canvas)] border border-[var(--border)] shadow-xs hover:border-[var(--border-strong)] transition-all space-y-1.5">
             <div className="flex items-center justify-between">
-              <span className="text-[10px] font-mono font-bold text-[var(--text-muted)] uppercase tracking-wider">Average Regimen Risk</span>
+              <span className="text-[10px] font-mono font-bold text-[var(--ink-3)] uppercase tracking-wider">Average Regimen Risk</span>
               <LedIndicator status={currentTierCfg.ledStatus} size="sm" />
             </div>
             <div className="flex items-baseline gap-2 flex-wrap">
               <span className="text-xl sm:text-2xl font-black font-mono" style={{ color: currentTierCfg.color }}>
                 {avgRisk.toFixed(1)} / 5.0
               </span>
-              <span className="text-[11px] font-mono font-bold px-2 py-0.5 rounded-full border bg-[var(--brand-surface)] shadow-2xs" style={{ borderColor: currentTierCfg.color, color: currentTierCfg.color }}>
+              <span className="text-[11px] font-mono font-bold px-2 py-0.5 rounded-full border bg-[var(--surface)] shadow-2xs" style={{ borderColor: currentTierCfg.color, color: currentTierCfg.color }}>
                 {currentTierCfg.label}
               </span>
             </div>
-            <p className="text-[11px] text-[var(--text-muted)] font-mono leading-tight">
+            <p className="text-[11px] text-[var(--ink-3)] font-mono leading-tight">
               WHO/NCI weighted pharmacological harm classification.
             </p>
           </div>
 
           {/* Highest Risk Drug */}
-          <div className="p-4 rounded-2xl bg-[var(--chassis)] border border-[var(--brand-border)] shadow-xs hover:border-[var(--brand-border-visible)] transition-all space-y-1.5">
+          <div className="p-4 rounded-2xl bg-[var(--canvas)] border border-[var(--border)] shadow-xs hover:border-[var(--border-strong)] transition-all space-y-1.5">
             <div className="flex items-center justify-between">
-              <span className="text-[10px] font-mono font-bold text-[var(--text-muted)] uppercase tracking-wider">Peak Risk Agent</span>
+              <span className="text-[10px] font-mono font-bold text-[var(--ink-3)] uppercase tracking-wider">Peak Risk Agent</span>
               <LedIndicator status={highestCfg.ledStatus} size="sm" />
             </div>
             <div className="flex items-baseline gap-2 flex-wrap min-w-0">
-              <span className="text-sm sm:text-base font-bold text-[var(--text-primary)] font-display truncate min-w-0">
+              <span className="text-sm sm:text-base font-bold text-[var(--ink)] font-[var(--font-heading)] truncate min-w-0">
                 {highestDrug.name}
               </span>
               <DrugHarmBadge harmLevel={highestLevel} size="sm" />
             </div>
-            <p className="text-[11px] text-[var(--text-muted)] font-mono leading-tight">
+            <p className="text-[11px] text-[var(--ink-3)] font-mono leading-tight">
               {highestCfg.tip}
             </p>
           </div>
         </div>
 
         {/* 5-Tier Spectrum Meter with Crisp Embedded Active Indicator */}
-        <div className="space-y-2.5 p-3.5 sm:p-4 rounded-2xl bg-[var(--chassis)] border border-[var(--brand-border)] shadow-xs">
-        <div className="flex items-center justify-between text-xs font-mono font-bold text-[var(--text-primary)]">
+        <div className="space-y-2.5 p-3.5 sm:p-4 rounded-2xl bg-[var(--canvas)] border border-[var(--border)] shadow-xs">
+        <div className="flex items-center justify-between text-xs font-mono font-bold text-[var(--ink)]">
           <div className="flex items-center gap-2">
             <span className="tracking-wider uppercase">WHO/NCI 5-Tier Spectrum</span>
-            <span className="text-[10px] px-2 py-0.5 rounded-full bg-[var(--chassis-panel)] text-[var(--text-secondary)] border border-[var(--brand-border)] shadow-2xs">
+            <span className="text-[10px] px-2 py-0.5 rounded-full bg-[var(--surface-2)] text-[var(--ink-2)] border border-[var(--border)] shadow-2xs">
               Clinical Scale
             </span>
           </div>
           <span
-            className="px-2.5 py-0.5 rounded-lg border text-xs font-extrabold shadow-2xs bg-[var(--brand-surface)]"
+            className="px-2.5 py-0.5 rounded-lg border text-xs font-extrabold shadow-2xs bg-[var(--surface)]"
             style={{
               borderColor: currentTierCfg.color,
               color: currentTierCfg.color,
@@ -541,7 +541,7 @@ export function PolypharmacyHarmDashboard({ medicines = [], flags = [], regimenR
         </div>
 
         {/* 5 Segmented Color Blocks */}
-        <div className="grid grid-cols-5 gap-1.5 p-1 rounded-xl bg-[var(--chassis-panel)] border border-[var(--brand-border)]">
+        <div className="grid grid-cols-5 gap-1.5 p-1 rounded-xl bg-[var(--surface-2)] border border-[var(--border)]">
           {[1, 2, 3, 4, 5].map((lvl, index) => {
             const cfg = HARM_LEVELS[lvl];
             const isCurrent = lvl === currentTierLevel;
@@ -582,13 +582,13 @@ export function PolypharmacyHarmDashboard({ medicines = [], flags = [], regimenR
               <div key={lvl} className="flex justify-center">
                 {isCurrent ? (
                   <span
-                    className="w-full py-0.5 px-1 rounded-md text-[10px] sm:text-[11px] font-black tracking-wider bg-[var(--chassis)] border shadow-[var(--shadow-sm)] truncate"
+                    className="w-full py-0.5 px-1 rounded-md text-[10px] sm:text-[11px] font-black tracking-wider bg-[var(--canvas)] border shadow-[var(--shadow-sm)] truncate"
                     style={{ borderColor: cfg.color, color: cfg.color }}
                   >
                     {cfg.shortLabel}
                   </span>
                 ) : (
-                  <span className="text-[10px] font-bold text-[var(--text-muted)] opacity-60 py-0.5 truncate">
+                  <span className="text-[10px] font-bold text-[var(--ink-3)] opacity-60 py-0.5 truncate">
                     {cfg.shortLabel}
                   </span>
                 )}

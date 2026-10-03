@@ -37,13 +37,13 @@ export default function BackButton({
       onClick={handleClick}
       className={`group inline-flex items-center gap-2.5 ${
         isSmall ? 'px-3 py-1.5 rounded-xl' : 'px-3.5 py-2 rounded-2xl'
-      } bg-[var(--brand-surface)]/95 hover:bg-[var(--brand-surface)] active:scale-[0.98] border border-[var(--brand-border)] hover:border-[var(--accent-primary)]/40 text-[var(--text-secondary)] hover:text-[var(--accent-primary)] shadow-[var(--shadow-sm)] hover:shadow-[var(--shadow-card)] backdrop-blur-md transition-all duration-200 ease-out whitespace-nowrap flex-shrink-0 cursor-pointer select-none ${className}`}
+      } bg-[var(--surface)]/95 hover:bg-[var(--surface)] active:scale-[0.98] border border-[var(--border)] hover:border-[var(--brand-600)]/40 text-[var(--ink-2)] hover:text-[var(--brand-600)] shadow-[var(--shadow-sm)] hover:shadow-[var(--shadow-sm)] backdrop-blur-md transition-all duration-200 ease-out whitespace-nowrap flex-shrink-0 cursor-pointer select-none ${className}`}
       title={label}
     >
       <span
         className={`${
           isSmall ? 'w-5 h-5 rounded-lg' : 'w-6 h-6 rounded-xl'
-        } bg-[var(--chassis)] group-hover:bg-[var(--accent-primary)]/10 border border-[var(--brand-border)] group-hover:border-[var(--accent-primary)]/30 flex items-center justify-center text-[var(--text-muted)] group-hover:text-[var(--accent-primary)] transition-all duration-200 flex-shrink-0`}
+        } bg-[var(--canvas)] group-hover:bg-[var(--brand-600)]/10 border border-[var(--border)] group-hover:border-[var(--brand-600)]/30 flex items-center justify-center text-[var(--ink-3)] group-hover:text-[var(--brand-600)] transition-all duration-200 flex-shrink-0`}
       >
         <ArrowLeft
           className={`${

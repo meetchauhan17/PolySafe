@@ -79,16 +79,16 @@ export default function Navbar() {
         {/* Left: Brand logo & wordmark */}
         <Link to="/home" className="flex items-center gap-2.5 group">
           <div
-            className="p-2 rounded-xl bg-[var(--accent-primary)]/10 border border-[var(--accent-primary)]/20 text-[var(--accent-primary)] shadow-xs transition-transform group-hover:scale-105"
-            style={{ filter: 'drop-shadow(0 0 6px var(--accent-primary-glow))' }}
+            className="p-2 rounded-xl bg-[var(--brand-600)]/10 border border-[var(--brand-600)]/20 text-[var(--brand-600)] shadow-xs transition-transform group-hover:scale-105"
+            style={{ filter: 'drop-shadow(0 0 6px rgba(14,116,144,.20))' }}
           >
             <ShieldCheck className="w-5 h-5" />
           </div>
           <div>
-            <span className="text-lg font-extrabold tracking-tight text-[var(--text-primary)] font-display block leading-none drop-shadow-[0_1px_0_rgba(255,255,255,0.8)]">
+            <span className="text-lg font-extrabold tracking-tight text-[var(--ink)] font-[var(--font-heading)] block leading-none drop-shadow-[0_1px_0_rgba(255,255,255,0.8)]">
               PolySafe
             </span>
-            <span className="text-[10px] block text-[var(--text-muted)] font-mono font-bold tracking-wider uppercase mt-0.5">
+            <span className="text-[10px] block text-[var(--ink-3)] font-mono font-bold tracking-wider uppercase mt-0.5">
               Control Panel
             </span>
           </div>
@@ -101,10 +101,10 @@ export default function Navbar() {
             const isDoctor = item.path === '/doctor-dashboard';
             const isCaregiver = item.path === '/caregiver-view';
             const activeColor = isDoctor
-              ? 'text-[var(--role-doctor)]'
+              ? 'text-[var(--doctor-600)]'
               : isCaregiver
-              ? 'text-[var(--role-caregiver)]'
-              : 'text-[var(--accent-primary)]';
+              ? 'text-[var(--caregiver-600)]'
+              : 'text-[var(--brand-600)]';
             const isActive =
               location.pathname === item.path ||
               (item.path === '/connected' && location.pathname === '/connected-people') ||
@@ -116,15 +116,15 @@ export default function Navbar() {
                 to={item.path}
                 className={`relative flex items-center gap-1.5 px-3 py-1.5 rounded-2xl text-xs font-bold uppercase tracking-wider whitespace-nowrap shrink-0 transition-all ${
                   isActive
-                    ? `bg-[var(--chassis)] ${activeColor} shadow-[var(--shadow-pressed)]`
-                    : 'bg-[var(--chassis)] text-[var(--text-muted)] shadow-[var(--shadow-sm)] hover:text-[var(--text-primary)] hover:shadow-[var(--shadow-card)] hover:-translate-y-0.5'
+                    ? `bg-[var(--canvas)] ${activeColor} shadow-[var(--shadow-inner)]`
+                    : 'bg-[var(--canvas)] text-[var(--ink-3)] shadow-[var(--shadow-sm)] hover:text-[var(--ink)] hover:shadow-[var(--shadow-sm)] hover:-translate-y-0.5'
                 }`}
               >
                 <Icon className="w-3.5 h-3.5 shrink-0" />
                 <span className="whitespace-nowrap">{item.label}</span>
                 {isActive && (
                   <span
-                    className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-[var(--led-online)] shadow-[0_0_8px_2px_var(--led-online-glow)] animate-[led-pulse_2s_ease-in-out_infinite]"
+                    className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-[var(--safe-fg)] shadow-[0_0_8px_2px_rgba(21,128,61,.25)] animate-[led-pulse_2s_ease-in-out_infinite]"
                   />
                 )}
               </Link>
@@ -135,7 +135,7 @@ export default function Navbar() {
         {/* Right: Status LED + User Profile + Actions */}
         <div className="flex items-center gap-3">
           {/* System Online LED Indicator */}
-          <div className="hidden sm:flex items-center bg-[var(--chassis-panel)] border border-[var(--brand-border)] px-2.5 py-1 rounded-full shadow-xs">
+          <div className="hidden sm:flex items-center bg-[var(--surface-2)] border border-[var(--border)] px-2.5 py-1 rounded-full shadow-xs">
             <LedIndicator status="online" label="Online" size="sm" />
           </div>
 
@@ -147,23 +147,23 @@ export default function Navbar() {
                 to="/profile"
                 className={`w-8 h-8 rounded-full ${
                   user.role === 'DOCTOR'
-                    ? 'bg-[var(--role-doctor)]'
+                    ? 'bg-[var(--doctor-600)]'
                     : user.role === 'CAREGIVER'
-                    ? 'bg-[var(--role-caregiver)]'
-                    : 'bg-[var(--role-patient)]'
+                    ? 'bg-[var(--caregiver-600)]'
+                    : 'bg-[var(--brand-600)]'
                 } text-white font-mono text-xs font-bold flex items-center justify-center shadow-[var(--shadow-sm)] hover:scale-105 transition-transform`}
                 title={`${user.name || user.email} (${user.role || 'PATIENT'})`}
               >
                 {getInitials(user.name || user.email)}
               </Link>
               {user.role === 'DOCTOR' && (
-                <span className="hidden sm:inline-block text-[10px] font-mono font-extrabold uppercase px-2 py-0.5 rounded-md bg-[var(--role-doctor)] text-white shadow-xs">
+                <span className="hidden sm:inline-block text-[10px] font-mono font-extrabold uppercase px-2 py-0.5 rounded-md bg-[var(--doctor-600)] text-white shadow-xs">
                   MD
                 </span>
               )}
               <button
                 onClick={() => setShowSignOutModal(true)}
-                className="ps-btn ps-btn--ghost ps-btn--sm text-[var(--led-critical)]"
+                className="ps-btn ps-btn--ghost ps-btn--sm text-[var(--critical-fg)]"
                 title="Sign Out"
                 aria-label="Sign Out of PolySafe"
               >
@@ -184,7 +184,7 @@ export default function Navbar() {
           {/* Mobile hamburger menu toggle */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden p-2 rounded-xl bg-[var(--brand-surface)] border border-[var(--brand-border)] text-[var(--text-primary)] shadow-xs active:scale-95 cursor-pointer hover:bg-[var(--chassis)] transition-colors"
+            className="lg:hidden p-2 rounded-xl bg-[var(--surface)] border border-[var(--border)] text-[var(--ink)] shadow-xs active:scale-95 cursor-pointer hover:bg-[var(--canvas)] transition-colors"
             aria-label="Toggle navigation menu"
           >
             {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -200,17 +200,17 @@ export default function Navbar() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.18, ease: 'easeOut' }}
-            className="lg:hidden absolute top-16 left-0 right-0 bg-[var(--brand-surface)] border-b border-[var(--brand-border-visible)] shadow-[var(--shadow-floating)] p-4 flex flex-col gap-1.5 z-50"
+            className="lg:hidden absolute top-16 left-0 right-0 bg-[var(--surface)] border-b border-[var(--border-strong)] shadow-[var(--shadow-lg)] p-4 flex flex-col gap-1.5 z-50"
           >
             {navItems.map((item) => {
               const Icon = item.icon;
               const isDoctor = item.path === '/doctor-dashboard';
               const isCaregiver = item.path === '/caregiver-view';
               const activeColor = isDoctor
-                ? 'text-[var(--role-doctor)] border-l-4 border-[var(--role-doctor)] bg-[var(--chassis)]'
+                ? 'text-[var(--doctor-600)] border-l-4 border-[var(--doctor-600)] bg-[var(--canvas)]'
                 : isCaregiver
-                ? 'text-[var(--role-caregiver)] border-l-4 border-[var(--role-caregiver)] bg-[var(--chassis)]'
-                : 'text-[var(--accent-primary)] border-l-4 border-[var(--accent-primary)] bg-[var(--chassis)]';
+                ? 'text-[var(--caregiver-600)] border-l-4 border-[var(--caregiver-600)] bg-[var(--canvas)]'
+                : 'text-[var(--brand-600)] border-l-4 border-[var(--brand-600)] bg-[var(--canvas)]';
               const isActive =
                 location.pathname === item.path ||
                 (item.path === '/connected' && location.pathname === '/connected-people');
@@ -223,26 +223,26 @@ export default function Navbar() {
                   className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
                     isActive
                       ? activeColor
-                      : 'text-[var(--text-secondary)] hover:bg-[var(--chassis)] hover:text-[var(--text-primary)]'
+                      : 'text-[var(--ink-2)] hover:bg-[var(--canvas)] hover:text-[var(--ink)]'
                   }`}
                 >
                   <Icon className={`w-4 h-4 flex-shrink-0 ${
-                    isActive ? '' : 'text-[var(--text-muted)]'
+                    isActive ? '' : 'text-[var(--ink-3)]'
                   }`} />
                   <span>{item.label}</span>
                   {isActive && (
-                    <span className="ml-auto w-1.5 h-1.5 rounded-full bg-[var(--led-online)] shadow-[0_0_6px_2px_var(--led-online-glow)] animate-[led-pulse_2s_ease-in-out_infinite]" />
+                    <span className="ml-auto w-1.5 h-1.5 rounded-full bg-[var(--safe-fg)] shadow-[0_0_6px_2px_rgba(21,128,61,.25)] animate-[led-pulse_2s_ease-in-out_infinite]" />
                   )}
                 </Link>
               );
             })}
 
-            <div className="pt-2 mt-1 border-t border-[var(--brand-border)] flex items-center justify-between px-2">
+            <div className="pt-2 mt-1 border-t border-[var(--border)] flex items-center justify-between px-2">
               <LedIndicator status="online" label="System Active" size="sm" />
               <Link
                 to="/onboarding"
                 onClick={() => setMobileMenuOpen(false)}
-                className="text-xs font-mono text-[var(--accent-primary)] underline underline-offset-2"
+                className="text-xs font-mono text-[var(--brand-600)] underline underline-offset-2"
               >
                 Reset Profile
               </Link>
@@ -267,25 +267,25 @@ export default function Navbar() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.95, y: 10 }}
               transition={{ type: 'spring', damping: 30, stiffness: 400 }}
-              className="relative z-10 w-full max-w-sm bg-[var(--chassis)] rounded-[28px] p-6 shadow-[var(--shadow-floating)] border border-[rgba(255,255,255,0.4)] text-left space-y-4"
+              className="relative z-10 w-full max-w-sm bg-[var(--canvas)] rounded-[28px] p-6 shadow-[var(--shadow-lg)] border border-[rgba(255,255,255,0.4)] text-left space-y-4"
               role="dialog"
               aria-modal="true"
             >
               <div className="flex items-center gap-3">
-                <div className="p-3 bg-[var(--led-critical)]/10 text-[var(--led-critical)] rounded-2xl shadow-[var(--shadow-sm)]">
+                <div className="p-3 bg-[var(--critical-fg)]/10 text-[var(--critical-fg)] rounded-2xl shadow-[var(--shadow-sm)]">
                   <LogOut className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="text-base font-extrabold text-[var(--text-primary)] font-display">
+                  <h3 className="text-base font-extrabold text-[var(--ink)] font-[var(--font-heading)]">
                     Sign out of PolySafe?
                   </h3>
-                  <p className="text-xs text-[var(--text-muted)] font-mono">
+                  <p className="text-xs text-[var(--ink-3)] font-mono">
                     Are you sure you want to end your active session?
                   </p>
                 </div>
               </div>
 
-              <div className="flex items-center justify-end gap-2.5 pt-2 border-t border-[var(--chassis-dark)]">
+              <div className="flex items-center justify-end gap-2.5 pt-2 border-t border-[var(--border)]">
                 <button
                   type="button"
                   onClick={() => setShowSignOutModal(false)}

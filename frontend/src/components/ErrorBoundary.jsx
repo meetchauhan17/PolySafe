@@ -27,23 +27,23 @@ export default class ErrorBoundary extends React.Component {
  render() {
  if (this.state.hasError) {
  return (
- <div className="min-h-screen bg-[var(--chassis)] flex items-center justify-center p-4">
- <div className="polysafe-card max-w-md w-full p-8 text-center space-y-5 rounded-[32px] shadow-[var(--shadow-card)]">
- <div className="w-16 h-16 rounded-full bg-[var(--chassis)] border-2 border-[var(--led-critical)]/30 flex items-center justify-center mx-auto shadow-sm">
- <AlertOctagon className="w-8 h-8 text-[var(--led-critical)]" />
+ <div className="min-h-screen bg-[var(--canvas)] flex items-center justify-center p-4">
+ <div className="polysafe-card max-w-md w-full p-8 text-center space-y-5 rounded-[32px] shadow-[var(--shadow-sm)]">
+ <div className="w-16 h-16 rounded-full bg-[var(--canvas)] border-2 border-[var(--critical-fg)]/30 flex items-center justify-center mx-auto shadow-sm">
+ <AlertOctagon className="w-8 h-8 text-[var(--critical-fg)]" />
  </div>
 
  <div className="space-y-1.5">
- <h2 className="text-2xl font-bold text-[var(--text-primary)]" >
+ <h2 className="text-2xl font-bold text-[var(--ink)]" >
  Something went wrong
  </h2>
- <p className="text-xs text-[var(--text-muted)] leading-relaxed">
+ <p className="text-xs text-[var(--ink-3)] leading-relaxed">
  PolySafe encountered an unexpected issue while rendering this view.
  </p>
  </div>
 
  {this.state.error?.message && (
- <div className="p-3 bg-[var(--chassis)] shadow-[var(--shadow-card)] rounded-2xl text-[11px] font-mono text-[var(--led-critical)] text-left break-words overflow-auto max-h-28">
+ <div className="p-3 bg-[var(--canvas)] shadow-[var(--shadow-sm)] rounded-2xl text-[11px] font-mono text-[var(--critical-fg)] text-left break-words overflow-auto max-h-28">
  {this.state.error.message}
  </div>
  )}
@@ -52,7 +52,7 @@ export default class ErrorBoundary extends React.Component {
  <button
  type="button"
  onClick={this.handleReload}
- className="btn-secondary flex-1 py-3 text-xs flex items-center justify-center gap-2 cursor-pointer"
+ className="ps-btn ps-btn-secondary flex-1 py-3 text-xs flex items-center justify-center gap-2 cursor-pointer"
  >
  <RefreshCw className="w-4 h-4" />
  <span>Reload Page</span>
@@ -60,7 +60,7 @@ export default class ErrorBoundary extends React.Component {
  <button
  type="button"
  onClick={this.handleReset}
- className="btn-primary flex-1 py-3 text-xs flex items-center justify-center gap-2 cursor-pointer"
+ className="ps-btn ps-btn-primary flex-1 py-3 text-xs flex items-center justify-center gap-2 cursor-pointer"
  >
  <Home className="w-4 h-4" />
  <span>Back to Home</span>

@@ -1,4 +1,6 @@
-import React from 'react';
+// src/layouts/PatientLayout.jsx
+// "Clinical Calm" shell — clean top nav + mobile tab bar
+import React, { useState } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import {
   ShieldCheck,
@@ -9,218 +11,252 @@ import {
   Users,
   TrendingUp,
   UserCircle,
+  LogOut,
+  Menu,
+  X,
+  ChevronRight,
 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import PageTransition from '../components/PageTransition';
 import { useAuth } from '../context/AuthContext';
 import SignOutConfirmButton from '../components/SignOutConfirmButton';
-import LedIndicator from '../components/LedIndicator';
+import { clsx } from 'clsx';
+
+const navItems = [
+  { id: 'home',     label: 'Home',      path: '/home',        icon: Home,
+    match: (p) => p === '/home' || p.startsWith('/risk') },
+  { id: 'add',      label: 'Add Med',   path: '/add-medicine', icon: PlusCircle,
+    match: (p) => p === '/add-medicine' },
+  { id: 'timeline', label: 'Timeline',  path: '/timeline',     icon: Clock,
+    match: (p) => p === '/timeline' },
+  { id: 'symptoms', label: 'Symptoms',  path: '/log-symptom',  icon: HeartPulse,
+    match: (p) => p === '/log-symptom' || p === '/symptom-result' },
+  { id: 'connected',label: 'Connected', path: '/connected',    icon: Users,
+    match: (p) => p === '/connected' || p === '/connected-people' || p === '/share' },
+];
+
+function NavLink({ item, location }) {
+  const Icon = item.icon;
+  const active = item.match(location.pathname);
+  return (
+    <Link
+      to={item.path}
+      className={clsx(
+        'flex items-center gap-2 px-3.5 py-2 rounded-[var(--radius-sm)] text-sm font-semibold',
+        'font-[var(--font-heading)] transition-all duration-150 whitespace-nowrap',
+        active
+          ? 'bg-[var(--brand-50)] text-[var(--brand-700)] border border-[var(--brand-100)]'
+          : 'text-[var(--ink-3)] hover:text-[var(--ink)] hover:bg-[var(--surface-2)] border border-transparent'
+      )}
+      aria-current={active ? 'page' : undefined}
+    >
+      <Icon className="w-4 h-4 flex-shrink-0" aria-hidden />
+      {item.label}
+    </Link>
+  );
+}
 
 export default function PatientLayout() {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, isGuest, logout } = useAuth() || {};
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleSignOut = () => {
     logout?.();
     navigate('/login', { replace: true });
   };
 
-  const navTabs = [
-    {
-      id: 'home',
-      label: 'Home',
-      path: '/home',
-      icon: Home,
-      match: (p) => p === '/home' || p.startsWith('/risk'),
-    },
-    {
-      id: 'add',
-      label: 'Add Med',
-      path: '/add-medicine',
-      icon: PlusCircle,
-      match: (p) => p === '/add-medicine',
-    },
-    {
-      id: 'timeline',
-      label: 'Timeline',
-      path: '/timeline',
-      icon: Clock,
-      match: (p) => p === '/timeline',
-    },
-    {
-      id: 'symptoms',
-      label: 'Symptoms',
-      path: '/log-symptom',
-      icon: HeartPulse,
-      match: (p) => p === '/log-symptom' || p === '/symptom-result',
-    },
-    {
-      id: 'connected',
-      label: 'Connected',
-      path: '/connected',
-      icon: Users,
-      match: (p) => p === '/connected' || p === '/connected-people' || p === '/share',
-    },
-  ];
-
   return (
-    <div className="relative min-h-screen bg-[var(--chassis)] text-[var(--text-primary)] flex flex-col font-sans selection:bg-indigo-500 selection:text-white overflow-x-hidden">
-      {/* ── Background Precision Dot Matrix ── */}
-      <div className="fixed inset-0 bg-[radial-gradient(#c7d2fe_1px,transparent_1px)] [background-size:24px_24px] opacity-25 pointer-events-none z-0" />
-
-      {/* ── Atmospheric Ambient Lighting Orbs ── */}
-      <div className="fixed -top-36 left-1/2 -translate-x-1/2 w-[850px] h-[450px] bg-gradient-to-b from-blue-600/12 via-cyan-500/8 to-transparent rounded-full blur-3xl pointer-events-none z-0" />
-      <div className="fixed top-1/4 -left-48 w-[450px] h-[450px] bg-emerald-500/8 rounded-full blur-3xl pointer-events-none z-0" />
-      <div className="fixed bottom-10 -right-48 w-[450px] h-[450px] bg-indigo-600/8 rounded-full blur-3xl pointer-events-none z-0" />
-
-      {/* ─── Persistent Guest Mode Notice Banner ─── */}
+    <div className="min-h-screen bg-[var(--canvas)] text-[var(--ink)] flex flex-col">
+      {/* ── Guest Banner ── */}
       {isGuest && (
-        <aside
-          aria-label="Guest Mode Status"
-          className="bg-slate-900 text-white px-4 py-2 text-xs border-b border-indigo-500/40 shadow-sm sticky top-0 z-50 relative"
+        <div
+          role="banner"
+          className="bg-[var(--caution-bg)] border-b border-[var(--caution-fg)]/30 px-4 py-2.5"
         >
-          <div className="max-w-6xl mx-auto flex items-center justify-between gap-3 font-mono">
+          <div className="max-w-7xl mx-auto flex items-center justify-between gap-3">
             <div className="flex items-center gap-2 min-w-0">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-400" />
+              <span className="relative flex h-2 w-2 flex-shrink-0">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--caution-fg)] opacity-60" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-[var(--caution-fg)]" />
               </span>
-              <span className="truncate text-xs">
-                GUEST PREVIEW MODE — Log in to persist clinical telemetry
+              <span className="text-sm font-medium text-[var(--caution-fg)] truncate font-[var(--font-heading)]">
+                Guest preview — data is not saved
               </span>
             </div>
             <button
               type="button"
               onClick={handleSignOut}
-              className="underline font-bold text-amber-300 hover:text-white transition-colors text-xs whitespace-nowrap cursor-pointer uppercase"
+              className="text-sm font-semibold text-[var(--caution-fg)] underline underline-offset-2 hover:no-underline whitespace-nowrap"
             >
-              Sign In
+              Sign in
             </button>
           </div>
-        </aside>
+        </div>
       )}
 
-      {/* ─── Top Bar: Modern Glassmorphic Header ─── */}
-      <header
-        className={`sticky ${isGuest ? 'top-[33px]' : 'top-0'} z-40 bg-[var(--brand-surface)]/90 backdrop-blur-md px-4 sm:px-6 py-3 border-b border-[var(--brand-border)] shadow-[var(--shadow-sm)] relative`}
-      >
-        <div className="max-w-6xl mx-auto flex items-center justify-between gap-4">
-          <Link to="/home" className="flex items-center gap-3 group flex-shrink-0">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[var(--accent-primary)] via-indigo-600 to-[var(--accent-secondary)] p-0.5 shadow-lg shadow-indigo-500/20 flex items-center justify-center text-white group-hover:scale-105 transition-transform">
-              <ShieldCheck className="w-5 h-5" />
+      {/* ── Top Nav Bar ── */}
+      <header className="sticky top-0 z-50 bg-[var(--surface)]/95 backdrop-blur-sm border-b border-[var(--border)]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between gap-4">
+          {/* Brand mark */}
+          <Link to="/home" className="flex items-center gap-2.5 flex-shrink-0 group">
+            <div className="w-8 h-8 bg-[var(--brand-600)] rounded-[var(--radius-sm)] flex items-center justify-center flex-shrink-0 group-hover:bg-[var(--brand-700)] transition-colors">
+              <ShieldCheck className="w-4.5 h-4.5 text-white" aria-hidden />
             </div>
-            <div className="flex flex-col">
-              <span className="text-xl font-extrabold tracking-tight text-[var(--text-primary)] font-display block leading-tight">
-                Poly<span className="bg-gradient-to-r from-[var(--accent-primary)] via-indigo-600 to-[var(--accent-secondary)] bg-clip-text text-transparent">Safe</span>
-              </span>
-              <span className="text-[10px] block text-[var(--text-muted)] font-mono uppercase tracking-widest -mt-0.5 font-semibold">
-                {isGuest ? 'Demo Workstation' : 'Patient Console'}
-              </span>
-            </div>
+            <span className="text-base font-extrabold text-[var(--ink)] font-[var(--font-heading)] tracking-tight">
+              Poly<span className="text-[var(--brand-600)]">Safe</span>
+            </span>
           </Link>
 
-          {/* ── Desktop Navigation Links ── */}
-          <nav className="hidden md:flex items-center space-x-1.5 flex-shrink-0" aria-label="Desktop Patient Navigation">
-            {navTabs.map((tab) => {
-              const Icon = tab.icon;
-              const isActive = tab.match(location.pathname);
-              return (
-                <Link
-                  key={tab.id}
-                  to={tab.path}
-                  className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold uppercase tracking-wider whitespace-nowrap shrink-0 transition-all ${
-                    isActive
-                      ? 'bg-[var(--brand-surface)] text-[var(--accent-primary)] shadow-xs border border-[var(--brand-border)]'
-                      : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--chassis)] border border-transparent'
-                  }`}
-                >
-                  <Icon className="w-3.5 h-3.5 shrink-0" />
-                  <span className="whitespace-nowrap">{tab.label}</span>
-                </Link>
-              );
-            })}
+          {/* Desktop nav */}
+          <nav className="hidden md:flex items-center gap-1 flex-1 justify-center" aria-label="Patient navigation">
+            {navItems.map((item) => (
+              <NavLink key={item.id} item={item} location={location} />
+            ))}
           </nav>
 
-          <div className="flex items-center gap-2.5 flex-shrink-0">
-            {/* Live Clinical Engine Indicator */}
-            <div className="hidden lg:inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[var(--brand-surface)] backdrop-blur-md border border-[var(--brand-border)] text-[11px] font-semibold text-[var(--text-secondary)] shadow-2xs">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
-              </span>
-              <span>Clinical Engine v2.4</span>
-            </div>
-
+          {/* Right actions */}
+          <div className="flex items-center gap-2 flex-shrink-0">
+            {/* Analytics — desktop only */}
             <Link
               to="/insights"
-              className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono font-bold uppercase rounded-xl transition-all ${
+              className={clsx(
+                'hidden md:flex items-center gap-1.5 px-3.5 py-2 rounded-[var(--radius-sm)] text-sm font-semibold',
+                'font-[var(--font-heading)] transition-all duration-150',
                 location.pathname === '/insights' || location.pathname === '/trends'
-                  ? 'bg-[var(--brand-surface)] text-[var(--accent-primary)] shadow-xs border border-[var(--brand-border)]'
-                  : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--chassis)] border border-transparent'
-              }`}
-              title="Analytics"
+                  ? 'bg-[var(--brand-50)] text-[var(--brand-700)] border border-[var(--brand-100)]'
+                  : 'text-[var(--ink-3)] hover:text-[var(--ink)] hover:bg-[var(--surface-2)] border border-transparent'
+              )}
             >
-              <TrendingUp className="w-3.5 h-3.5 text-[var(--accent-primary)]" />
-              <span className="hidden sm:inline">Analytics</span>
+              <TrendingUp className="w-4 h-4" aria-hidden />
+              Analytics
             </Link>
 
+            {/* Profile */}
             <Link
               to="/profile"
-              className={`p-2 text-xs font-bold rounded-xl transition-all ${
+              className={clsx(
+                'flex items-center justify-center w-9 h-9 rounded-[var(--radius-sm)] transition-colors',
                 location.pathname === '/profile'
-                  ? 'bg-[var(--brand-surface)] text-[var(--accent-primary)] shadow-xs border border-[var(--brand-border)]'
-                  : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--chassis)] border border-transparent'
-              }`}
-              title="Profile Settings"
+                  ? 'bg-[var(--brand-50)] text-[var(--brand-700)]'
+                  : 'text-[var(--ink-3)] hover:bg-[var(--surface-2)] hover:text-[var(--ink)]'
+              )}
+              aria-label="Profile"
             >
-              <UserCircle className="w-4 h-4 text-[var(--accent-primary)]" />
+              <UserCircle className="w-5 h-5" aria-hidden />
             </Link>
 
+            {/* Sign out — desktop */}
             <SignOutConfirmButton />
+
+            {/* Mobile hamburger */}
+            <button
+              className="md:hidden flex items-center justify-center w-9 h-9 rounded-[var(--radius-sm)] text-[var(--ink-3)] hover:bg-[var(--surface-2)] hover:text-[var(--ink)] transition-colors"
+              aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            >
+              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
           </div>
         </div>
+
+        {/* Mobile menu drawer (drop-down) */}
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+              className="md:hidden overflow-hidden border-t border-[var(--border)] bg-[var(--surface)]"
+            >
+              <nav
+                className="p-3 grid grid-cols-2 gap-1.5"
+                aria-label="Mobile patient navigation"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                {[...navItems, {
+                  id: 'analytics', label: 'Analytics', path: '/insights',
+                  icon: TrendingUp, match: (p) => p === '/insights' || p === '/trends',
+                }].map((item) => {
+                  const Icon = item.icon;
+                  const active = item.match(location.pathname);
+                  return (
+                    <Link
+                      key={item.id}
+                      to={item.path}
+                      className={clsx(
+                        'flex items-center gap-2 px-3 py-2.5 rounded-[var(--radius-sm)] text-sm font-semibold',
+                        'font-[var(--font-heading)] transition-colors',
+                        active
+                          ? 'bg-[var(--brand-50)] text-[var(--brand-700)]'
+                          : 'text-[var(--ink-2)] hover:bg-[var(--surface-2)]'
+                      )}
+                      aria-current={active ? 'page' : undefined}
+                    >
+                      <Icon className="w-4 h-4 flex-shrink-0" />
+                      {item.label}
+                      {active && <ChevronRight className="w-3 h-3 ml-auto" />}
+                    </Link>
+                  );
+                })}
+              </nav>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </header>
 
-      {/* ─── Page Content ─── */}
-      <main className="relative z-10 flex-1 pb-32 md:pb-12 max-w-6xl mx-auto w-full px-4 sm:px-6 pt-6">
+      {/* ── Page Content ── */}
+      <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 py-6 pb-24 md:pb-8">
         <PageTransition key={location.pathname}>
           <Outlet />
         </PageTransition>
       </main>
 
-      {/* ─── Fixed Bottom Tab Bar (Mobile Only) ─── */}
+      {/* ── Mobile Bottom Tab Bar ── */}
       <nav
-        className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-[var(--brand-surface)]/95 backdrop-blur-md border-t border-[var(--brand-border)] py-2 px-3 shadow-[var(--shadow-card)]"
-        aria-label="Mobile Patient Navigation"
+        className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-[var(--surface)]/95 backdrop-blur-sm border-t border-[var(--border)]"
+        aria-label="Mobile tab bar"
       >
-        <div className="max-w-md mx-auto grid grid-cols-5 gap-1.5">
-          {navTabs.map((tab) => {
-            const Icon = tab.icon;
-            const isActive = tab.match(location.pathname);
-
+        <div className="grid grid-cols-5 h-16 max-w-lg mx-auto">
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            const active = item.match(location.pathname);
             return (
               <Link
-                key={tab.id}
-                to={tab.path}
-                className={`flex flex-col items-center justify-center py-2 px-1 rounded-2xl transition-all relative ${
-                  isActive
-                    ? 'text-[var(--accent-primary)] font-bold bg-[var(--brand-surface)] shadow-xs border border-[var(--brand-border)]'
-                    : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
-                }`}
+                key={item.id}
+                to={item.path}
+                className={clsx(
+                  'flex flex-col items-center justify-center gap-0.5 py-2 px-1 transition-colors',
+                  active
+                    ? 'text-[var(--brand-600)]'
+                    : 'text-[var(--ink-3)] hover:text-[var(--ink-2)]'
+                )}
+                aria-label={item.label}
+                aria-current={active ? 'page' : undefined}
               >
                 <div className="relative">
-                  <Icon className={`w-5 h-5 ${isActive ? 'stroke-[2.5]' : 'stroke-2'}`} />
-                  {isActive && (
-                    <span className="absolute -top-1 -right-1 w-1.5 h-1.5 rounded-full bg-[var(--accent-primary)] shadow-[0_0_6px_1px_rgba(99,102,241,0.4)]" />
+                  <Icon className={clsx('w-5 h-5', active && 'stroke-[2.5]')} aria-hidden />
+                  {active && (
+                    <span
+                      className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 rounded-full bg-[var(--brand-600)]"
+                      aria-hidden
+                    />
                   )}
                 </div>
-                <span className="text-[10px] font-mono font-bold mt-1 tracking-tight leading-none uppercase whitespace-nowrap">
-                  {tab.label}
+                <span className={clsx(
+                  'text-[10px] font-semibold font-[var(--font-heading)] tracking-tight leading-none',
+                  active ? 'text-[var(--brand-600)]' : ''
+                )}>
+                  {item.label}
                 </span>
               </Link>
             );
           })}
         </div>
+        {/* Safe area padding for notched phones */}
+        <div className="h-[env(safe-area-inset-bottom)]" />
       </nav>
     </div>
   );
