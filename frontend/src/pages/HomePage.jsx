@@ -401,10 +401,19 @@ function PhysicianDirectivesBanner({ patientId, token }) {
             </span>
           </div>
         </div>
-        <span className="text-[11px] font-medium text-[var(--ink-3)] hidden sm:inline-flex items-center gap-1.5">
-          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-          Direct Clinical Link
-        </span>
+        <div className="flex items-center gap-2.5">
+          <span className="text-[11px] font-medium text-[var(--ink-3)] hidden sm:inline-flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            Direct Clinical Link
+          </span>
+          <Link
+            to="/timeline"
+            className="inline-flex items-center gap-1 text-[11px] font-bold text-[var(--doctor-600)] hover:text-[var(--doctor-700)] bg-[var(--doctor-600)]/10 hover:bg-[var(--doctor-600)]/20 px-2.5 py-1 rounded-full transition-colors"
+          >
+            <span>Timeline History</span>
+            <ChevronRight className="w-3 h-3" />
+          </Link>
+        </div>
       </div>
 
       <AnimatePresence initial={false}>

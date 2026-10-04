@@ -1,4 +1,6 @@
 const express = require('express');
+const fs = require('fs');
+const path = require('path');
 const { z } = require('zod');
 const prisma = require('../lib/prisma');
 const { auth } = require('../middleware/auth');
@@ -443,9 +445,21 @@ router.get('/timeline', auth, async (req, res) => {
       };
     });
 
+    const DIRECTIVES_FILE = path.join(__dirname, '../../data/doctor-directives.json');
+    let directives = [];
+    try {
+      if (fs.existsSync(DIRECTIVES_FILE)) {
+        const parsed = JSON.parse(fs.readFileSync(DIRECTIVES_FILE, 'utf8'));
+        directives = parsed[patient.id] || [];
+      }
+    } catch (e) {
+      console.error('[getPatientDirectives]', e.message);
+    }
+
     return res.status(200).json({
-      medicines: payload,
-      total:     payload.length,
+      medicines:  payload,
+      directives: directives,
+      total:      payload.length,
     });
   } catch (err) {
     console.error('[GET /patient/timeline]', err);

@@ -22,9 +22,13 @@ import {
   Shield,
   Activity,
   Clock,
+  Dumbbell,
+  Utensils,
+  ArrowLeftRight,
 } from 'lucide-react';
 import Card from '../components/Card';
 import BackButton from '../components/BackButton';
+import LedIndicator from '../components/LedIndicator';
 import { DrugHarmBadge, KnownSideEffectsPanel } from '../components/DrugHarmLevel';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { EmptyTimelineIllustration } from '../components/EmptyIllustrations';
@@ -32,6 +36,69 @@ import { TimelineSkeleton } from '../components/Skeletons';
 import { useAuth } from '../context/AuthContext';
 import { Lock } from 'lucide-react';
 import { getMedicineIndication } from '../utils/indications';
+
+// ─── Helper: Directive Style Helper ──────────────────────────────────────────
+function getDirectiveStyle(category) {
+  const cat = String(category || '').toUpperCase();
+  if (cat.includes('LIFESTYLE') || cat.includes('WORKOUT') || cat.includes('EXERCISE')) {
+    return {
+      accentBorder: 'border-l-emerald-500',
+      badgeBg: 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/20',
+      iconBg: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20',
+      icon: <Dumbbell className="w-3.5 h-3.5" />,
+      label: 'Lifestyle & Activity Order',
+      dotBorder: '#10B981',
+    };
+  }
+  if (cat.includes('DIET') || cat.includes('NUTRITION')) {
+    return {
+      accentBorder: 'border-l-teal-500',
+      badgeBg: 'bg-teal-500/10 text-teal-700 dark:text-teal-300 border-teal-500/20',
+      iconBg: 'bg-teal-500/10 text-teal-600 dark:text-teal-400 border-teal-500/20',
+      icon: <Utensils className="w-3.5 h-3.5" />,
+      label: 'Dietary Instruction',
+      dotBorder: '#14B8A6',
+    };
+  }
+  if (cat.includes('PRESCRIB') || cat.includes('START')) {
+    return {
+      accentBorder: 'border-l-cyan-500',
+      badgeBg: 'bg-cyan-500/10 text-cyan-700 dark:text-cyan-300 border-cyan-500/20',
+      iconBg: 'bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border-cyan-500/20',
+      icon: <Pill className="w-3.5 h-3.5" />,
+      label: 'Prescription Order',
+      dotBorder: '#06B6D4',
+    };
+  }
+  if (cat.includes('DEPRESCRIB') || cat.includes('TAPER') || cat.includes('STOP')) {
+    return {
+      accentBorder: 'border-l-amber-500',
+      badgeBg: 'bg-amber-500/10 text-amber-700 dark:text-amber-300 border-amber-500/20',
+      iconBg: 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20',
+      icon: <AlertCircle className="w-3.5 h-3.5" />,
+      label: 'Deprescribing Order',
+      dotBorder: '#F59E0B',
+    };
+  }
+  if (cat.includes('SUBSTITUT')) {
+    return {
+      accentBorder: 'border-l-blue-500',
+      badgeBg: 'bg-blue-500/10 text-blue-700 dark:text-blue-300 border-blue-500/20',
+      iconBg: 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20',
+      icon: <ArrowLeftRight className="w-3.5 h-3.5" />,
+      label: 'Drug Substitution',
+      dotBorder: '#3B82F6',
+    };
+  }
+  return {
+    accentBorder: 'border-l-indigo-500',
+    badgeBg: 'bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 border-indigo-500/20',
+    iconBg: 'bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/20',
+    icon: <Stethoscope className="w-3.5 h-3.5" />,
+    label: 'Clinical Directive',
+    dotBorder: '#6366F1',
+  };
+}
 
 // ─── Helper: Medicine Type Badge ──────────────────────────────────────────────
 function MedicineTypeBadge({ type }) {
@@ -161,6 +228,26 @@ const DEMO_TIMELINE_MEDICINES = [
  },
 ];
 
+const DEMO_TIMELINE_DIRECTIVES = [
+  {
+    id: 'demo-dir-1',
+    doctorName: 'Dr. Sarah Wilson',
+    category: 'LIFESTYLE_ORDER',
+    priority: 'HIGH',
+    text: 'Maintain hydration and engage in 20 minutes of daily low-impact walking. Monitor morning blood pressure readings.',
+    issuedAt: new Date(Date.now() - 3 * 86400000).toISOString(),
+  },
+  {
+    id: 'demo-dir-2',
+    doctorName: 'Dr. Sarah Wilson',
+    category: 'DEPRESCRIBING_ADVICE',
+    priority: 'HIGH',
+    text: 'Taper Amitriptyline to 10mg before bedtime over the next 10 days to resolve daytime grogginess.',
+    issuedAt: new Date(Date.now() - 20 * 86400000).toISOString(),
+  },
+];
+
+
 // ─── API ──────────────────────────────────────────────────────────────────────
 async function fetchTimeline() {
  const { data } = await axios.get('/patient/timeline');
@@ -269,7 +356,7 @@ export default function TimelinePage() {
         </div>
 
  {/* ── Stats Summary Bar ── */}
- {!isLoading && !isError && medicines.length > 0 && (
+ {!isLoading && !isError && displayItems.length > 0 && (
  <div className="grid grid-cols-3 gap-3">
  {[
  { label: 'Total Tracked', value: medicines.length, color: 'var(--brand-600)' },
@@ -317,7 +404,7 @@ export default function TimelinePage() {
  )}
 
  {/* ── Empty State ───────────────────────────────────────────────────── */}
- {!isLoading && !isError && medicines.length === 0 && (
+ {!isLoading && !isError && displayItems.length === 0 && (
  <Card className="p-10 flex flex-col items-center text-center space-y-4">
  <EmptyTimelineIllustration className="w-36 h-36 mx-auto mb-1" />
  <div>
