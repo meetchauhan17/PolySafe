@@ -12,6 +12,8 @@
  */
 
 const express = require('express');
+const fs      = require('fs');
+const path    = require('path');
 const QRCode  = require('qrcode');
 const crypto  = require('crypto');
 const prisma  = require('../lib/prisma');
@@ -1363,8 +1365,31 @@ router.post('/doctor-substitute', auth, requireRole(['DOCTOR']), async (req, res
   }
 });
 
-// In-memory / cache store for clinical directives & doctor consultation notes
-const doctorDirectivesStore = new Map();
+// Persistent storage for clinical directives & doctor consultation notes
+const DIRECTIVES_FILE = path.join(__dirname, '../../data/doctor-directives.json');
+
+function loadDirectives() {
+  try {
+    if (fs.existsSync(DIRECTIVES_FILE)) {
+      const parsed = JSON.parse(fs.readFileSync(DIRECTIVES_FILE, 'utf8'));
+      return new Map(Object.entries(parsed));
+    }
+  } catch (e) {
+    console.error('[loadDirectives]', e.message);
+  }
+  return new Map();
+}
+
+function saveDirectives(store) {
+  try {
+    const obj = Object.fromEntries(store.entries());
+    fs.writeFileSync(DIRECTIVES_FILE, JSON.stringify(obj, null, 2), 'utf8');
+  } catch (e) {
+    console.error('[saveDirectives]', e.message);
+  }
+}
+
+const doctorDirectivesStore = loadDirectives();
 
 // ═════════════════════════════════════════════════════════════════════════════
 // POST /connection/doctor-directive
@@ -1405,6 +1430,7 @@ router.post('/doctor-directive', auth, requireRole(['DOCTOR']), async (req, res)
 
     const existing = doctorDirectivesStore.get(patientId) || [];
     doctorDirectivesStore.set(patientId, [directive, ...existing].slice(0, 20));
+    saveDirectives(doctorDirectivesStore);
 
     // Emit live event
     const io = req.app.get('io');
