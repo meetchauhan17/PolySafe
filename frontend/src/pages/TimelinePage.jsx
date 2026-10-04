@@ -269,6 +269,7 @@ export default function TimelinePage() {
  const navigate = useNavigate();
  const shouldReduceMotion = useReducedMotion();
  const { isGuest, token, openGuestLockModal } = useAuth();
+ const [timelineFilter, setTimelineFilter] = useState('ALL');
 
  const { data, isLoading, isError } = useQuery({
  queryKey: ['patient-timeline'],
