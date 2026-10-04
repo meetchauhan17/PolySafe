@@ -284,26 +284,76 @@ function PhysicianDirectivesBanner({ patientId, token }) {
     staleTime: 15_000,
   });
 
+  const directives = directivesData?.directives || [];
+
   // Listen for Socket.IO-pushed doctor events on the window event bus
   useEffect(() => {
     const handler = (e) => {
       const evt = e.detail;
       if (!evt) return;
-      setLiveEvents(prev => [{
-        id: `live-${Date.now()}`,
-        ...evt,
-        issuedAt: new Date().toISOString(),
-        isLive: true,
-      }, ...prev].slice(0, 8));
+      const targetId = evt.id;
+      const targetText = (evt.text || evt.note || '').trim().toLowerCase();
+
+      // Ignore if already present in persisted directives
+      if (directives.some(d => (targetId && d.id === targetId) || (targetText && (d.text || '').trim().toLowerCase() === targetText))) {
+        return;
+      }
+
+      setLiveEvents(prev => {
+        // Prevent duplicate live events
+        const alreadyInLive = prev.some(
+          d => (targetId && d.id === targetId) || (targetText && (d.text || '').trim().toLowerCase() === targetText)
+        );
+        if (alreadyInLive) return prev;
+
+        return [{
+          id: targetId || `live-${Date.now()}`,
+          ...evt,
+          issuedAt: evt.issuedAt || new Date().toISOString(),
+          isLive: true,
+        }, ...prev].slice(0, 8);
+      });
     };
     window.addEventListener('polysafe:doctor-event', handler);
     return () => window.removeEventListener('polysafe:doctor-event', handler);
-  }, []);
+  }, [directives]);
 
-  const directives = directivesData?.directives || [];
-  const allEvents = [...liveEvents, ...directives.map(d => ({ ...d, isLive: false }))];
+  // Clean up any liveEvents that have now arrived in the persisted directives
+  useEffect(() => {
+    if (directives.length > 0) {
+      setLiveEvents(prev =>
+        prev.filter(live => {
+          const liveText = (live.text || live.note || '').trim().toLowerCase();
+          return !directives.some(
+            d => d.id === live.id || (liveText && (d.text || '').trim().toLowerCase() === liveText)
+          );
+        })
+      );
+    }
+  }, [directives]);
+
+  // Merge and strictly deduplicate all events (live + persisted)
+  const combined = [...liveEvents, ...directives.map(d => ({ ...d, isLive: false }))];
+  const seenIds = new Set();
+  const seenSignatures = new Set();
+  const deduplicatedEvents = [];
+
+  for (const item of combined) {
+    if (!item) continue;
+    const textSig = (item.text || item.note || '').trim().toLowerCase();
+    const docSig = (item.doctorId || item.doctorName || item.doctorLabel || '').trim().toLowerCase();
+    const signature = `${docSig}:::${textSig}:::${item.category || item.action || ''}`;
+
+    if (item.id && seenIds.has(item.id)) continue;
+    if (textSig && seenSignatures.has(signature)) continue;
+
+    if (item.id) seenIds.add(item.id);
+    if (textSig) seenSignatures.add(signature);
+    deduplicatedEvents.push(item);
+  }
+
   // Filter out any dismissed or already-read directives so they never clutter the dashboard
-  const visible = allEvents.filter(e => !dismissed.has(e.id) && !e.read);
+  const visible = deduplicatedEvents.filter(e => !dismissed.has(e.id) && !e.read);
 
   const handleMarkAsRead = async (evt) => {
     const id = evt.id;

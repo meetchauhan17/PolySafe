@@ -1303,15 +1303,21 @@ export default function AddMedicinePage() {
  notify.info('Text Extracted', 'Please verify or enter the medicine name below.');
  }
  },
- onError: (err) => {
- const msg = err.response?.data?.error
- || (err.code === 'ECONNABORTED' ? 'Scan timed out — please try again or type manually.' : null)
- || err.message
- || 'OCR scan failed. Please enter the medicine name manually.';
- setScanError(msg);
- setScanState('error');
- notify.warning('OCR Scan Notice', msg);
- },
+  onError: (err) => {
+    let msg = err.response?.data?.error;
+    if (!msg) {
+      if (err.response?.status === 502 || err.code === 'ECONNREFUSED') {
+        msg = 'Connection to the OCR engine was momentarily interrupted. Please click scan again.';
+      } else if (err.code === 'ECONNABORTED' || err.message?.includes('timeout')) {
+        msg = 'Scan timed out — please try again with a clearer photo or enter details manually.';
+      } else {
+        msg = err.message || 'OCR scan failed. Please enter the medicine name manually.';
+      }
+    }
+    setScanError(msg);
+    setScanState('error');
+    notify.warning('OCR Scan Notice', msg);
+  },
  });
 
  // ─── Add Medicine mutation ──────────────────────────────────────────────────

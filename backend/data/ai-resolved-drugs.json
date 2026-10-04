@@ -4796,5 +4796,24 @@
     "safetyTip": "RxNorm validated medication. Take as directed.",
     "standardizedCode": "3626",
     "layer": "Layer 4 (RxNorm REST API)"
+  },
+  "dolo-650": {
+    "resolvedName": "Dolo-650",
+    "genericName": "Paracetamol",
+    "genericSalts": [
+      "Paracetamol"
+    ],
+    "constituents": [
+      "Paracetamol"
+    ],
+    "harmLevel": 3,
+    "class": "Analgesic and Antipyretic",
+    "foodInstruction": "after_food",
+    "dosageOptions": [
+      "650 mg"
+    ],
+    "safetyTip": "Do not exceed 4000mg total daily intake to prevent severe hepatotoxicity.",
+    "standardizedCode": "161",
+    "layer": "Layer 5 (gemini_gemini-3.1-flash-lite)"
   }
 }

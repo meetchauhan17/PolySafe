@@ -978,20 +978,37 @@ router.post('/doctor-prescribe', auth, requireRole(['DOCTOR']), async (req, res)
     const cumulativeBurden = await calculateCumulativeBurden(patientId);
     const regimenRisk = await calculateRegimenRisk(patientId);
 
-    // 8. Emit real-time Socket notification to patient room
+/** Helper: Emits a socket event to a patient's rooms without duplicate emissions */
+function emitToPatient(io, patientOrId, eventName, payload) {
+  if (!io) return;
+  const ids = [];
+  if (typeof patientOrId === 'string') {
+    ids.push(patientOrId);
+  } else if (patientOrId && typeof patientOrId === 'object') {
+    if (patientOrId.userId) ids.push(patientOrId.userId);
+    if (patientOrId.id) ids.push(patientOrId.id);
+  }
+  const uniqueRooms = [...new Set(ids.filter(Boolean).map((id) => `patient-${id}`))];
+  if (uniqueRooms.length === 0) return;
+
+  let emitter = io;
+  uniqueRooms.forEach((r) => {
+    emitter = emitter.to(r);
+  });
+  emitter.emit(eventName, payload);
+}
+
+    // 8. Emit real-time Socket notification to patient room (deduplicated)
     const io = req.app.get('io');
     if (io) {
-      const rooms = [`patient-${patient.userId}`, `patient-${patient.id}`];
-      rooms.forEach((r) =>
-        io.to(r).emit('patient-regimen-updated', {
-          action: 'DOCTOR_PRESCRIBED',
-          medicine,
-          doctorLabel,
-          newFlagsCount: newFlags.length,
-          regimenRisk,
-          cumulativeBurden,
-        })
-      );
+      emitToPatient(io, patient, 'patient-regimen-updated', {
+        action: 'DOCTOR_PRESCRIBED',
+        medicine,
+        doctorLabel,
+        newFlagsCount: newFlags.length,
+        regimenRisk,
+        cumulativeBurden,
+      });
     }
 
     return res.status(201).json({
@@ -1058,16 +1075,13 @@ router.post('/doctor-deprescribe', auth, requireRole(['DOCTOR']), async (req, re
 
     const io = req.app.get('io');
     if (io) {
-      const rooms = [`patient-${patient.userId}`, `patient-${patient.id}`];
-      rooms.forEach((r) =>
-        io.to(r).emit('patient-regimen-updated', {
-          action: 'DOCTOR_DEPRESCRIBED',
-          medicineId,
-          medicineName: med.name,
-          rationale: rationale || 'Discontinued by physician to optimize regimen safety.',
-          taperPlan,
-        })
-      );
+      emitToPatient(io, patient, 'patient-regimen-updated', {
+        action: 'DOCTOR_DEPRESCRIBED',
+        medicineId,
+        medicineName: med.name,
+        rationale: rationale || 'Discontinued by physician to optimize regimen safety.',
+        taperPlan,
+      });
     }
 
     return res.status(200).json({
@@ -1343,21 +1357,18 @@ router.post('/doctor-substitute', auth, requireRole(['DOCTOR']), async (req, res
     const doctorUser = await prisma.user.findUnique({ where: { id: userId } });
     const doctorLabel = doctorUser?.email ? `Dr. ${doctorUser.email.split('@')[0]}` : 'Doctor';
 
-    // Socket dispatch
+    // Socket dispatch (deduplicated)
     const io = req.app.get('io');
     if (io) {
-      const rooms = [`patient-${patient.userId}`, `patient-${patient.id}`];
-      rooms.forEach((r) =>
-        io.to(r).emit('patient-regimen-updated', {
-          action: 'DOCTOR_SUBSTITUTED',
-          discontinued: oldMed.name,
-          prescribed: newMed.name,
-          rationale: rationale || 'Optimized for geriatric safety and lower polypharmacy burden.',
-          doctorLabel,
-          regimenRisk,
-          cumulativeBurden,
-        })
-      );
+      emitToPatient(io, patient, 'patient-regimen-updated', {
+        action: 'DOCTOR_SUBSTITUTED',
+        discontinued: oldMed.name,
+        prescribed: newMed.name,
+        rationale: rationale || 'Optimized for geriatric safety and lower polypharmacy burden.',
+        doctorLabel,
+        regimenRisk,
+        cumulativeBurden,
+      });
     }
 
     return res.status(200).json({
@@ -1441,11 +1452,10 @@ router.post('/doctor-directive', auth, requireRole(['DOCTOR']), async (req, res)
     doctorDirectivesStore.set(patientId, [directive, ...existing].slice(0, 20));
     saveDirectives(doctorDirectivesStore);
 
-    // Emit live event
+    // Emit live event (deduplicated)
     const io = req.app.get('io');
     if (io) {
-      const rooms = [`patient-${patient.userId}`, `patient-${patient.id}`];
-      rooms.forEach((r) => io.to(r).emit('doctor-directive-received', directive));
+      emitToPatient(io, patient, 'doctor-directive-received', directive);
     }
 
     return res.status(201).json({
@@ -1460,15 +1470,27 @@ router.post('/doctor-directive', auth, requireRole(['DOCTOR']), async (req, res)
 
 // ═════════════════════════════════════════════════════════════════════════════
 // GET /connection/doctor-patient/:patientId/directives
-// Fetches directives for a patient, optionally filtering by unread
+// Fetches directives for a patient, strictly deduplicated and optionally filtered
 // ═════════════════════════════════════════════════════════════════════════════
 router.get('/doctor-patient/:patientId/directives', auth, async (req, res) => {
   const { patientId } = req.params;
   const { unreadOnly } = req.query;
-  let directives = doctorDirectivesStore.get(patientId) || [];
-  if (unreadOnly === 'true') {
-    directives = directives.filter((d) => !d.read);
+  const rawList = doctorDirectivesStore.get(patientId) || [];
+
+  // Deduplicate by ID and content signature so duplicates are never returned
+  const seenIds = new Set();
+  const seenSigs = new Set();
+  const deduped = [];
+  for (const d of rawList) {
+    if (!d || seenIds.has(d.id)) continue;
+    const sig = `${(d.text || '').trim().toLowerCase()}:::${d.category || ''}`;
+    if (seenSigs.has(sig)) continue;
+    seenIds.add(d.id);
+    seenSigs.add(sig);
+    deduped.push(d);
   }
+
+  const directives = unreadOnly === 'true' ? deduped.filter((d) => !d.read) : deduped;
   return res.status(200).json({ directives });
 });
 
@@ -1513,12 +1535,7 @@ router.post('/directive/:id/read', auth, async (req, res) => {
     // Broadcast update via socket so other tabs/devices sync immediately
     const io = req.app.get('io');
     if (io && targetPatientId) {
-      const rooms = [`patient-${targetPatientId}`];
-      try {
-        const pRecord = await prisma.patient.findUnique({ where: { id: targetPatientId } });
-        if (pRecord?.userId) rooms.push(`patient-${pRecord.userId}`);
-      } catch (err) {}
-      rooms.forEach((r) => io.to(r).emit('doctor-directive-updated', targetDirective));
+      emitToPatient(io, targetPatientId, 'doctor-directive-updated', targetDirective);
     }
 
     return res.status(200).json({
@@ -1554,12 +1571,7 @@ router.post('/doctor-patient/:patientId/directives/read-all', auth, async (req, 
 
     const io = req.app.get('io');
     if (io) {
-      const rooms = [`patient-${patientId}`];
-      try {
-        const pRecord = await prisma.patient.findUnique({ where: { id: patientId } });
-        if (pRecord?.userId) rooms.push(`patient-${pRecord.userId}`);
-      } catch (err) {}
-      rooms.forEach((r) => io.to(r).emit('doctor-directives-cleared', { patientId }));
+      emitToPatient(io, patientId, 'doctor-directives-cleared', { patientId });
     }
 
     return res.status(200).json({
