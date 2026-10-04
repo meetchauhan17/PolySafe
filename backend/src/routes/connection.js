@@ -1460,12 +1460,116 @@ router.post('/doctor-directive', auth, requireRole(['DOCTOR']), async (req, res)
 
 // ═════════════════════════════════════════════════════════════════════════════
 // GET /connection/doctor-patient/:patientId/directives
-// Fetches active directives for a patient
+// Fetches directives for a patient, optionally filtering by unread
 // ═════════════════════════════════════════════════════════════════════════════
 router.get('/doctor-patient/:patientId/directives', auth, async (req, res) => {
   const { patientId } = req.params;
-  const directives = doctorDirectivesStore.get(patientId) || [];
+  const { unreadOnly } = req.query;
+  let directives = doctorDirectivesStore.get(patientId) || [];
+  if (unreadOnly === 'true') {
+    directives = directives.filter((d) => !d.read);
+  }
   return res.status(200).json({ directives });
+});
+
+// ═════════════════════════════════════════════════════════════════════════════
+// POST /connection/directive/:id/read
+// Patient- or Doctor-auth: Marks a directive as read/acknowledged
+// ═════════════════════════════════════════════════════════════════════════════
+router.post('/directive/:id/read', auth, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const body = req.body || {};
+    const markAs = body.read !== undefined ? Boolean(body.read) : true;
+    let targetPatientId = body.patientId;
+    let targetDirective = null;
+
+    // Check target patient if provided
+    if (targetPatientId && doctorDirectivesStore.has(targetPatientId)) {
+      const list = doctorDirectivesStore.get(targetPatientId);
+      targetDirective = list.find((d) => d.id === id);
+    }
+
+    // Otherwise, scan all patient records in the store
+    if (!targetDirective) {
+      for (const [pId, list] of doctorDirectivesStore.entries()) {
+        const found = list.find((d) => d.id === id);
+        if (found) {
+          targetPatientId = pId;
+          targetDirective = found;
+          break;
+        }
+      }
+    }
+
+    if (!targetDirective) {
+      return res.status(404).json({ error: 'Directive not found.' });
+    }
+
+    targetDirective.read = markAs;
+    targetDirective.readAt = markAs ? new Date().toISOString() : null;
+    saveDirectives(doctorDirectivesStore);
+
+    // Broadcast update via socket so other tabs/devices sync immediately
+    const io = req.app.get('io');
+    if (io && targetPatientId) {
+      const rooms = [`patient-${targetPatientId}`];
+      try {
+        const pRecord = await prisma.patient.findUnique({ where: { id: targetPatientId } });
+        if (pRecord?.userId) rooms.push(`patient-${pRecord.userId}`);
+      } catch (err) {}
+      rooms.forEach((r) => io.to(r).emit('doctor-directive-updated', targetDirective));
+    }
+
+    return res.status(200).json({
+      message: markAs ? 'Directive marked as read.' : 'Directive marked as unread.',
+      directive: targetDirective,
+    });
+  } catch (err) {
+    console.error('[POST /connection/directive/:id/read]', err);
+    return res.status(500).json({ error: 'Failed to update directive status.' });
+  }
+});
+
+// ═════════════════════════════════════════════════════════════════════════════
+// POST /connection/doctor-patient/:patientId/directives/read-all
+// Marks all directives for a patient as read
+// ═════════════════════════════════════════════════════════════════════════════
+router.post('/doctor-patient/:patientId/directives/read-all', auth, async (req, res) => {
+  try {
+    const { patientId } = req.params;
+    const list = doctorDirectivesStore.get(patientId) || [];
+    const now = new Date().toISOString();
+    let updatedCount = 0;
+
+    list.forEach((d) => {
+      if (!d.read) {
+        d.read = true;
+        d.readAt = now;
+        updatedCount++;
+      }
+    });
+
+    saveDirectives(doctorDirectivesStore);
+
+    const io = req.app.get('io');
+    if (io) {
+      const rooms = [`patient-${patientId}`];
+      try {
+        const pRecord = await prisma.patient.findUnique({ where: { id: patientId } });
+        if (pRecord?.userId) rooms.push(`patient-${pRecord.userId}`);
+      } catch (err) {}
+      rooms.forEach((r) => io.to(r).emit('doctor-directives-cleared', { patientId }));
+    }
+
+    return res.status(200).json({
+      message: 'All directives marked as read.',
+      count: updatedCount,
+    });
+  } catch (err) {
+    console.error('[POST /connection/doctor-patient/:patientId/directives/read-all]', err);
+    return res.status(500).json({ error: 'Failed to mark directives as read.' });
+  }
 });
 
 /** Helper: Computes organ toxicity burden index */

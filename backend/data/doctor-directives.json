@@ -8,7 +8,9 @@
       "text": "do workout",
       "category": "LIFESTYLE_ORDER",
       "priority": "NORMAL",
-      "issuedAt": "2026-10-04T10:41:19.841Z"
+      "issuedAt": "2026-10-04T10:41:19.841Z",
+      "read": true,
+      "readAt": "2026-10-04T11:07:41.946Z"
     }
   ]
 }

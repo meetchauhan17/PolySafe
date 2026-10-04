@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import {
   ArrowLeft,
@@ -25,6 +25,7 @@ import {
   Dumbbell,
   Utensils,
   ArrowLeftRight,
+  CheckCircle2,
 } from 'lucide-react';
 import Card from '../components/Card';
 import BackButton from '../components/BackButton';
@@ -35,6 +36,7 @@ import { EmptyTimelineIllustration } from '../components/EmptyIllustrations';
 import { TimelineSkeleton } from '../components/Skeletons';
 import { useAuth } from '../context/AuthContext';
 import { Lock } from 'lucide-react';
+import { notify } from '../utils/toast';
 import { getMedicineIndication } from '../utils/indications';
 
 // ─── Helper: Directive Style Helper ──────────────────────────────────────────
@@ -266,17 +268,34 @@ function formatDate(dateStr) {
 
 // ─── Main page ────────────────────────────────────────────────────────────────
 export default function TimelinePage() {
- const navigate = useNavigate();
- const shouldReduceMotion = useReducedMotion();
- const { isGuest, token, openGuestLockModal } = useAuth();
- const [timelineFilter, setTimelineFilter] = useState('ALL');
+  const navigate = useNavigate();
+  const shouldReduceMotion = useReducedMotion();
+  const { isGuest, token, openGuestLockModal } = useAuth();
+  const [timelineFilter, setTimelineFilter] = useState('ALL');
+  const [markingDirId, setMarkingDirId] = useState(null);
+  const queryClient = useQueryClient();
 
- const { data, isLoading, isError } = useQuery({
- queryKey: ['patient-timeline'],
- queryFn: fetchTimeline,
- enabled: !!token && !isGuest,
- retry: 1,
- });
+  const handleMarkDirectiveRead = async (dirId) => {
+    setMarkingDirId(dirId);
+    try {
+      await axios.post(`/connection/directive/${dirId}/read`, { read: true });
+      notify.success('Directive Acknowledged', 'Directive marked as read.');
+      queryClient.invalidateQueries({ queryKey: ['patient-timeline'] });
+      queryClient.invalidateQueries({ queryKey: ['patient-directives'] });
+    } catch (err) {
+      console.error('Failed to mark directive as read:', err);
+      notify.error('Update Failed', 'Could not update directive status.');
+    } finally {
+      setMarkingDirId(null);
+    }
+  };
+
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ['patient-timeline'],
+    queryFn: fetchTimeline,
+    enabled: !!token && !isGuest,
+    retry: 1,
+  });
 
  if (isLoading) {
  return (
@@ -531,7 +550,7 @@ export default function TimelinePage() {
                           className={`flex-1 space-y-3 transition-all bg-[var(--brand-surface)] border border-[var(--border)] border-l-4 ${style.accentBorder} hover:shadow-[var(--shadow-sm)]`}
                         >
                           <div className="flex items-center justify-between gap-2 flex-wrap pb-1 border-b border-[var(--border)]">
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-2 flex-wrap">
                               <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold uppercase tracking-wider border ${style.badgeBg}`}>
                                 {style.icon}
                                 <span>{style.label}</span>
@@ -540,6 +559,17 @@ export default function TimelinePage() {
                                 <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20">
                                   <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-ping" />
                                   High Priority
+                                </span>
+                              )}
+                              {dir.read ? (
+                                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/20">
+                                  <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                                  <span>Acknowledged</span>
+                                </span>
+                              ) : (
+                                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-blue-500/10 text-blue-700 dark:text-blue-300 border border-blue-500/20">
+                                  <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
+                                  <span>Active on Dashboard</span>
                                 </span>
                               )}
                             </div>
@@ -556,14 +586,27 @@ export default function TimelinePage() {
                             <span className="text-base text-[var(--doctor-600)] font-serif ml-1">”</span>
                           </div>
 
-                          <div className="flex items-center justify-between gap-2 pt-1 text-xs text-[var(--ink-3)]">
+                          <div className="flex items-center justify-between gap-2 pt-1 text-xs text-[var(--ink-3)] flex-wrap">
                             <span className="inline-flex items-center gap-1.5 font-semibold text-[var(--ink)]">
                               <Stethoscope className="w-3.5 h-3.5 text-[var(--doctor-600)]" />
                               <span>{dir.doctorName || 'Attending Physician'}</span>
                             </span>
-                            <span className="text-[10px] uppercase font-mono tracking-wider text-[var(--ink-3)]">
-                              Direct Care Directive
-                            </span>
+                            <div className="flex items-center gap-2">
+                              {!dir.read && !isGuest && (
+                                <button
+                                  onClick={() => handleMarkDirectiveRead(dir.id)}
+                                  disabled={markingDirId === dir.id}
+                                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white shadow-xs transition-all disabled:opacity-50"
+                                  title="Mark as read and remove from dashboard"
+                                >
+                                  <CheckCircle2 className="w-3 h-3" />
+                                  <span>Mark as Read</span>
+                                </button>
+                              )}
+                              <span className="text-[10px] uppercase font-mono tracking-wider text-[var(--ink-3)]">
+                                Direct Care Directive
+                              </span>
+                            </div>
                           </div>
                         </Card>
                       </motion.div>

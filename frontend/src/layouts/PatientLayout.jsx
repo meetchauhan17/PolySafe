@@ -100,6 +100,16 @@ export default function PatientLayout() {
       queryClient.invalidateQueries({ queryKey: ['home-summary'] });
     });
 
+    socket.on('doctor-directive-updated', () => {
+      queryClient.invalidateQueries({ queryKey: ['patient-directives'] });
+      queryClient.invalidateQueries({ queryKey: ['patient-timeline'] });
+    });
+
+    socket.on('doctor-directives-cleared', () => {
+      queryClient.invalidateQueries({ queryKey: ['patient-directives'] });
+      queryClient.invalidateQueries({ queryKey: ['patient-timeline'] });
+    });
+
     // 2. Live prescription/deprescribing/substitution listener
     socket.on('patient-regimen-updated', (data) => {
       notify.info(

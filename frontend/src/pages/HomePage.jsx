@@ -271,6 +271,9 @@ function PhysicianDirectivesBanner({ patientId, token }) {
   const shouldReduceMotion = useReducedMotion();
   const [liveEvents, setLiveEvents] = useState([]);
   const [dismissed, setDismissed] = useState(new Set());
+  const [markingId, setMarkingId] = useState(null);
+  const [markingAll, setMarkingAll] = useState(false);
+  const queryClient = useQueryClient();
 
   // Fetch persisted directives from API
   const { data: directivesData } = useQuery({
@@ -299,7 +302,57 @@ function PhysicianDirectivesBanner({ patientId, token }) {
 
   const directives = directivesData?.directives || [];
   const allEvents = [...liveEvents, ...directives.map(d => ({ ...d, isLive: false }))];
-  const visible = allEvents.filter(e => !dismissed.has(e.id));
+  // Filter out any dismissed or already-read directives so they never clutter the dashboard
+  const visible = allEvents.filter(e => !dismissed.has(e.id) && !e.read);
+
+  const handleMarkAsRead = async (evt) => {
+    const id = evt.id;
+    // Optimistically remove immediately from dashboard
+    setDismissed(prev => new Set([...prev, id]));
+    setMarkingId(id);
+
+    try {
+      if (!id.startsWith('live-')) {
+        await axios.post(`/connection/directive/${id}/read`, {
+          patientId,
+          read: true,
+        });
+      }
+      notify.success(
+        'Directive Acknowledged',
+        'Marked as read and archived from dashboard. You can review it anytime in your Care Timeline.'
+      );
+      queryClient.invalidateQueries({ queryKey: ['patient-directives'] });
+      queryClient.invalidateQueries({ queryKey: ['patient-timeline'] });
+    } catch (err) {
+      console.error('Failed to mark directive as read:', err);
+      notify.info('Directive Acknowledged', 'Archived to your Care Timeline.');
+    } finally {
+      setMarkingId(null);
+    }
+  };
+
+  const handleMarkAllAsRead = async () => {
+    setMarkingAll(true);
+    const visibleIds = visible.map(v => v.id);
+    setDismissed(prev => new Set([...prev, ...visibleIds]));
+
+    try {
+      if (patientId) {
+        await axios.post(`/connection/doctor-patient/${patientId}/directives/read-all`);
+      }
+      notify.success(
+        'All Directives Acknowledged',
+        'Directives have been marked as read and archived to your Care Timeline.'
+      );
+      queryClient.invalidateQueries({ queryKey: ['patient-directives'] });
+      queryClient.invalidateQueries({ queryKey: ['patient-timeline'] });
+    } catch (err) {
+      console.error('Failed to mark all directives as read:', err);
+    } finally {
+      setMarkingAll(false);
+    }
+  };
 
   if (visible.length === 0) return null;
 
@@ -387,7 +440,7 @@ function PhysicianDirectivesBanner({ patientId, token }) {
 
   return (
     <div className="space-y-3">
-      <div className="flex items-center justify-between gap-3">
+      <div className="flex items-center justify-between gap-3 flex-wrap">
         <div className="flex items-center gap-2.5">
           <div className="w-7 h-7 rounded-lg bg-[var(--doctor-600)]/10 text-[var(--doctor-600)] flex items-center justify-center border border-[var(--doctor-600)]/20 shadow-xs">
             <Stethoscope className="w-4 h-4" />
@@ -401,11 +454,20 @@ function PhysicianDirectivesBanner({ patientId, token }) {
             </span>
           </div>
         </div>
-        <div className="flex items-center gap-2.5">
-          <span className="text-[11px] font-medium text-[var(--ink-3)] hidden sm:inline-flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            Direct Clinical Link
-          </span>
+
+        <div className="flex items-center gap-2 flex-wrap">
+          {visible.length > 1 && (
+            <button
+              onClick={handleMarkAllAsRead}
+              disabled={markingAll}
+              className="inline-flex items-center gap-1.5 text-[11px] font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 px-2.5 py-1 rounded-full transition-colors active:scale-95 disabled:opacity-50"
+              title="Mark all directives as read and archive to timeline"
+            >
+              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+              <span>Mark all read</span>
+            </button>
+          )}
+
           <Link
             to="/timeline"
             className="inline-flex items-center gap-1 text-[11px] font-bold text-[var(--doctor-600)] hover:text-[var(--doctor-700)] bg-[var(--doctor-600)]/10 hover:bg-[var(--doctor-600)]/20 px-2.5 py-1 rounded-full transition-colors"
@@ -434,72 +496,87 @@ function PhysicianDirectivesBanner({ patientId, token }) {
               transition={{ duration: 0.2, ease: 'easeOut' }}
               className={`relative rounded-2xl border border-[var(--border)] border-l-4 ${style.accentBorder} bg-[var(--brand-surface)] shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-card-hover)] p-4 sm:p-5 transition-all`}
             >
-              <div className="flex items-start gap-3 sm:gap-4">
-                {/* Icon Container */}
-                <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 border ${style.iconBg} shadow-xs`}>
-                  {style.icon}
-                </div>
-
-                {/* Content */}
-                <div className="flex-1 min-w-0">
-                  <div className="flex flex-wrap items-center gap-2 mb-2">
-                    {/* Category Chip */}
-                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wider uppercase border ${style.badgeBg}`}>
-                      {style.label}
-                    </span>
-
-                    {/* Priority Badge */}
-                    {isHighPriority && (
-                      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wide uppercase bg-rose-500/10 text-rose-700 dark:text-rose-300 border border-rose-500/20">
-                        <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />
-                        {priority} Priority
-                      </span>
-                    )}
-
-                    {/* Live Badge */}
-                    {evt.isLive && (
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-extrabold tracking-wider bg-emerald-500 text-white shadow-xs animate-pulse">
-                        LIVE
-                      </span>
-                    )}
+              <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                <div className="flex items-start gap-3 sm:gap-4 flex-1 min-w-0">
+                  {/* Icon Container */}
+                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 border ${style.iconBg} shadow-xs`}>
+                    {style.icon}
                   </div>
 
-                  {/* Directive Message Body */}
-                  <div className="p-3 sm:p-3.5 rounded-xl bg-[var(--canvas)] border border-[var(--border)] text-sm sm:text-base font-semibold text-[var(--ink)] leading-relaxed shadow-xs">
-                    "{formatEvent(evt)}"
-                  </div>
+                  {/* Content */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex flex-wrap items-center gap-2 mb-2">
+                      {/* Category Chip */}
+                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wider uppercase border ${style.badgeBg}`}>
+                        {style.label}
+                      </span>
 
-                  {/* Rationale if present */}
-                  {evt.rationale && evt.action !== 'DOCTOR_SUBSTITUTED' && (
-                    <div className="mt-2 text-xs text-[var(--ink-2)] flex items-start gap-1.5">
-                      <span className="font-semibold text-[var(--ink)]">Rationale:</span>
-                      <span>{evt.rationale}</span>
+                      {/* Priority Badge */}
+                      {isHighPriority && (
+                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wide uppercase bg-rose-500/10 text-rose-700 dark:text-rose-300 border border-rose-500/20">
+                          <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />
+                          {priority} Priority
+                        </span>
+                      )}
+
+                      {/* Live Badge */}
+                      {evt.isLive && (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-extrabold tracking-wider bg-emerald-500 text-white shadow-xs animate-pulse">
+                          LIVE
+                        </span>
+                      )}
                     </div>
-                  )}
 
-                  {/* Doctor & Date Stamp */}
-                  <div className="flex flex-wrap items-center gap-3 mt-2.5 text-[11px] text-[var(--ink-3)] font-medium">
-                    <span className="inline-flex items-center gap-1.5 text-[var(--ink-2)] font-semibold">
-                      <Stethoscope className="w-3.5 h-3.5 text-[var(--doctor-600)]" />
-                      {evt.doctorName ? (evt.doctorName.toLowerCase().startsWith('dr') ? evt.doctorName : `Dr. ${evt.doctorName}`) : (evt.doctorLabel || 'Attending Physician')}
-                    </span>
-                    <span>·</span>
-                    <span className="inline-flex items-center gap-1">
-                      <Clock className="w-3 h-3 text-[var(--ink-3)]" />
-                      {dateStr}
-                    </span>
+                    {/* Directive Message Body */}
+                    <div className="p-3 sm:p-3.5 rounded-xl bg-[var(--canvas)] border border-[var(--border)] text-sm sm:text-base font-semibold text-[var(--ink)] leading-relaxed shadow-xs">
+                      "{formatEvent(evt)}"
+                    </div>
+
+                    {/* Rationale if present */}
+                    {evt.rationale && evt.action !== 'DOCTOR_SUBSTITUTED' && (
+                      <div className="mt-2 text-xs text-[var(--ink-2)] flex items-start gap-1.5">
+                        <span className="font-semibold text-[var(--ink)]">Rationale:</span>
+                        <span>{evt.rationale}</span>
+                      </div>
+                    )}
+
+                    {/* Doctor & Date Stamp */}
+                    <div className="flex flex-wrap items-center gap-3 mt-2.5 text-[11px] text-[var(--ink-3)] font-medium">
+                      <span className="inline-flex items-center gap-1.5 text-[var(--ink-2)] font-semibold">
+                        <Stethoscope className="w-3.5 h-3.5 text-[var(--doctor-600)]" />
+                        {evt.doctorName ? (evt.doctorName.toLowerCase().startsWith('dr') ? evt.doctorName : `Dr. ${evt.doctorName}`) : (evt.doctorLabel || 'Attending Physician')}
+                      </span>
+                      <span>·</span>
+                      <span className="inline-flex items-center gap-1">
+                        <Clock className="w-3 h-3 text-[var(--ink-3)]" />
+                        {dateStr}
+                      </span>
+                    </div>
                   </div>
                 </div>
 
-                {/* Dismiss Button */}
-                <button
-                  onClick={() => setDismissed(prev => new Set([...prev, evt.id]))}
-                  title="Dismiss this directive"
-                  className="p-1.5 sm:p-2 rounded-xl text-[var(--ink-3)] hover:text-rose-600 hover:bg-rose-500/10 border border-transparent hover:border-rose-500/20 transition-all flex-shrink-0"
-                  aria-label="Dismiss directive"
-                >
-                  <X className="w-4 h-4" />
-                </button>
+                {/* Directive Action Controls */}
+                <div className="flex items-center justify-end sm:justify-start gap-2 flex-shrink-0 self-end sm:self-start pt-1 sm:pt-0">
+                  <button
+                    onClick={() => handleMarkAsRead(evt)}
+                    disabled={markingId === evt.id}
+                    title="Mark directive as read and remove from dashboard"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white shadow-xs hover:shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-emerald-500/30 disabled:opacity-50"
+                    aria-label="Mark directive as read"
+                  >
+                    <CheckCircle2 className="w-3.5 h-3.5" />
+                    <span>Mark as Read</span>
+                  </button>
+
+                  <button
+                    onClick={() => handleMarkAsRead(evt)}
+                    title="Dismiss and remove from dashboard"
+                    className="p-1.5 sm:p-2 rounded-xl text-[var(--ink-3)] hover:text-rose-600 hover:bg-rose-500/10 border border-transparent hover:border-rose-500/20 transition-all flex-shrink-0"
+                    aria-label="Dismiss directive"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
             </motion.div>
           );
