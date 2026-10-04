@@ -377,40 +377,84 @@ export default function TimelinePage() {
           </div>
         </div>
 
- {/* ── Stats Summary Bar ── */}
- {!isLoading && !isError && displayItems.length > 0 && (
- <div className="grid grid-cols-3 gap-3">
- {[
- { label: 'Total Tracked', value: medicines.length, color: 'var(--brand-600)' },
- { label: 'Risk Flags', value: flaggedCount, color: flaggedCount > 0 ? 'var(--critical-fg)' : 'var(--safe-fg)' },
- { label: 'Herbals & OTC', value: herbalCount, color: 'var(--doctor-600)' },
- ].map((s) => (
- <div key={s.label} className="ps-stat-card text-center space-y-0.5 p-3.5">
- <p
- className="text-2xl font-black"
- style={{ color: s.color }}
- >
- {s.value}
- </p>
- <p className="text-[11px] text-[var(--ink-3)] font-semibold">{s.label}</p>
- </div>
- ))}
- </div>
- )}
+        {/* ── Stats Summary Bar ── */}
+        {!isLoading && !isError && displayItems.length > 0 && (
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            {[
+              { label: 'Medications', value: medicines.length, color: 'var(--brand-600)' },
+              { label: 'Risk Flags', value: flaggedCount, color: flaggedCount > 0 ? 'var(--critical-fg)' : 'var(--safe-fg)' },
+              { label: 'Herbals & OTC', value: herbalCount, color: 'var(--doctor-600)' },
+              { label: 'Doctor Directives', value: directives.length, color: '#10B981' },
+            ].map((s) => (
+              <div key={s.label} className="ps-stat-card text-center space-y-0.5 p-3.5">
+                <p className="text-2xl font-black" style={{ color: s.color }}>
+                  {s.value}
+                </p>
+                <p className="text-[11px] text-[var(--ink-3)] font-semibold">{s.label}</p>
+              </div>
+            ))}
+          </div>
+        )}
 
- {/* ── Legend ───────────────────────────────────────────────────────── */}
- {!isLoading && medicines.length > 0 && (
- <div className="flex items-center gap-6 px-1">
- <span className="flex items-center gap-2 text-xs text-[var(--ink-3)] font-semibold">
- <span className="w-3.5 h-3.5 rounded-full bg-white border-[3px] border-[var(--brand-600)] shadow-xs" />
- Safe / Normal Entry
- </span>
- <span className="flex items-center gap-2 text-xs text-[var(--ink-3)] font-semibold">
- <span className="w-3.5 h-3.5 rounded-full bg-white border-[3px] border-[var(--critical-fg)] shadow-xs" />
- Interaction Flagged
- </span>
- </div>
- )}
+        {/* ── Filter Tabs ── */}
+        {!isLoading && !isError && displayItems.length > 0 && directives.length > 0 && (
+          <div className="flex items-center gap-2 overflow-x-auto pb-1 pt-1">
+            <button
+              type="button"
+              onClick={() => setTimelineFilter('ALL')}
+              className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all ${
+                timelineFilter === 'ALL'
+                  ? 'bg-[var(--brand-600)] text-white shadow-xs'
+                  : 'bg-[var(--surface)] text-[var(--ink-2)] hover:bg-[var(--surface-2)] border border-[var(--border)]'
+              }`}
+            >
+              All Activities ({allTimelineItems.length})
+            </button>
+            <button
+              type="button"
+              onClick={() => setTimelineFilter('MEDS')}
+              className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all ${
+                timelineFilter === 'MEDS'
+                  ? 'bg-[var(--brand-600)] text-white shadow-xs'
+                  : 'bg-[var(--surface)] text-[var(--ink-2)] hover:bg-[var(--surface-2)] border border-[var(--border)]'
+              }`}
+            >
+              Medications ({medicines.length})
+            </button>
+            <button
+              type="button"
+              onClick={() => setTimelineFilter('DIRECTIVES')}
+              className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all flex items-center gap-1.5 ${
+                timelineFilter === 'DIRECTIVES'
+                  ? 'bg-emerald-600 text-white shadow-xs'
+                  : 'bg-[var(--surface)] text-[var(--ink-2)] hover:bg-[var(--surface-2)] border border-[var(--border)]'
+              }`}
+            >
+              <Stethoscope className="w-3.5 h-3.5" />
+              <span>Doctor Directives ({directives.length})</span>
+            </button>
+          </div>
+        )}
+
+        {/* ── Legend ───────────────────────────────────────────────────────── */}
+        {!isLoading && displayItems.length > 0 && (
+          <div className="flex items-center flex-wrap gap-4 sm:gap-6 px-1">
+            <span className="flex items-center gap-2 text-xs text-[var(--ink-3)] font-semibold">
+              <span className="w-3.5 h-3.5 rounded-full bg-white border-[3px] border-[var(--brand-600)] shadow-xs" />
+              Safe / Normal Entry
+            </span>
+            <span className="flex items-center gap-2 text-xs text-[var(--ink-3)] font-semibold">
+              <span className="w-3.5 h-3.5 rounded-full bg-white border-[3px] border-[var(--critical-fg)] shadow-xs" />
+              Interaction Flagged
+            </span>
+            {directives.length > 0 && (
+              <span className="flex items-center gap-2 text-xs text-[var(--ink-3)] font-semibold">
+                <span className="w-3.5 h-3.5 rounded-full bg-white border-[3px] border-emerald-500 shadow-xs" />
+                Doctor Directive / Order
+              </span>
+            )}
+          </div>
+        )}
 
  {/* ── Error State ───────────────────────────────────────────────────── */}
  {isError && (
@@ -444,27 +488,96 @@ export default function TimelinePage() {
  </Card>
  )}
 
- {/* ── Timeline Display with Vertical Timeline Line ───────────────────── */}
- {!isLoading && !isError && medicines.length > 0 && (
- <div className="relative pl-2 py-2">
- <motion.div
- className="absolute left-[19px] top-4 bottom-6 w-[3px] z-0 rounded-full origin-top"
- style={{ backgroundColor: 'var(--brand-600)' }}
- initial={shouldReduceMotion ? { scaleY: 1 } : { scaleY: 0 }}
- animate={{ scaleY: 1 }}
- transition={{ duration: shouldReduceMotion ? 0 : 0.45, ease: 'easeOut' }}
- />
+        {/* ── Timeline Display with Vertical Timeline Line ───────────────────── */}
+        {!isLoading && !isError && displayItems.length > 0 && (
+          <div className="relative pl-2 py-2">
+            <motion.div
+              className="absolute left-[19px] top-4 bottom-6 w-[3px] z-0 rounded-full origin-top"
+              style={{ backgroundColor: 'var(--brand-600)' }}
+              initial={shouldReduceMotion ? { scaleY: 1 } : { scaleY: 0 }}
+              animate={{ scaleY: 1 }}
+              transition={{ duration: shouldReduceMotion ? 0 : 0.45, ease: 'easeOut' }}
+            />
 
- <div className="space-y-6">
- <AnimatePresence initial={false}>
- {medicines.map((med, index) => {
- const isDiscontinued = !!med.discontinued || !!med.removedAt;
- const isFlagged = !isDiscontinued && med.flagged && med.flags?.length > 0;
- const details = parseDosageDetails(med.dosage);
+            <div className="space-y-6">
+              <AnimatePresence initial={false}>
+                {displayItems.map((item, index) => {
+                  if (item.itemType === 'DIRECTIVE') {
+                    const dir = item.data;
+                    const style = getDirectiveStyle(dir.category);
+                    const isHighPriority = dir.priority === 'HIGH' || dir.priority === 'URGENT';
 
- return (
- <motion.div
- key={med.id}
+                    return (
+                      <motion.div
+                        key={item.id}
+                        layout={!shouldReduceMotion}
+                        initial={shouldReduceMotion ? false : { opacity: 0, y: 14 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={shouldReduceMotion ? undefined : { opacity: 0, scale: 0.95 }}
+                        transition={{
+                          duration: shouldReduceMotion ? 0 : 0.28,
+                          delay: shouldReduceMotion ? 0 : index * 0.05,
+                          ease: [0.25, 1, 0.5, 1],
+                        }}
+                        className="relative z-10 flex items-start gap-4"
+                      >
+                        <div
+                          className="w-[18px] h-[18px] rounded-full bg-[var(--canvas)] flex-shrink-0 mt-4 shadow-sm"
+                          style={{ border: `3px solid ${style.dotBorder}` }}
+                        />
+
+                        <Card
+                          hideScrews={true}
+                          className={`flex-1 space-y-3 transition-all bg-[var(--brand-surface)] border border-[var(--border)] border-l-4 ${style.accentBorder} hover:shadow-[var(--shadow-sm)]`}
+                        >
+                          <div className="flex items-center justify-between gap-2 flex-wrap pb-1 border-b border-[var(--border)]">
+                            <div className="flex items-center gap-2">
+                              <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold uppercase tracking-wider border ${style.badgeBg}`}>
+                                {style.icon}
+                                <span>{style.label}</span>
+                              </span>
+                              {isHighPriority && (
+                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20">
+                                  <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-ping" />
+                                  High Priority
+                                </span>
+                              )}
+                            </div>
+
+                            <span className="inline-flex items-center gap-1 text-xs text-[var(--ink-3)] font-medium">
+                              <Clock className="w-3.5 h-3.5 text-[#9CA3AF]" />
+                              {formatDate(dir.issuedAt)}
+                            </span>
+                          </div>
+
+                          <div className="rounded-xl bg-[var(--surface)] border border-[var(--border)] p-3.5 text-sm text-[var(--ink)] font-medium leading-relaxed">
+                            <span className="text-base text-[var(--doctor-600)] font-serif mr-1">“</span>
+                            {dir.text}
+                            <span className="text-base text-[var(--doctor-600)] font-serif ml-1">”</span>
+                          </div>
+
+                          <div className="flex items-center justify-between gap-2 pt-1 text-xs text-[var(--ink-3)]">
+                            <span className="inline-flex items-center gap-1.5 font-semibold text-[var(--ink)]">
+                              <Stethoscope className="w-3.5 h-3.5 text-[var(--doctor-600)]" />
+                              <span>{dir.doctorName || 'Attending Physician'}</span>
+                            </span>
+                            <span className="text-[10px] uppercase font-mono tracking-wider text-[var(--ink-3)]">
+                              Direct Care Directive
+                            </span>
+                          </div>
+                        </Card>
+                      </motion.div>
+                    );
+                  }
+
+                  const med = item.data;
+                  const isDiscontinued = !!med.discontinued || !!med.removedAt;
+                  const isFlagged = !isDiscontinued && med.flagged && med.flags?.length > 0;
+                  const details = parseDosageDetails(med.dosage);
+
+                  return (
+                    <motion.div
+                      key={item.id}
  layout={!shouldReduceMotion}
  initial={shouldReduceMotion ? false : { opacity: 0, y: 14 }}
  animate={{ opacity: 1, y: 0 }}

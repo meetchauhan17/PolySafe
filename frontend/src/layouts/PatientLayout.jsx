@@ -1,7 +1,11 @@
 // src/layouts/PatientLayout.jsx
 // "Clinical Calm" shell — clean top nav + mobile tab bar
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { io as socketIO } from 'socket.io-client';
+import { useQueryClient } from '@tanstack/react-query';
+import { notify } from '../utils/toast';
 import {
   ShieldCheck,
   Home,
@@ -61,6 +65,61 @@ export default function PatientLayout() {
   const navigate = useNavigate();
   const { user, isGuest, logout } = useAuth() || {};
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const queryClient = useQueryClient();
+
+  // ─── Real-Time Socket.IO Synchronization ─────────────────────────────────
+  useEffect(() => {
+    if (!user || isGuest) return;
+
+    const socketUrl = axios.defaults.baseURL
+      ? axios.defaults.baseURL.replace(/\/api$/, '')
+      : (window.location.hostname === 'localhost' ? 'http://localhost:5000' : window.location.origin);
+
+    const socket = socketIO(socketUrl, {
+      transports: ['websocket', 'polling'],
+      reconnectionAttempts: 5,
+    });
+
+    socket.on('connect', () => {
+      const patientId = user.patientId || user.userId || user.id;
+      if (patientId) {
+        socket.emit('join-patient-room', { patientId, userId: user.userId || user.id });
+      }
+    });
+
+    // 1. Live physician directive listener (instant auto-update without page refresh)
+    socket.on('doctor-directive-received', (directive) => {
+      notify.info(
+        'Physician Directive Received',
+        `${directive.doctorName || 'Your doctor'} sent an update: "${directive.text}"`
+      );
+      window.dispatchEvent(new CustomEvent('polysafe:doctor-event', { detail: directive }));
+      queryClient.invalidateQueries({ queryKey: ['patient-directives'] });
+      queryClient.invalidateQueries({ queryKey: ['patient-timeline'] });
+      queryClient.invalidateQueries({ queryKey: ['patient-home'] });
+      queryClient.invalidateQueries({ queryKey: ['home-summary'] });
+    });
+
+    // 2. Live prescription/deprescribing/substitution listener
+    socket.on('patient-regimen-updated', (data) => {
+      notify.info(
+        'Medication Regimen Updated',
+        data.doctorLabel
+          ? `${data.doctorLabel} modified your regimen: ${String(data.action || '').replace('DOCTOR_', '').toLowerCase()}.`
+          : 'Your doctor modified your medication regimen.'
+      );
+      window.dispatchEvent(new CustomEvent('polysafe:doctor-event', { detail: data }));
+      queryClient.invalidateQueries({ queryKey: ['patient-directives'] });
+      queryClient.invalidateQueries({ queryKey: ['patient-timeline'] });
+      queryClient.invalidateQueries({ queryKey: ['patient-home'] });
+      queryClient.invalidateQueries({ queryKey: ['home-summary'] });
+      queryClient.invalidateQueries({ queryKey: ['patient-medicines'] });
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, [user, isGuest, queryClient]);
 
   const handleSignOut = () => {
     logout?.();

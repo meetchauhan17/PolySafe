@@ -981,14 +981,17 @@ router.post('/doctor-prescribe', auth, requireRole(['DOCTOR']), async (req, res)
     // 8. Emit real-time Socket notification to patient room
     const io = req.app.get('io');
     if (io) {
-      io.to(`patient-${patient.userId}`).emit('patient-regimen-updated', {
-        action: 'DOCTOR_PRESCRIBED',
-        medicine,
-        doctorLabel,
-        newFlagsCount: newFlags.length,
-        regimenRisk,
-        cumulativeBurden,
-      });
+      const rooms = [`patient-${patient.userId}`, `patient-${patient.id}`];
+      rooms.forEach((r) =>
+        io.to(r).emit('patient-regimen-updated', {
+          action: 'DOCTOR_PRESCRIBED',
+          medicine,
+          doctorLabel,
+          newFlagsCount: newFlags.length,
+          regimenRisk,
+          cumulativeBurden,
+        })
+      );
     }
 
     return res.status(201).json({
@@ -1055,13 +1058,16 @@ router.post('/doctor-deprescribe', auth, requireRole(['DOCTOR']), async (req, re
 
     const io = req.app.get('io');
     if (io) {
-      io.to(`patient-${patient.userId}`).emit('patient-regimen-updated', {
-        action: 'DOCTOR_DEPRESCRIBED',
-        medicineId,
-        medicineName: med.name,
-        rationale: rationale || 'Discontinued by physician to optimize regimen safety.',
-        taperPlan,
-      });
+      const rooms = [`patient-${patient.userId}`, `patient-${patient.id}`];
+      rooms.forEach((r) =>
+        io.to(r).emit('patient-regimen-updated', {
+          action: 'DOCTOR_DEPRESCRIBED',
+          medicineId,
+          medicineName: med.name,
+          rationale: rationale || 'Discontinued by physician to optimize regimen safety.',
+          taperPlan,
+        })
+      );
     }
 
     return res.status(200).json({
@@ -1340,15 +1346,18 @@ router.post('/doctor-substitute', auth, requireRole(['DOCTOR']), async (req, res
     // Socket dispatch
     const io = req.app.get('io');
     if (io) {
-      io.to(`patient-${patient.userId}`).emit('patient-regimen-updated', {
-        action: 'DOCTOR_SUBSTITUTED',
-        discontinued: oldMed.name,
-        prescribed: newMed.name,
-        rationale: rationale || 'Optimized for geriatric safety and lower polypharmacy burden.',
-        doctorLabel,
-        regimenRisk,
-        cumulativeBurden,
-      });
+      const rooms = [`patient-${patient.userId}`, `patient-${patient.id}`];
+      rooms.forEach((r) =>
+        io.to(r).emit('patient-regimen-updated', {
+          action: 'DOCTOR_SUBSTITUTED',
+          discontinued: oldMed.name,
+          prescribed: newMed.name,
+          rationale: rationale || 'Optimized for geriatric safety and lower polypharmacy burden.',
+          doctorLabel,
+          regimenRisk,
+          cumulativeBurden,
+        })
+      );
     }
 
     return res.status(200).json({
@@ -1435,7 +1444,8 @@ router.post('/doctor-directive', auth, requireRole(['DOCTOR']), async (req, res)
     // Emit live event
     const io = req.app.get('io');
     if (io) {
-      io.to(`patient-${patient.userId}`).emit('doctor-directive-received', directive);
+      const rooms = [`patient-${patient.userId}`, `patient-${patient.id}`];
+      rooms.forEach((r) => io.to(r).emit('doctor-directive-received', directive));
     }
 
     return res.status(201).json({
