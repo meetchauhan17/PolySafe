@@ -4738,5 +4738,63 @@
     "safetyTip": "Complete the full course of therapy even if symptoms improve to prevent antibiotic resistance.",
     "standardizedCode": "133008",
     "layer": "Layer 5 (gemini_gemini-3.5-flash-lite)"
+  },
+  "nexd": {
+    "resolvedName": "nexd",
+    "genericName": "Esomeprazole Magnesium",
+    "genericSalts": [
+      "Esomeprazole Magnesium"
+    ],
+    "constituents": [
+      "Esomeprazole Magnesium"
+    ],
+    "harmLevel": 2,
+    "class": "Proton Pump Inhibitor",
+    "foodInstruction": "before_food",
+    "dosageOptions": [
+      "20 mg",
+      "40 mg"
+    ],
+    "safetyTip": "Take approximately 30-60 minutes before your first meal of the day for optimal acid suppression.",
+    "standardizedCode": "283562",
+    "layer": "Layer 5 (gemini_gemini-3.5-flash-lite)"
+  },
+  "naproxen sodium": {
+    "resolvedName": "Naproxen Sodium",
+    "genericName": "Naproxen Sodium",
+    "genericSalts": [
+      "Naproxen Sodium"
+    ],
+    "constituents": [
+      "Naproxen Sodium"
+    ],
+    "harmLevel": 3,
+    "class": "RxNorm Standard Drug",
+    "foodInstruction": "after_food",
+    "dosageOptions": [
+      "Standard dose"
+    ],
+    "safetyTip": "RxNorm validated medication. Take as directed.",
+    "standardizedCode": "142442",
+    "layer": "Layer 4 (RxNorm REST API)"
+  },
+  "domperidone": {
+    "resolvedName": "Domperidone",
+    "genericName": "Domperidone",
+    "genericSalts": [
+      "Domperidone"
+    ],
+    "constituents": [
+      "Domperidone"
+    ],
+    "harmLevel": 2,
+    "class": "RxNorm Standard Drug",
+    "foodInstruction": "after_food",
+    "dosageOptions": [
+      "Standard dose"
+    ],
+    "safetyTip": "RxNorm validated medication. Take as directed.",
+    "standardizedCode": "3626",
+    "layer": "Layer 4 (RxNorm REST API)"
   }
 }

@@ -15,6 +15,13 @@ const io = new Server(server, {
 // ─── Core Middleware ───────────────────────────────────────────────────────────
 app.use(cors());
 app.use(express.json());
+// Ensure req.body is safely initialized to an object for all requests
+app.use((req, _res, next) => {
+  if (!req.body || typeof req.body !== 'object') {
+    req.body = {};
+  }
+  next();
+});
 
 // Make io available to route handlers via req.app.get('io')
 app.set('io', io);

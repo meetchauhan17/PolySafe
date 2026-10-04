@@ -268,112 +268,236 @@ const DEMO_DATA = {
 
 // ─── Physician Directives Banner ────────────────────────────────────────────
 function PhysicianDirectivesBanner({ patientId, token }) {
- const shouldReduceMotion = useReducedMotion();
- // Live events from Socket.IO (via window-level event bus)
- const [liveEvents, setLiveEvents] = useState([]);
- const [dismissed, setDismissed] = useState(new Set());
+  const shouldReduceMotion = useReducedMotion();
+  const [liveEvents, setLiveEvents] = useState([]);
+  const [dismissed, setDismissed] = useState(new Set());
 
- // Fetch persisted directives from API
- const { data: directivesData } = useQuery({
- queryKey: ['patient-directives', patientId],
- queryFn: () => patientId ? axios.get(`/connection/doctor-patient/${patientId}/directives`).then(r => r.data) : null,
- enabled: !!patientId && !!token,
- refetchInterval: 30_000,
- staleTime: 15_000,
- });
+  // Fetch persisted directives from API
+  const { data: directivesData } = useQuery({
+    queryKey: ['patient-directives', patientId],
+    queryFn: () => patientId ? axios.get(`/connection/doctor-patient/${patientId}/directives`).then(r => r.data) : null,
+    enabled: !!patientId && !!token,
+    refetchInterval: 30_000,
+    staleTime: 15_000,
+  });
 
- // Listen for Socket.IO-pushed doctor events on the window event bus
- useEffect(() => {
- const handler = (e) => {
- const evt = e.detail;
- if (!evt) return;
- setLiveEvents(prev => [{
- id: `live-${Date.now()}`,
- ...evt,
- issuedAt: new Date().toISOString(),
- isLive: true,
- }, ...prev].slice(0, 8));
- };
- window.addEventListener('polysafe:doctor-event', handler);
- return () => window.removeEventListener('polysafe:doctor-event', handler);
- }, []);
+  // Listen for Socket.IO-pushed doctor events on the window event bus
+  useEffect(() => {
+    const handler = (e) => {
+      const evt = e.detail;
+      if (!evt) return;
+      setLiveEvents(prev => [{
+        id: `live-${Date.now()}`,
+        ...evt,
+        issuedAt: new Date().toISOString(),
+        isLive: true,
+      }, ...prev].slice(0, 8));
+    };
+    window.addEventListener('polysafe:doctor-event', handler);
+    return () => window.removeEventListener('polysafe:doctor-event', handler);
+  }, []);
 
- const directives = directivesData?.directives || [];
- const allEvents = [...liveEvents, ...directives.map(d => ({ ...d, isLive: false }))];
- const visible = allEvents.filter(e => !dismissed.has(e.id));
+  const directives = directivesData?.directives || [];
+  const allEvents = [...liveEvents, ...directives.map(d => ({ ...d, isLive: false }))];
+  const visible = allEvents.filter(e => !dismissed.has(e.id));
 
- if (visible.length === 0) return null;
+  if (visible.length === 0) return null;
 
- const getEventStyle = (evt) => {
- const action = evt.action || evt.category || '';
- if (action.includes('PRESCRIBED') || action === 'REGIMEN_ADVICE') {
- return { bg: 'bg-[var(--canvas)]', border: 'border-[var(--brand-600)]/30', text: 'text-[var(--ink)]', icon: <Stethoscope className="w-4 h-4 text-[var(--brand-600)] flex-shrink-0" />, label: 'Physician Prescription' };
- }
- if (action.includes('DEPRESCRIBED') || action.includes('TAPER')) {
- return { bg: 'bg-amber-50', border: 'border-amber-200', text: 'text-amber-800', icon: <ArrowLeftRight className="w-4 h-4 text-amber-600 flex-shrink-0" />, label: 'Deprescribing Order' };
- }
- if (action.includes('SUBSTITUTED')) {
- return { bg: 'bg-blue-50', border: 'border-blue-200', text: 'text-blue-800', icon: <ArrowLeftRight className="w-4 h-4 text-blue-600 flex-shrink-0" />, label: 'Drug Substitution' };
- }
- return { bg: 'bg-[var(--canvas)]', border: 'border-[var(--border)]', text: 'text-[var(--ink)]', icon: <ClipboardList className="w-4 h-4 text-[var(--ink-3)] flex-shrink-0" />, label: 'Clinical Directive' };
- };
+  const getEventStyle = (evt) => {
+    const action = evt.action || evt.category || '';
+    if (action.includes('PRESCRIBED')) {
+      return {
+        accentBorder: 'border-l-cyan-500',
+        badgeBg: 'bg-cyan-500/10 text-cyan-700 dark:text-cyan-300 border-cyan-500/20',
+        iconBg: 'bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border-cyan-500/20',
+        icon: <Pill className="w-5 h-5" />,
+        label: 'Prescription Order'
+      };
+    }
+    if (action.includes('DEPRESCRIBED') || action.includes('TAPER')) {
+      return {
+        accentBorder: 'border-l-amber-500',
+        badgeBg: 'bg-amber-500/10 text-amber-700 dark:text-amber-300 border-amber-500/20',
+        iconBg: 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20',
+        icon: <AlertCircle className="w-5 h-5" />,
+        label: 'Deprescribing Order'
+      };
+    }
+    if (action.includes('SUBSTITUTED')) {
+      return {
+        accentBorder: 'border-l-blue-500',
+        badgeBg: 'bg-blue-500/10 text-blue-700 dark:text-blue-300 border-blue-500/20',
+        iconBg: 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20',
+        icon: <ArrowLeftRight className="w-5 h-5" />,
+        label: 'Drug Substitution'
+      };
+    }
+    if (action === 'LIFESTYLE_ORDER') {
+      return {
+        accentBorder: 'border-l-emerald-500',
+        badgeBg: 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/20',
+        iconBg: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20',
+        icon: <Dumbbell className="w-5 h-5" />,
+        label: 'Lifestyle & Activity Order'
+      };
+    }
+    if (action === 'DIETARY_INSTRUCTION') {
+      return {
+        accentBorder: 'border-l-teal-500',
+        badgeBg: 'bg-teal-500/10 text-teal-700 dark:text-teal-300 border-teal-500/20',
+        iconBg: 'bg-teal-500/10 text-teal-600 dark:text-teal-400 border-teal-500/20',
+        icon: <Utensils className="w-5 h-5" />,
+        label: 'Dietary Instruction'
+      };
+    }
+    if (action === 'MONITORING_INSTRUCTION') {
+      return {
+        accentBorder: 'border-l-purple-500',
+        badgeBg: 'bg-purple-500/10 text-purple-700 dark:text-purple-300 border-purple-500/20',
+        iconBg: 'bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/20',
+        icon: <Activity className="w-5 h-5" />,
+        label: 'Monitoring Instruction'
+      };
+    }
+    if (action === 'FOLLOW_UP') {
+      return {
+        accentBorder: 'border-l-indigo-500',
+        badgeBg: 'bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 border-indigo-500/20',
+        iconBg: 'bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/20',
+        icon: <Clock className="w-5 h-5" />,
+        label: 'Follow-Up Notice'
+      };
+    }
+    return {
+      accentBorder: 'border-l-[var(--doctor-600)]',
+      badgeBg: 'bg-[var(--doctor-600)]/10 text-[var(--doctor-600)] border-[var(--doctor-600)]/20',
+      iconBg: 'bg-[var(--doctor-600)]/10 text-[var(--doctor-600)] border-[var(--doctor-600)]/20',
+      icon: <ClipboardList className="w-5 h-5" />,
+      label: 'Clinical Directive'
+    };
+  };
 
- const formatEvent = (evt) => {
- const action = evt.action || '';
- if (action === 'DOCTOR_PRESCRIBED') return `${evt.doctorLabel || 'Your doctor'} prescribed ${evt.medicine?.name || evt.prescribed || 'a new medication'}.`;
- if (action === 'DOCTOR_DEPRESCRIBED') return `${evt.doctorLabel || 'Your doctor'} discontinued ${evt.medicine?.name || evt.discontinued || 'a medication'}.`;
- if (action === 'DOCTOR_SUBSTITUTED') return `${evt.doctorLabel || 'Your doctor'} substituted ${evt.discontinued || '...'} to ${evt.prescribed || '...'}. ${evt.rationale ? `Reason: ${evt.rationale}` : ''}`;
- return evt.text || evt.note || 'New clinical update from your physician.';
- };
+  const formatEvent = (evt) => {
+    const action = evt.action || '';
+    if (action === 'DOCTOR_PRESCRIBED') return `${evt.doctorLabel || 'Your doctor'} prescribed ${evt.medicine?.name || evt.prescribed || 'a new medication'}.`;
+    if (action === 'DOCTOR_DEPRESCRIBED') return `${evt.doctorLabel || 'Your doctor'} discontinued ${evt.medicine?.name || evt.discontinued || 'a medication'}.`;
+    if (action === 'DOCTOR_SUBSTITUTED') return `${evt.doctorLabel || 'Your doctor'} substituted ${evt.discontinued || '...'} to ${evt.prescribed || '...'}. ${evt.rationale ? `Reason: ${evt.rationale}` : ''}`;
+    return evt.text || evt.note || 'New clinical update from your physician.';
+  };
 
- return (
- <div className="space-y-2">
- <div className="flex items-center gap-2">
- <Megaphone className="w-3.5 h-3.5 text-[var(--brand-600)]" />
- <span className="text-[10px] font-extrabold uppercase tracking-widest text-[var(--brand-600)]">Physician Directives & Updates</span>
- <span className="text-[10px] font-bold text-white bg-[var(--brand-600)] px-2 py-0.5 rounded-full">{visible.length}</span>
- </div>
- <AnimatePresence initial={false}>
- {visible.map((evt) => {
- const style = getEventStyle(evt);
- return (
- <motion.div
- key={evt.id}
- initial={shouldReduceMotion ? false : { opacity: 0, y: -8 }}
- animate={{ opacity: 1, y: 0 }}
- exit={shouldReduceMotion ? undefined : { opacity: 0, scale: 0.96 }}
- transition={{ duration: 0.2, ease: 'easeOut' }}
- className={`relative flex items-start gap-3 p-3.5 rounded-2xl border ${style.bg} ${style.border} shadow-sm`}
- >
- {evt.isLive && (
- <span className="absolute top-2 right-9 text-[9px] font-extrabold bg-green-500 text-white px-1.5 py-0.5 rounded-full animate-pulse">
- LIVE
- </span>
- )}
- <div className="mt-0.5">{style.icon}</div>
- <div className="flex-1 min-w-0">
- <p className={`text-[10px] font-extrabold uppercase tracking-wider mb-0.5 ${style.text}`}>{style.label}</p>
- <p className={`text-xs font-semibold leading-relaxed ${style.text}`}>{formatEvent(evt)}</p>
- {evt.rationale && evt.action !== 'DOCTOR_SUBSTITUTED' && (
- <p className="text-[11px] text-[var(--ink-3)] mt-0.5">{evt.rationale}</p>
- )}
- <p className="text-[10px] text-[#9CA3AF] mt-1">
- {evt.doctorName || evt.doctorLabel || 'Physician'} · {new Date(evt.issuedAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
- </p>
- </div>
- <button
- onClick={() => setDismissed(prev => new Set([...prev, evt.id]))}
- className="p-1 rounded-lg hover:bg-black/10 transition-colors flex-shrink-0 mt-0.5"
- aria-label="Dismiss"
- >
- <X className="w-3.5 h-3.5 text-[var(--ink-3)]" />
- </button>
- </motion.div>
- );
- })}
- </AnimatePresence>
- </div>
- );
+  return (
+    <div className="space-y-3">
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center gap-2.5">
+          <div className="w-7 h-7 rounded-lg bg-[var(--doctor-600)]/10 text-[var(--doctor-600)] flex items-center justify-center border border-[var(--doctor-600)]/20 shadow-xs">
+            <Stethoscope className="w-4 h-4" />
+          </div>
+          <div className="flex items-center gap-2">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--ink)] font-[var(--font-heading)]">
+              Physician Directives & Care Updates
+            </h3>
+            <span className="inline-flex items-center justify-center px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-[var(--doctor-600)] text-white shadow-xs">
+              {visible.length}
+            </span>
+          </div>
+        </div>
+        <span className="text-[11px] font-medium text-[var(--ink-3)] hidden sm:inline-flex items-center gap-1.5">
+          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+          Direct Clinical Link
+        </span>
+      </div>
+
+      <AnimatePresence initial={false}>
+        {visible.map((evt) => {
+          const style = getEventStyle(evt);
+          const priority = evt.priority || 'ROUTINE';
+          const isHighPriority = priority === 'HIGH' || priority === 'URGENT';
+          const dateStr = evt.issuedAt
+            ? new Date(evt.issuedAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })
+            : 'Recent';
+
+          return (
+            <motion.div
+              key={evt.id}
+              initial={shouldReduceMotion ? false : { opacity: 0, y: -8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={shouldReduceMotion ? undefined : { opacity: 0, scale: 0.96 }}
+              transition={{ duration: 0.2, ease: 'easeOut' }}
+              className={`relative rounded-2xl border border-[var(--border)] border-l-4 ${style.accentBorder} bg-[var(--brand-surface)] shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-card-hover)] p-4 sm:p-5 transition-all`}
+            >
+              <div className="flex items-start gap-3 sm:gap-4">
+                {/* Icon Container */}
+                <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 border ${style.iconBg} shadow-xs`}>
+                  {style.icon}
+                </div>
+
+                {/* Content */}
+                <div className="flex-1 min-w-0">
+                  <div className="flex flex-wrap items-center gap-2 mb-2">
+                    {/* Category Chip */}
+                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wider uppercase border ${style.badgeBg}`}>
+                      {style.label}
+                    </span>
+
+                    {/* Priority Badge */}
+                    {isHighPriority && (
+                      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wide uppercase bg-rose-500/10 text-rose-700 dark:text-rose-300 border border-rose-500/20">
+                        <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />
+                        {priority} Priority
+                      </span>
+                    )}
+
+                    {/* Live Badge */}
+                    {evt.isLive && (
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-extrabold tracking-wider bg-emerald-500 text-white shadow-xs animate-pulse">
+                        LIVE
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Directive Message Body */}
+                  <div className="p-3 sm:p-3.5 rounded-xl bg-[var(--canvas)] border border-[var(--border)] text-sm sm:text-base font-semibold text-[var(--ink)] leading-relaxed shadow-xs">
+                    "{formatEvent(evt)}"
+                  </div>
+
+                  {/* Rationale if present */}
+                  {evt.rationale && evt.action !== 'DOCTOR_SUBSTITUTED' && (
+                    <div className="mt-2 text-xs text-[var(--ink-2)] flex items-start gap-1.5">
+                      <span className="font-semibold text-[var(--ink)]">Rationale:</span>
+                      <span>{evt.rationale}</span>
+                    </div>
+                  )}
+
+                  {/* Doctor & Date Stamp */}
+                  <div className="flex flex-wrap items-center gap-3 mt-2.5 text-[11px] text-[var(--ink-3)] font-medium">
+                    <span className="inline-flex items-center gap-1.5 text-[var(--ink-2)] font-semibold">
+                      <Stethoscope className="w-3.5 h-3.5 text-[var(--doctor-600)]" />
+                      {evt.doctorName ? (evt.doctorName.toLowerCase().startsWith('dr') ? evt.doctorName : `Dr. ${evt.doctorName}`) : (evt.doctorLabel || 'Attending Physician')}
+                    </span>
+                    <span>·</span>
+                    <span className="inline-flex items-center gap-1">
+                      <Clock className="w-3 h-3 text-[var(--ink-3)]" />
+                      {dateStr}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Dismiss Button */}
+                <button
+                  onClick={() => setDismissed(prev => new Set([...prev, evt.id]))}
+                  title="Dismiss this directive"
+                  className="p-1.5 sm:p-2 rounded-xl text-[var(--ink-3)] hover:text-rose-600 hover:bg-rose-500/10 border border-transparent hover:border-rose-500/20 transition-all flex-shrink-0"
+                  aria-label="Dismiss directive"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            </motion.div>
+          );
+        })}
+      </AnimatePresence>
+    </div>
+  );
 }
 
 // ─── Main Component ──────────────────────────────────────────────────────────

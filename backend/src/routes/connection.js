@@ -42,10 +42,11 @@ async function generateUniqueCode() {
 // record with no connectedUserId yet (doctor or caregiver hasn't claimed it yet).
 // ═════════════════════════════════════════════════════════════════════════════
 router.post('/generate-code', auth, requireRole(['PATIENT']), async (req, res) => {
-  const { userId } = req.user;
-  const targetRole = req.body.role === 'CAREGIVER' ? 'CAREGIVER' : 'DOCTOR';
-
   try {
+    const { userId } = req.user;
+    const body = req.body || {};
+    const targetRole = body.role === 'CAREGIVER' ? 'CAREGIVER' : 'DOCTOR';
+
     const patient = await prisma.patient.findUnique({ where: { userId } });
     if (!patient) {
       return res.status(404).json({ error: 'Patient profile not found. Complete onboarding first.' });
@@ -102,15 +103,16 @@ router.post('/generate-code', auth, requireRole(['PATIENT']), async (req, res) =
 // Doctor or Caregiver auth: provide a 6-digit code, claim the Connection.
 // ═════════════════════════════════════════════════════════════════════════════
 router.post('/claim-code', auth, requireRole(['DOCTOR', 'CAREGIVER']), async (req, res) => {
-  const { userId, role } = req.user;
-  const rawCode = req.body.code || req.body.shareCode;
-  const code = rawCode ? String(rawCode).trim() : '';
-
-  if (!code || !/^\d{6}$/.test(code)) {
-    return res.status(400).json({ error: 'Please provide a valid 6-digit code.' });
-  }
-
   try {
+    const { userId, role } = req.user;
+    const body = req.body || {};
+    const rawCode = body.code || body.shareCode;
+    const code = rawCode ? String(rawCode).trim() : '';
+
+    if (!code || !/^\d{6}$/.test(code)) {
+      return res.status(400).json({ error: 'Please provide a valid 6-digit code.' });
+    }
+
     const connection = await prisma.connection.findUnique({
       where: { shareCode: String(code).trim() },
       include: { patient: { select: { id: true, age: true, conditions: true } } },
@@ -447,7 +449,7 @@ router.get('/doctor-patient/:patientId/timeline', auth, requireRole(['DOCTOR']),
 // ═════════════════════════════════════════════════════════════════════════════
 const handleDoctorSafetyCheck = async (req, res) => {
   const { userId } = req.user;
-  const { patientId, proposedDrug, proposedMedicineName, dosage } = req.body;
+  const { patientId, proposedDrug, proposedMedicineName, dosage } = req.body || {};
 
   const rawDrug = (proposedDrug || proposedMedicineName || '').trim();
 
@@ -618,7 +620,7 @@ router.post('/doctor/prescribe-safety-check', auth, requireRole(['DOCTOR']), han
 // ═════════════════════════════════════════════════════════════════════════════
 router.post('/add-caregiver', auth, requireRole(['PATIENT']), async (req, res) => {
   const { userId } = req.user;
-  const { phone, email, name, relation } = req.body;
+  const { phone, email, name, relation } = req.body || {};
 
   let normalizedPhone = null;
   let normalizedEmail = null;
@@ -862,7 +864,7 @@ router.get('/my-connections', auth, requireRole(['PATIENT']), async (req, res) =
 // ═════════════════════════════════════════════════════════════════════════════
 router.post('/doctor-prescribe', auth, requireRole(['DOCTOR']), async (req, res) => {
   const { userId } = req.user;
-  const { patientId, name, dosage, type = 'PRESCRIPTION', foodInstruction, notes } = req.body;
+  const { patientId, name, dosage, type = 'PRESCRIPTION', foodInstruction, notes } = req.body || {};
 
   if (!patientId || !name || !name.trim()) {
     return res.status(400).json({ error: 'patientId and medication name are required.' });
@@ -1008,7 +1010,7 @@ router.post('/doctor-prescribe', auth, requireRole(['DOCTOR']), async (req, res)
 // ═════════════════════════════════════════════════════════════════════════════
 router.post('/doctor-deprescribe', auth, requireRole(['DOCTOR']), async (req, res) => {
   const { userId } = req.user;
-  const { patientId, medicineId, rationale, taperPlan } = req.body;
+  const { patientId, medicineId, rationale, taperPlan } = req.body || {};
 
   if (!patientId || !medicineId) {
     return res.status(400).json({ error: 'patientId and medicineId are required.' });
@@ -1245,7 +1247,7 @@ router.get('/doctor-patient/:patientId/clinical-summary', auth, requireRole(['DO
 // ═════════════════════════════════════════════════════════════════════════════
 router.post('/doctor-substitute', auth, requireRole(['DOCTOR']), async (req, res) => {
   const { userId } = req.user;
-  const { patientId, oldMedicineId, substituteDrugName, substituteDosage, rationale } = req.body;
+  const { patientId, oldMedicineId, substituteDrugName, substituteDosage, rationale } = req.body || {};
 
   if (!patientId || !oldMedicineId || !substituteDrugName?.trim()) {
     return res.status(400).json({ error: 'patientId, oldMedicineId, and substituteDrugName are required.' });
@@ -1370,7 +1372,7 @@ const doctorDirectivesStore = new Map();
 // ═════════════════════════════════════════════════════════════════════════════
 router.post('/doctor-directive', auth, requireRole(['DOCTOR']), async (req, res) => {
   const { userId } = req.user;
-  const { patientId, text, category = 'REGIMEN_ADVICE', priority = 'HIGH' } = req.body;
+  const { patientId, text, category = 'REGIMEN_ADVICE', priority = 'HIGH' } = req.body || {};
 
   if (!patientId || !text?.trim()) {
     return res.status(400).json({ error: 'patientId and directive text are required.' });

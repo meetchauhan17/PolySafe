@@ -22,8 +22,8 @@ import { useAuth } from '../context/AuthContext';
 
 // ─── API helpers ──────────────────────────────────────────────────────────────
 async function generateCode() {
- const { data } = await axios.post('/connection/generate-code');
- return data;
+  const { data } = await axios.post('/connection/generate-code', { role: 'DOCTOR' });
+  return data;
 }
 async function fetchPending() {
  const { data } = await axios.get('/connection/pending');
