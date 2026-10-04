@@ -38,6 +38,26 @@ async function generateUniqueCode() {
   return code;
 }
 
+/** Helper: Emits a socket event to a patient's rooms without duplicate emissions */
+function emitToPatient(io, patientOrId, eventName, payload) {
+  if (!io) return;
+  const ids = [];
+  if (typeof patientOrId === 'string') {
+    ids.push(patientOrId);
+  } else if (patientOrId && typeof patientOrId === 'object') {
+    if (patientOrId.userId) ids.push(patientOrId.userId);
+    if (patientOrId.id) ids.push(patientOrId.id);
+  }
+  const uniqueRooms = [...new Set(ids.filter(Boolean).map((id) => `patient-${id}`))];
+  if (uniqueRooms.length === 0) return;
+
+  let emitter = io;
+  uniqueRooms.forEach((r) => {
+    emitter = emitter.to(r);
+  });
+  emitter.emit(eventName, payload);
+}
+
 // ═════════════════════════════════════════════════════════════════════════════
 // POST /connection/generate-code
 // Patient-auth: generates a new invite code + QR, creates a PENDING Connection
@@ -977,26 +997,6 @@ router.post('/doctor-prescribe', auth, requireRole(['DOCTOR']), async (req, res)
     // 7. Calculate updated burden & risk
     const cumulativeBurden = await calculateCumulativeBurden(patientId);
     const regimenRisk = await calculateRegimenRisk(patientId);
-
-/** Helper: Emits a socket event to a patient's rooms without duplicate emissions */
-function emitToPatient(io, patientOrId, eventName, payload) {
-  if (!io) return;
-  const ids = [];
-  if (typeof patientOrId === 'string') {
-    ids.push(patientOrId);
-  } else if (patientOrId && typeof patientOrId === 'object') {
-    if (patientOrId.userId) ids.push(patientOrId.userId);
-    if (patientOrId.id) ids.push(patientOrId.id);
-  }
-  const uniqueRooms = [...new Set(ids.filter(Boolean).map((id) => `patient-${id}`))];
-  if (uniqueRooms.length === 0) return;
-
-  let emitter = io;
-  uniqueRooms.forEach((r) => {
-    emitter = emitter.to(r);
-  });
-  emitter.emit(eventName, payload);
-}
 
     // 8. Emit real-time Socket notification to patient room (deduplicated)
     const io = req.app.get('io');
