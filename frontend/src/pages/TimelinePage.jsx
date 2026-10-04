@@ -284,10 +284,31 @@ export default function TimelinePage() {
  </div>
  );
  }
+  const medicines = isGuest ? DEMO_TIMELINE_MEDICINES : (data?.medicines ?? (token ? [] : DEMO_TIMELINE_MEDICINES));
+  const directives = isGuest ? DEMO_TIMELINE_DIRECTIVES : (data?.directives ?? []);
+  const flaggedCount = medicines.filter((m) => m.flagged).length;
+  const herbalCount = medicines.filter((m) => m.type === 'HERBAL').length;
 
- const medicines = isGuest ? DEMO_TIMELINE_MEDICINES : (data?.medicines ?? (token ? [] : DEMO_TIMELINE_MEDICINES));
- const flaggedCount = medicines.filter((m) => m.flagged).length;
- const herbalCount = medicines.filter((m) => m.type === 'HERBAL').length;
+  const allTimelineItems = [
+    ...medicines.map((m) => ({
+      itemType: 'MEDICINE',
+      id: `med-${m.id}`,
+      timestamp: m.dateAdded || new Date().toISOString(),
+      data: m,
+    })),
+    ...directives.map((d) => ({
+      itemType: 'DIRECTIVE',
+      id: `dir-${d.id}`,
+      timestamp: d.issuedAt || new Date().toISOString(),
+      data: d,
+    })),
+  ].sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+
+  const displayItems = allTimelineItems.filter((item) => {
+    if (timelineFilter === 'MEDS') return item.itemType === 'MEDICINE';
+    if (timelineFilter === 'DIRECTIVES') return item.itemType === 'DIRECTIVE';
+    return true;
+  });
 
   return (
     <div className="min-h-[88vh] pb-16">
