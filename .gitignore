@@ -111,9 +111,8 @@ build_submission.js
 *.docx
 
 # ------------------------------------------------------------------------------
-# Master Study Guides & Project Handbooks (EXPLICITLY PRESERVED & TRACKED)
+# Team Presentation Handbooks & Exam Guides (Local Offline Artifacts)
 # ------------------------------------------------------------------------------
-!POLYSAFE_MASTER_PROJECT_AND_JUDGES_GUIDE.md
-!POLYSAFE_EXAM_STUDY_GUIDE.html
-!POLYSAFE_EXAM_STUDY_GUIDE.pdf
-!README.md
+POLYSAFE_MASTER_PROJECT_AND_JUDGES_GUIDE.md
+POLYSAFE_EXAM_STUDY_GUIDE.html
+POLYSAFE_EXAM_STUDY_GUIDE.pdf

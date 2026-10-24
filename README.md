@@ -45,18 +45,20 @@ PolySafe is fully deployed in production on Vercel Serverless paired with Neon S
 
 ## Master Study Kit: Exam, Presentation & Defense Playbooks
 
-For academic examinations, hackathon presentations, and clinical defense panels, PolySafe provides three synchronized study and documentation artifacts:
+For academic examinations, hackathon presentations, and clinical defense panels, PolySafe provides three local study and documentation artifacts in the project workspace:
 
 | Resource Document | Format | Size | Purpose & Scope |
 |:---|:---:|:---:|:---|
-| [`POLYSAFE_MASTER_PROJECT_AND_JUDGES_GUIDE.md`](./POLYSAFE_MASTER_PROJECT_AND_JUDGES_GUIDE.md) | Markdown | 45 KB (625 lines) | **Complete 11-Chapter Team Bible**: Plain-English concept, clinical urgency, all 7 math scoring models, 5 subsystems, 3 portals, architecture, 5-person role scripts, 5-minute live demo choreography, top 15 judge defense Q&As, and medical glossary. |
-| [`POLYSAFE_EXAM_STUDY_GUIDE.pdf`](./POLYSAFE_EXAM_STUDY_GUIDE.pdf) | PDF (Print-Ready) | 908 KB | **Physical Exam & Judge Handout**: Pre-compiled, high-density study guide styled like an academic clinical pharmacology exam paper. Ideal for printing on standard A4 or offline reading on tablets/phones. |
-| [`POLYSAFE_EXAM_STUDY_GUIDE.html`](./POLYSAFE_EXAM_STUDY_GUIDE.html) | Interactive HTML | 42 KB (792 lines) | **Print-Optimized Template**: Custom `@media print` layout with typography (`Inter`, `JetBrains Mono`), double-rule exam borders, math callouts, and auto-page breaks. Open in Chrome/Edge and press `Ctrl + P` to print. |
+| `POLYSAFE_MASTER_PROJECT_AND_JUDGES_GUIDE.md` | Markdown | 45 KB (625 lines) | **Complete 11-Chapter Team Bible**: Plain-English concept, clinical urgency, all 7 math scoring models, 5 subsystems, 3 portals, architecture, 5-person role scripts, 5-minute live demo choreography, top 15 judge defense Q&As, and medical glossary. |
+| `POLYSAFE_EXAM_STUDY_GUIDE.pdf` | PDF (Print-Ready) | 908 KB | **Physical Exam & Judge Handout**: Pre-compiled, high-density study guide styled like an academic clinical pharmacology exam paper. Ideal for printing on standard A4 or offline reading on tablets/phones. |
+| `POLYSAFE_EXAM_STUDY_GUIDE.html` | Interactive HTML | 42 KB (792 lines) | **Print-Optimized Template**: Custom `@media print` layout with typography (`Inter`, `JetBrains Mono`), double-rule exam borders, math callouts, and auto-page breaks. Open in Chrome/Edge and press `Ctrl + P` to print. |
+
+> **Note**: These master study documents are maintained locally in the project repository for team preparation, offline study, and live panel evaluations.
 
 ### How to Use the Study Kit
 
-* **For Team Pre-Pitch Revision**: Read [`POLYSAFE_MASTER_PROJECT_AND_JUDGES_GUIDE.md`](./POLYSAFE_MASTER_PROJECT_AND_JUDGES_GUIDE.md) Chapter 8 (5-Person Role Scripts) and Chapter 10 (Top 15 Tough Judge Questions).
-* **For Booth Demonstrations**: Print [`POLYSAFE_EXAM_STUDY_GUIDE.pdf`](./POLYSAFE_EXAM_STUDY_GUIDE.pdf) or keep it open on an iPad/tablet to show judges full mathematical rigor.
+* **For Team Pre-Pitch Revision**: Review `POLYSAFE_MASTER_PROJECT_AND_JUDGES_GUIDE.md` Chapter 8 (5-Person Role Scripts) and Chapter 10 (Top 15 Tough Judge Questions).
+* **For Booth Demonstrations**: Print `POLYSAFE_EXAM_STUDY_GUIDE.pdf` or present it on an iPad/tablet to show judges complete pharmacological equations and proof.
 * **To Recompile the PDF from HTML**: Run this PowerShell command from the project root:
   ```powershell
   Start-Process -FilePath "msedge.exe" -ArgumentList "--headless", "--disable-gpu", "--run-all-compositor-stages-before-draw", "--print-to-pdf=`"C:\Meet\xyz\PolySafe\POLYSAFE_EXAM_STUDY_GUIDE.pdf`"", "`"file:///C:/Meet/xyz/PolySafe/POLYSAFE_EXAM_STUDY_GUIDE.html`"" -Wait
@@ -475,7 +477,7 @@ ALL 18 CLINICAL ENDPOINTS & SYSTEM WORKFLOWS VERIFIED (100% OK)
 
 ## Detailed Study Guide Chapter Index
 
-The [`POLYSAFE_MASTER_PROJECT_AND_JUDGES_GUIDE.md`](./POLYSAFE_MASTER_PROJECT_AND_JUDGES_GUIDE.md) document contains 11 comprehensive chapters:
+The `POLYSAFE_MASTER_PROJECT_AND_JUDGES_GUIDE.md` document contains 11 comprehensive chapters:
 
 1. **What is PolySafe in Plain English?** - Relatable grandfather narrative, multi-doctor silos, and whole-regimen safety vs pair-checking.
 2. **The Big Problem (Why PolySafe Must Exist)** - Clinical statistics (30%+ senior admissions, 50%+ preventable) and the 4 fatal healthcare traps.
