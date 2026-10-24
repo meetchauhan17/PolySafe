@@ -48,6 +48,12 @@ export function SocketProvider({ children }) {
 
     const socketUrl = getSocketUrl();
 
+    // Vercel serverless functions do not host persistent WebSocket servers.
+    // Gracefully bypass to prevent continuous connection errors and network console noise.
+    if (socketUrl.includes('vercel.app')) {
+      return;
+    }
+
     // Reuse existing socket if already connected to the same destination
     if (socketRef.current) {
       if (socketRef.current.connected) {
@@ -59,10 +65,10 @@ export function SocketProvider({ children }) {
     const socket = socketIO(socketUrl, {
       transports: ['websocket', 'polling'],
       reconnection: true,
-      reconnectionAttempts: Infinity,
+      reconnectionAttempts: 5,
       reconnectionDelay: 1000,
       reconnectionDelayMax: 5000,
-      timeout: 20000,
+      timeout: 10000,
       autoConnect: true,
     });
 

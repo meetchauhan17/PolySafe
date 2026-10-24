@@ -69,3 +69,4 @@ backend/scripts/*.png
 backend/scripts/*.cjs
 
 
+.neon

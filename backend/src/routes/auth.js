@@ -11,7 +11,7 @@ const { auth } = require('../middleware/auth');
 const router = express.Router();
 
 const SALT_ROUNDS = 12;
-const DUMMY_HASH = '$2b$12$invalidhashpaddingtopreventinenumeration00000000000000000';
+const DUMMY_HASH = '$2b$12$swTEbp1nLWgwDCWbRDS5oe2S4UOPqe4O5ex7Mx97O609rKL.t24MS';
 
 // ─── Rate limiters ─────────────────────────────────────────────────────────────
 

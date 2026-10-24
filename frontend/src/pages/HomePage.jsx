@@ -725,8 +725,8 @@ export default function HomePage() {
     queryKey: ['home-summary', token],
     queryFn: () => patientApi.getHomeSummary(token),
     enabled: !!token && !user?.isGuest,
-    staleTime: 3000,
-    refetchInterval: 4000, // Real-time 4s polling for live doctor prescriptions & safety updates
+    staleTime: 10000,
+    refetchInterval: 15000, // Responsive 15s sync for live doctor prescriptions & safety updates
   });
 
  // ─── Mutations for Edit & Discontinue ──────────────────────────────────────

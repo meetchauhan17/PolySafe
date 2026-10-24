@@ -19,8 +19,8 @@ if (API_BASE_URL) {
   axios.defaults.baseURL = API_BASE_URL;
 }
 
-// Global 8-second request timeout for all API communications
-axios.defaults.timeout = 8000;
+// Global 25-second request timeout for all API communications (allows for serverless cold-starts & AI analysis)
+axios.defaults.timeout = 25000;
 
 // Global response interceptor for resilient clinical notifications
 axios.interceptors.response.use(
@@ -28,7 +28,7 @@ axios.interceptors.response.use(
   (error) => {
     let message = 'Network connection issue. Please check your connectivity.';
     if (error.code === 'ECONNABORTED' || error.message?.includes('timeout')) {
-      message = 'Request timed out after 8s. The server may be waking up.';
+      message = 'Request timed out. The server may be waking up, please retry.';
     } else if (error.response?.data?.error) {
       message = typeof error.response.data.error === 'string'
         ? error.response.data.error
