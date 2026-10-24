@@ -4968,5 +4968,2139 @@
     "safetyTip": "Max 4,000mg per 24 hours. Keep at least 4-6 hours between consecutive doses.",
     "standardizedCode": "161",
     "layer": "Layer 3 (Fuzzy Match: Dolo 650)"
+  },
+  "pan-d": {
+    "brandName": "Pan-D",
+    "standardGeneric": "Pantoprazole + Domperidone",
+    "constituents": [
+      "Pantoprazole",
+      "Domperidone"
+    ],
+    "primaryRxCui": null,
+    "dosage": "40mg+10mg",
+    "dosageOptions": [],
+    "category": "PPI + Prokinetic (GERD / Dyspepsia)",
+    "safetyTip": "Take 30-60 minutes before morning breakfast on an empty stomach for maximum acid suppression.",
+    "foodInstruction": "before_food",
+    "manufacturer": "Alkem",
+    "source": "indian_formulary"
+  },
+  "pantocid-d": {
+    "brandName": "Pantocid-D",
+    "standardGeneric": "Pantoprazole + Domperidone",
+    "constituents": [
+      "Pantoprazole",
+      "Domperidone"
+    ],
+    "primaryRxCui": null,
+    "dosage": "40mg+30mg SR",
+    "dosageOptions": [],
+    "category": "PPI + Prokinetic (GERD / Dyspepsia)",
+    "safetyTip": "Take 30 minutes before the first meal of the day with water.",
+    "foodInstruction": "before_food",
+    "manufacturer": "Sun Pharma",
+    "source": "indian_formulary"
+  },
+  "razo-d": {
+    "brandName": "Razo-D",
+    "standardGeneric": "Rabeprazole + Domperidone",
+    "constituents": [
+      "Rabeprazole",
+      "Domperidone"
+    ],
+    "primaryRxCui": null,
+    "dosage": "20mg+30mg DSR",
+    "dosageOptions": [],
+    "category": "PPI + Prokinetic (GERD)",
+    "safetyTip": "Take on empty stomach 30 mins before morning meal. Avoid in patients with cardiac QT prolongation.",
+    "foodInstruction": "before_food",
+    "manufacturer": "Dr. Reddy",
+    "source": "indian_formulary"
+  },
+  "rabekind-dsr": {
+    "brandName": "Rabekind-DSR",
+    "standardGeneric": "Rabeprazole + Domperidone",
+    "constituents": [
+      "Rabeprazole",
+      "Domperidone"
+    ],
+    "primaryRxCui": null,
+    "dosage": "20mg+30mg SR",
+    "dosageOptions": [],
+    "category": "PPI + Prokinetic (GERD)",
+    "safetyTip": "Take before breakfast. Swallow whole, do not crush or chew sustained-release capsules.",
+    "foodInstruction": "before_food",
+    "manufacturer": "Mankind",
+    "source": "indian_formulary"
+  },
+  "sompraz-d": {
+    "brandName": "Sompraz-D",
+    "standardGeneric": "Esomeprazole + Domperidone",
+    "constituents": [
+      "Esomeprazole",
+      "Domperidone"
+    ],
+    "primaryRxCui": null,
+    "dosage": "40mg+30mg SR",
+    "dosageOptions": [],
+    "category": "PPI + Prokinetic (GERD)",
+    "safetyTip": "High-efficacy acid control for severe reflux and erosive esophagitis.",
+    "foodInstruction": "before_food",
+    "manufacturer": "Sun Pharma",
+    "source": "indian_formulary"
+  },
+  "sucrafil": {
+    "brandName": "Sucrafil",
+    "standardGeneric": "Sucralfate",
+    "constituents": [
+      "Sucralfate"
+    ],
+    "primaryRxCui": null,
+    "dosage": "1000mg/5ml suspension",
+    "dosageOptions": [],
+    "category": "Mucosal Protective Agent (Anti-ulcer)",
+    "safetyTip": "Take on empty stomach 1 hour before or 2 hours after meals. Separate from other oral meds by 2 hours.",
+    "foodInstruction": "empty_stomach",
+    "manufacturer": "Fourrts",
+    "source": "indian_formulary"
+  },
+  "udiliv 300": {
+    "brandName": "Udiliv 300",
+    "standardGeneric": "Ursodeoxycholic Acid",
+    "constituents": [
+      "Ursodeoxycholic Acid"
+    ],
+    "primaryRxCui": null,
+    "dosage": "150mg",
+    "dosageOptions": [],
+    "category": "Hepatoprotective / Bile Acid",
+    "safetyTip": "Take with milk or meals. Regular liver function tests recommended during chronic therapy.",
+    "foodInstruction": "with_food",
+    "manufacturer": "Abbott",
+    "source": "indian_formulary"
+  },
+  "udiliv300": {
+    "brandName": "Udiliv 300",
+    "standardGeneric": "Ursodeoxycholic Acid",
+    "constituents": [
+      "Ursodeoxycholic Acid"
+    ],
+    "primaryRxCui": null,
+    "dosage": "150mg",
+    "dosageOptions": [],
+    "category": "Hepatoprotective / Bile Acid",
+    "safetyTip": "Take with milk or meals. Regular liver function tests recommended during chronic therapy.",
+    "foodInstruction": "with_food",
+    "manufacturer": "Abbott",
+    "source": "indian_formulary_variant"
+  },
+  "udiliv": {
+    "brandName": "Udiliv 300",
+    "standardGeneric": "Ursodeoxycholic Acid",
+    "constituents": [
+      "Ursodeoxycholic Acid"
+    ],
+    "primaryRxCui": null,
+    "dosage": "150mg",
+    "dosageOptions": [],
+    "category": "Hepatoprotective / Bile Acid",
+    "safetyTip": "Take with milk or meals. Regular liver function tests recommended during chronic therapy.",
+    "foodInstruction": "with_food",
+    "manufacturer": "Abbott",
+    "source": "indian_formulary_variant"
+  },
+  "cremaffin": {
+    "brandName": "Cremaffin",
+    "standardGeneric": "Liquid Paraffin + Magnesium Hydroxide",
+    "constituents": [
+      "Liquid Paraffin",
+      "Magnesium Hydroxide"
+    ],
+    "primaryRxCui": null,
+    "dosage": "15ml at bedtime",
+    "dosageOptions": [],
+    "category": "Laxative / Stool Softener",
+    "safetyTip": "Take at bedtime with plenty of water. Avoid long-term continuous use without doctor advice.",
+    "foodInstruction": "after_food",
+    "manufacturer": "Abbott",
+    "source": "indian_formulary"
+  },
+  "dulcolax": {
+    "brandName": "Dulcolax",
+    "standardGeneric": "Bisacodyl",
+    "constituents": [
+      "Bisacodyl"
+    ],
+    "primaryRxCui": null,
+    "dosage": "5mg",
+    "dosageOptions": [],
+    "category": "Stimulant Laxative",
+    "safetyTip": "Take at bedtime. Do not take with antacids or milk to avoid premature enteric coating dissolution.",
+    "foodInstruction": "after_food",
+    "manufacturer": "Sanofi",
+    "source": "indian_formulary"
+  },
+  "telma h": {
+    "brandName": "Telma H",
+    "standardGeneric": "Telmisartan + Hydrochlorothiazide",
+    "constituents": [
+      "Telmisartan",
+      "Hydrochlorothiazide"
+    ],
+    "primaryRxCui": null,
+    "dosage": "40mg+12.5mg",
+    "dosageOptions": [],
+    "category": "ARB + Thiazide Diuretic (Antihypertensive)",
+    "safetyTip": "Take in the morning. Monitor serum potassium, creatinine, and hydration status regularly.",
+    "foodInstruction": "any",
+    "manufacturer": "Glenmark",
+    "source": "indian_formulary"
+  },
+  "telmah": {
+    "brandName": "Telma H",
+    "standardGeneric": "Telmisartan + Hydrochlorothiazide",
+    "constituents": [
+      "Telmisartan",
+      "Hydrochlorothiazide"
+    ],
+    "primaryRxCui": null,
+    "dosage": "40mg+12.5mg",
+    "dosageOptions": [],
+    "category": "ARB + Thiazide Diuretic (Antihypertensive)",
+    "safetyTip": "Take in the morning. Monitor serum potassium, creatinine, and hydration status regularly.",
+    "foodInstruction": "any",
+    "manufacturer": "Glenmark",
+    "source": "indian_formulary_variant"
+  },
+  "telma am": {
+    "brandName": "Telma AM",
+    "standardGeneric": "Telmisartan + Amlodipine",
+    "constituents": [
+      "Telmisartan",
+      "Amlodipine"
+    ],
+    "primaryRxCui": null,
+    "dosage": "40mg+5mg",
+    "dosageOptions": [],
+    "category": "ARB + Calcium Channel Blocker",
+    "safetyTip": "Dual-action hypertension control. Check blood pressure regularly; report ankle swelling.",
+    "foodInstruction": "any",
+    "manufacturer": "Glenmark",
+    "source": "indian_formulary"
+  },
+  "telmaam": {
+    "brandName": "Telma AM",
+    "standardGeneric": "Telmisartan + Amlodipine",
+    "constituents": [
+      "Telmisartan",
+      "Amlodipine"
+    ],
+    "primaryRxCui": null,
+    "dosage": "40mg+5mg",
+    "dosageOptions": [],
+    "category": "ARB + Calcium Channel Blocker",
+    "safetyTip": "Dual-action hypertension control. Check blood pressure regularly; report ankle swelling.",
+    "foodInstruction": "any",
+    "manufacturer": "Glenmark",
+    "source": "indian_formulary_variant"
+  },
+  "telma": {
+    "brandName": "Telma",
+    "standardGeneric": "Telmisartan",
+    "constituents": [
+      "Telmisartan"
+    ],
+    "primaryRxCui": null,
+    "dosage": "20mg",
+    "dosageOptions": [],
+    "category": "Angiotensin II Receptor Blocker (ARB)",
+    "safetyTip": "Cardioprotective antihypertensive. Contraindicated during pregnancy.",
+    "foodInstruction": "any",
+    "manufacturer": "Glenmark",
+    "source": "indian_formulary"
+  },
+  "amlokind": {
+    "brandName": "Amlokind",
+    "standardGeneric": "Amlodipine",
+    "constituents": [
+      "Amlodipine"
+    ],
+    "primaryRxCui": null,
+    "dosage": "5mg",
+    "dosageOptions": [],
+    "category": "Calcium Channel Blocker (Antihypertensive)",
+    "safetyTip": "Take at the same time each day for consistent 24-hour blood pressure control.",
+    "foodInstruction": "any",
+    "manufacturer": "Mankind",
+    "source": "indian_formulary"
+  },
+  "stamlo beta": {
+    "brandName": "Stamlo Beta",
+    "standardGeneric": "Amlodipine + Atenolol",
+    "constituents": [
+      "Amlodipine",
+      "Atenolol"
+    ],
+    "primaryRxCui": null,
+    "dosage": "5mg+50mg",
+    "dosageOptions": [],
+    "category": "CCB + Beta-1 Blocker (Antihypertensive)",
+    "safetyTip": "Do not discontinue abruptly to prevent rebound tachycardia and acute hypertensive crisis.",
+    "foodInstruction": "any",
+    "manufacturer": "Dr. Reddy",
+    "source": "indian_formulary"
+  },
+  "stamlobeta": {
+    "brandName": "Stamlo Beta",
+    "standardGeneric": "Amlodipine + Atenolol",
+    "constituents": [
+      "Amlodipine",
+      "Atenolol"
+    ],
+    "primaryRxCui": null,
+    "dosage": "5mg+50mg",
+    "dosageOptions": [],
+    "category": "CCB + Beta-1 Blocker (Antihypertensive)",
+    "safetyTip": "Do not discontinue abruptly to prevent rebound tachycardia and acute hypertensive crisis.",
+    "foodInstruction": "any",
+    "manufacturer": "Dr. Reddy",
+    "source": "indian_formulary_variant"
+  },
+  "cilacar": {
+    "brandName": "Cilacar",
+    "standardGeneric": "Cilnidipine",
+    "constituents": [
+      "Cilnidipine"
+    ],
+    "primaryRxCui": null,
+    "dosage": "5mg",
+    "dosageOptions": [],
+    "category": "L/N-Type Calcium Channel Blocker",
+    "safetyTip": "Dual L/N-type blocker with lower incidence of ankle edema compared to traditional amlodipine.",
+    "foodInstruction": "any",
+    "manufacturer": "J.B. Chemicals",
+    "source": "indian_formulary"
+  },
+  "concor": {
+    "brandName": "Concor",
+    "standardGeneric": "Bisoprolol",
+    "constituents": [
+      "Bisoprolol"
+    ],
+    "primaryRxCui": null,
+    "dosage": "2.5mg",
+    "dosageOptions": [],
+    "category": "Cardioselective Beta-1 Blocker",
+    "safetyTip": "Take in morning with water. Monitor resting pulse; do not skip doses abruptly.",
+    "foodInstruction": "any",
+    "manufacturer": "Merck",
+    "source": "indian_formulary"
+  },
+  "cardivas": {
+    "brandName": "Cardivas",
+    "standardGeneric": "Carvedilol",
+    "constituents": [
+      "Carvedilol"
+    ],
+    "primaryRxCui": null,
+    "dosage": "3.125mg",
+    "dosageOptions": [],
+    "category": "Non-selective Beta + Alpha-1 Blocker",
+    "safetyTip": "Take with food to minimize orthostatic hypotension and lightheadedness. Used in heart failure.",
+    "foodInstruction": "with_food",
+    "manufacturer": "Sun Pharma",
+    "source": "indian_formulary"
+  },
+  "metolar xr": {
+    "brandName": "Metolar XR",
+    "standardGeneric": "Metoprolol",
+    "constituents": [
+      "Metoprolol"
+    ],
+    "primaryRxCui": null,
+    "dosage": "25mg",
+    "dosageOptions": [],
+    "category": "Cardioselective Beta-1 Blocker",
+    "safetyTip": "Sustained-release for angina and hypertension. Swallow whole with water.",
+    "foodInstruction": "after_food",
+    "manufacturer": "Cipla",
+    "source": "indian_formulary"
+  },
+  "metolarxr": {
+    "brandName": "Metolar XR",
+    "standardGeneric": "Metoprolol",
+    "constituents": [
+      "Metoprolol"
+    ],
+    "primaryRxCui": null,
+    "dosage": "25mg",
+    "dosageOptions": [],
+    "category": "Cardioselective Beta-1 Blocker",
+    "safetyTip": "Sustained-release for angina and hypertension. Swallow whole with water.",
+    "foodInstruction": "after_food",
+    "manufacturer": "Cipla",
+    "source": "indian_formulary_variant"
+  },
+  "starpress xl": {
+    "brandName": "Starpress XL",
+    "standardGeneric": "Metoprolol",
+    "constituents": [
+      "Metoprolol"
+    ],
+    "primaryRxCui": null,
+    "dosage": "25mg",
+    "dosageOptions": [],
+    "category": "Beta-1 Selective Adrenoreceptor Blocker",
+    "safetyTip": "Extended-release formulation. Do not crush or chew tablets.",
+    "foodInstruction": "after_food",
+    "manufacturer": "Lupin",
+    "source": "indian_formulary"
+  },
+  "starpressxl": {
+    "brandName": "Starpress XL",
+    "standardGeneric": "Metoprolol",
+    "constituents": [
+      "Metoprolol"
+    ],
+    "primaryRxCui": null,
+    "dosage": "25mg",
+    "dosageOptions": [],
+    "category": "Beta-1 Selective Adrenoreceptor Blocker",
+    "safetyTip": "Extended-release formulation. Do not crush or chew tablets.",
+    "foodInstruction": "after_food",
+    "manufacturer": "Lupin",
+    "source": "indian_formulary_variant"
+  },
+  "clopilet": {
+    "brandName": "Clopilet",
+    "standardGeneric": "Clopidogrel",
+    "constituents": [
+      "Clopidogrel"
+    ],
+    "primaryRxCui": null,
+    "dosage": "75mg",
+    "dosageOptions": [],
+    "category": "P2Y12 Antiplatelet Agent",
+    "safetyTip": "Prevents vascular thrombosis and stent occlusion. Avoid combining with Omeprazole; use Pantoprazole instead.",
+    "foodInstruction": "any",
+    "manufacturer": "Sun Pharma",
+    "source": "indian_formulary"
+  },
+  "brilinta": {
+    "brandName": "Brilinta",
+    "standardGeneric": "Ticagrelor",
+    "constituents": [
+      "Ticagrelor"
+    ],
+    "primaryRxCui": null,
+    "dosage": "90mg",
+    "dosageOptions": [],
+    "category": "Reversible P2Y12 Antiplatelet",
+    "safetyTip": "Potent reversible platelet inhibitor. Dyspnea (shortness of breath) is a recognized common side effect.",
+    "foodInstruction": "any",
+    "manufacturer": "AstraZeneca",
+    "source": "indian_formulary"
+  },
+  "pradaxa": {
+    "brandName": "Pradaxa",
+    "standardGeneric": "Dabigatran",
+    "constituents": [
+      "Dabigatran"
+    ],
+    "primaryRxCui": null,
+    "dosage": "110mg",
+    "dosageOptions": [],
+    "category": "Direct Thrombin Inhibitor (DOAC)",
+    "safetyTip": "HIGH-ALERT NOAC: Swallow whole with full glass of water. Keep in original moisture-proof blister.",
+    "foodInstruction": "with_food",
+    "manufacturer": "Boehringer Ingelheim",
+    "source": "indian_formulary"
+  },
+  "lasix": {
+    "brandName": "Lasix",
+    "standardGeneric": "Furosemide",
+    "constituents": [
+      "Furosemide"
+    ],
+    "primaryRxCui": null,
+    "dosage": "20mg",
+    "dosageOptions": [],
+    "category": "Loop Diuretic (Fluid Reduction)",
+    "safetyTip": "Take in morning to avoid nocturnal urination. Monitor potassium levels and blood pressure.",
+    "foodInstruction": "empty_stomach",
+    "manufacturer": "Sanofi",
+    "source": "indian_formulary"
+  },
+  "dytor": {
+    "brandName": "Dytor",
+    "standardGeneric": "Torsemide",
+    "constituents": [
+      "Torsemide"
+    ],
+    "primaryRxCui": null,
+    "dosage": "5mg",
+    "dosageOptions": [],
+    "category": "Loop Diuretic (Long-acting)",
+    "safetyTip": "High-bioavailability loop diuretic for heart failure edema. Take in the morning.",
+    "foodInstruction": "empty_stomach",
+    "manufacturer": "Cipla",
+    "source": "indian_formulary"
+  },
+  "aldactone": {
+    "brandName": "Aldactone",
+    "standardGeneric": "Spironolactone",
+    "constituents": [
+      "Spironolactone"
+    ],
+    "primaryRxCui": null,
+    "dosage": "25mg",
+    "dosageOptions": [],
+    "category": "Potassium-Sparing Diuretic / Aldosterone Antagonist",
+    "safetyTip": "Take with breakfast. High risk of hyperkalemia if combined with ACE inhibitors or potassium supplements.",
+    "foodInstruction": "with_food",
+    "manufacturer": "RPG Life Sciences",
+    "source": "indian_formulary"
+  },
+  "lanoxin": {
+    "brandName": "Lanoxin",
+    "standardGeneric": "Digoxin",
+    "constituents": [
+      "Digoxin"
+    ],
+    "primaryRxCui": null,
+    "dosage": "0.25mg",
+    "dosageOptions": [],
+    "category": "Cardiac Glycoside (Narrow Index)",
+    "safetyTip": "NARROW THERAPEUTIC INDEX: Watch for toxicity (nausea, yellow-green halos, bradycardia). Check serum levels.",
+    "foodInstruction": "any",
+    "manufacturer": "GSK",
+    "source": "indian_formulary"
+  },
+  "atorlip": {
+    "brandName": "Atorlip",
+    "standardGeneric": "Atorvastatin",
+    "constituents": [
+      "Atorvastatin"
+    ],
+    "primaryRxCui": null,
+    "dosage": "10mg",
+    "dosageOptions": [],
+    "category": "HMG-CoA Reductase Inhibitor (Statin)",
+    "safetyTip": "Take at bedtime. Report unexplained muscle soreness, tenderness, or dark urine to physician.",
+    "foodInstruction": "after_food",
+    "manufacturer": "Cipla",
+    "source": "indian_formulary"
+  },
+  "rozavel": {
+    "brandName": "Rozavel",
+    "standardGeneric": "Rosuvastatin",
+    "constituents": [
+      "Rosuvastatin"
+    ],
+    "primaryRxCui": null,
+    "dosage": "5mg",
+    "dosageOptions": [],
+    "category": "HMG-CoA Reductase Inhibitor (Statin)",
+    "safetyTip": "High-potency lipid lowering. Routine liver enzyme and lipid panel monitoring advised.",
+    "foodInstruction": "any",
+    "manufacturer": "Sun Pharma",
+    "source": "indian_formulary"
+  },
+  "glycomet-gp 2": {
+    "brandName": "Glycomet-GP 2",
+    "standardGeneric": "Glimepiride + Metformin",
+    "constituents": [
+      "Glimepiride",
+      "Metformin"
+    ],
+    "primaryRxCui": null,
+    "dosage": "2mg+500mg",
+    "dosageOptions": [],
+    "category": "Dual Oral Antidiabetic (Sulfonylurea + Biguanide)",
+    "safetyTip": "Take with morning breakfast. High hypoglycemia risk if breakfast is delayed or skipped.",
+    "foodInstruction": "with_food",
+    "manufacturer": "USV",
+    "source": "indian_formulary"
+  },
+  "glycomet-gp2": {
+    "brandName": "Glycomet-GP 2",
+    "standardGeneric": "Glimepiride + Metformin",
+    "constituents": [
+      "Glimepiride",
+      "Metformin"
+    ],
+    "primaryRxCui": null,
+    "dosage": "2mg+500mg",
+    "dosageOptions": [],
+    "category": "Dual Oral Antidiabetic (Sulfonylurea + Biguanide)",
+    "safetyTip": "Take with morning breakfast. High hypoglycemia risk if breakfast is delayed or skipped.",
+    "foodInstruction": "with_food",
+    "manufacturer": "USV",
+    "source": "indian_formulary_variant"
+  },
+  "glycomet-gp": {
+    "brandName": "Glycomet-GP 2",
+    "standardGeneric": "Glimepiride + Metformin",
+    "constituents": [
+      "Glimepiride",
+      "Metformin"
+    ],
+    "primaryRxCui": null,
+    "dosage": "2mg+500mg",
+    "dosageOptions": [],
+    "category": "Dual Oral Antidiabetic (Sulfonylurea + Biguanide)",
+    "safetyTip": "Take with morning breakfast. High hypoglycemia risk if breakfast is delayed or skipped.",
+    "foodInstruction": "with_food",
+    "manufacturer": "USV",
+    "source": "indian_formulary_variant"
+  },
+  "glycomet-gp 1": {
+    "brandName": "Glycomet-GP 1",
+    "standardGeneric": "Glimepiride + Metformin",
+    "constituents": [
+      "Glimepiride",
+      "Metformin"
+    ],
+    "primaryRxCui": null,
+    "dosage": "1mg+500mg",
+    "dosageOptions": [],
+    "category": "Dual Oral Antidiabetic (Sulfonylurea + Biguanide)",
+    "safetyTip": "Take with the first main meal of the day. Keep fast-acting glucose tablets handy.",
+    "foodInstruction": "with_food",
+    "manufacturer": "USV",
+    "source": "indian_formulary"
+  },
+  "glycomet-gp1": {
+    "brandName": "Glycomet-GP 1",
+    "standardGeneric": "Glimepiride + Metformin",
+    "constituents": [
+      "Glimepiride",
+      "Metformin"
+    ],
+    "primaryRxCui": null,
+    "dosage": "1mg+500mg",
+    "dosageOptions": [],
+    "category": "Dual Oral Antidiabetic (Sulfonylurea + Biguanide)",
+    "safetyTip": "Take with the first main meal of the day. Keep fast-acting glucose tablets handy.",
+    "foodInstruction": "with_food",
+    "manufacturer": "USV",
+    "source": "indian_formulary_variant"
+  },
+  "galvus met": {
+    "brandName": "Galvus Met",
+    "standardGeneric": "Vildagliptin + Metformin",
+    "constituents": [
+      "Vildagliptin",
+      "Metformin"
+    ],
+    "primaryRxCui": null,
+    "dosage": "50mg+500mg",
+    "dosageOptions": [],
+    "category": "DPP-4 Inhibitor + Biguanide",
+    "safetyTip": "Twice-daily dosing with morning and evening meals. Periodic liver function tests advised.",
+    "foodInstruction": "with_food",
+    "manufacturer": "Novartis",
+    "source": "indian_formulary"
+  },
+  "galvusmet": {
+    "brandName": "Galvus Met",
+    "standardGeneric": "Vildagliptin + Metformin",
+    "constituents": [
+      "Vildagliptin",
+      "Metformin"
+    ],
+    "primaryRxCui": null,
+    "dosage": "50mg+500mg",
+    "dosageOptions": [],
+    "category": "DPP-4 Inhibitor + Biguanide",
+    "safetyTip": "Twice-daily dosing with morning and evening meals. Periodic liver function tests advised.",
+    "foodInstruction": "with_food",
+    "manufacturer": "Novartis",
+    "source": "indian_formulary_variant"
+  },
+  "trajenta": {
+    "brandName": "Trajenta",
+    "standardGeneric": "Linagliptin",
+    "constituents": [
+      "Linagliptin"
+    ],
+    "primaryRxCui": null,
+    "dosage": "5mg",
+    "dosageOptions": [],
+    "category": "DPP-4 Inhibitor (No Renal Adjustment)",
+    "safetyTip": "Safe across all stages of chronic kidney disease without dose reduction.",
+    "foodInstruction": "any",
+    "manufacturer": "Boehringer Ingelheim",
+    "source": "indian_formulary"
+  },
+  "rybelsus": {
+    "brandName": "Rybelsus",
+    "standardGeneric": "Semaglutide",
+    "constituents": [
+      "Semaglutide"
+    ],
+    "primaryRxCui": null,
+    "dosage": "3mg",
+    "dosageOptions": [],
+    "category": "Oral GLP-1 Receptor Agonist",
+    "safetyTip": "Strictly take first thing in the morning with up to 120ml water; wait 30 mins before any food or other medications.",
+    "foodInstruction": "empty_stomach",
+    "manufacturer": "Novo Nordisk",
+    "source": "indian_formulary"
+  },
+  "febutaz 40": {
+    "brandName": "Febutaz 40",
+    "standardGeneric": "Febuxostat",
+    "constituents": [
+      "Febuxostat"
+    ],
+    "primaryRxCui": null,
+    "dosage": "40mg",
+    "dosageOptions": [],
+    "category": "Xanthine Oxidase Inhibitor (Gout / Uric Acid)",
+    "safetyTip": "Lowering serum uric acid in chronic gout. Regular serum urate checks recommended.",
+    "foodInstruction": "any",
+    "manufacturer": "Sun Pharma",
+    "source": "indian_formulary"
+  },
+  "febutaz40": {
+    "brandName": "Febutaz 40",
+    "standardGeneric": "Febuxostat",
+    "constituents": [
+      "Febuxostat"
+    ],
+    "primaryRxCui": null,
+    "dosage": "40mg",
+    "dosageOptions": [],
+    "category": "Xanthine Oxidase Inhibitor (Gout / Uric Acid)",
+    "safetyTip": "Lowering serum uric acid in chronic gout. Regular serum urate checks recommended.",
+    "foodInstruction": "any",
+    "manufacturer": "Sun Pharma",
+    "source": "indian_formulary_variant"
+  },
+  "febutaz": {
+    "brandName": "Febutaz 40",
+    "standardGeneric": "Febuxostat",
+    "constituents": [
+      "Febuxostat"
+    ],
+    "primaryRxCui": null,
+    "dosage": "40mg",
+    "dosageOptions": [],
+    "category": "Xanthine Oxidase Inhibitor (Gout / Uric Acid)",
+    "safetyTip": "Lowering serum uric acid in chronic gout. Regular serum urate checks recommended.",
+    "foodInstruction": "any",
+    "manufacturer": "Sun Pharma",
+    "source": "indian_formulary_variant"
+  },
+  "zyloric": {
+    "brandName": "Zyloric",
+    "standardGeneric": "Allopurinol",
+    "constituents": [
+      "Allopurinol"
+    ],
+    "primaryRxCui": null,
+    "dosage": "100mg",
+    "dosageOptions": [],
+    "category": "Xanthine Oxidase Inhibitor",
+    "safetyTip": "Take after meals with plenty of fluid. Stop immediately and call doctor if skin rash develops.",
+    "foodInstruction": "after_food",
+    "manufacturer": "GSK",
+    "source": "indian_formulary"
+  },
+  "montair-lc": {
+    "brandName": "Montair-LC",
+    "standardGeneric": "Montelukast + Levocetirizine",
+    "constituents": [
+      "Montelukast",
+      "Levocetirizine"
+    ],
+    "primaryRxCui": null,
+    "dosage": "10mg+5mg",
+    "dosageOptions": [],
+    "category": "Leukotriene Antagonist + Antihistamine",
+    "safetyTip": "Take at night. May cause mild morning drowsiness or mood changes.",
+    "foodInstruction": "any",
+    "manufacturer": "Cipla",
+    "source": "indian_formulary"
+  },
+  "telekast-l": {
+    "brandName": "Telekast-L",
+    "standardGeneric": "Montelukast + Levocetirizine",
+    "constituents": [
+      "Montelukast",
+      "Levocetirizine"
+    ],
+    "primaryRxCui": null,
+    "dosage": "10mg+5mg",
+    "dosageOptions": [],
+    "category": "Dual Anti-allergic",
+    "safetyTip": "Evening dosing preferred for nocturnal asthma and allergic rhinitis control.",
+    "foodInstruction": "any",
+    "manufacturer": "Lupin",
+    "source": "indian_formulary"
+  },
+  "foracort inhaler": {
+    "brandName": "Foracort Inhaler",
+    "standardGeneric": "Formoterol + Budesonide",
+    "constituents": [
+      "Formoterol",
+      "Budesonide"
+    ],
+    "primaryRxCui": null,
+    "dosage": "200mcg",
+    "dosageOptions": [],
+    "category": "LABA + Inhaled Corticosteroid",
+    "safetyTip": "Rinse mouth thoroughly with water after inhalation to prevent oral fungal thrush.",
+    "foodInstruction": "any",
+    "manufacturer": "Cipla",
+    "source": "indian_formulary"
+  },
+  "foracortinhaler": {
+    "brandName": "Foracort Inhaler",
+    "standardGeneric": "Formoterol + Budesonide",
+    "constituents": [
+      "Formoterol",
+      "Budesonide"
+    ],
+    "primaryRxCui": null,
+    "dosage": "200mcg",
+    "dosageOptions": [],
+    "category": "LABA + Inhaled Corticosteroid",
+    "safetyTip": "Rinse mouth thoroughly with water after inhalation to prevent oral fungal thrush.",
+    "foodInstruction": "any",
+    "manufacturer": "Cipla",
+    "source": "indian_formulary_variant"
+  },
+  "seroflo inhaler": {
+    "brandName": "Seroflo Inhaler",
+    "standardGeneric": "Salmeterol + Fluticasone",
+    "constituents": [
+      "Salmeterol",
+      "Fluticasone"
+    ],
+    "primaryRxCui": null,
+    "dosage": "125mcg",
+    "dosageOptions": [],
+    "category": "LABA + Inhaled Corticosteroid",
+    "safetyTip": "Maintenance inhaler for asthma/COPD. Rinse and spit after every dose.",
+    "foodInstruction": "any",
+    "manufacturer": "Cipla",
+    "source": "indian_formulary"
+  },
+  "serofloinhaler": {
+    "brandName": "Seroflo Inhaler",
+    "standardGeneric": "Salmeterol + Fluticasone",
+    "constituents": [
+      "Salmeterol",
+      "Fluticasone"
+    ],
+    "primaryRxCui": null,
+    "dosage": "125mcg",
+    "dosageOptions": [],
+    "category": "LABA + Inhaled Corticosteroid",
+    "safetyTip": "Maintenance inhaler for asthma/COPD. Rinse and spit after every dose.",
+    "foodInstruction": "any",
+    "manufacturer": "Cipla",
+    "source": "indian_formulary_variant"
+  },
+  "ascoril d plus": {
+    "brandName": "Ascoril D Plus",
+    "standardGeneric": "Dextromethorphan + Phenylephrine + Chlorpheniramine",
+    "constituents": [
+      "Dextromethorphan",
+      "Phenylephrine",
+      "Chlorpheniramine"
+    ],
+    "primaryRxCui": null,
+    "dosage": "Syrup 100ml",
+    "dosageOptions": [],
+    "category": "Cough Suppressant + Decongestant + Antihistamine",
+    "safetyTip": "For dry cough. Phenylephrine can raise blood pressure; use caution in hypertensive patients.",
+    "foodInstruction": "after_food",
+    "manufacturer": "Glenmark",
+    "source": "indian_formulary"
+  },
+  "ascorildplus": {
+    "brandName": "Ascoril D Plus",
+    "standardGeneric": "Dextromethorphan + Phenylephrine + Chlorpheniramine",
+    "constituents": [
+      "Dextromethorphan",
+      "Phenylephrine",
+      "Chlorpheniramine"
+    ],
+    "primaryRxCui": null,
+    "dosage": "Syrup 100ml",
+    "dosageOptions": [],
+    "category": "Cough Suppressant + Decongestant + Antihistamine",
+    "safetyTip": "For dry cough. Phenylephrine can raise blood pressure; use caution in hypertensive patients.",
+    "foodInstruction": "after_food",
+    "manufacturer": "Glenmark",
+    "source": "indian_formulary_variant"
+  },
+  "zoloft": {
+    "brandName": "Zoloft",
+    "standardGeneric": "Sertraline",
+    "constituents": [
+      "Sertraline"
+    ],
+    "primaryRxCui": null,
+    "dosage": "25mg",
+    "dosageOptions": [],
+    "category": "SSRI Antidepressant",
+    "safetyTip": "Take consistently with morning/evening meal. Avoid herbal St. John's Wort due to serotonin syndrome risk.",
+    "foodInstruction": "any",
+    "manufacturer": "Pfizer",
+    "source": "indian_formulary"
+  },
+  "restyl": {
+    "brandName": "Restyl",
+    "standardGeneric": "Alprazolam",
+    "constituents": [
+      "Alprazolam"
+    ],
+    "primaryRxCui": null,
+    "dosage": "0.25mg",
+    "dosageOptions": [],
+    "category": "Benzodiazepine Anxiolytic",
+    "safetyTip": "Causes sedation and fall risk in elderly. Never combine with alcohol or opioids.",
+    "foodInstruction": "any",
+    "manufacturer": "Cipla",
+    "source": "indian_formulary"
+  },
+  "clona": {
+    "brandName": "Clona",
+    "standardGeneric": "Clonazepam",
+    "constituents": [
+      "Clonazepam"
+    ],
+    "primaryRxCui": null,
+    "dosage": "0.25mg",
+    "dosageOptions": [],
+    "category": "Long-acting Benzodiazepine (Anticonvulsant / Anxiolytic)",
+    "safetyTip": "Controlled sedative. Do not discontinue suddenly due to withdrawal seizures.",
+    "foodInstruction": "any",
+    "manufacturer": "Intas",
+    "source": "indian_formulary"
+  },
+  "ativan": {
+    "brandName": "Ativan",
+    "standardGeneric": "Lorazepam",
+    "constituents": [
+      "Lorazepam"
+    ],
+    "primaryRxCui": null,
+    "dosage": "1mg",
+    "dosageOptions": [],
+    "category": "Intermediate Benzodiazepine",
+    "safetyTip": "Used for acute anxiety and insomnia. Avoid operating heavy machinery after taking.",
+    "foodInstruction": "any",
+    "manufacturer": "Pfizer",
+    "source": "indian_formulary"
+  },
+  "pacitane": {
+    "brandName": "Pacitane",
+    "standardGeneric": "Trihexyphenidyl",
+    "constituents": [
+      "Trihexyphenidyl"
+    ],
+    "primaryRxCui": null,
+    "dosage": "2mg",
+    "dosageOptions": [],
+    "category": "Centrally-acting Anticholinergic (Antiparkinsonian)",
+    "safetyTip": "HIGH ACB SCORE (3): High risk of confusion, dry mouth, blurred vision, urinary retention, and memory impairment.",
+    "foodInstruction": "with_food",
+    "manufacturer": "Pfizer",
+    "source": "indian_formulary"
+  },
+  "gabapin nt": {
+    "brandName": "Gabapin NT",
+    "standardGeneric": "Gabapentin + Nortriptyline",
+    "constituents": [
+      "Gabapentin",
+      "Nortriptyline"
+    ],
+    "primaryRxCui": null,
+    "dosage": "100mg+10mg",
+    "dosageOptions": [],
+    "category": "GABA Analog + Tricyclic Antidepressant (Neuropathy)",
+    "safetyTip": "HIGH ANTICHOLINERGIC / CNS DEPRESSION: Take strictly at bedtime. Causes significant drowsiness and dry mouth.",
+    "foodInstruction": "after_food",
+    "manufacturer": "Intas",
+    "source": "indian_formulary"
+  },
+  "gabapinnt": {
+    "brandName": "Gabapin NT",
+    "standardGeneric": "Gabapentin + Nortriptyline",
+    "constituents": [
+      "Gabapentin",
+      "Nortriptyline"
+    ],
+    "primaryRxCui": null,
+    "dosage": "100mg+10mg",
+    "dosageOptions": [],
+    "category": "GABA Analog + Tricyclic Antidepressant (Neuropathy)",
+    "safetyTip": "HIGH ANTICHOLINERGIC / CNS DEPRESSION: Take strictly at bedtime. Causes significant drowsiness and dry mouth.",
+    "foodInstruction": "after_food",
+    "manufacturer": "Intas",
+    "source": "indian_formulary_variant"
+  },
+  "maxgalin": {
+    "brandName": "Maxgalin",
+    "standardGeneric": "Pregabalin",
+    "constituents": [
+      "Pregabalin"
+    ],
+    "primaryRxCui": null,
+    "dosage": "50mg",
+    "dosageOptions": [],
+    "category": "Neuropathic Pain Agent / Anticonvulsant",
+    "safetyTip": "Take at night. May cause dizziness, peripheral edema, and weight gain.",
+    "foodInstruction": "any",
+    "manufacturer": "Sun Pharma",
+    "source": "indian_formulary"
+  },
+  "donecept": {
+    "brandName": "Donecept",
+    "standardGeneric": "Donepezil",
+    "constituents": [
+      "Donepezil"
+    ],
+    "primaryRxCui": null,
+    "dosage": "5mg",
+    "dosageOptions": [],
+    "category": "Cholinesterase Inhibitor (Alzheimer / Dementia)",
+    "safetyTip": "Take immediately before bedtime. Can cause bradycardia (slow heart rate) and vivid dreams.",
+    "foodInstruction": "at_bedtime",
+    "manufacturer": "Cipla",
+    "source": "indian_formulary"
+  },
+  "memantine": {
+    "brandName": "Memantine",
+    "standardGeneric": "Memantine",
+    "constituents": [
+      "Memantine"
+    ],
+    "primaryRxCui": null,
+    "dosage": "5mg",
+    "dosageOptions": [],
+    "category": "NMDA Receptor Antagonist (Dementia)",
+    "safetyTip": "Used for moderate-to-severe Alzheimer disease. Titrate dose gradually as advised.",
+    "foodInstruction": "any",
+    "manufacturer": "Sun Pharma",
+    "source": "indian_formulary"
+  },
+  "encorate chrono": {
+    "brandName": "Encorate Chrono",
+    "standardGeneric": "Sodium Valproate",
+    "constituents": [
+      "Sodium Valproate"
+    ],
+    "primaryRxCui": null,
+    "dosage": "200mg",
+    "dosageOptions": [],
+    "category": "Anticonvulsant / Mood Stabilizer",
+    "safetyTip": "Regular liver function and platelet tests required. Highly teratogenic (contraindicated in pregnancy).",
+    "foodInstruction": "after_food",
+    "manufacturer": "Sun Pharma",
+    "source": "indian_formulary"
+  },
+  "encoratechrono": {
+    "brandName": "Encorate Chrono",
+    "standardGeneric": "Sodium Valproate",
+    "constituents": [
+      "Sodium Valproate"
+    ],
+    "primaryRxCui": null,
+    "dosage": "200mg",
+    "dosageOptions": [],
+    "category": "Anticonvulsant / Mood Stabilizer",
+    "safetyTip": "Regular liver function and platelet tests required. Highly teratogenic (contraindicated in pregnancy).",
+    "foodInstruction": "after_food",
+    "manufacturer": "Sun Pharma",
+    "source": "indian_formulary_variant"
+  },
+  "augmentin 625": {
+    "brandName": "Augmentin 625",
+    "standardGeneric": "Amoxicillin + Clavulanate",
+    "constituents": [
+      "Amoxicillin",
+      "Clavulanate"
+    ],
+    "primaryRxCui": null,
+    "dosage": "375mg",
+    "dosageOptions": [],
+    "category": "Penicillin + Beta-Lactamase Inhibitor",
+    "safetyTip": "Take with food to minimize nausea/GI upset. Complete the full prescribed antibiotic course.",
+    "foodInstruction": "with_food",
+    "manufacturer": "GSK",
+    "source": "indian_formulary"
+  },
+  "augmentin625": {
+    "brandName": "Augmentin 625",
+    "standardGeneric": "Amoxicillin + Clavulanate",
+    "constituents": [
+      "Amoxicillin",
+      "Clavulanate"
+    ],
+    "primaryRxCui": null,
+    "dosage": "375mg",
+    "dosageOptions": [],
+    "category": "Penicillin + Beta-Lactamase Inhibitor",
+    "safetyTip": "Take with food to minimize nausea/GI upset. Complete the full prescribed antibiotic course.",
+    "foodInstruction": "with_food",
+    "manufacturer": "GSK",
+    "source": "indian_formulary_variant"
+  },
+  "azithral 500": {
+    "brandName": "Azithral 500",
+    "standardGeneric": "Azithromycin",
+    "constituents": [
+      "Azithromycin"
+    ],
+    "primaryRxCui": null,
+    "dosage": "250mg",
+    "dosageOptions": [],
+    "category": "Macrolide Antibiotic",
+    "safetyTip": "Take 1 hour before or 2 hours after meals once daily. Complete 3 or 5 day course.",
+    "foodInstruction": "empty_stomach",
+    "manufacturer": "Alembic",
+    "source": "indian_formulary"
+  },
+  "azithral500": {
+    "brandName": "Azithral 500",
+    "standardGeneric": "Azithromycin",
+    "constituents": [
+      "Azithromycin"
+    ],
+    "primaryRxCui": null,
+    "dosage": "250mg",
+    "dosageOptions": [],
+    "category": "Macrolide Antibiotic",
+    "safetyTip": "Take 1 hour before or 2 hours after meals once daily. Complete 3 or 5 day course.",
+    "foodInstruction": "empty_stomach",
+    "manufacturer": "Alembic",
+    "source": "indian_formulary_variant"
+  },
+  "azee 500": {
+    "brandName": "Azee 500",
+    "standardGeneric": "Azithromycin",
+    "constituents": [
+      "Azithromycin"
+    ],
+    "primaryRxCui": null,
+    "dosage": "500mg",
+    "dosageOptions": [],
+    "category": "Macrolide Antibiotic",
+    "safetyTip": "Watch for QT prolongation if combined with other antiarrhythmics or antipsychotics.",
+    "foodInstruction": "empty_stomach",
+    "manufacturer": "Cipla",
+    "source": "indian_formulary"
+  },
+  "azee500": {
+    "brandName": "Azee 500",
+    "standardGeneric": "Azithromycin",
+    "constituents": [
+      "Azithromycin"
+    ],
+    "primaryRxCui": null,
+    "dosage": "500mg",
+    "dosageOptions": [],
+    "category": "Macrolide Antibiotic",
+    "safetyTip": "Watch for QT prolongation if combined with other antiarrhythmics or antipsychotics.",
+    "foodInstruction": "empty_stomach",
+    "manufacturer": "Cipla",
+    "source": "indian_formulary_variant"
+  },
+  "azee": {
+    "brandName": "Azee 500",
+    "standardGeneric": "Azithromycin",
+    "constituents": [
+      "Azithromycin"
+    ],
+    "primaryRxCui": null,
+    "dosage": "500mg",
+    "dosageOptions": [],
+    "category": "Macrolide Antibiotic",
+    "safetyTip": "Watch for QT prolongation if combined with other antiarrhythmics or antipsychotics.",
+    "foodInstruction": "empty_stomach",
+    "manufacturer": "Cipla",
+    "source": "indian_formulary_variant"
+  },
+  "cifran 500": {
+    "brandName": "Cifran 500",
+    "standardGeneric": "Ciprofloxacin",
+    "constituents": [
+      "Ciprofloxacin"
+    ],
+    "primaryRxCui": null,
+    "dosage": "250mg",
+    "dosageOptions": [],
+    "category": "Fluoroquinolone Antibiotic",
+    "safetyTip": "Avoid taking with dairy products, iron, or antacids. Report any sudden tendon pain immediately.",
+    "foodInstruction": "empty_stomach",
+    "manufacturer": "Sun Pharma",
+    "source": "indian_formulary"
+  },
+  "cifran500": {
+    "brandName": "Cifran 500",
+    "standardGeneric": "Ciprofloxacin",
+    "constituents": [
+      "Ciprofloxacin"
+    ],
+    "primaryRxCui": null,
+    "dosage": "250mg",
+    "dosageOptions": [],
+    "category": "Fluoroquinolone Antibiotic",
+    "safetyTip": "Avoid taking with dairy products, iron, or antacids. Report any sudden tendon pain immediately.",
+    "foodInstruction": "empty_stomach",
+    "manufacturer": "Sun Pharma",
+    "source": "indian_formulary_variant"
+  },
+  "mahacef 200": {
+    "brandName": "Mahacef 200",
+    "standardGeneric": "Cefixime",
+    "constituents": [
+      "Cefixime"
+    ],
+    "primaryRxCui": null,
+    "dosage": "100mg",
+    "dosageOptions": [],
+    "category": "Third-Generation Cephalosporin Antibiotic",
+    "safetyTip": "Oral cephalosporin for respiratory/urinary tract infections.",
+    "foodInstruction": "any",
+    "manufacturer": "Mankind",
+    "source": "indian_formulary"
+  },
+  "mahacef200": {
+    "brandName": "Mahacef 200",
+    "standardGeneric": "Cefixime",
+    "constituents": [
+      "Cefixime"
+    ],
+    "primaryRxCui": null,
+    "dosage": "100mg",
+    "dosageOptions": [],
+    "category": "Third-Generation Cephalosporin Antibiotic",
+    "safetyTip": "Oral cephalosporin for respiratory/urinary tract infections.",
+    "foodInstruction": "any",
+    "manufacturer": "Mankind",
+    "source": "indian_formulary_variant"
+  },
+  "mahacef": {
+    "brandName": "Mahacef 200",
+    "standardGeneric": "Cefixime",
+    "constituents": [
+      "Cefixime"
+    ],
+    "primaryRxCui": null,
+    "dosage": "100mg",
+    "dosageOptions": [],
+    "category": "Third-Generation Cephalosporin Antibiotic",
+    "safetyTip": "Oral cephalosporin for respiratory/urinary tract infections.",
+    "foodInstruction": "any",
+    "manufacturer": "Mankind",
+    "source": "indian_formulary_variant"
+  },
+  "flagyl 400": {
+    "brandName": "Flagyl 400",
+    "standardGeneric": "Metronidazole",
+    "constituents": [
+      "Metronidazole"
+    ],
+    "primaryRxCui": null,
+    "dosage": "200mg",
+    "dosageOptions": [],
+    "category": "Nitroimidazole Antibacterial / Antiprotozoal",
+    "safetyTip": "STRICTLY AVOID ALCOHOL during and for 48 hours after therapy (causes severe disulfiram reaction).",
+    "foodInstruction": "after_food",
+    "manufacturer": "Abbott",
+    "source": "indian_formulary"
+  },
+  "flagyl400": {
+    "brandName": "Flagyl 400",
+    "standardGeneric": "Metronidazole",
+    "constituents": [
+      "Metronidazole"
+    ],
+    "primaryRxCui": null,
+    "dosage": "200mg",
+    "dosageOptions": [],
+    "category": "Nitroimidazole Antibacterial / Antiprotozoal",
+    "safetyTip": "STRICTLY AVOID ALCOHOL during and for 48 hours after therapy (causes severe disulfiram reaction).",
+    "foodInstruction": "after_food",
+    "manufacturer": "Abbott",
+    "source": "indian_formulary_variant"
+  },
+  "it-mac 200": {
+    "brandName": "IT-Mac 200",
+    "standardGeneric": "Itraconazole",
+    "constituents": [
+      "Itraconazole"
+    ],
+    "primaryRxCui": null,
+    "dosage": "100mg",
+    "dosageOptions": [],
+    "category": "Triazole Antifungal",
+    "safetyTip": "Take with a full meal or acidic beverage. Potent CYP3A4 inhibitor with extensive drug interactions.",
+    "foodInstruction": "after_food",
+    "manufacturer": "Macleods",
+    "source": "indian_formulary"
+  },
+  "it-mac200": {
+    "brandName": "IT-Mac 200",
+    "standardGeneric": "Itraconazole",
+    "constituents": [
+      "Itraconazole"
+    ],
+    "primaryRxCui": null,
+    "dosage": "100mg",
+    "dosageOptions": [],
+    "category": "Triazole Antifungal",
+    "safetyTip": "Take with a full meal or acidic beverage. Potent CYP3A4 inhibitor with extensive drug interactions.",
+    "foodInstruction": "after_food",
+    "manufacturer": "Macleods",
+    "source": "indian_formulary_variant"
+  },
+  "it-mac": {
+    "brandName": "IT-Mac 200",
+    "standardGeneric": "Itraconazole",
+    "constituents": [
+      "Itraconazole"
+    ],
+    "primaryRxCui": null,
+    "dosage": "100mg",
+    "dosageOptions": [],
+    "category": "Triazole Antifungal",
+    "safetyTip": "Take with a full meal or acidic beverage. Potent CYP3A4 inhibitor with extensive drug interactions.",
+    "foodInstruction": "after_food",
+    "manufacturer": "Macleods",
+    "source": "indian_formulary_variant"
+  },
+  "urimax 0.4": {
+    "brandName": "Urimax 0.4",
+    "standardGeneric": "Tamsulosin",
+    "constituents": [
+      "Tamsulosin"
+    ],
+    "primaryRxCui": null,
+    "dosage": "0.4mg",
+    "dosageOptions": [],
+    "category": "Alpha-1A Adrenoceptor Blocker (BPH / Prostate)",
+    "safetyTip": "Take 30 minutes after the same meal each day. May cause postural dizziness upon standing.",
+    "foodInstruction": "after_food",
+    "manufacturer": "Cipla",
+    "source": "indian_formulary"
+  },
+  "urimax0.4": {
+    "brandName": "Urimax 0.4",
+    "standardGeneric": "Tamsulosin",
+    "constituents": [
+      "Tamsulosin"
+    ],
+    "primaryRxCui": null,
+    "dosage": "0.4mg",
+    "dosageOptions": [],
+    "category": "Alpha-1A Adrenoceptor Blocker (BPH / Prostate)",
+    "safetyTip": "Take 30 minutes after the same meal each day. May cause postural dizziness upon standing.",
+    "foodInstruction": "after_food",
+    "manufacturer": "Cipla",
+    "source": "indian_formulary_variant"
+  },
+  "urimax-d": {
+    "brandName": "Urimax-D",
+    "standardGeneric": "Tamsulosin + Dutasteride",
+    "constituents": [
+      "Tamsulosin",
+      "Dutasteride"
+    ],
+    "primaryRxCui": null,
+    "dosage": "0.4mg+0.5mg",
+    "dosageOptions": [],
+    "category": "Alpha Blocker + 5-Alpha Reductase Inhibitor",
+    "safetyTip": "Dual prostate therapy. Swallow whole; pregnant women should not handle leaking capsules.",
+    "foodInstruction": "after_food",
+    "manufacturer": "Cipla",
+    "source": "indian_formulary"
+  },
+  "silodal": {
+    "brandName": "Silodal",
+    "standardGeneric": "Silodosin",
+    "constituents": [
+      "Silodosin"
+    ],
+    "primaryRxCui": null,
+    "dosage": "4mg",
+    "dosageOptions": [],
+    "category": "Selective Alpha-1A Blocker (Prostate)",
+    "safetyTip": "Take with food once daily. Causes reversible retrograde ejaculation in male patients.",
+    "foodInstruction": "with_food",
+    "manufacturer": "Sun Pharma",
+    "source": "indian_formulary"
+  },
+  "shelcal 500": {
+    "brandName": "Shelcal 500",
+    "standardGeneric": "Calcium + Vitamin D3",
+    "constituents": [
+      "Calcium",
+      "Vitamin D3"
+    ],
+    "primaryRxCui": null,
+    "dosage": "500mg+250IU",
+    "dosageOptions": [],
+    "category": "Mineral & Vitamin Supplement",
+    "safetyTip": "Take after a meal for optimal calcium absorption. Separate from thyroid medications by 4 hours.",
+    "foodInstruction": "after_food",
+    "manufacturer": "Torrent",
+    "source": "indian_formulary"
+  },
+  "shelcal500": {
+    "brandName": "Shelcal 500",
+    "standardGeneric": "Calcium + Vitamin D3",
+    "constituents": [
+      "Calcium",
+      "Vitamin D3"
+    ],
+    "primaryRxCui": null,
+    "dosage": "500mg+250IU",
+    "dosageOptions": [],
+    "category": "Mineral & Vitamin Supplement",
+    "safetyTip": "Take after a meal for optimal calcium absorption. Separate from thyroid medications by 4 hours.",
+    "foodInstruction": "after_food",
+    "manufacturer": "Torrent",
+    "source": "indian_formulary_variant"
+  },
+  "neurobion forte": {
+    "brandName": "Neurobion Forte",
+    "standardGeneric": "Vitamin B1 + Vitamin B6 + Vitamin B12",
+    "constituents": [
+      "Vitamin B1",
+      "Vitamin B6",
+      "Vitamin B12"
+    ],
+    "primaryRxCui": null,
+    "dosage": "1 tablet daily",
+    "dosageOptions": [],
+    "category": "Neurotropic B-Complex Vitamins",
+    "safetyTip": "Supports nerve regeneration in peripheral diabetic neuropathy.",
+    "foodInstruction": "after_food",
+    "manufacturer": "P&G Health",
+    "source": "indian_formulary"
+  },
+  "neurobionforte": {
+    "brandName": "Neurobion Forte",
+    "standardGeneric": "Vitamin B1 + Vitamin B6 + Vitamin B12",
+    "constituents": [
+      "Vitamin B1",
+      "Vitamin B6",
+      "Vitamin B12"
+    ],
+    "primaryRxCui": null,
+    "dosage": "1 tablet daily",
+    "dosageOptions": [],
+    "category": "Neurotropic B-Complex Vitamins",
+    "safetyTip": "Supports nerve regeneration in peripheral diabetic neuropathy.",
+    "foodInstruction": "after_food",
+    "manufacturer": "P&G Health",
+    "source": "indian_formulary_variant"
+  },
+  "folvite": {
+    "brandName": "Folvite",
+    "standardGeneric": "Folic Acid",
+    "constituents": [
+      "Folic Acid"
+    ],
+    "primaryRxCui": null,
+    "dosage": "5mg",
+    "dosageOptions": [],
+    "category": "Vitamin B9 (Folate)",
+    "safetyTip": "Essential for RBC production and methotrexate toxicity mitigation in arthritis.",
+    "foodInstruction": "any",
+    "manufacturer": "Pfizer",
+    "source": "indian_formulary"
+  },
+  "autrin": {
+    "brandName": "Autrin",
+    "standardGeneric": "Ferrous Fumarate + Folic Acid + Vitamin B12",
+    "constituents": [
+      "Ferrous Fumarate",
+      "Folic Acid",
+      "Vitamin B12"
+    ],
+    "primaryRxCui": null,
+    "dosage": "Capsule",
+    "dosageOptions": [],
+    "category": "Hematinic (Iron Supplement)",
+    "safetyTip": "Take after meals to avoid nausea and dark stools. Separate from calcium and tea/coffee by 2 hours.",
+    "foodInstruction": "after_food",
+    "manufacturer": "Pfizer",
+    "source": "indian_formulary"
+  },
+  "telma-am": {
+    "brandName": "Telma-AM",
+    "standardGeneric": "Telmisartan + Amlodipine",
+    "constituents": [
+      "Telmisartan",
+      "Amlodipine"
+    ],
+    "primaryRxCui": null,
+    "dosage": "40mg+5mg",
+    "dosageOptions": [],
+    "category": "ARB + Calcium Channel Blocker (Hypertension)",
+    "safetyTip": "Dual blood pressure control. Avoid grapefruit juice; monitor for ankle swelling and potassium levels.",
+    "foodInstruction": "any",
+    "manufacturer": "Glenmark",
+    "source": "indian_formulary"
+  },
+  "telma-h": {
+    "brandName": "Telma-H",
+    "standardGeneric": "Telmisartan + Hydrochlorothiazide",
+    "constituents": [
+      "Telmisartan",
+      "Hydrochlorothiazide"
+    ],
+    "primaryRxCui": null,
+    "dosage": "40mg+12.5mg",
+    "dosageOptions": [],
+    "category": "ARB + Thiazide Diuretic (Hypertension)",
+    "safetyTip": "Take in morning with water to prevent nighttime urination. Monitor electrolytes regularly.",
+    "foodInstruction": "morning",
+    "manufacturer": "Glenmark",
+    "source": "indian_formulary"
+  },
+  "janumet": {
+    "brandName": "Janumet",
+    "standardGeneric": "Sitagliptin + Metformin",
+    "constituents": [
+      "Sitagliptin",
+      "Metformin"
+    ],
+    "primaryRxCui": null,
+    "dosage": "50mg+500mg",
+    "dosageOptions": [],
+    "category": "DPP-4 Inhibitor + Biguanide (Type 2 Diabetes)",
+    "safetyTip": "Take twice daily with meals. Low risk of hypoglycemia compared to sulfonylureas.",
+    "foodInstruction": "with_food",
+    "manufacturer": "MSD Pharmaceuticals",
+    "source": "indian_formulary"
+  },
+  "ecosprin-av 75/20": {
+    "brandName": "Ecosprin-AV 75/20",
+    "standardGeneric": "Aspirin + Atorvastatin",
+    "constituents": [
+      "Aspirin",
+      "Atorvastatin"
+    ],
+    "primaryRxCui": null,
+    "dosage": "75mg+20mg",
+    "dosageOptions": [],
+    "category": "Antiplatelet + Statin (Cardiovascular Protection)",
+    "safetyTip": "Take at bedtime after food. Protects against heart attack and stroke. Avoid grapefruit and NSAIDs.",
+    "foodInstruction": "after_food",
+    "manufacturer": "USV",
+    "source": "indian_formulary"
+  },
+  "ecosprin-av75/20": {
+    "brandName": "Ecosprin-AV 75/20",
+    "standardGeneric": "Aspirin + Atorvastatin",
+    "constituents": [
+      "Aspirin",
+      "Atorvastatin"
+    ],
+    "primaryRxCui": null,
+    "dosage": "75mg+20mg",
+    "dosageOptions": [],
+    "category": "Antiplatelet + Statin (Cardiovascular Protection)",
+    "safetyTip": "Take at bedtime after food. Protects against heart attack and stroke. Avoid grapefruit and NSAIDs.",
+    "foodInstruction": "after_food",
+    "manufacturer": "USV",
+    "source": "indian_formulary_variant"
+  },
+  "rosuvas-f": {
+    "brandName": "Rosuvas-F",
+    "standardGeneric": "Rosuvastatin + Fenofibrate",
+    "constituents": [
+      "Rosuvastatin",
+      "Fenofibrate"
+    ],
+    "primaryRxCui": null,
+    "dosage": "10mg+145mg",
+    "dosageOptions": [],
+    "category": "Statin + Fibrate (Combined Dyslipidemia)",
+    "safetyTip": "Dual lipid management. Monitor liver function and CPK enzymes due to combined myopathy risk.",
+    "foodInstruction": "after_food",
+    "manufacturer": "Sun Pharma",
+    "source": "indian_formulary"
+  },
+  "deplatt-a": {
+    "brandName": "Deplatt-A",
+    "standardGeneric": "Clopidogrel + Aspirin",
+    "constituents": [
+      "Clopidogrel",
+      "Aspirin"
+    ],
+    "primaryRxCui": null,
+    "dosage": "75mg+75mg",
+    "dosageOptions": [],
+    "category": "Dual Antiplatelet Therapy (DAPT / Post-Stent)",
+    "safetyTip": "Critical post-angioplasty stent maintenance. Never stop abruptly without consulting your cardiologist.",
+    "foodInstruction": "after_food",
+    "manufacturer": "Torrent",
+    "source": "indian_formulary"
+  },
+  "pan-it": {
+    "brandName": "Pan-IT",
+    "standardGeneric": "Pantoprazole + Itopride",
+    "constituents": [
+      "Pantoprazole",
+      "Itopride"
+    ],
+    "primaryRxCui": null,
+    "dosage": "40mg+150mg SR",
+    "dosageOptions": [],
+    "category": "PPI + Prokinetic (Reflux & Gastroparesis)",
+    "safetyTip": "Take 30-45 minutes before morning breakfast with a full glass of water.",
+    "foodInstruction": "before_food",
+    "manufacturer": "Alkem",
+    "source": "indian_formulary"
+  },
+  "omez-d": {
+    "brandName": "Omez-D",
+    "standardGeneric": "Omeprazole + Domperidone",
+    "constituents": [
+      "Omeprazole",
+      "Domperidone"
+    ],
+    "primaryRxCui": null,
+    "dosage": "20mg+10mg",
+    "dosageOptions": [],
+    "category": "PPI + Prokinetic (Gastritis & Heartburn)",
+    "safetyTip": "Take 30 minutes before meal for relief of acid regurgitation and nausea.",
+    "foodInstruction": "before_food",
+    "manufacturer": "Dr. Reddy's",
+    "source": "indian_formulary"
+  },
+  "clavam 625": {
+    "brandName": "Clavam 625",
+    "standardGeneric": "Amoxicillin + Clavulanic Acid",
+    "constituents": [
+      "Amoxicillin",
+      "Clavulanic Acid"
+    ],
+    "primaryRxCui": null,
+    "dosage": "500mg+125mg",
+    "dosageOptions": [],
+    "category": "Penicillin + Beta-Lactamase Inhibitor (Antibiotic)",
+    "safetyTip": "Take at start of a meal to improve absorption and reduce GI side effects. Complete the entire course.",
+    "foodInstruction": "with_food",
+    "manufacturer": "Alkem",
+    "source": "indian_formulary"
+  },
+  "clavam625": {
+    "brandName": "Clavam 625",
+    "standardGeneric": "Amoxicillin + Clavulanic Acid",
+    "constituents": [
+      "Amoxicillin",
+      "Clavulanic Acid"
+    ],
+    "primaryRxCui": null,
+    "dosage": "500mg+125mg",
+    "dosageOptions": [],
+    "category": "Penicillin + Beta-Lactamase Inhibitor (Antibiotic)",
+    "safetyTip": "Take at start of a meal to improve absorption and reduce GI side effects. Complete the entire course.",
+    "foodInstruction": "with_food",
+    "manufacturer": "Alkem",
+    "source": "indian_formulary_variant"
+  },
+  "moxikind-cv 625": {
+    "brandName": "Moxikind-CV 625",
+    "standardGeneric": "Amoxicillin + Clavulanic Acid",
+    "constituents": [
+      "Amoxicillin",
+      "Clavulanic Acid"
+    ],
+    "primaryRxCui": null,
+    "dosage": "500mg+125mg",
+    "dosageOptions": [],
+    "category": "Broad-Spectrum Antibiotic",
+    "safetyTip": "Take with food at regular intervals. Do not skip doses to prevent bacterial resistance.",
+    "foodInstruction": "with_food",
+    "manufacturer": "Mankind",
+    "source": "indian_formulary"
+  },
+  "moxikind-cv625": {
+    "brandName": "Moxikind-CV 625",
+    "standardGeneric": "Amoxicillin + Clavulanic Acid",
+    "constituents": [
+      "Amoxicillin",
+      "Clavulanic Acid"
+    ],
+    "primaryRxCui": null,
+    "dosage": "500mg+125mg",
+    "dosageOptions": [],
+    "category": "Broad-Spectrum Antibiotic",
+    "safetyTip": "Take with food at regular intervals. Do not skip doses to prevent bacterial resistance.",
+    "foodInstruction": "with_food",
+    "manufacturer": "Mankind",
+    "source": "indian_formulary_variant"
+  },
+  "moxikind-cv": {
+    "brandName": "Moxikind-CV 625",
+    "standardGeneric": "Amoxicillin + Clavulanic Acid",
+    "constituents": [
+      "Amoxicillin",
+      "Clavulanic Acid"
+    ],
+    "primaryRxCui": null,
+    "dosage": "500mg+125mg",
+    "dosageOptions": [],
+    "category": "Broad-Spectrum Antibiotic",
+    "safetyTip": "Take with food at regular intervals. Do not skip doses to prevent bacterial resistance.",
+    "foodInstruction": "with_food",
+    "manufacturer": "Mankind",
+    "source": "indian_formulary_variant"
+  },
+  "zifi 200": {
+    "brandName": "Zifi 200",
+    "standardGeneric": "Cefixime",
+    "constituents": [
+      "Cefixime"
+    ],
+    "primaryRxCui": null,
+    "dosage": "100mg",
+    "dosageOptions": [],
+    "category": "Cephalosporin 3rd Generation (Antibiotic)",
+    "safetyTip": "Effective for respiratory, typhoid, and urinary infections. Take after meals with plenty of water.",
+    "foodInstruction": "after_food",
+    "manufacturer": "FDC",
+    "source": "indian_formulary"
+  },
+  "zifi200": {
+    "brandName": "Zifi 200",
+    "standardGeneric": "Cefixime",
+    "constituents": [
+      "Cefixime"
+    ],
+    "primaryRxCui": null,
+    "dosage": "100mg",
+    "dosageOptions": [],
+    "category": "Cephalosporin 3rd Generation (Antibiotic)",
+    "safetyTip": "Effective for respiratory, typhoid, and urinary infections. Take after meals with plenty of water.",
+    "foodInstruction": "after_food",
+    "manufacturer": "FDC",
+    "source": "indian_formulary_variant"
+  },
+  "taxim-o 200": {
+    "brandName": "Taxim-O 200",
+    "standardGeneric": "Cefixime",
+    "constituents": [
+      "Cefixime"
+    ],
+    "primaryRxCui": null,
+    "dosage": "200mg",
+    "dosageOptions": [],
+    "category": "3rd Gen Cephalosporin Antibiotic",
+    "safetyTip": "Complete prescribed duration even if symptoms improve quickly.",
+    "foodInstruction": "after_food",
+    "manufacturer": "Alkem",
+    "source": "indian_formulary"
+  },
+  "taxim-o200": {
+    "brandName": "Taxim-O 200",
+    "standardGeneric": "Cefixime",
+    "constituents": [
+      "Cefixime"
+    ],
+    "primaryRxCui": null,
+    "dosage": "200mg",
+    "dosageOptions": [],
+    "category": "3rd Gen Cephalosporin Antibiotic",
+    "safetyTip": "Complete prescribed duration even if symptoms improve quickly.",
+    "foodInstruction": "after_food",
+    "manufacturer": "Alkem",
+    "source": "indian_formulary_variant"
+  },
+  "taxim-o": {
+    "brandName": "Taxim-O 200",
+    "standardGeneric": "Cefixime",
+    "constituents": [
+      "Cefixime"
+    ],
+    "primaryRxCui": null,
+    "dosage": "200mg",
+    "dosageOptions": [],
+    "category": "3rd Gen Cephalosporin Antibiotic",
+    "safetyTip": "Complete prescribed duration even if symptoms improve quickly.",
+    "foodInstruction": "after_food",
+    "manufacturer": "Alkem",
+    "source": "indian_formulary_variant"
+  },
+  "ciplox-tz": {
+    "brandName": "Ciplox-TZ",
+    "standardGeneric": "Ciprofloxacin + Tinidazole",
+    "constituents": [
+      "Ciprofloxacin",
+      "Tinidazole"
+    ],
+    "primaryRxCui": null,
+    "dosage": "500mg+600mg",
+    "dosageOptions": [],
+    "category": "Fluoroquinolone + Antiprotozoal (Infectious Diarrhea)",
+    "safetyTip": "Avoid milk, calcium, and iron within 2 hours. Completely avoid alcohol to prevent disulfiram-like reactions.",
+    "foodInstruction": "after_food",
+    "manufacturer": "Cipla",
+    "source": "indian_formulary"
+  },
+  "oflox-oz": {
+    "brandName": "Oflox-OZ",
+    "standardGeneric": "Ofloxacin + Ornidazole",
+    "constituents": [
+      "Ofloxacin",
+      "Ornidazole"
+    ],
+    "primaryRxCui": null,
+    "dosage": "200mg+500mg",
+    "dosageOptions": [],
+    "category": "Fluoroquinolone + Nitroimidazole (Gastroenteritis)",
+    "safetyTip": "Take after meals. Avoid direct strong sunlight exposure due to photosensitivity risks.",
+    "foodInstruction": "after_food",
+    "manufacturer": "Cipla",
+    "source": "indian_formulary"
+  },
+  "montair lc": {
+    "brandName": "Montair LC",
+    "standardGeneric": "Montelukast + Levocetirizine",
+    "constituents": [
+      "Montelukast",
+      "Levocetirizine"
+    ],
+    "primaryRxCui": null,
+    "dosage": "10mg+5mg",
+    "dosageOptions": [],
+    "category": "Leukotriene Receptor Antagonist + Antihistamine (Allergy/Asthma)",
+    "safetyTip": "Take once daily at bedtime. May cause mild drowsiness.",
+    "foodInstruction": "night",
+    "manufacturer": "Cipla",
+    "source": "indian_formulary"
+  },
+  "montairlc": {
+    "brandName": "Montair LC",
+    "standardGeneric": "Montelukast + Levocetirizine",
+    "constituents": [
+      "Montelukast",
+      "Levocetirizine"
+    ],
+    "primaryRxCui": null,
+    "dosage": "10mg+5mg",
+    "dosageOptions": [],
+    "category": "Leukotriene Receptor Antagonist + Antihistamine (Allergy/Asthma)",
+    "safetyTip": "Take once daily at bedtime. May cause mild drowsiness.",
+    "foodInstruction": "night",
+    "manufacturer": "Cipla",
+    "source": "indian_formulary_variant"
+  },
+  "montek lc": {
+    "brandName": "Montek LC",
+    "standardGeneric": "Montelukast + Levocetirizine",
+    "constituents": [
+      "Montelukast",
+      "Levocetirizine"
+    ],
+    "primaryRxCui": null,
+    "dosage": "10mg+5mg",
+    "dosageOptions": [],
+    "category": "Anti-Allergic / Bronchoprotective",
+    "safetyTip": "Take at night. Alleviates allergic rhinitis, sneezing, and wheezing symptoms.",
+    "foodInstruction": "night",
+    "manufacturer": "Sun Pharma",
+    "source": "indian_formulary"
+  },
+  "monteklc": {
+    "brandName": "Montek LC",
+    "standardGeneric": "Montelukast + Levocetirizine",
+    "constituents": [
+      "Montelukast",
+      "Levocetirizine"
+    ],
+    "primaryRxCui": null,
+    "dosage": "10mg+5mg",
+    "dosageOptions": [],
+    "category": "Anti-Allergic / Bronchoprotective",
+    "safetyTip": "Take at night. Alleviates allergic rhinitis, sneezing, and wheezing symptoms.",
+    "foodInstruction": "night",
+    "manufacturer": "Sun Pharma",
+    "source": "indian_formulary_variant"
+  },
+  "allegra 120": {
+    "brandName": "Allegra 120",
+    "standardGeneric": "Fexofenadine",
+    "constituents": [
+      "Fexofenadine"
+    ],
+    "primaryRxCui": null,
+    "dosage": "120mg",
+    "dosageOptions": [],
+    "category": "Non-Sedating 2nd Gen Antihistamine",
+    "safetyTip": "Take with plain water. Avoid fruit juices (apple, orange, grapefruit) within 4 hours as they block absorption.",
+    "foodInstruction": "before_food",
+    "manufacturer": "Sanofi",
+    "source": "indian_formulary"
+  },
+  "allegra120": {
+    "brandName": "Allegra 120",
+    "standardGeneric": "Fexofenadine",
+    "constituents": [
+      "Fexofenadine"
+    ],
+    "primaryRxCui": null,
+    "dosage": "120mg",
+    "dosageOptions": [],
+    "category": "Non-Sedating 2nd Gen Antihistamine",
+    "safetyTip": "Take with plain water. Avoid fruit juices (apple, orange, grapefruit) within 4 hours as they block absorption.",
+    "foodInstruction": "before_food",
+    "manufacturer": "Sanofi",
+    "source": "indian_formulary_variant"
+  },
+  "zerodol-th": {
+    "brandName": "Zerodol-TH",
+    "standardGeneric": "Aceclofenac + Thiocolchicoside",
+    "constituents": [
+      "Aceclofenac",
+      "Thiocolchicoside"
+    ],
+    "primaryRxCui": null,
+    "dosage": "100mg+4mg",
+    "dosageOptions": [],
+    "category": "NSAID + Muscle Relaxant (Spasm & Severe Pain)",
+    "safetyTip": "Take after meals. Prescribed for painful muscle spasms. Avoid combining with other painkillers.",
+    "foodInstruction": "after_food",
+    "manufacturer": "Ipca",
+    "source": "indian_formulary"
+  },
+  "meftal-spas": {
+    "brandName": "Meftal-Spas",
+    "standardGeneric": "Mefenamic Acid + Dicyclomine",
+    "constituents": [
+      "Mefenamic Acid",
+      "Dicyclomine"
+    ],
+    "primaryRxCui": null,
+    "dosage": "250mg+10mg",
+    "dosageOptions": [],
+    "category": "NSAID + Antispasmodic (Cramps & Colic)",
+    "safetyTip": "Take after food for abdominal cramps and dysmenorrhea. Dry mouth is a common mild side effect.",
+    "foodInstruction": "after_food",
+    "manufacturer": "Blue Cross",
+    "source": "indian_formulary"
+  },
+  "ondem 4": {
+    "brandName": "Ondem 4",
+    "standardGeneric": "Ondansetron",
+    "constituents": [
+      "Ondansetron"
+    ],
+    "primaryRxCui": null,
+    "dosage": "4mg",
+    "dosageOptions": [],
+    "category": "5-HT3 Receptor Antagonist (Anti-Emetic)",
+    "safetyTip": "Dissolve on tongue or swallow with water 30 mins before medications causing nausea.",
+    "foodInstruction": "any",
+    "manufacturer": "Alkem",
+    "source": "indian_formulary"
+  },
+  "ondem4": {
+    "brandName": "Ondem 4",
+    "standardGeneric": "Ondansetron",
+    "constituents": [
+      "Ondansetron"
+    ],
+    "primaryRxCui": null,
+    "dosage": "4mg",
+    "dosageOptions": [],
+    "category": "5-HT3 Receptor Antagonist (Anti-Emetic)",
+    "safetyTip": "Dissolve on tongue or swallow with water 30 mins before medications causing nausea.",
+    "foodInstruction": "any",
+    "manufacturer": "Alkem",
+    "source": "indian_formulary_variant"
+  },
+  "silodal 8": {
+    "brandName": "Silodal 8",
+    "standardGeneric": "Silodosin",
+    "constituents": [
+      "Silodosin"
+    ],
+    "primaryRxCui": null,
+    "dosage": "4mg",
+    "dosageOptions": [],
+    "category": "Selective Alpha-1A Blocker (BPH Urinary Flow)",
+    "safetyTip": "Highly uroselective. Take with food at dinner. Improves urinary stream in prostate enlargement.",
+    "foodInstruction": "with_food",
+    "manufacturer": "Sun Pharma",
+    "source": "indian_formulary"
+  },
+  "silodal8": {
+    "brandName": "Silodal 8",
+    "standardGeneric": "Silodosin",
+    "constituents": [
+      "Silodosin"
+    ],
+    "primaryRxCui": null,
+    "dosage": "4mg",
+    "dosageOptions": [],
+    "category": "Selective Alpha-1A Blocker (BPH Urinary Flow)",
+    "safetyTip": "Highly uroselective. Take with food at dinner. Improves urinary stream in prostate enlargement.",
+    "foodInstruction": "with_food",
+    "manufacturer": "Sun Pharma",
+    "source": "indian_formulary_variant"
+  },
+  "lasix 40": {
+    "brandName": "Lasix 40",
+    "standardGeneric": "Furosemide",
+    "constituents": [
+      "Furosemide"
+    ],
+    "primaryRxCui": null,
+    "dosage": "40mg",
+    "dosageOptions": [],
+    "category": "Loop Diuretic (Edema & Hypertension)",
+    "safetyTip": "Take in the morning with a full glass of water. Eat potassium-rich foods; monitor renal function.",
+    "foodInstruction": "morning",
+    "manufacturer": "Sanofi",
+    "source": "indian_formulary"
+  },
+  "lasix40": {
+    "brandName": "Lasix 40",
+    "standardGeneric": "Furosemide",
+    "constituents": [
+      "Furosemide"
+    ],
+    "primaryRxCui": null,
+    "dosage": "40mg",
+    "dosageOptions": [],
+    "category": "Loop Diuretic (Edema & Hypertension)",
+    "safetyTip": "Take in the morning with a full glass of water. Eat potassium-rich foods; monitor renal function.",
+    "foodInstruction": "morning",
+    "manufacturer": "Sanofi",
+    "source": "indian_formulary_variant"
+  },
+  "dytor 10": {
+    "brandName": "Dytor 10",
+    "standardGeneric": "Torsemide",
+    "constituents": [
+      "Torsemide"
+    ],
+    "primaryRxCui": null,
+    "dosage": "10mg",
+    "dosageOptions": [],
+    "category": "Potent Loop Diuretic (Heart Failure Edema)",
+    "safetyTip": "Long-acting diuretic. Take early in the day. Monitor body weight and electrolyte balance.",
+    "foodInstruction": "morning",
+    "manufacturer": "Cipla",
+    "source": "indian_formulary"
+  },
+  "dytor10": {
+    "brandName": "Dytor 10",
+    "standardGeneric": "Torsemide",
+    "constituents": [
+      "Torsemide"
+    ],
+    "primaryRxCui": null,
+    "dosage": "10mg",
+    "dosageOptions": [],
+    "category": "Potent Loop Diuretic (Heart Failure Edema)",
+    "safetyTip": "Long-acting diuretic. Take early in the day. Monitor body weight and electrolyte balance.",
+    "foodInstruction": "morning",
+    "manufacturer": "Cipla",
+    "source": "indian_formulary_variant"
+  },
+  "limcee 500": {
+    "brandName": "Limcee 500",
+    "standardGeneric": "Ascorbic Acid (Vitamin C)",
+    "constituents": [
+      "Ascorbic Acid (Vitamin C)"
+    ],
+    "primaryRxCui": null,
+    "dosage": "500mg Chewable",
+    "dosageOptions": [],
+    "category": "Antioxidant Vitamin Supplement",
+    "safetyTip": "Chew tablet thoroughly after a meal. Enhances iron absorption and immune function.",
+    "foodInstruction": "after_food",
+    "manufacturer": "Abbott",
+    "source": "indian_formulary"
+  },
+  "limcee500": {
+    "brandName": "Limcee 500",
+    "standardGeneric": "Ascorbic Acid (Vitamin C)",
+    "constituents": [
+      "Ascorbic Acid (Vitamin C)"
+    ],
+    "primaryRxCui": null,
+    "dosage": "500mg Chewable",
+    "dosageOptions": [],
+    "category": "Antioxidant Vitamin Supplement",
+    "safetyTip": "Chew tablet thoroughly after a meal. Enhances iron absorption and immune function.",
+    "foodInstruction": "after_food",
+    "manufacturer": "Abbott",
+    "source": "indian_formulary_variant"
+  },
+  "limcee": {
+    "brandName": "Limcee 500",
+    "standardGeneric": "Ascorbic Acid (Vitamin C)",
+    "constituents": [
+      "Ascorbic Acid (Vitamin C)"
+    ],
+    "primaryRxCui": null,
+    "dosage": "500mg Chewable",
+    "dosageOptions": [],
+    "category": "Antioxidant Vitamin Supplement",
+    "safetyTip": "Chew tablet thoroughly after a meal. Enhances iron absorption and immune function.",
+    "foodInstruction": "after_food",
+    "manufacturer": "Abbott",
+    "source": "indian_formulary_variant"
+  },
+  "evion 400": {
+    "brandName": "Evion 400",
+    "standardGeneric": "Vitamin E (Tocopherol)",
+    "constituents": [
+      "Vitamin E (Tocopherol)"
+    ],
+    "primaryRxCui": null,
+    "dosage": "400mg",
+    "dosageOptions": [],
+    "category": "Lipophilic Antioxidant Supplement",
+    "safetyTip": "Take after fatty food for optimal absorption. Supports skin health and cell membrane integrity.",
+    "foodInstruction": "after_food",
+    "manufacturer": "P&G Health",
+    "source": "indian_formulary"
+  },
+  "evion400": {
+    "brandName": "Evion 400",
+    "standardGeneric": "Vitamin E (Tocopherol)",
+    "constituents": [
+      "Vitamin E (Tocopherol)"
+    ],
+    "primaryRxCui": null,
+    "dosage": "400mg",
+    "dosageOptions": [],
+    "category": "Lipophilic Antioxidant Supplement",
+    "safetyTip": "Take after fatty food for optimal absorption. Supports skin health and cell membrane integrity.",
+    "foodInstruction": "after_food",
+    "manufacturer": "P&G Health",
+    "source": "indian_formulary_variant"
+  },
+  "evion": {
+    "brandName": "Evion 400",
+    "standardGeneric": "Vitamin E (Tocopherol)",
+    "constituents": [
+      "Vitamin E (Tocopherol)"
+    ],
+    "primaryRxCui": null,
+    "dosage": "400mg",
+    "dosageOptions": [],
+    "category": "Lipophilic Antioxidant Supplement",
+    "safetyTip": "Take after fatty food for optimal absorption. Supports skin health and cell membrane integrity.",
+    "foodInstruction": "after_food",
+    "manufacturer": "P&G Health",
+    "source": "indian_formulary_variant"
   }
 }
