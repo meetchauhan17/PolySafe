@@ -24,8 +24,10 @@ const prisma = require('../lib/prisma');
 
 const router = express.Router();
 
+const os = require('os');
+
 // ─── Ensure temp upload directory exists ───────────────────────────────────────
-const tmpDir = path.join(__dirname, '../../tmp');
+const tmpDir = path.join(os.tmpdir(), 'polysafe-uploads');
 if (!fs.existsSync(tmpDir)) {
   try {
     fs.mkdirSync(tmpDir, { recursive: true });
