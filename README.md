@@ -25,13 +25,13 @@
 
 <br/>
 
-[Live Deployments](#live-deployments--demo-credentials) | [Clinical Problem](#the-clinical-problem-statement) | [Core Safety Subsystems](#the-5-core-safety-subsystems) | [Mathematical Scoring Models](#deterministic-mathematical-scoring-models) | [Role Portals](#role-based-clinical-portals) | [Team Presentation Guide](#5-person-team-presentation-division) | [API Reference](#api-endpoint-reference-76-endpoints) | [Database Architecture](#database-architecture) | [Quickstart](#local-installation--quickstart) | [Verification Audit](#master-verification-audit-1818-passed)
+[Live Deployments](#live-deployments) | [Master Study Kit](#master-study-kit-exam--presentation-playbooks) | [Clinical Problem](#the-clinical-problem-statement) | [Core Safety Subsystems](#the-5-core-safety-subsystems) | [Mathematical Scoring Models](#deterministic-mathematical-scoring-models) | [Role Portals](#role-based-clinical-portals) | [Team Presentation Guide](#5-person-team-presentation-division) | [API Reference](#api-endpoint-reference-76-endpoints) | [Database Architecture](#database-architecture) | [Quickstart](#local-installation--quickstart) | [Verification Audit](#master-verification-audit-1818-passed)
 
 ---
 
 </div>
 
-## Live Deployments & Demo Credentials
+## Live Deployments
 
 PolySafe is fully deployed in production on Vercel Serverless paired with Neon Serverless PostgreSQL.
 
@@ -41,24 +41,26 @@ PolySafe is fully deployed in production on Vercel Serverless paired with Neon S
 | **Backend REST API** | [`https://polysafe-backend.vercel.app`](https://polysafe-backend.vercel.app) | ACTIVE | Serverless Node 22 API with rate-limiting & Prisma connection pooling |
 | **Diagnostic Heartbeat** | [`https://polysafe-backend.vercel.app/health`](https://polysafe-backend.vercel.app/health) | 200 OK | `{"status":"ok","api":true,"db":true,"demoMode":false}` |
 
-### Verified Demo Credentials
+---
 
-Pre-seeded accounts in the production Neon database with complete clinical timelines:
+## Master Study Kit: Exam, Presentation & Defense Playbooks
 
-```text
-+-----------------------------------------------------------------------------+
-| PATIENT DEMO ACCOUNT                                                        |
-| Email:    meetc8030@gmail.com                                               |
-| Password: Meet@123                                                          |
-| Context:  Age 68, Hypertension & Atrial Fibrillation.                       |
-| Regimen:  Warfarin + Aspirin + Ginkgo Biloba (Triggers Level 5 Alert)       |
-+-----------------------------------------------------------------------------+
-| DOCTOR DEMO ACCOUNT                                                         |
-| Email:    cse.230840131016@gmail.com                                        |
-| Password: Meet@123                                                          |
-| Context:  Dr. Sarah Wilson, Senior Cardiologist (License: MED-89412)        |
-+-----------------------------------------------------------------------------+
-```
+For academic examinations, hackathon presentations, and clinical defense panels, PolySafe provides three synchronized study and documentation artifacts:
+
+| Resource Document | Format | Size | Purpose & Scope |
+|:---|:---:|:---:|:---|
+| [`POLYSAFE_MASTER_PROJECT_AND_JUDGES_GUIDE.md`](./POLYSAFE_MASTER_PROJECT_AND_JUDGES_GUIDE.md) | Markdown | 45 KB (625 lines) | **Complete 11-Chapter Team Bible**: Plain-English concept, clinical urgency, all 7 math scoring models, 5 subsystems, 3 portals, architecture, 5-person role scripts, 5-minute live demo choreography, top 15 judge defense Q&As, and medical glossary. |
+| [`POLYSAFE_EXAM_STUDY_GUIDE.pdf`](./POLYSAFE_EXAM_STUDY_GUIDE.pdf) | PDF (Print-Ready) | 908 KB | **Physical Exam & Judge Handout**: Pre-compiled, high-density study guide styled like an academic clinical pharmacology exam paper. Ideal for printing on standard A4 or offline reading on tablets/phones. |
+| [`POLYSAFE_EXAM_STUDY_GUIDE.html`](./POLYSAFE_EXAM_STUDY_GUIDE.html) | Interactive HTML | 42 KB (792 lines) | **Print-Optimized Template**: Custom `@media print` layout with typography (`Inter`, `JetBrains Mono`), double-rule exam borders, math callouts, and auto-page breaks. Open in Chrome/Edge and press `Ctrl + P` to print. |
+
+### How to Use the Study Kit
+
+* **For Team Pre-Pitch Revision**: Read [`POLYSAFE_MASTER_PROJECT_AND_JUDGES_GUIDE.md`](./POLYSAFE_MASTER_PROJECT_AND_JUDGES_GUIDE.md) Chapter 8 (5-Person Role Scripts) and Chapter 10 (Top 15 Tough Judge Questions).
+* **For Booth Demonstrations**: Print [`POLYSAFE_EXAM_STUDY_GUIDE.pdf`](./POLYSAFE_EXAM_STUDY_GUIDE.pdf) or keep it open on an iPad/tablet to show judges full mathematical rigor.
+* **To Recompile the PDF from HTML**: Run this PowerShell command from the project root:
+  ```powershell
+  Start-Process -FilePath "msedge.exe" -ArgumentList "--headless", "--disable-gpu", "--run-all-compositor-stages-before-draw", "--print-to-pdf=`"C:\Meet\xyz\PolySafe\POLYSAFE_EXAM_STUDY_GUIDE.pdf`"", "`"file:///C:/Meet/xyz/PolySafe/POLYSAFE_EXAM_STUDY_GUIDE.html`"" -Wait
+  ```
 
 ---
 
@@ -471,6 +473,31 @@ ALL 18 CLINICAL ENDPOINTS & SYSTEM WORKFLOWS VERIFIED (100% OK)
 
 ---
 
+## Detailed Study Guide Chapter Index
+
+The [`POLYSAFE_MASTER_PROJECT_AND_JUDGES_GUIDE.md`](./POLYSAFE_MASTER_PROJECT_AND_JUDGES_GUIDE.md) document contains 11 comprehensive chapters:
+
+1. **What is PolySafe in Plain English?** - Relatable grandfather narrative, multi-doctor silos, and whole-regimen safety vs pair-checking.
+2. **The Big Problem (Why PolySafe Must Exist)** - Clinical statistics (30%+ senior admissions, 50%+ preventable) and the 4 fatal healthcare traps.
+3. **All Scores & Mathematical Logic (Maths First)**:
+   - 3.1 Regimen Risk Score (Level 1 to 5) with mean toxicity $\mu_{\text{risk}}$, $h_{\max}$, and piecewise decision tree.
+   - 3.2 Anticholinergic Cognitive Burden (Boustani ACB Score 0 to 12+).
+   - 3.3 DDInter Interaction Severity, mechanistic classifications, and mathematical weights.
+   - 3.4 Duplicate Salt Toxicity & Safe Ceiling Limits ($Dose_{\text{cumulative}}(S_k) > CeilingLimit(S_k)$).
+   - 3.5 Prescribing Cascade Temporal Graph Traversal ($t(m_A) < t(s) \le t(m_B)$).
+   - 3.6 Rolling 7-Day Adherence Percentage and Streak tracking.
+   - 3.7 4-System Organ Toxicity Vector ($[Renal, Hepatic, Cardio, CNS]$).
+4. **The 5 Core Safety Subsystems** - Detailed architectural mechanics of each layer.
+5. **The 3 User Portals** - Patient Portal, Doctor Portal, and Caregiver Portal with privacy firewall.
+6. **Complete Technical Architecture & Cloud Stack** - Frontend, backend, and Neon PostgreSQL database layers.
+7. **Live Deployment & Cloud Infrastructure** - Live service endpoints, serverless database tier, and health diagnostics.
+8. **5-Person Team Role Division** - Exact 45-60s speaking scripts and live demo click actions for all 5 team members.
+9. **5-Minute Live Demo Timeline** - Second-by-second choreography for hackathon presentations.
+10. **Judge Defense Bible** - Top 15 tough judge questions with golden, authoritative model answers.
+11. **Medical & Technical Glossary** - Clear, simple definitions for 16 clinical and technical terms.
+
+---
+
 ## Clinical Evidence Base & Standards
 
 1. **DDInter Consortium**: Xiong et al., *DDInter: an online drug-drug interaction database with pharmacological mechanisms and safety levels*, Nucleic Acids Research, 2022. (222,383 records, 160,235 unique pairs).
@@ -481,14 +508,6 @@ ALL 18 CLINICAL ENDPOINTS & SYSTEM WORKFLOWS VERIFIED (100% OK)
 6. **FDA OFFSIDES Post-Market Database**: Tatonetti NP. et al., *Data-driven prediction of drug effects and interactions*, Science Translational Medicine, 2012. (1.2M+ signals).
 7. **NLM RxNorm Standards**: US National Library of Medicine standardized clinical drug nomenclature and RxCUI identifiers.
 8. **Indian Pharmacopoeia Commission (IPC)**: National drug formulary standards for Fixed-Dose Combinations (FDCs).
-
----
-
-## Documentation & Presentation Handbooks
-
-* Complete A-to-Z Master Guide: [`POLYSAFE_MASTER_PROJECT_AND_JUDGES_GUIDE.md`](./POLYSAFE_MASTER_PROJECT_AND_JUDGES_GUIDE.md)
-* Exam Revision & Pitch PDF: [`POLYSAFE_EXAM_STUDY_GUIDE.pdf`](./POLYSAFE_EXAM_STUDY_GUIDE.pdf) *(Ready to print or share)*
-* Interactive Printable HTML: [`POLYSAFE_EXAM_STUDY_GUIDE.html`](./POLYSAFE_EXAM_STUDY_GUIDE.html)
 
 ---
 

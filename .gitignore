@@ -1,44 +1,98 @@
+# ==============================================================================
+# PolySafe Master .gitignore
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
 # Dependencies
+# ------------------------------------------------------------------------------
 node_modules/
 .pnpm-store/
+.npm/
 
-# Environment variables
+# ------------------------------------------------------------------------------
+# Environment Variables & Secrets (NEVER COMMIT CREDENTIALS)
+# ------------------------------------------------------------------------------
 .env
-.env.local
-.env.production
-.env.development
+.env.*
+*.env
+backend/.env
+frontend/.env.local
+frontend/.env.production
+!.env.example
 
-# Build outputs
+# ------------------------------------------------------------------------------
+# Build & Distribution Outputs
+# ------------------------------------------------------------------------------
 dist/
+dist-ssr/
 build/
 out/
 .next/
+.cache/
 
-# Logs
+# ------------------------------------------------------------------------------
+# Cloud, Serverless & Neon Metadata
+# ------------------------------------------------------------------------------
+.vercel/
+.vercel
+.neon
+.neon/
+.serverless/
+
+# ------------------------------------------------------------------------------
+# Logs & Diagnostic Dumps
+# ------------------------------------------------------------------------------
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+pnpm-debug.log*
 logs/
 
-# IDE / OS
-.vscode/
-.idea/
+# ------------------------------------------------------------------------------
+# Operating System & IDE Artifacts
+# ------------------------------------------------------------------------------
 .DS_Store
 Thumbs.db
+desktop.ini
+.vscode/
+!.vscode/extensions.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
 
-# Database & Uploads
+# ------------------------------------------------------------------------------
+# Database Local Storage & Temp Uploads
+# ------------------------------------------------------------------------------
+*.db
+*.db-journal
 prisma/*.db
 prisma/*.db-journal
 backend/prisma/*.db
 backend/prisma/*.db-journal
-*.db
-*.db-journal
 uploads/
-
-# Multer temp OCR upload dir — files deleted after processing but keep dir
 backend/tmp/
 
-# Project Manuals & Build Sequence Docs
+# ------------------------------------------------------------------------------
+# Large Raw Datasets & Archive Files (>100MB GitHub limit)
+# ------------------------------------------------------------------------------
+*.csv.gz
+*.tsv.gz
+TWOSIDES.csv/
+
+# ------------------------------------------------------------------------------
+# Temporary Inspection & Test Scripts
+# ------------------------------------------------------------------------------
+scratch/
+backend/scripts/*.png
+backend/scripts/*.cjs
+
+# ------------------------------------------------------------------------------
+# Internal Legacy Drafts & Temporary Files
+# ------------------------------------------------------------------------------
 POLYSAFE_COMPLETE_ATOZ_MANUAL.md
 PolySafe_FINAL_Build_Sequence.md
 PolySafe_Master_Project.md
@@ -46,15 +100,6 @@ POLYSAFE_CURRENT_STATE.md
 POLYSAFE_FINAL_CONFIRMATION.md
 POLYSAFE_UI_AUDIT.md
 ROUND1_SUBMISSION_DATA.md
-*.docx
-build_submission.js
-
-# Large raw datasets & archives (exceed GitHub 100MB file limit)
-*.csv.gz
-*.tsv.gz
-TWOSIDES.csv/
-
-# Local-only reference documents
 POLYSAFE_PPT_DATA.md
 FINALS_CHANGELOG.md
 FINALS_READINESS.md
@@ -62,11 +107,13 @@ MATHEMATICAL_CALCULATIONS_AND_DATASETS.md
 POSTER_DATA.md
 UI_LAYOUT_SPECIFICATION.md
 UI_REDESIGN_REPORT.md
+build_submission.js
+*.docx
 
-# Scratch and test inspection artifacts
-scratch/
-backend/scripts/*.png
-backend/scripts/*.cjs
-
-
-.neon
+# ------------------------------------------------------------------------------
+# Master Study Guides & Project Handbooks (EXPLICITLY PRESERVED & TRACKED)
+# ------------------------------------------------------------------------------
+!POLYSAFE_MASTER_PROJECT_AND_JUDGES_GUIDE.md
+!POLYSAFE_EXAM_STUDY_GUIDE.html
+!POLYSAFE_EXAM_STUDY_GUIDE.pdf
+!README.md
