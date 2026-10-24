@@ -434,6 +434,64 @@
     <div class="formula">O&#773;<sub>regimen</sub> = [ O<sub>Renal</sub>, &nbsp; O<sub>Hepatic</sub>, &nbsp; O<sub>Cardiovascular</sub>, &nbsp; O<sub>CNS/Cognitive</sub> ] &isin; [0.0, 1.0]<sup>4</sup></div>
   </div>
 
+  <h3>2.7 Master Score Reference & End-to-End Data Flow</h3>
+  <p>Every score displayed on PolySafe solves a specific clinical failure mode and follows a verified data pipeline:</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 14%;">Score Name & Scale</th>
+        <th style="width: 20%;">Why It Exists (Clinical Hazard)</th>
+        <th style="width: 32%;">Mathematical Logic & Rule</th>
+        <th style="width: 34%;">End-to-End Data Flow (Input &rarr; UI)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Regimen Risk Score</strong><br/><span class="code-pill">L1 &ndash; L5</span><br/>(Low &rarr; Critical)</td>
+        <td>Evaluates whole-regimen toxicity so patients & doctors see overall danger at a single glance.</td>
+        <td><code>&mu;<sub>risk</sub> = (&sum;h<sub>i</sub>)/N</code><br/>If <code>h<sub>max</sub>=5 &or; F<sub>active</sub>&ge;3</code> &rarr; L5 Critical.<br/>Else if <code>&mu;&ge;3.5 &or; F<sub>major</sub>&ge;1</code> &rarr; L4 High.</td>
+        <td><strong>Input:</strong> Drug added &rarr; <strong>Lookup:</strong> <code>harm-levels.json</code> assigns $h_i$ &rarr; <strong>DB:</strong> Prisma fetches active drugs & flags &rarr; <strong>Engine:</strong> <code>calculateRegimenRisk()</code> evaluates decision tree &rarr; <strong>UI:</strong> Animated colored Safety Ring on Home.</td>
+      </tr>
+      <tr>
+        <td><strong>ACB Cognitive Score</strong><br/><span class="code-pill">0 &ndash; 12+</span><br/>(Boustani Scale)</td>
+        <td>Blocks central muscarinic receptors; score &ge;3 triples delirium, confusion, and fall fractures.</td>
+        <td><code>TotalACB = &sum; Score(m<sub>i</sub>)</code><br/>Score &isin; {0, 1, 2, 3}<br/>0: Normal | 1-2: Moderate | &ge;3: Critical.</td>
+        <td><strong>Input:</strong> Drug names normalized &rarr; <strong>Lookup:</strong> <code>burdens.json</code> (567 calibrated drug scores) &rarr; <strong>Math:</strong> Sum active drug scores &rarr; <strong>UI:</strong> Semicircular needle gauge on <code>ACBMeter.jsx</code>.</td>
+      </tr>
+      <tr>
+        <td><strong>DDInter Severity</strong><br/><span class="code-pill">Minor &rarr; Contraindicated</span><br/>(Weights 1 &rarr; 4)</td>
+        <td>Eliminates alert fatigue by prioritizing lethal combinations over minor dietary timings.</td>
+        <td>Evaluates $\binom{N}{2}$ combinations.<br/>$W_{\text{Contra}}=4 > W_{\text{Maj}}=3 > W_{\text{Mod}}=2 > W_{\text{Min}}=1$.</td>
+        <td><strong>Input:</strong> Pair of drugs &rarr; <strong>Lookup:</strong> <code>ddinter.csv</code> (222k pairs) &rarr; <strong>DB:</strong> Stored in <code>InteractionFlag</code> table &rarr; <strong>AI:</strong> Groq LLaMA synthesizes dual clinical/plain explanation &rarr; <strong>UI:</strong> Color-coded alert cards.</td>
+      </tr>
+      <tr>
+        <td><strong>Salt Toxicity Ceiling</strong><br/><span class="code-pill">mg / day limit</span></td>
+        <td>Indian FDCs hide identical salts across brands, causing acute hepatotoxicity.</td>
+        <td><code>&sum; (Dose &times; Freq) &gt; CeilingLimit</code><br/>Paracetamol ceiling = 4,000 mg/day (2,000 mg in hepatic impairment).</td>
+        <td><strong>Input:</strong> Trade brands (Combiflam + Calpol) &rarr; <strong>Resolver:</strong> 5-layer engine extracts Paracetamol mg &rarr; <strong>Engine:</strong> Multiplies by daily frequency &rarr; <strong>Alert:</strong> Red banner if sum &gt; 4000mg.</td>
+      </tr>
+      <tr>
+        <td><strong>Cascade Match</strong><br/><span class="code-pill">Boolean + Days</span></td>
+        <td>Prevents treating a drug's side-effect with a second redundant prescription.</td>
+        <td>Checks if $t(m_A) < t(\text{Symptom}) \le t(m_B)$ and matches 581 known cascade rules.</td>
+        <td><strong>Input:</strong> Patient logs symptom ("ankle swelling") &rarr; <strong>Engine:</strong> Traverses active drugs and start dates &rarr; <strong>Match:</strong> Identifies Amlodipine started 21 days ago &rarr; <strong>UI:</strong> Prescribing Cascade Warning banner.</td>
+      </tr>
+      <tr>
+        <td><strong>7-Day Adherence</strong><br/><span class="code-pill">0% &ndash; 100%</span></td>
+        <td>Missed doses of critical drugs (Warfarin) cause fatal clots; erratic dosing causes spikes.</td>
+        <td><code>(Logged Doses / Scheduled Doses) &times; 100</code><br/>&ge;85%: Green | 70-84%: Amber | &lt;70%: Red.</td>
+        <td><strong>Input:</strong> Checkbox clicked on Daily Timetable &rarr; <strong>API:</strong> <code>POST /medicine/log-dose</code> &rarr; <strong>DB:</strong> Recorded in <code>DoseLog</code> &rarr; <strong>UI:</strong> Circular ring progress + celebratory confetti on streak.</td>
+      </tr>
+      <tr>
+        <td><strong>4-Organ Toxicity</strong><br/><span class="code-pill">[0.0, 1.0] Vector</span></td>
+        <td>Provides specialists with clearance strain across Kidney, Liver, Heart, and Brain.</td>
+        <td>$O_{\text{organ}} = \min(1.0, \frac{1}{2.5} \sum c_{\text{organ}}(m_i))$.</td>
+        <td><strong>Input:</strong> Active medications &rarr; <strong>Engine:</strong> Sums clearance coefficients &rarr; <strong>UI:</strong> Interactive 4-axis Spider/Radar chart on Doctor Dashboard.</td>
+      </tr>
+    </tbody>
+  </table>
+
   <div class="page-break"></div>
 
   <!-- ==================== SECTION 3: THE 5 SAFETY SUBSYSTEMS ==================== -->

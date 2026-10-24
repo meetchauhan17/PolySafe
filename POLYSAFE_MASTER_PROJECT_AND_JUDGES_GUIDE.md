@@ -137,6 +137,20 @@ $$\vec{O}_{\text{regimen}} = \big[ O_{\text{Renal}}, \; O_{\text{Hepatic}}, \; O
 
 ---
 
+### 3.7 Master Score Reference & End-to-End Data Flow
+
+| Score Name & Scale | Why It Exists (Clinical Hazard) | Mathematical Logic & Rule | End-to-End Data Flow (Input &rarr; UI) |
+|---|---|---|---|
+| **Regimen Risk Score**<br/>`L1 to L5`<br/>(Low &rarr; Critical) | Evaluates whole-regimen toxicity so patients & doctors see overall danger at a single glance. | $\mu_{\text{risk}} = \frac{1}{N}\sum h_i$<br/>If $h_{\max}=5 \lor F_{\text{active}} \ge 3 \implies$ **L5 Critical**.<br/>Else if $\mu \ge 3.5 \lor F_{\text{major}} \ge 1 \implies$ **L4 High**. | **Input:** Drug added &rarr; **Lookup:** `harm-levels.json` assigns $h_i$ &rarr; **DB:** Prisma fetches active drugs & flags &rarr; **Engine:** `calculateRegimenRisk()` evaluates decision tree &rarr; **UI:** Animated colored Safety Ring on Home. |
+| **ACB Cognitive Score**<br/>`0 to 12+`<br/>(Boustani Scale) | Blocks central muscarinic receptors; score &ge;3 triples delirium, confusion, and fall fractures. | $\text{TotalACB} = \sum \text{Score}(m_i)$<br/>$\text{Score}(m_i) \in \{0, 1, 2, 3\}$<br/>0: Normal \| 1-2: Moderate \| &ge;3: Critical. | **Input:** Drug names normalized &rarr; **Lookup:** `burdens.json` (567 calibrated drug scores) &rarr; **Math:** Sum active drug scores &rarr; **UI:** Semicircular needle gauge on `ACBMeter.jsx`. |
+| **DDInter Severity**<br/>`Minor to Contraindicated`<br/>(Weights 1 to 4) | Eliminates alert fatigue by prioritizing lethal combinations over minor dietary timings. | Evaluates $\binom{N}{2}$ combinations.<br/>$W_{\text{Contra}}=4 > W_{\text{Maj}}=3 > W_{\text{Mod}}=2 > W_{\text{Min}}=1$. | **Input:** Pair of drugs &rarr; **Lookup:** `ddinter.csv` (222k pairs) &rarr; **DB:** Stored in `InteractionFlag` table &rarr; **AI:** Groq LLaMA synthesizes dual clinical/plain explanation &rarr; **UI:** Color-coded alert cards. |
+| **Salt Toxicity Ceiling**<br/>`mg / day limit` | Indian FDCs hide identical salts across brands, causing acute hepatotoxicity. | $\sum (\text{Dose} \times \text{Freq}) > \text{CeilingLimit}$<br/>Paracetamol ceiling = 4,000 mg/day (2,000 mg in hepatic impairment). | **Input:** Trade brands (Combiflam + Calpol) &rarr; **Resolver:** 5-layer engine extracts Paracetamol mg &rarr; **Engine:** Multiplies by daily frequency &rarr; **Alert:** Red banner if sum &gt; 4000mg. |
+| **Cascade Match**<br/>`Boolean + Days` | Prevents treating a drug's side-effect with a second redundant prescription. | Checks if $t(m_A) < t(\text{Symptom}) \le t(m_B)$ and matches 581 known cascade rules. | **Input:** Patient logs symptom ("ankle swelling") &rarr; **Engine:** Traverses active drugs and start dates &rarr; **Match:** Identifies Amlodipine started 21 days ago &rarr; **UI:** Prescribing Cascade Warning banner. |
+| **7-Day Adherence**<br/>`0% to 100%` | Missed doses of critical drugs (Warfarin) cause fatal clots; erratic dosing causes spikes. | $(\text{Logged Doses} / \text{Scheduled Doses}) \times 100$<br/>&ge;85%: Green \| 70-84%: Amber \| &lt;70%: Red. | **Input:** Checkbox clicked on Daily Timetable &rarr; **API:** `POST /medicine/log-dose` &rarr; **DB:** Recorded in `DoseLog` &rarr; **UI:** Circular ring progress + celebratory confetti on streak. |
+| **4-Organ Toxicity**<br/>`[0.0, 1.0] Vector` | Provides specialists with clearance strain across Kidney, Liver, Heart, and Brain. | $O_{\text{organ}} = \min(1.0, \frac{1}{2.5} \sum c_{\text{organ}}(m_i))$. | **Input:** Active medications &rarr; **Engine:** Sums clearance coefficients &rarr; **UI:** Interactive 4-axis Spider/Radar chart on Doctor Dashboard. |
+
+---
+
 ## 4. How PolySafe Solves It (The 5 Safety Subsystems)
 
 ```
