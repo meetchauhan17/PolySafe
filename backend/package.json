@@ -48,7 +48,6 @@
   },
   "devDependencies": {
     "axe-core": "^4.14.0",
-    "nodemon": "^3.1.14",
-    "puppeteer": "^25.15.0"
+    "nodemon": "^3.1.14"
   }
 }
