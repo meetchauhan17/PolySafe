@@ -2906,6 +2906,21 @@
       "symptomKeyword": "sweating spells",
       "causingDrugCategory": "cholinergic",
       "description": "Muscarinic agonists prescribed for Sjögren syndrome or radiation xerostomia stimulate generalized glandular secretions and bladder contraction."
+    },
+    {
+      "symptomKeyword": "ankle swelling",
+      "causingDrugCategory": "calcium channel blocker",
+      "description": "Amlodipine produces peripheral edema via precapillary arteriolar vasodilation; commonly misdiagnosed as heart failure, triggering unnecessary loop diuretic (furosemide) initiation."
+    },
+    {
+      "symptomKeyword": "vitamin b12 deficiency",
+      "causingDrugCategory": "biguanide",
+      "description": "Long-term metformin usage antagonizes calcium-dependent ileal membrane absorption of Vitamin B12 (cobalamin), leading to neuropathy frequently confused with diabetic peripheral neuropathy."
+    },
+    {
+      "symptomKeyword": "dry cough",
+      "causingDrugCategory": "ACE inhibitor",
+      "description": "ACE inhibitors (e.g. lisinopril, ramipril) inhibit kininase II, causing pulmonary accumulation of bradykinin and substance P; frequently misdiagnosed as late-onset asthma, triggering inappropriate bronchodilator prescribing."
     }
   ]
 }

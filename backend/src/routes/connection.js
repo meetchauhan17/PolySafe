@@ -19,6 +19,7 @@ const crypto  = require('crypto');
 const prisma  = require('../lib/prisma');
 const { auth, requireRole } = require('../middleware/auth');
 const { lookupInteraction } = require('../services/interactionLookup');
+const { runSafetyChecks } = require('../services/safetyChecks');
 
 const router = express.Router();
 
@@ -607,6 +608,32 @@ const handleDoctorSafetyCheck = async (req, res) => {
       decision = 'SAFE';
     }
 
+    // 6. Run 5 Deterministic Safety Checks (Duplicate ingredient, Duplicate class, Allergy, Disease-Drug, Food & Spacing)
+    const patientRecord = await prisma.patient.findUnique({
+      where: { id: patientId },
+    });
+
+    let safetyAlerts = [];
+    if (patientRecord) {
+      safetyAlerts = await runSafetyChecks({
+        patient: patientRecord,
+        medicines: activeMeds,
+        newMedicine: {
+          name: rawDrug,
+          resolvedName,
+          genericName,
+          constituents,
+          class: resolved.class,
+        },
+      });
+    }
+
+    if (safetyAlerts.some(a => a.severity === 'CRITICAL')) {
+      decision = 'CRITICAL';
+    } else if (decision === 'SAFE' && safetyAlerts.some(a => a.severity === 'MAJOR' || a.severity === 'MODERATE')) {
+      decision = 'CAUTION';
+    }
+
     return res.status(200).json({
       decision,
       proposedDrug: {
@@ -618,6 +645,8 @@ const handleDoctorSafetyCheck = async (req, res) => {
         dosage: dosage || resolved.dosageOptions?.[0] || 'Standard dose',
       },
       flags: detectedFlags,
+      safetyAlerts,
+      safetyAlertCount: safetyAlerts.length,
       currentRegimenCount: activeMeds.length,
       projectedRegimenRisk,
       projectedAverageScore: parseFloat(projectedAverage.toFixed(1)),
@@ -632,6 +661,53 @@ const handleDoctorSafetyCheck = async (req, res) => {
 
 router.post('/doctor-safety-check', auth, requireRole(['DOCTOR']), handleDoctorSafetyCheck);
 router.post('/doctor/prescribe-safety-check', auth, requireRole(['DOCTOR']), handleDoctorSafetyCheck);
+
+// ═════════════════════════════════════════════════════════════════════════════
+// GET /connection/patient-safety-alerts/:patientId
+// Doctor-auth: returns 5 deterministic safety check alerts for a connected patient
+// ═════════════════════════════════════════════════════════════════════════════
+router.get('/patient-safety-alerts/:patientId', auth, requireRole(['DOCTOR']), async (req, res) => {
+  const { userId } = req.user;
+  const { patientId } = req.params;
+
+  try {
+    const connection = await prisma.connection.findFirst({
+      where: { connectedUserId: userId, patientId, status: 'APPROVED' },
+    });
+    if (!connection) {
+      return res.status(403).json({ error: 'No approved connection to this patient.' });
+    }
+
+    const patient = await prisma.patient.findUnique({
+      where: { id: patientId },
+      include: {
+        medicines: {
+          where: { removedAt: null },
+          orderBy: { dateAdded: 'asc' },
+        },
+      },
+    });
+
+    if (!patient) {
+      return res.status(404).json({ error: 'Patient not found.' });
+    }
+
+    const safetyAlerts = await runSafetyChecks({
+      patient,
+      medicines: patient.medicines || [],
+      enableAiRephrasing: req.query.enableAi === 'true',
+    });
+
+    return res.status(200).json({
+      alerts: safetyAlerts,
+      safetyAlerts,
+      safetyAlertCount: safetyAlerts.length,
+    });
+  } catch (err) {
+    console.error('[GET /connection/patient-safety-alerts/:patientId]', err);
+    return res.status(500).json({ error: 'Failed to fetch patient safety alerts.' });
+  }
+});
 
 
 // ═════════════════════════════════════════════════════════════════════════════
@@ -1245,6 +1321,10 @@ router.get('/doctor-patient/:patientId/clinical-summary', auth, requireRole(['DO
       anticholinergicBurden: burden,
       regimenRisk: risk,
       deprescribingCandidates,
+      safetyAlerts: await runSafetyChecks({
+        patient,
+        medicines: activeMeds,
+      }),
       organToxicity: {
         renal: calculateOrganRisk(activeMeds, 'renal'),
         hepatic: calculateOrganRisk(activeMeds, 'hepatic'),

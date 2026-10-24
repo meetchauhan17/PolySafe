@@ -1,0 +1,51 @@
+[
+  {
+    "id": "7ba27bbc-0224-4e02-b6ae-ac9845f875c9",
+    "patientId": "1cd1be61-ed66-4ce5-b36a-0550aa132428",
+    "description": "Persistent leg swelling and ankle edema",
+    "dateLogged": "2026-08-20T18:10:00.164Z",
+    "possibleCauseMedicineId": null
+  },
+  {
+    "id": "61c1b632-ee19-4afe-bf33-356c327428cd",
+    "patientId": "542692a2-514f-4331-bf48-d19188e092bc",
+    "description": "Persistent leg swelling and ankle edema",
+    "dateLogged": "2026-08-20T18:17:49.367Z",
+    "possibleCauseMedicineId": null
+  },
+  {
+    "id": "dd9c41e0-0f65-44ad-9779-95ecee218e89",
+    "patientId": "a8ab0ac5-a3c6-445f-a86e-cfc3ef333bbb",
+    "description": "Persistent leg swelling and ankle edema",
+    "dateLogged": "2026-08-21T06:34:39.889Z",
+    "possibleCauseMedicineId": null
+  },
+  {
+    "id": "33fa7a14-ad52-49c8-bd2a-1cc9775486b9",
+    "patientId": "e4c662c4-078f-44a0-b2b1-bef6ab908acd",
+    "description": "Persistent leg swelling and ankle edema",
+    "dateLogged": "2026-08-21T06:40:32.756Z",
+    "possibleCauseMedicineId": null
+  },
+  {
+    "id": "e7aa60fd-5006-4cb5-a060-11331a0cbdb2",
+    "patientId": "55c64387-abc4-42e9-ac73-a54dc5ac26df",
+    "description": "Persistent leg swelling and ankle edema",
+    "dateLogged": "2026-08-21T06:41:55.709Z",
+    "possibleCauseMedicineId": null
+  },
+  {
+    "id": "bb2b813d-2b05-4b67-aeac-07930aa4c73d",
+    "patientId": "27b32849-5b4e-461a-b145-52a6587f42b6",
+    "description": "Persistent leg swelling and ankle edema",
+    "dateLogged": "2026-08-21T06:51:27.638Z",
+    "possibleCauseMedicineId": null
+  },
+  {
+    "id": "e0a6782b-8cd3-4889-b808-ec2261492e66",
+    "patientId": "f7892cf8-752f-4cb4-899a-8b21e4fcc12a",
+    "description": "Persistent leg swelling and ankle edema",
+    "dateLogged": "2026-08-21T07:01:42.214Z",
+    "possibleCauseMedicineId": null
+  }
+]

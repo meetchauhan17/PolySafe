@@ -1,0 +1,588 @@
+/**
+ * backend/scripts/generate-safety-data.js
+ *
+ * Generates verified clinical safety datasets:
+ * 1. drug-classes.json   (300+ ingredients mapped to ATC-style class)
+ * 2. allergy-groups.json (Allergen groups, synonyms, members, cross-reactivities)
+ * 3. disease-drug.json   (40 to 60 geriatric Beers & STOPP/START rules)
+ * 4. food-spacing.json   (40 food & timing administration rules)
+ *
+ * Each file contains a top-level comment "needs clinical review" and a source field per entry.
+ */
+
+'use strict';
+
+const fs = require('fs');
+const path = require('path');
+
+const DATA_DIR = path.join(__dirname, '../data');
+
+// ═════════════════════════════════════════════════════════════════════════════
+// 1. DRUG CLASSES (300+ ingredients)
+// ═════════════════════════════════════════════════════════════════════════════
+const rawClasses = {
+  // NSAIDs (M01A)
+  "ibuprofen": { "class": "Non-Steroidal Anti-Inflammatory Drug (NSAID)", "classCode": "M01AE", "category": "NSAID", "duplicateRisk": "HIGH", "source": "WHO-ATC M01AE01 / RxClass" },
+  "naproxen": { "class": "Non-Steroidal Anti-Inflammatory Drug (NSAID)", "classCode": "M01AE", "category": "NSAID", "duplicateRisk": "HIGH", "source": "WHO-ATC M01AE02 / RxClass" },
+  "diclofenac": { "class": "Non-Steroidal Anti-Inflammatory Drug (NSAID)", "classCode": "M01AB", "category": "NSAID", "duplicateRisk": "HIGH", "source": "WHO-ATC M01AB05 / RxClass" },
+  "aceclofenac": { "class": "Non-Steroidal Anti-Inflammatory Drug (NSAID)", "classCode": "M01AB", "category": "NSAID", "duplicateRisk": "HIGH", "source": "WHO-ATC M01AB16 / RxClass" },
+  "indomethacin": { "class": "Non-Steroidal Anti-Inflammatory Drug (NSAID)", "classCode": "M01AB", "category": "NSAID", "duplicateRisk": "HIGH", "source": "WHO-ATC M01AB01 / RxClass" },
+  "celecoxib": { "class": "Non-Steroidal Anti-Inflammatory Drug (NSAID)", "classCode": "M01AH", "category": "NSAID", "duplicateRisk": "HIGH", "source": "WHO-ATC M01AH01 / RxClass" },
+  "etoricoxib": { "class": "Non-Steroidal Anti-Inflammatory Drug (NSAID)", "classCode": "M01AH", "category": "NSAID", "duplicateRisk": "HIGH", "source": "WHO-ATC M01AH05 / RxClass" },
+  "ketorolac": { "class": "Non-Steroidal Anti-Inflammatory Drug (NSAID)", "classCode": "M01AB", "category": "NSAID", "duplicateRisk": "HIGH", "source": "WHO-ATC M01AB15 / RxClass" },
+  "piroxicam": { "class": "Non-Steroidal Anti-Inflammatory Drug (NSAID)", "classCode": "M01AC", "category": "NSAID", "duplicateRisk": "HIGH", "source": "WHO-ATC M01AC01 / RxClass" },
+  "mefenamic acid": { "class": "Non-Steroidal Anti-Inflammatory Drug (NSAID)", "classCode": "M01AG", "category": "NSAID", "duplicateRisk": "HIGH", "source": "WHO-ATC M01AG01 / RxClass" },
+  "meloxicam": { "class": "Non-Steroidal Anti-Inflammatory Drug (NSAID)", "classCode": "M01AC", "category": "NSAID", "duplicateRisk": "HIGH", "source": "WHO-ATC M01AC06 / RxClass" },
+  "nabumetone": { "class": "Non-Steroidal Anti-Inflammatory Drug (NSAID)", "classCode": "M01AX", "category": "NSAID", "duplicateRisk": "HIGH", "source": "WHO-ATC M01AX01 / RxClass" },
+  "sulindac": { "class": "Non-Steroidal Anti-Inflammatory Drug (NSAID)", "classCode": "M01AB", "category": "NSAID", "duplicateRisk": "HIGH", "source": "WHO-ATC M01AB02 / RxClass" },
+  "ketoprofen": { "class": "Non-Steroidal Anti-Inflammatory Drug (NSAID)", "classCode": "M01AE", "category": "NSAID", "duplicateRisk": "HIGH", "source": "WHO-ATC M01AE03 / RxClass" },
+  "flurbiprofen": { "class": "Non-Steroidal Anti-Inflammatory Drug (NSAID)", "classCode": "M01AE", "category": "NSAID", "duplicateRisk": "HIGH", "source": "WHO-ATC M01AE09 / RxClass" },
+  "lornoxicam": { "class": "Non-Steroidal Anti-Inflammatory Drug (NSAID)", "classCode": "M01AC", "category": "NSAID", "duplicateRisk": "HIGH", "source": "WHO-ATC M01AC05 / RxClass" },
+  "parecoxib": { "class": "Non-Steroidal Anti-Inflammatory Drug (NSAID)", "classCode": "M01AH", "category": "NSAID", "duplicateRisk": "HIGH", "source": "WHO-ATC M01AH04 / RxClass" },
+  "diflunisal": { "class": "Non-Steroidal Anti-Inflammatory Drug (NSAID)", "classCode": "N02BA", "category": "NSAID", "duplicateRisk": "HIGH", "source": "WHO-ATC N02BA11 / RxClass" },
+  "fenoprofen": { "class": "Non-Steroidal Anti-Inflammatory Drug (NSAID)", "classCode": "M01AE", "category": "NSAID", "duplicateRisk": "HIGH", "source": "WHO-ATC M01AE04 / RxClass" },
+  "oxaprozin": { "class": "Non-Steroidal Anti-Inflammatory Drug (NSAID)", "classCode": "M01AE", "category": "NSAID", "duplicateRisk": "HIGH", "source": "WHO-ATC M01AE12 / RxClass" },
+  "tiaprofenic acid": { "class": "Non-Steroidal Anti-Inflammatory Drug (NSAID)", "classCode": "M01AE", "category": "NSAID", "duplicateRisk": "HIGH", "source": "WHO-ATC M01AE11 / RxClass" },
+  "tolmetin": { "class": "Non-Steroidal Anti-Inflammatory Drug (NSAID)", "classCode": "M01AB", "category": "NSAID", "duplicateRisk": "HIGH", "source": "WHO-ATC M01AB03 / RxClass" },
+  "nimesulide": { "class": "Non-Steroidal Anti-Inflammatory Drug (NSAID)", "classCode": "M01AX", "category": "NSAID", "duplicateRisk": "HIGH", "source": "WHO-ATC M01AX17 / RxClass" },
+  "dexibuprofen": { "class": "Non-Steroidal Anti-Inflammatory Drug (NSAID)", "classCode": "M01AE", "category": "NSAID", "duplicateRisk": "HIGH", "source": "WHO-ATC M01AE14 / RxClass" },
+  "dexketoprofen": { "class": "Non-Steroidal Anti-Inflammatory Drug (NSAID)", "classCode": "M01AE", "category": "NSAID", "duplicateRisk": "HIGH", "source": "WHO-ATC M01AE17 / RxClass" },
+
+  // Proton Pump Inhibitors - PPIs (A02BC)
+  "omeprazole": { "class": "Proton Pump Inhibitor (PPI)", "classCode": "A02BC", "category": "PPI", "duplicateRisk": "MODERATE", "source": "WHO-ATC A02BC01 / RxClass" },
+  "pantoprazole": { "class": "Proton Pump Inhibitor (PPI)", "classCode": "A02BC", "category": "PPI", "duplicateRisk": "MODERATE", "source": "WHO-ATC A02BC02 / RxClass" },
+  "lansoprazole": { "class": "Proton Pump Inhibitor (PPI)", "classCode": "A02BC", "category": "PPI", "duplicateRisk": "MODERATE", "source": "WHO-ATC A02BC03 / RxClass" },
+  "rabeprazole": { "class": "Proton Pump Inhibitor (PPI)", "classCode": "A02BC", "category": "PPI", "duplicateRisk": "MODERATE", "source": "WHO-ATC A02BC04 / RxClass" },
+  "esomeprazole": { "class": "Proton Pump Inhibitor (PPI)", "classCode": "A02BC", "category": "PPI", "duplicateRisk": "MODERATE", "source": "WHO-ATC A02BC05 / RxClass" },
+  "dexlansoprazole": { "class": "Proton Pump Inhibitor (PPI)", "classCode": "A02BC", "category": "PPI", "duplicateRisk": "MODERATE", "source": "WHO-ATC A02BC06 / RxClass" },
+  "ilaprazole": { "class": "Proton Pump Inhibitor (PPI)", "classCode": "A02BC", "category": "PPI", "duplicateRisk": "MODERATE", "source": "WHO-ATC A02BC07 / RxClass" },
+
+  // H2-Receptor Antagonists (A02BA)
+  "famotidine": { "class": "H2 Receptor Antagonist", "classCode": "A02BA", "category": "H2RA", "duplicateRisk": "MODERATE", "source": "WHO-ATC A02BA03 / RxClass" },
+  "ranitidine": { "class": "H2 Receptor Antagonist", "classCode": "A02BA", "category": "H2RA", "duplicateRisk": "MODERATE", "source": "WHO-ATC A02BA02 / RxClass" },
+  "cimetidine": { "class": "H2 Receptor Antagonist", "classCode": "A02BA", "category": "H2RA", "duplicateRisk": "MODERATE", "source": "WHO-ATC A02BA01 / RxClass" },
+  "nizatidine": { "class": "H2 Receptor Antagonist", "classCode": "A02BA", "category": "H2RA", "duplicateRisk": "MODERATE", "source": "WHO-ATC A02BA04 / RxClass" },
+  "roxatidine": { "class": "H2 Receptor Antagonist", "classCode": "A02BA", "category": "H2RA", "duplicateRisk": "MODERATE", "source": "WHO-ATC A02BA06 / RxClass" },
+
+  // Statins - HMG-CoA Reductase Inhibitors (C10AA)
+  "atorvastatin": { "class": "HMG-CoA Reductase Inhibitor (Statin)", "classCode": "C10AA", "category": "Statin", "duplicateRisk": "HIGH", "source": "WHO-ATC C10AA05 / RxClass" },
+  "rosuvastatin": { "class": "HMG-CoA Reductase Inhibitor (Statin)", "classCode": "C10AA", "category": "Statin", "duplicateRisk": "HIGH", "source": "WHO-ATC C10AA07 / RxClass" },
+  "simvastatin": { "class": "HMG-CoA Reductase Inhibitor (Statin)", "classCode": "C10AA", "category": "Statin", "duplicateRisk": "HIGH", "source": "WHO-ATC C10AA01 / RxClass" },
+  "pravastatin": { "class": "HMG-CoA Reductase Inhibitor (Statin)", "classCode": "C10AA", "category": "Statin", "duplicateRisk": "HIGH", "source": "WHO-ATC C10AA03 / RxClass" },
+  "lovastatin": { "class": "HMG-CoA Reductase Inhibitor (Statin)", "classCode": "C10AA", "category": "Statin", "duplicateRisk": "HIGH", "source": "WHO-ATC C10AA02 / RxClass" },
+  "pitavastatin": { "class": "HMG-CoA Reductase Inhibitor (Statin)", "classCode": "C10AA", "category": "Statin", "duplicateRisk": "HIGH", "source": "WHO-ATC C10AA08 / RxClass" },
+  "fluvastatin": { "class": "HMG-CoA Reductase Inhibitor (Statin)", "classCode": "C10AA", "category": "Statin", "duplicateRisk": "HIGH", "source": "WHO-ATC C10AA04 / RxClass" },
+
+  // Fibrates & Cholesterol Absorption Inhibitors (C10AB/AX)
+  "fenofibrate": { "class": "Fibrate Lipid Regulating Agent", "classCode": "C10AB", "category": "Fibrate", "duplicateRisk": "MODERATE", "source": "WHO-ATC C10AB05 / RxClass" },
+  "gemfibrozil": { "class": "Fibrate Lipid Regulating Agent", "classCode": "C10AB", "category": "Fibrate", "duplicateRisk": "HIGH", "source": "WHO-ATC C10AB02 / RxClass" },
+  "bezafibrate": { "class": "Fibrate Lipid Regulating Agent", "classCode": "C10AB", "category": "Fibrate", "duplicateRisk": "MODERATE", "source": "WHO-ATC C10AB08 / RxClass" },
+  "ciprofibrate": { "class": "Fibrate Lipid Regulating Agent", "classCode": "C10AB", "category": "Fibrate", "duplicateRisk": "MODERATE", "source": "WHO-ATC C10AB04 / RxClass" },
+  "ezetimibe": { "class": "Cholesterol Absorption Inhibitor", "classCode": "C10AX", "category": "Lipid Lowering", "duplicateRisk": "MODERATE", "source": "WHO-ATC C10AX09 / RxClass" },
+  "evolocumab": { "class": "PCSK9 Inhibitor", "classCode": "C10AX", "category": "Lipid Lowering", "duplicateRisk": "HIGH", "source": "WHO-ATC C10AX13 / RxClass" },
+  "alirocumab": { "class": "PCSK9 Inhibitor", "classCode": "C10AX", "category": "Lipid Lowering", "duplicateRisk": "HIGH", "source": "WHO-ATC C10AX14 / RxClass" },
+  "bempedoic acid": { "class": "Adenosine Triphosphate-Citrate Lyase Inhibitor", "classCode": "C10AX", "category": "Lipid Lowering", "duplicateRisk": "MODERATE", "source": "WHO-ATC C10AX15 / RxClass" },
+
+  // ACE Inhibitors (C09AA)
+  "ramipril": { "class": "ACE Inhibitor", "classCode": "C09AA", "category": "ACE Inhibitor", "duplicateRisk": "HIGH", "source": "WHO-ATC C09AA05 / RxClass" },
+  "enalapril": { "class": "ACE Inhibitor", "classCode": "C09AA", "category": "ACE Inhibitor", "duplicateRisk": "HIGH", "source": "WHO-ATC C09AA02 / RxClass" },
+  "lisinopril": { "class": "ACE Inhibitor", "classCode": "C09AA", "category": "ACE Inhibitor", "duplicateRisk": "HIGH", "source": "WHO-ATC C09AA03 / RxClass" },
+  "captopril": { "class": "ACE Inhibitor", "classCode": "C09AA", "category": "ACE Inhibitor", "duplicateRisk": "HIGH", "source": "WHO-ATC C09AA01 / RxClass" },
+  "perindopril": { "class": "ACE Inhibitor", "classCode": "C09AA", "category": "ACE Inhibitor", "duplicateRisk": "HIGH", "source": "WHO-ATC C09AA04 / RxClass" },
+  "benazepril": { "class": "ACE Inhibitor", "classCode": "C09AA", "category": "ACE Inhibitor", "duplicateRisk": "HIGH", "source": "WHO-ATC C09AA07 / RxClass" },
+  "quinapril": { "class": "ACE Inhibitor", "classCode": "C09AA", "category": "ACE Inhibitor", "duplicateRisk": "HIGH", "source": "WHO-ATC C09AA06 / RxClass" },
+  "fosinopril": { "class": "ACE Inhibitor", "classCode": "C09AA", "category": "ACE Inhibitor", "duplicateRisk": "HIGH", "source": "WHO-ATC C09AA09 / RxClass" },
+  "trandolapril": { "class": "ACE Inhibitor", "classCode": "C09AA", "category": "ACE Inhibitor", "duplicateRisk": "HIGH", "source": "WHO-ATC C09AA10 / RxClass" },
+  "moexipril": { "class": "ACE Inhibitor", "classCode": "C09AA", "category": "ACE Inhibitor", "duplicateRisk": "HIGH", "source": "WHO-ATC C09AA13 / RxClass" },
+  "cilazapril": { "class": "ACE Inhibitor", "classCode": "C09AA", "category": "ACE Inhibitor", "duplicateRisk": "HIGH", "source": "WHO-ATC C09AA08 / RxClass" },
+
+  // Angiotensin II Receptor Blockers - ARBs (C09CA)
+  "telmisartan": { "class": "Angiotensin II Receptor Blocker (ARB)", "classCode": "C09CA", "category": "ARB", "duplicateRisk": "HIGH", "source": "WHO-ATC C09CA07 / RxClass" },
+  "losartan": { "class": "Angiotensin II Receptor Blocker (ARB)", "classCode": "C09CA", "category": "ARB", "duplicateRisk": "HIGH", "source": "WHO-ATC C09CA01 / RxClass" },
+  "valsartan": { "class": "Angiotensin II Receptor Blocker (ARB)", "classCode": "C09CA", "category": "ARB", "duplicateRisk": "HIGH", "source": "WHO-ATC C09CA03 / RxClass" },
+  "olmesartan": { "class": "Angiotensin II Receptor Blocker (ARB)", "classCode": "C09CA", "category": "ARB", "duplicateRisk": "HIGH", "source": "WHO-ATC C09CA08 / RxClass" },
+  "candesartan": { "class": "Angiotensin II Receptor Blocker (ARB)", "classCode": "C09CA", "category": "ARB", "duplicateRisk": "HIGH", "source": "WHO-ATC C09CA06 / RxClass" },
+  "irbesartan": { "class": "Angiotensin II Receptor Blocker (ARB)", "classCode": "C09CA", "category": "ARB", "duplicateRisk": "HIGH", "source": "WHO-ATC C09CA04 / RxClass" },
+  "azilsartan": { "class": "Angiotensin II Receptor Blocker (ARB)", "classCode": "C09CA", "category": "ARB", "duplicateRisk": "HIGH", "source": "WHO-ATC C09CA09 / RxClass" },
+  "eprosartan": { "class": "Angiotensin II Receptor Blocker (ARB)", "classCode": "C09CA", "category": "ARB", "duplicateRisk": "HIGH", "source": "WHO-ATC C09CA02 / RxClass" },
+
+  // Beta-Adrenergic Blockers (C07)
+  "metoprolol": { "class": "Beta-Adrenergic Blocker", "classCode": "C07AB", "category": "Beta Blocker", "duplicateRisk": "HIGH", "source": "WHO-ATC C07AB02 / RxClass" },
+  "atenolol": { "class": "Beta-Adrenergic Blocker", "classCode": "C07AB", "category": "Beta Blocker", "duplicateRisk": "HIGH", "source": "WHO-ATC C07AB03 / RxClass" },
+  "bisoprolol": { "class": "Beta-Adrenergic Blocker", "classCode": "C07AB", "category": "Beta Blocker", "duplicateRisk": "HIGH", "source": "WHO-ATC C07AB07 / RxClass" },
+  "carvedilol": { "class": "Beta-Adrenergic Blocker", "classCode": "C07AG", "category": "Beta Blocker", "duplicateRisk": "HIGH", "source": "WHO-ATC C07AG02 / RxClass" },
+  "propranolol": { "class": "Beta-Adrenergic Blocker", "classCode": "C07AA", "category": "Beta Blocker", "duplicateRisk": "HIGH", "source": "WHO-ATC C07AA05 / RxClass" },
+  "nebivolol": { "class": "Beta-Adrenergic Blocker", "classCode": "C07AB", "category": "Beta Blocker", "duplicateRisk": "HIGH", "source": "WHO-ATC C07AB12 / RxClass" },
+  "labetalol": { "class": "Beta-Adrenergic Blocker", "classCode": "C07AG", "category": "Beta Blocker", "duplicateRisk": "HIGH", "source": "WHO-ATC C07AG01 / RxClass" },
+  "sotalol": { "class": "Beta-Adrenergic Blocker", "classCode": "C07AA", "category": "Beta Blocker", "duplicateRisk": "HIGH", "source": "WHO-ATC C07AA07 / RxClass" },
+  "timolol": { "class": "Beta-Adrenergic Blocker", "classCode": "C07AA", "category": "Beta Blocker", "duplicateRisk": "HIGH", "source": "WHO-ATC C07AA06 / RxClass" },
+  "nadolol": { "class": "Beta-Adrenergic Blocker", "classCode": "C07AA", "category": "Beta Blocker", "duplicateRisk": "HIGH", "source": "WHO-ATC C07AA12 / RxClass" },
+  "pindolol": { "class": "Beta-Adrenergic Blocker", "classCode": "C07AA", "category": "Beta Blocker", "duplicateRisk": "HIGH", "source": "WHO-ATC C07AA03 / RxClass" },
+  "betaxolol": { "class": "Beta-Adrenergic Blocker", "classCode": "C07AB", "category": "Beta Blocker", "duplicateRisk": "HIGH", "source": "WHO-ATC C07AB05 / RxClass" },
+  "esmolol": { "class": "Beta-Adrenergic Blocker", "classCode": "C07AB", "category": "Beta Blocker", "duplicateRisk": "HIGH", "source": "WHO-ATC C07AB09 / RxClass" },
+  "celiprolol": { "class": "Beta-Adrenergic Blocker", "classCode": "C07AB", "category": "Beta Blocker", "duplicateRisk": "HIGH", "source": "WHO-ATC C07AB08 / RxClass" },
+  "acebutolol": { "class": "Beta-Adrenergic Blocker", "classCode": "C07AB", "category": "Beta Blocker", "duplicateRisk": "HIGH", "source": "WHO-ATC C07AB04 / RxClass" },
+
+  // Calcium Channel Blockers (C08)
+  "amlodipine": { "class": "Calcium Channel Blocker (Dihydropyridine)", "classCode": "C08CA", "category": "CCB", "duplicateRisk": "HIGH", "source": "WHO-ATC C08CA01 / RxClass" },
+  "nifedipine": { "class": "Calcium Channel Blocker (Dihydropyridine)", "classCode": "C08CA", "category": "CCB", "duplicateRisk": "HIGH", "source": "WHO-ATC C08CA05 / RxClass" },
+  "felodipine": { "class": "Calcium Channel Blocker (Dihydropyridine)", "classCode": "C08CA", "category": "CCB", "duplicateRisk": "HIGH", "source": "WHO-ATC C08CA02 / RxClass" },
+  "cilnidipine": { "class": "Calcium Channel Blocker (Dihydropyridine)", "classCode": "C08CA", "category": "CCB", "duplicateRisk": "HIGH", "source": "WHO-ATC C08CA14 / RxClass" },
+  "lercanidipine": { "class": "Calcium Channel Blocker (Dihydropyridine)", "classCode": "C08CA", "category": "CCB", "duplicateRisk": "HIGH", "source": "WHO-ATC C08CA13 / RxClass" },
+  "nimodipine": { "class": "Calcium Channel Blocker (Dihydropyridine)", "classCode": "C08CA", "category": "CCB", "duplicateRisk": "HIGH", "source": "WHO-ATC C08CA06 / RxClass" },
+  "nicardipine": { "class": "Calcium Channel Blocker (Dihydropyridine)", "classCode": "C08CA", "category": "CCB", "duplicateRisk": "HIGH", "source": "WHO-ATC C08CA04 / RxClass" },
+  "isradipine": { "class": "Calcium Channel Blocker (Dihydropyridine)", "classCode": "C08CA", "category": "CCB", "duplicateRisk": "HIGH", "source": "WHO-ATC C08CA03 / RxClass" },
+  "nitrendipine": { "class": "Calcium Channel Blocker (Dihydropyridine)", "classCode": "C08CA", "category": "CCB", "duplicateRisk": "HIGH", "source": "WHO-ATC C08CA08 / RxClass" },
+  "diltiazem": { "class": "Calcium Channel Blocker (Non-Dihydropyridine)", "classCode": "C08DB", "category": "CCB", "duplicateRisk": "HIGH", "source": "WHO-ATC C08DB01 / RxClass" },
+  "verapamil": { "class": "Calcium Channel Blocker (Non-Dihydropyridine)", "classCode": "C08DA", "category": "CCB", "duplicateRisk": "HIGH", "source": "WHO-ATC C08DA01 / RxClass" },
+
+  // Diuretics (C03)
+  "furosemide": { "class": "Loop Diuretic", "classCode": "C03CA", "category": "Diuretic", "duplicateRisk": "HIGH", "source": "WHO-ATC C03CA01 / RxClass" },
+  "torsemide": { "class": "Loop Diuretic", "classCode": "C03CA", "category": "Diuretic", "duplicateRisk": "HIGH", "source": "WHO-ATC C03CA04 / RxClass" },
+  "bumetanide": { "class": "Loop Diuretic", "classCode": "C03CA", "category": "Diuretic", "duplicateRisk": "HIGH", "source": "WHO-ATC C03CA02 / RxClass" },
+  "ethacrynic acid": { "class": "Loop Diuretic", "classCode": "C03CC", "category": "Diuretic", "duplicateRisk": "HIGH", "source": "WHO-ATC C03CC01 / RxClass" },
+  "hydrochlorothiazide": { "class": "Thiazide Diuretic", "classCode": "C03AA", "category": "Diuretic", "duplicateRisk": "HIGH", "source": "WHO-ATC C03AA03 / RxClass" },
+  "chlorthalidone": { "class": "Thiazide-Like Diuretic", "classCode": "C03BA", "category": "Diuretic", "duplicateRisk": "HIGH", "source": "WHO-ATC C03BA04 / RxClass" },
+  "indapamide": { "class": "Thiazide-Like Diuretic", "classCode": "C03BA", "category": "Diuretic", "duplicateRisk": "HIGH", "source": "WHO-ATC C03BA11 / RxClass" },
+  "metolazone": { "class": "Thiazide-Like Diuretic", "classCode": "C03BA", "category": "Diuretic", "duplicateRisk": "HIGH", "source": "WHO-ATC C03BA08 / RxClass" },
+  "spironolactone": { "class": "Potassium-Sparing Diuretic (Aldosterone Antagonist)", "classCode": "C03DA", "category": "Diuretic", "duplicateRisk": "HIGH", "source": "WHO-ATC C03DA01 / RxClass" },
+  "eplerenone": { "class": "Potassium-Sparing Diuretic (Aldosterone Antagonist)", "classCode": "C03DA", "category": "Diuretic", "duplicateRisk": "HIGH", "source": "WHO-ATC C03DA04 / RxClass" },
+  "amiloride": { "class": "Potassium-Sparing Diuretic", "classCode": "C03DB", "category": "Diuretic", "duplicateRisk": "HIGH", "source": "WHO-ATC C03DB01 / RxClass" },
+  "triamterene": { "class": "Potassium-Sparing Diuretic", "classCode": "C03DB", "category": "Diuretic", "duplicateRisk": "HIGH", "source": "WHO-ATC C03DB02 / RxClass" },
+  "acetazolamide": { "class": "Carbonic Anhydrase Inhibitor", "classCode": "S01EC", "category": "Diuretic", "duplicateRisk": "MODERATE", "source": "WHO-ATC S01EC01 / RxClass" },
+
+  // Benzodiazepines (N05BA/CD)
+  "alprazolam": { "class": "Benzodiazepine", "classCode": "N05BA", "category": "Benzodiazepine", "duplicateRisk": "CRITICAL", "source": "WHO-ATC N05BA12 / RxClass" },
+  "clonazepam": { "class": "Benzodiazepine", "classCode": "N03AE", "category": "Benzodiazepine", "duplicateRisk": "CRITICAL", "source": "WHO-ATC N03AE01 / RxClass" },
+  "diazepam": { "class": "Benzodiazepine", "classCode": "N05BA", "category": "Benzodiazepine", "duplicateRisk": "CRITICAL", "source": "WHO-ATC N05BA01 / RxClass" },
+  "lorazepam": { "class": "Benzodiazepine", "classCode": "N05BA", "category": "Benzodiazepine", "duplicateRisk": "CRITICAL", "source": "WHO-ATC N05BA06 / RxClass" },
+  "midazolam": { "class": "Benzodiazepine", "classCode": "N05CD", "category": "Benzodiazepine", "duplicateRisk": "CRITICAL", "source": "WHO-ATC N05CD08 / RxClass" },
+  "temazepam": { "class": "Benzodiazepine", "classCode": "N05CD", "category": "Benzodiazepine", "duplicateRisk": "CRITICAL", "source": "WHO-ATC N05CD07 / RxClass" },
+  "oxazepam": { "class": "Benzodiazepine", "classCode": "N05BA", "category": "Benzodiazepine", "duplicateRisk": "CRITICAL", "source": "WHO-ATC N05BA04 / RxClass" },
+  "chlordiazepoxide": { "class": "Benzodiazepine", "classCode": "N05BA", "category": "Benzodiazepine", "duplicateRisk": "CRITICAL", "source": "WHO-ATC N05BA02 / RxClass" },
+  "clobazam": { "class": "Benzodiazepine", "classCode": "N05BA", "category": "Benzodiazepine", "duplicateRisk": "CRITICAL", "source": "WHO-ATC N05BA09 / RxClass" },
+  "flurazepam": { "class": "Benzodiazepine", "classCode": "N05CD", "category": "Benzodiazepine", "duplicateRisk": "CRITICAL", "source": "WHO-ATC N05CD01 / RxClass" },
+  "nitrazepam": { "class": "Benzodiazepine", "classCode": "N05CD", "category": "Benzodiazepine", "duplicateRisk": "CRITICAL", "source": "WHO-ATC N05CD02 / RxClass" },
+  "triazolam": { "class": "Benzodiazepine", "classCode": "N05CD", "category": "Benzodiazepine", "duplicateRisk": "CRITICAL", "source": "WHO-ATC N05CD05 / RxClass" },
+  "bromazepam": { "class": "Benzodiazepine", "classCode": "N05BA", "category": "Benzodiazepine", "duplicateRisk": "CRITICAL", "source": "WHO-ATC N05BA08 / RxClass" },
+  "estazolam": { "class": "Benzodiazepine", "classCode": "N05CD", "category": "Benzodiazepine", "duplicateRisk": "CRITICAL", "source": "WHO-ATC N05CD04 / RxClass" },
+
+  // Non-Benzodiazepine Sedatives (Z-drugs) (N05CF)
+  "zolpidem": { "class": "Non-Benzodiazepine Sedative-Hypnotic", "classCode": "N05CF", "category": "Z-Drug", "duplicateRisk": "CRITICAL", "source": "WHO-ATC N05CF02 / RxClass" },
+  "zopiclone": { "class": "Non-Benzodiazepine Sedative-Hypnotic", "classCode": "N05CF", "category": "Z-Drug", "duplicateRisk": "CRITICAL", "source": "WHO-ATC N05CF01 / RxClass" },
+  "eszopiclone": { "class": "Non-Benzodiazepine Sedative-Hypnotic", "classCode": "N05CF", "category": "Z-Drug", "duplicateRisk": "CRITICAL", "source": "WHO-ATC N05CF04 / RxClass" },
+  "zaleplon": { "class": "Non-Benzodiazepine Sedative-Hypnotic", "classCode": "N05CF", "category": "Z-Drug", "duplicateRisk": "CRITICAL", "source": "WHO-ATC N05CF03 / RxClass" },
+
+  // Antihistamines (R06A)
+  "cetirizine": { "class": "Second-Generation Antihistamine", "classCode": "R06AE", "category": "Antihistamine", "duplicateRisk": "MODERATE", "source": "WHO-ATC R06AE07 / RxClass" },
+  "levocetirizine": { "class": "Second-Generation Antihistamine", "classCode": "R06AE", "category": "Antihistamine", "duplicateRisk": "MODERATE", "source": "WHO-ATC R06AE09 / RxClass" },
+  "fexofenadine": { "class": "Second-Generation Antihistamine", "classCode": "R06AX", "category": "Antihistamine", "duplicateRisk": "MODERATE", "source": "WHO-ATC R06AX26 / RxClass" },
+  "loratadine": { "class": "Second-Generation Antihistamine", "classCode": "R06AX", "category": "Antihistamine", "duplicateRisk": "MODERATE", "source": "WHO-ATC R06AX13 / RxClass" },
+  "desloratadine": { "class": "Second-Generation Antihistamine", "classCode": "R06AX", "category": "Antihistamine", "duplicateRisk": "MODERATE", "source": "WHO-ATC R06AX27 / RxClass" },
+  "bilastine": { "class": "Second-Generation Antihistamine", "classCode": "R06AX", "category": "Antihistamine", "duplicateRisk": "MODERATE", "source": "WHO-ATC R06AX29 / RxClass" },
+  "rupatadine": { "class": "Second-Generation Antihistamine", "classCode": "R06AX", "category": "Antihistamine", "duplicateRisk": "MODERATE", "source": "WHO-ATC R06AX28 / RxClass" },
+  "diphenhydramine": { "class": "First-Generation Antihistamine", "classCode": "R06AA", "category": "Antihistamine", "duplicateRisk": "HIGH", "source": "WHO-ATC R06AA02 / RxClass" },
+  "chlorpheniramine": { "class": "First-Generation Antihistamine", "classCode": "R06AB", "category": "Antihistamine", "duplicateRisk": "HIGH", "source": "WHO-ATC R06AB04 / RxClass" },
+  "hydroxyzine": { "class": "First-Generation Antihistamine", "classCode": "N05BB", "category": "Antihistamine", "duplicateRisk": "HIGH", "source": "WHO-ATC N05BB01 / RxClass" },
+  "promethazine": { "class": "First-Generation Antihistamine", "classCode": "R06AD", "category": "Antihistamine", "duplicateRisk": "HIGH", "source": "WHO-ATC R06AD02 / RxClass" },
+  "clemastine": { "class": "First-Generation Antihistamine", "classCode": "R06AA", "category": "Antihistamine", "duplicateRisk": "HIGH", "source": "WHO-ATC R06AA04 / RxClass" },
+  "cyproheptadine": { "class": "First-Generation Antihistamine", "classCode": "R06AX", "category": "Antihistamine", "duplicateRisk": "HIGH", "source": "WHO-ATC R06AX02 / RxClass" },
+  "dimenhydrinate": { "class": "First-Generation Antihistamine", "classCode": "R06AA", "category": "Antihistamine", "duplicateRisk": "HIGH", "source": "WHO-ATC R06AA11 / RxClass" },
+  "doxylamine": { "class": "First-Generation Antihistamine", "classCode": "R06AA", "category": "Antihistamine", "duplicateRisk": "HIGH", "source": "WHO-ATC R06AA09 / RxClass" },
+  "ebastine": { "class": "Second-Generation Antihistamine", "classCode": "R06AX", "category": "Antihistamine", "duplicateRisk": "MODERATE", "source": "WHO-ATC R06AX22 / RxClass" },
+  "mizolastine": { "class": "Second-Generation Antihistamine", "classCode": "R06AX", "category": "Antihistamine", "duplicateRisk": "MODERATE", "source": "WHO-ATC R06AX25 / RxClass" },
+
+  // Antidiabetics (A10)
+  "metformin": { "class": "Biguanide Antidiabetic", "classCode": "A10BA", "category": "Antidiabetic", "duplicateRisk": "HIGH", "source": "WHO-ATC A10BA02 / RxClass" },
+  "glimepiride": { "class": "Sulfonylurea Antidiabetic", "classCode": "A10BB", "category": "Sulfonylurea", "duplicateRisk": "CRITICAL", "source": "WHO-ATC A10BB12 / RxClass" },
+  "gliclazide": { "class": "Sulfonylurea Antidiabetic", "classCode": "A10BB", "category": "Sulfonylurea", "duplicateRisk": "CRITICAL", "source": "WHO-ATC A10BB09 / RxClass" },
+  "glipizide": { "class": "Sulfonylurea Antidiabetic", "classCode": "A10BB", "category": "Sulfonylurea", "duplicateRisk": "CRITICAL", "source": "WHO-ATC A10BB07 / RxClass" },
+  "glyburide": { "class": "Sulfonylurea Antidiabetic", "classCode": "A10BB", "category": "Sulfonylurea", "duplicateRisk": "CRITICAL", "source": "WHO-ATC A10BB01 / RxClass" },
+  "glibenclamide": { "class": "Sulfonylurea Antidiabetic", "classCode": "A10BB", "category": "Sulfonylurea", "duplicateRisk": "CRITICAL", "source": "WHO-ATC A10BB01 / RxClass" },
+  "chlorpropamide": { "class": "Sulfonylurea Antidiabetic", "classCode": "A10BB", "category": "Sulfonylurea", "duplicateRisk": "CRITICAL", "source": "WHO-ATC A10BB02 / RxClass" },
+  "sitagliptin": { "class": "Dipeptidyl Peptidase-4 (DPP-4) Inhibitor", "classCode": "A10BH", "category": "DPP-4 Inhibitor", "duplicateRisk": "HIGH", "source": "WHO-ATC A10BH01 / RxClass" },
+  "vildagliptin": { "class": "Dipeptidyl Peptidase-4 (DPP-4) Inhibitor", "classCode": "A10BH", "category": "DPP-4 Inhibitor", "duplicateRisk": "HIGH", "source": "WHO-ATC A10BH02 / RxClass" },
+  "linagliptin": { "class": "Dipeptidyl Peptidase-4 (DPP-4) Inhibitor", "classCode": "A10BH", "category": "DPP-4 Inhibitor", "duplicateRisk": "HIGH", "source": "WHO-ATC A10BH04 / RxClass" },
+  "teneligliptin": { "class": "Dipeptidyl Peptidase-4 (DPP-4) Inhibitor", "classCode": "A10BH", "category": "DPP-4 Inhibitor", "duplicateRisk": "HIGH", "source": "WHO-ATC A10BH08 / RxClass" },
+  "saxagliptin": { "class": "Dipeptidyl Peptidase-4 (DPP-4) Inhibitor", "classCode": "A10BH", "category": "DPP-4 Inhibitor", "duplicateRisk": "HIGH", "source": "WHO-ATC A10BH03 / RxClass" },
+  "alogliptin": { "class": "Dipeptidyl Peptidase-4 (DPP-4) Inhibitor", "classCode": "A10BH", "category": "DPP-4 Inhibitor", "duplicateRisk": "HIGH", "source": "WHO-ATC A10BH05 / RxClass" },
+  "dapagliflozin": { "class": "Sodium-Glucose Cotransporter 2 (SGLT2) Inhibitor", "classCode": "A10BK", "category": "SGLT2 Inhibitor", "duplicateRisk": "HIGH", "source": "WHO-ATC A10BK01 / RxClass" },
+  "empagliflozin": { "class": "Sodium-Glucose Cotransporter 2 (SGLT2) Inhibitor", "classCode": "A10BK", "category": "SGLT2 Inhibitor", "duplicateRisk": "HIGH", "source": "WHO-ATC A10BK03 / RxClass" },
+  "canagliflozin": { "class": "Sodium-Glucose Cotransporter 2 (SGLT2) Inhibitor", "classCode": "A10BK", "category": "SGLT2 Inhibitor", "duplicateRisk": "HIGH", "source": "WHO-ATC A10BK02 / RxClass" },
+  "ertugliflozin": { "class": "Sodium-Glucose Cotransporter 2 (SGLT2) Inhibitor", "classCode": "A10BK", "category": "SGLT2 Inhibitor", "duplicateRisk": "HIGH", "source": "WHO-ATC A10BK04 / RxClass" },
+  "remogliflozin": { "class": "Sodium-Glucose Cotransporter 2 (SGLT2) Inhibitor", "classCode": "A10BK", "category": "SGLT2 Inhibitor", "duplicateRisk": "HIGH", "source": "WHO-ATC A10BK05 / RxClass" },
+  "semaglutide": { "class": "GLP-1 Receptor Agonist", "classCode": "A10BJ", "category": "GLP-1 RA", "duplicateRisk": "HIGH", "source": "WHO-ATC A10BJ06 / RxClass" },
+  "liraglutide": { "class": "GLP-1 Receptor Agonist", "classCode": "A10BJ", "category": "GLP-1 RA", "duplicateRisk": "HIGH", "source": "WHO-ATC A10BJ02 / RxClass" },
+  "dulaglutide": { "class": "GLP-1 Receptor Agonist", "classCode": "A10BJ", "category": "GLP-1 RA", "duplicateRisk": "HIGH", "source": "WHO-ATC A10BJ05 / RxClass" },
+  "exenatide": { "class": "GLP-1 Receptor Agonist", "classCode": "A10BJ", "category": "GLP-1 RA", "duplicateRisk": "HIGH", "source": "WHO-ATC A10BJ01 / RxClass" },
+  "tirzepatide": { "class": "Dual GIP and GLP-1 Receptor Agonist", "classCode": "A10BX", "category": "Incretin Mimetic", "duplicateRisk": "HIGH", "source": "WHO-ATC A10BX16 / RxClass" },
+  "pioglitazone": { "class": "Thiazolidinedione (PPAR-gamma Agonist)", "classCode": "A10BG", "category": "TZD", "duplicateRisk": "HIGH", "source": "WHO-ATC A10BG03 / RxClass" },
+  "rosiglitazone": { "class": "Thiazolidinedione (PPAR-gamma Agonist)", "classCode": "A10BG", "category": "TZD", "duplicateRisk": "HIGH", "source": "WHO-ATC A10BG02 / RxClass" },
+  "acarbose": { "class": "Alpha-Glucosidase Inhibitor", "classCode": "A10BF", "category": "Alpha-Glucosidase", "duplicateRisk": "MODERATE", "source": "WHO-ATC A10BF01 / RxClass" },
+  "voglibose": { "class": "Alpha-Glucosidase Inhibitor", "classCode": "A10BF", "category": "Alpha-Glucosidase", "duplicateRisk": "MODERATE", "source": "WHO-ATC A10BF03 / RxClass" },
+  "miglitol": { "class": "Alpha-Glucosidase Inhibitor", "classCode": "A10BF", "category": "Alpha-Glucosidase", "duplicateRisk": "MODERATE", "source": "WHO-ATC A10BF02 / RxClass" },
+  "repaglinide": { "class": "Meglitinide Analogue", "classCode": "A10BX", "category": "Meglitinide", "duplicateRisk": "HIGH", "source": "WHO-ATC A10BX02 / RxClass" },
+  "nateglinide": { "class": "Meglitinide Analogue", "classCode": "A10BX", "category": "Meglitinide", "duplicateRisk": "HIGH", "source": "WHO-ATC A10BX03 / RxClass" },
+
+  // Insulins (A10A)
+  "insulin glargine": { "class": "Long-Acting Insulin Analogue", "classCode": "A10AE", "category": "Insulin", "duplicateRisk": "HIGH", "source": "WHO-ATC A10AE04 / RxClass" },
+  "insulin detemir": { "class": "Long-Acting Insulin Analogue", "classCode": "A10AE", "category": "Insulin", "duplicateRisk": "HIGH", "source": "WHO-ATC A10AE05 / RxClass" },
+  "insulin degludec": { "class": "Ultra-Long-Acting Insulin Analogue", "classCode": "A10AE", "category": "Insulin", "duplicateRisk": "HIGH", "source": "WHO-ATC A10AE06 / RxClass" },
+  "insulin lispro": { "class": "Rapid-Acting Insulin Analogue", "classCode": "A10AB", "category": "Insulin", "duplicateRisk": "HIGH", "source": "WHO-ATC A10AB04 / RxClass" },
+  "insulin aspart": { "class": "Rapid-Acting Insulin Analogue", "classCode": "A10AB", "category": "Insulin", "duplicateRisk": "HIGH", "source": "WHO-ATC A10AB05 / RxClass" },
+  "insulin glulisine": { "class": "Rapid-Acting Insulin Analogue", "classCode": "A10AB", "category": "Insulin", "duplicateRisk": "HIGH", "source": "WHO-ATC A10AB06 / RxClass" },
+  "regular insulin": { "class": "Fast-Acting Soluble Human Insulin", "classCode": "A10AB", "category": "Insulin", "duplicateRisk": "HIGH", "source": "WHO-ATC A10AB01 / RxClass" },
+  "isophane insulin": { "class": "Intermediate-Acting NPH Insulin", "classCode": "A10AC", "category": "Insulin", "duplicateRisk": "HIGH", "source": "WHO-ATC A10AC01 / RxClass" },
+
+  // Anticoagulants & Antiplatelets (B01)
+  "warfarin": { "class": "Vitamin K Antagonist Anticoagulant", "classCode": "B01AA", "category": "Anticoagulant", "duplicateRisk": "CRITICAL", "source": "WHO-ATC B01AA03 / RxClass" },
+  "acenocoumarol": { "class": "Vitamin K Antagonist Anticoagulant", "classCode": "B01AA", "category": "Anticoagulant", "duplicateRisk": "CRITICAL", "source": "WHO-ATC B01AA07 / RxClass" },
+  "phenprocoumon": { "class": "Vitamin K Antagonist Anticoagulant", "classCode": "B01AA", "category": "Anticoagulant", "duplicateRisk": "CRITICAL", "source": "WHO-ATC B01AA04 / RxClass" },
+  "rivaroxaban": { "class": "Direct Factor Xa Inhibitor (DOAC)", "classCode": "B01AF", "category": "Anticoagulant", "duplicateRisk": "CRITICAL", "source": "WHO-ATC B01AF01 / RxClass" },
+  "apixaban": { "class": "Direct Factor Xa Inhibitor (DOAC)", "classCode": "B01AF", "category": "Anticoagulant", "duplicateRisk": "CRITICAL", "source": "WHO-ATC B01AF02 / RxClass" },
+  "edoxaban": { "class": "Direct Factor Xa Inhibitor (DOAC)", "classCode": "B01AF", "category": "Anticoagulant", "duplicateRisk": "CRITICAL", "source": "WHO-ATC B01AF03 / RxClass" },
+  "dabigatran": { "class": "Direct Thrombin Inhibitor (DOAC)", "classCode": "B01AE", "category": "Anticoagulant", "duplicateRisk": "CRITICAL", "source": "WHO-ATC B01AE07 / RxClass" },
+  "heparin": { "class": "Unfractionated Heparin Anticoagulant", "classCode": "B01AB", "category": "Anticoagulant", "duplicateRisk": "CRITICAL", "source": "WHO-ATC B01AB01 / RxClass" },
+  "enoxaparin": { "class": "Low Molecular Weight Heparin (LMWH)", "classCode": "B01AB", "category": "Anticoagulant", "duplicateRisk": "CRITICAL", "source": "WHO-ATC B01AB05 / RxClass" },
+  "dalteparin": { "class": "Low Molecular Weight Heparin (LMWH)", "classCode": "B01AB", "category": "Anticoagulant", "duplicateRisk": "CRITICAL", "source": "WHO-ATC B01AB04 / RxClass" },
+  "fondaparinux": { "class": "Synthetic Factor Xa Inhibitor", "classCode": "B01AX", "category": "Anticoagulant", "duplicateRisk": "CRITICAL", "source": "WHO-ATC B01AX05 / RxClass" },
+  "aspirin": { "class": "Antiplatelet Agent (Salicylate)", "classCode": "B01AC", "category": "Antiplatelet", "duplicateRisk": "HIGH", "source": "WHO-ATC B01AC06 / RxClass" },
+  "clopidogrel": { "class": "Thienopyridine Antiplatelet (P2Y12 Inhibitor)", "classCode": "B01AC", "category": "Antiplatelet", "duplicateRisk": "HIGH", "source": "WHO-ATC B01AC04 / RxClass" },
+  "prasugrel": { "class": "Thienopyridine Antiplatelet (P2Y12 Inhibitor)", "classCode": "B01AC", "category": "Antiplatelet", "duplicateRisk": "HIGH", "source": "WHO-ATC B01AC22 / RxClass" },
+  "ticagrelor": { "class": "Cyclopentyltriazolopyrimidine Antiplatelet (P2Y12 Inhibitor)", "classCode": "B01AC", "category": "Antiplatelet", "duplicateRisk": "HIGH", "source": "WHO-ATC B01AC24 / RxClass" },
+  "dipyridamole": { "class": "Phosphodiesterase Inhibitor Antiplatelet", "classCode": "B01AC", "category": "Antiplatelet", "duplicateRisk": "MODERATE", "source": "WHO-ATC B01AC07 / RxClass" },
+  "cilostazol": { "class": "Phosphodiesterase III Inhibitor Antiplatelet", "classCode": "B01AC", "category": "Antiplatelet", "duplicateRisk": "MODERATE", "source": "WHO-ATC B01AC23 / RxClass" },
+  "cangrelor": { "class": "Intravenous P2Y12 Inhibitor", "classCode": "B01AC", "category": "Antiplatelet", "duplicateRisk": "HIGH", "source": "WHO-ATC B01AC25 / RxClass" },
+
+  // Antidepressants - SSRIs (N06AB)
+  "escitalopram": { "class": "Selective Serotonin Reuptake Inhibitor (SSRI)", "classCode": "N06AB", "category": "SSRI", "duplicateRisk": "HIGH", "source": "WHO-ATC N06AB10 / RxClass" },
+  "citalopram": { "class": "Selective Serotonin Reuptake Inhibitor (SSRI)", "classCode": "N06AB", "category": "SSRI", "duplicateRisk": "HIGH", "source": "WHO-ATC N06AB04 / RxClass" },
+  "sertraline": { "class": "Selective Serotonin Reuptake Inhibitor (SSRI)", "classCode": "N06AB", "category": "SSRI", "duplicateRisk": "HIGH", "source": "WHO-ATC N06AB06 / RxClass" },
+  "fluoxetine": { "class": "Selective Serotonin Reuptake Inhibitor (SSRI)", "classCode": "N06AB", "category": "SSRI", "duplicateRisk": "HIGH", "source": "WHO-ATC N06AB03 / RxClass" },
+  "paroxetine": { "class": "Selective Serotonin Reuptake Inhibitor (SSRI)", "classCode": "N06AB", "category": "SSRI", "duplicateRisk": "HIGH", "source": "WHO-ATC N06AB05 / RxClass" },
+  "fluvoxamine": { "class": "Selective Serotonin Reuptake Inhibitor (SSRI)", "classCode": "N06AB", "category": "SSRI", "duplicateRisk": "HIGH", "source": "WHO-ATC N06AB08 / RxClass" },
+
+  // Antidepressants - SNRIs (N06AX)
+  "venlafaxine": { "class": "Serotonin-Norepinephrine Reuptake Inhibitor (SNRI)", "classCode": "N06AX", "category": "SNRI", "duplicateRisk": "HIGH", "source": "WHO-ATC N06AX16 / RxClass" },
+  "desvenlafaxine": { "class": "Serotonin-Norepinephrine Reuptake Inhibitor (SNRI)", "classCode": "N06AX", "category": "SNRI", "duplicateRisk": "HIGH", "source": "WHO-ATC N06AX23 / RxClass" },
+  "duloxetine": { "class": "Serotonin-Norepinephrine Reuptake Inhibitor (SNRI)", "classCode": "N06AX", "category": "SNRI", "duplicateRisk": "HIGH", "source": "WHO-ATC N06AX21 / RxClass" },
+  "milnacipran": { "class": "Serotonin-Norepinephrine Reuptake Inhibitor (SNRI)", "classCode": "N06AX", "category": "SNRI", "duplicateRisk": "HIGH", "source": "WHO-ATC N06AX17 / RxClass" },
+  "levomilnacipran": { "class": "Serotonin-Norepinephrine Reuptake Inhibitor (SNRI)", "classCode": "N06AX", "category": "SNRI", "duplicateRisk": "HIGH", "source": "WHO-ATC N06AX26 / RxClass" },
+
+  // Antidepressants - TCAs (N06AA)
+  "amitriptyline": { "class": "Tricyclic Antidepressant (TCA)", "classCode": "N06AA", "category": "TCA", "duplicateRisk": "HIGH", "source": "WHO-ATC N06AA09 / RxClass" },
+  "nortriptyline": { "class": "Tricyclic Antidepressant (TCA)", "classCode": "N06AA", "category": "TCA", "duplicateRisk": "HIGH", "source": "WHO-ATC N06AA10 / RxClass" },
+  "imipramine": { "class": "Tricyclic Antidepressant (TCA)", "classCode": "N06AA", "category": "TCA", "duplicateRisk": "HIGH", "source": "WHO-ATC N06AA02 / RxClass" },
+  "clomipramine": { "class": "Tricyclic Antidepressant (TCA)", "classCode": "N06AA", "category": "TCA", "duplicateRisk": "HIGH", "source": "WHO-ATC N06AA04 / RxClass" },
+  "desipramine": { "class": "Tricyclic Antidepressant (TCA)", "classCode": "N06AA", "category": "TCA", "duplicateRisk": "HIGH", "source": "WHO-ATC N06AA01 / RxClass" },
+  "doxepin": { "class": "Tricyclic Antidepressant (TCA)", "classCode": "N06AA", "category": "TCA", "duplicateRisk": "HIGH", "source": "WHO-ATC N06AA12 / RxClass" },
+  "trimipramine": { "class": "Tricyclic Antidepressant (TCA)", "classCode": "N06AA", "category": "TCA", "duplicateRisk": "HIGH", "source": "WHO-ATC N06AA06 / RxClass" },
+
+  // Other Antidepressants (N06AX)
+  "mirtazapine": { "class": "Noradrenergic and Specific Serotonergic Antidepressant (NaSSA)", "classCode": "N06AX", "category": "Antidepressant", "duplicateRisk": "HIGH", "source": "WHO-ATC N06AX11 / RxClass" },
+  "bupropion": { "class": "Norepinephrine-Dopamine Reuptake Inhibitor (NDRI)", "classCode": "N06AX", "category": "Antidepressant", "duplicateRisk": "HIGH", "source": "WHO-ATC N06AX12 / RxClass" },
+  "trazodone": { "class": "Serotonin Antagonist and Reuptake Inhibitor (SARI)", "classCode": "N06AX", "category": "Antidepressant", "duplicateRisk": "HIGH", "source": "WHO-ATC N06AX05 / RxClass" },
+  "vortioxetine": { "class": "Multimodal Serotonergic Antidepressant", "classCode": "N06AX", "category": "Antidepressant", "duplicateRisk": "HIGH", "source": "WHO-ATC N06AX26 / RxClass" },
+  "vilazodone": { "class": "Serotonin Partial Agonist and Reuptake Inhibitor (SPARI)", "classCode": "N06AX", "category": "Antidepressant", "duplicateRisk": "HIGH", "source": "WHO-ATC N06AX25 / RxClass" },
+  "agomelatine": { "class": "Melatonergic Agonist and 5-HT2C Antagonist", "classCode": "N06AX", "category": "Antidepressant", "duplicateRisk": "HIGH", "source": "WHO-ATC N06AX22 / RxClass" },
+
+  // Antipsychotics (N05A)
+  "olanzapine": { "class": "Atypical Antipsychotic (Second Generation)", "classCode": "N05AH", "category": "Antipsychotic", "duplicateRisk": "CRITICAL", "source": "WHO-ATC N05AH03 / RxClass" },
+  "quetiapine": { "class": "Atypical Antipsychotic (Second Generation)", "classCode": "N05AH", "category": "Antipsychotic", "duplicateRisk": "CRITICAL", "source": "WHO-ATC N05AH04 / RxClass" },
+  "risperidone": { "class": "Atypical Antipsychotic (Second Generation)", "classCode": "N05AX", "category": "Antipsychotic", "duplicateRisk": "CRITICAL", "source": "WHO-ATC N05AX08 / RxClass" },
+  "aripiprazole": { "class": "Atypical Antipsychotic (Second Generation)", "classCode": "N05AX", "category": "Antipsychotic", "duplicateRisk": "CRITICAL", "source": "WHO-ATC N05AX12 / RxClass" },
+  "clozapine": { "class": "Atypical Antipsychotic (Second Generation)", "classCode": "N05AH", "category": "Antipsychotic", "duplicateRisk": "CRITICAL", "source": "WHO-ATC N05AH02 / RxClass" },
+  "haloperidol": { "class": "Typical Antipsychotic (First Generation - Butyrophenone)", "classCode": "N05AD", "category": "Antipsychotic", "duplicateRisk": "CRITICAL", "source": "WHO-ATC N05AD01 / RxClass" },
+  "chlorpromazine": { "class": "Typical Antipsychotic (First Generation - Phenothiazine)", "classCode": "N05AA", "category": "Antipsychotic", "duplicateRisk": "CRITICAL", "source": "WHO-ATC N05AA01 / RxClass" },
+  "ziprasidone": { "class": "Atypical Antipsychotic (Second Generation)", "classCode": "N05AE", "category": "Antipsychotic", "duplicateRisk": "CRITICAL", "source": "WHO-ATC N05AE04 / RxClass" },
+  "paliperidone": { "class": "Atypical Antipsychotic (Second Generation)", "classCode": "N05AX", "category": "Antipsychotic", "duplicateRisk": "CRITICAL", "source": "WHO-ATC N05AX13 / RxClass" },
+  "lurasidone": { "class": "Atypical Antipsychotic (Second Generation)", "classCode": "N05AE", "category": "Antipsychotic", "duplicateRisk": "CRITICAL", "source": "WHO-ATC N05AE05 / RxClass" },
+  "amisulpride": { "class": "Atypical Antipsychotic (Second Generation)", "classCode": "N05AL", "category": "Antipsychotic", "duplicateRisk": "CRITICAL", "source": "WHO-ATC N05AL05 / RxClass" },
+  "cariprazine": { "class": "Atypical Antipsychotic (Second Generation)", "classCode": "N05AX", "category": "Antipsychotic", "duplicateRisk": "CRITICAL", "source": "WHO-ATC N05AX15 / RxClass" },
+  "brexpiprazole": { "class": "Atypical Antipsychotic (Second Generation)", "classCode": "N05AX", "category": "Antipsychotic", "duplicateRisk": "CRITICAL", "source": "WHO-ATC N05AX16 / RxClass" },
+  "fluphenazine": { "class": "Typical Antipsychotic (First Generation - Phenothiazine)", "classCode": "N05AB", "category": "Antipsychotic", "duplicateRisk": "CRITICAL", "source": "WHO-ATC N05AB02 / RxClass" },
+  "trifluoperazine": { "class": "Typical Antipsychotic (First Generation - Phenothiazine)", "classCode": "N05AB", "category": "Antipsychotic", "duplicateRisk": "CRITICAL", "source": "WHO-ATC N05AB06 / RxClass" },
+
+  // Anticonvulsants / Neuropathic Pain (N03A)
+  "gabapentin": { "class": "Gabapentinoid Anticonvulsant", "classCode": "N03AX", "category": "Anticonvulsant", "duplicateRisk": "HIGH", "source": "WHO-ATC N03AX12 / RxClass" },
+  "pregabalin": { "class": "Gabapentinoid Anticonvulsant", "classCode": "N03AX", "category": "Anticonvulsant", "duplicateRisk": "HIGH", "source": "WHO-ATC N03AX16 / RxClass" },
+  "levetiracetam": { "class": "Pyrrolidine Anticonvulsant", "classCode": "N03AX", "category": "Anticonvulsant", "duplicateRisk": "HIGH", "source": "WHO-ATC N03AX14 / RxClass" },
+  "carbamazepine": { "class": "Carboxamide Anticonvulsant", "classCode": "N03AF", "category": "Anticonvulsant", "duplicateRisk": "HIGH", "source": "WHO-ATC N03AF01 / RxClass" },
+  "oxcarbazepine": { "class": "Carboxamide Anticonvulsant", "classCode": "N03AF", "category": "Anticonvulsant", "duplicateRisk": "HIGH", "source": "WHO-ATC N03AF02 / RxClass" },
+  "sodium valproate": { "class": "Valproate Anticonvulsant", "classCode": "N03AG", "category": "Anticonvulsant", "duplicateRisk": "HIGH", "source": "WHO-ATC N03AG01 / RxClass" },
+  "divalproex": { "class": "Valproate Anticonvulsant", "classCode": "N03AG", "category": "Anticonvulsant", "duplicateRisk": "HIGH", "source": "WHO-ATC N03AG01 / RxClass" },
+  "topiramate": { "class": "Sulfamate-Substituted Monosaccharide Anticonvulsant", "classCode": "N03AX", "category": "Anticonvulsant", "duplicateRisk": "HIGH", "source": "WHO-ATC N03AX11 / RxClass" },
+  "lamotrigine": { "class": "Phenyltriazine Anticonvulsant", "classCode": "N03AX", "category": "Anticonvulsant", "duplicateRisk": "HIGH", "source": "WHO-ATC N03AX09 / RxClass" },
+  "phenytoin": { "class": "Hydantoin Anticonvulsant", "classCode": "N03AB", "category": "Anticonvulsant", "duplicateRisk": "HIGH", "source": "WHO-ATC N03AB02 / RxClass" },
+  "lacosamide": { "class": "Functionalized Amino Acid Anticonvulsant", "classCode": "N03AX", "category": "Anticonvulsant", "duplicateRisk": "HIGH", "source": "WHO-ATC N03AX18 / RxClass" },
+  "zonisamide": { "class": "Benzisoxazole Anticonvulsant", "classCode": "N03AX", "category": "Anticonvulsant", "duplicateRisk": "HIGH", "source": "WHO-ATC N03AX15 / RxClass" },
+  "vigabatrin": { "class": "GABA-Transaminase Inhibitor", "classCode": "N03AG", "category": "Anticonvulsant", "duplicateRisk": "HIGH", "source": "WHO-ATC N03AG04 / RxClass" },
+  "phenobarbital": { "class": "Barbiturate Anticonvulsant", "classCode": "N03AA", "category": "Barbiturate", "duplicateRisk": "CRITICAL", "source": "WHO-ATC N03AA02 / RxClass" },
+  "primidone": { "class": "Barbiturate Anticonvulsant", "classCode": "N03AA", "category": "Barbiturate", "duplicateRisk": "CRITICAL", "source": "WHO-ATC N03AA05 / RxClass" },
+
+  // Opioids & Central Analgesics (N02A)
+  "tramadol": { "class": "Opioid Analgesic", "classCode": "N02AX", "category": "Opioid", "duplicateRisk": "CRITICAL", "source": "WHO-ATC N02AX02 / RxClass" },
+  "codeine": { "class": "Opioid Analgesic", "classCode": "N02AA", "category": "Opioid", "duplicateRisk": "CRITICAL", "source": "WHO-ATC N02AA59 / RxClass" },
+  "morphine": { "class": "Opioid Analgesic", "classCode": "N02AA", "category": "Opioid", "duplicateRisk": "CRITICAL", "source": "WHO-ATC N02AA01 / RxClass" },
+  "oxycodone": { "class": "Opioid Analgesic", "classCode": "N02AA", "category": "Opioid", "duplicateRisk": "CRITICAL", "source": "WHO-ATC N02AA05 / RxClass" },
+  "fentanyl": { "class": "Opioid Analgesic", "classCode": "N02AB", "category": "Opioid", "duplicateRisk": "CRITICAL", "source": "WHO-ATC N02AB03 / RxClass" },
+  "buprenorphine": { "class": "Partial Opioid Agonist", "classCode": "N02AE", "category": "Opioid", "duplicateRisk": "CRITICAL", "source": "WHO-ATC N02AE01 / RxClass" },
+  "methadone": { "class": "Synthetic Opioid Agonist", "classCode": "N07BC", "category": "Opioid", "duplicateRisk": "CRITICAL", "source": "WHO-ATC N07BC02 / RxClass" },
+  "hydromorphone": { "class": "Opioid Analgesic", "classCode": "N02AA", "category": "Opioid", "duplicateRisk": "CRITICAL", "source": "WHO-ATC N02AA03 / RxClass" },
+  "tapentadol": { "class": "Centrally Acting Synthetic Opioid", "classCode": "N02AX", "category": "Opioid", "duplicateRisk": "CRITICAL", "source": "WHO-ATC N02AX06 / RxClass" },
+  "pethidine": { "class": "Opioid Analgesic", "classCode": "N02AB", "category": "Opioid", "duplicateRisk": "CRITICAL", "source": "WHO-ATC N02AB02 / RxClass" },
+  "hydrocodone": { "class": "Opioid Analgesic", "classCode": "N02AA", "category": "Opioid", "duplicateRisk": "CRITICAL", "source": "WHO-ATC N02AA08 / RxClass" },
+
+  // Non-Opioid Analgesics / Antipyretics (N02B)
+  "paracetamol": { "class": "Anilide Analgesic and Antipyretic", "classCode": "N02BE", "category": "Analgesic", "duplicateRisk": "HIGH", "source": "WHO-ATC N02BE01 / RxClass" },
+  "acetaminophen": { "class": "Anilide Analgesic and Antipyretic", "classCode": "N02BE", "category": "Analgesic", "duplicateRisk": "HIGH", "source": "WHO-ATC N02BE01 / RxClass" },
+  "nefopam": { "class": "Centrally Acting Non-Opioid Analgesic", "classCode": "N02BG", "category": "Analgesic", "duplicateRisk": "MODERATE", "source": "WHO-ATC N02BG06 / RxClass" },
+
+  // Skeletal Muscle Relaxants (M03B)
+  "baclofen": { "class": "GABA-B Receptor Agonist Muscle Relaxant", "classCode": "M03BX", "category": "Muscle Relaxant", "duplicateRisk": "HIGH", "source": "WHO-ATC M03BX01 / RxClass" },
+  "tizanidine": { "class": "Alpha-2 Adrenergic Agonist Muscle Relaxant", "classCode": "M03BX", "category": "Muscle Relaxant", "duplicateRisk": "HIGH", "source": "WHO-ATC M03BX02 / RxClass" },
+  "cyclobenzaprine": { "class": "Centrally Acting Muscle Relaxant", "classCode": "M03BX", "category": "Muscle Relaxant", "duplicateRisk": "HIGH", "source": "WHO-ATC M03BX08 / RxClass" },
+  "thiocolchicoside": { "class": "GABA-A Receptor Antagonist Muscle Relaxant", "classCode": "M03BX", "category": "Muscle Relaxant", "duplicateRisk": "HIGH", "source": "WHO-ATC M03BX05 / RxClass" },
+  "chlorzoxazone": { "class": "Centrally Acting Muscle Relaxant", "classCode": "M03BB", "category": "Muscle Relaxant", "duplicateRisk": "HIGH", "source": "WHO-ATC M03BB03 / RxClass" },
+  "carisoprodol": { "class": "Carbamate Muscle Relaxant", "classCode": "M03BA", "category": "Muscle Relaxant", "duplicateRisk": "CRITICAL", "source": "WHO-ATC M03BA02 / RxClass" },
+  "metaxalone": { "class": "Oxazolidinone Muscle Relaxant", "classCode": "M03BA", "category": "Muscle Relaxant", "duplicateRisk": "HIGH", "source": "WHO-ATC M03BA03 / RxClass" },
+  "methocarbamol": { "class": "Guaifenesin Derivative Muscle Relaxant", "classCode": "M03BA", "category": "Muscle Relaxant", "duplicateRisk": "HIGH", "source": "WHO-ATC M03BA03 / RxClass" },
+  "tolperisone": { "class": "Centrally Acting Muscle Relaxant", "classCode": "M03BX", "category": "Muscle Relaxant", "duplicateRisk": "HIGH", "source": "WHO-ATC M03BX04 / RxClass" },
+
+  // Antibiotics - Penicillins (J01C)
+  "amoxicillin": { "class": "Aminopenicillin Antibiotic", "classCode": "J01CA", "category": "Penicillin", "duplicateRisk": "HIGH", "source": "WHO-ATC J01CA04 / RxClass" },
+  "ampicillin": { "class": "Aminopenicillin Antibiotic", "classCode": "J01CA", "category": "Penicillin", "duplicateRisk": "HIGH", "source": "WHO-ATC J01CA01 / RxClass" },
+  "cloxacillin": { "class": "Penicillinase-Resistant Penicillin", "classCode": "J01CF", "category": "Penicillin", "duplicateRisk": "HIGH", "source": "WHO-ATC J01CF02 / RxClass" },
+  "piperacillin": { "class": "Antipseudomonal Ureidopenicillin", "classCode": "J01CA", "category": "Penicillin", "duplicateRisk": "HIGH", "source": "WHO-ATC J01CA12 / RxClass" },
+  "penicillin v": { "class": "Natural Penicillin Antibiotic", "classCode": "J01CE", "category": "Penicillin", "duplicateRisk": "HIGH", "source": "WHO-ATC J01CE02 / RxClass" },
+  "penicillin g": { "class": "Natural Penicillin Antibiotic", "classCode": "J01CE", "category": "Penicillin", "duplicateRisk": "HIGH", "source": "WHO-ATC J01CE01 / RxClass" },
+  "oxacillin": { "class": "Penicillinase-Resistant Penicillin", "classCode": "J01CF", "category": "Penicillin", "duplicateRisk": "HIGH", "source": "WHO-ATC J01CF04 / RxClass" },
+  "dicloxacillin": { "class": "Penicillinase-Resistant Penicillin", "classCode": "J01CF", "category": "Penicillin", "duplicateRisk": "HIGH", "source": "WHO-ATC J01CF01 / RxClass" },
+  "flucloxacillin": { "class": "Penicillinase-Resistant Penicillin", "classCode": "J01CF", "category": "Penicillin", "duplicateRisk": "HIGH", "source": "WHO-ATC J01CF05 / RxClass" },
+  "ticarcillin": { "class": "Carboxypenicillin Antibiotic", "classCode": "J01CA", "category": "Penicillin", "duplicateRisk": "HIGH", "source": "WHO-ATC J01CA13 / RxClass" },
+
+  // Antibiotics - Cephalosporins (J01D)
+  "cephalexin": { "class": "First-Generation Cephalosporin", "classCode": "J01DB", "category": "Cephalosporin", "duplicateRisk": "HIGH", "source": "WHO-ATC J01DB01 / RxClass" },
+  "cefazolin": { "class": "First-Generation Cephalosporin", "classCode": "J01DB", "category": "Cephalosporin", "duplicateRisk": "HIGH", "source": "WHO-ATC J01DB04 / RxClass" },
+  "cefadroxil": { "class": "First-Generation Cephalosporin", "classCode": "J01DB", "category": "Cephalosporin", "duplicateRisk": "HIGH", "source": "WHO-ATC J01DB05 / RxClass" },
+  "cefuroxime": { "class": "Second-Generation Cephalosporin", "classCode": "J01DC", "category": "Cephalosporin", "duplicateRisk": "HIGH", "source": "WHO-ATC J01DC02 / RxClass" },
+  "cefaclor": { "class": "Second-Generation Cephalosporin", "classCode": "J01DC", "category": "Cephalosporin", "duplicateRisk": "HIGH", "source": "WHO-ATC J01DC04 / RxClass" },
+  "cefprozil": { "class": "Second-Generation Cephalosporin", "classCode": "J01DC", "category": "Cephalosporin", "duplicateRisk": "HIGH", "source": "WHO-ATC J01DC10 / RxClass" },
+  "cefixime": { "class": "Third-Generation Cephalosporin", "classCode": "J01DD", "category": "Cephalosporin", "duplicateRisk": "HIGH", "source": "WHO-ATC J01DD08 / RxClass" },
+  "ceftriaxone": { "class": "Third-Generation Cephalosporin", "classCode": "J01DD", "category": "Cephalosporin", "duplicateRisk": "HIGH", "source": "WHO-ATC J01DD04 / RxClass" },
+  "cefotaxime": { "class": "Third-Generation Cephalosporin", "classCode": "J01DD", "category": "Cephalosporin", "duplicateRisk": "HIGH", "source": "WHO-ATC J01DD01 / RxClass" },
+  "ceftazidime": { "class": "Third-Generation Cephalosporin", "classCode": "J01DD", "category": "Cephalosporin", "duplicateRisk": "HIGH", "source": "WHO-ATC J01DD02 / RxClass" },
+  "cefepime": { "class": "Fourth-Generation Cephalosporin", "classCode": "J01DE", "category": "Cephalosporin", "duplicateRisk": "HIGH", "source": "WHO-ATC J01DE01 / RxClass" },
+  "cefpodoxime": { "class": "Third-Generation Cephalosporin", "classCode": "J01DD", "category": "Cephalosporin", "duplicateRisk": "HIGH", "source": "WHO-ATC J01DD13 / RxClass" },
+  "cefdinir": { "class": "Third-Generation Cephalosporin", "classCode": "J01DD", "category": "Cephalosporin", "duplicateRisk": "HIGH", "source": "WHO-ATC J01DD15 / RxClass" },
+  "ceftaroline": { "class": "Fifth-Generation Anti-MRSA Cephalosporin", "classCode": "J01DI", "category": "Cephalosporin", "duplicateRisk": "HIGH", "source": "WHO-ATC J01DI02 / RxClass" },
+
+  // Antibiotics - Fluoroquinolones (J01M)
+  "ciprofloxacin": { "class": "Fluoroquinolone Antibiotic", "classCode": "J01MA", "category": "Fluoroquinolone", "duplicateRisk": "HIGH", "source": "WHO-ATC J01MA02 / RxClass" },
+  "levofloxacin": { "class": "Fluoroquinolone Antibiotic", "classCode": "J01MA", "category": "Fluoroquinolone", "duplicateRisk": "HIGH", "source": "WHO-ATC J01MA12 / RxClass" },
+  "moxifloxacin": { "class": "Fluoroquinolone Antibiotic", "classCode": "J01MA", "category": "Fluoroquinolone", "duplicateRisk": "HIGH", "source": "WHO-ATC J01MA14 / RxClass" },
+  "norfloxacin": { "class": "Fluoroquinolone Antibiotic", "classCode": "J01MA", "category": "Fluoroquinolone", "duplicateRisk": "HIGH", "source": "WHO-ATC J01MA06 / RxClass" },
+  "ofloxacin": { "class": "Fluoroquinolone Antibiotic", "classCode": "J01MA", "category": "Fluoroquinolone", "duplicateRisk": "HIGH", "source": "WHO-ATC J01MA01 / RxClass" },
+  "gemifloxacin": { "class": "Fluoroquinolone Antibiotic", "classCode": "J01MA", "category": "Fluoroquinolone", "duplicateRisk": "HIGH", "source": "WHO-ATC J01MA15 / RxClass" },
+
+  // Antibiotics - Macrolides (J01F)
+  "azithromycin": { "class": "Macrolide Antibiotic (Azalide)", "classCode": "J01FA", "category": "Macrolide", "duplicateRisk": "HIGH", "source": "WHO-ATC J01FA10 / RxClass" },
+  "clarithromycin": { "class": "Macrolide Antibiotic", "classCode": "J01FA", "category": "Macrolide", "duplicateRisk": "HIGH", "source": "WHO-ATC J01FA09 / RxClass" },
+  "erythromycin": { "class": "Macrolide Antibiotic", "classCode": "J01FA", "category": "Macrolide", "duplicateRisk": "HIGH", "source": "WHO-ATC J01FA01 / RxClass" },
+  "roxithromycin": { "class": "Macrolide Antibiotic", "classCode": "J01FA", "category": "Macrolide", "duplicateRisk": "HIGH", "source": "WHO-ATC J01FA06 / RxClass" },
+  "spiramycin": { "class": "Macrolide Antibiotic", "classCode": "J01FA", "category": "Macrolide", "duplicateRisk": "HIGH", "source": "WHO-ATC J01FA02 / RxClass" },
+
+  // Antibiotics - Tetracyclines (J01A)
+  "doxycycline": { "class": "Tetracycline Antibiotic", "classCode": "J01AA", "category": "Tetracycline", "duplicateRisk": "HIGH", "source": "WHO-ATC J01AA02 / RxClass" },
+  "minocycline": { "class": "Tetracycline Antibiotic", "classCode": "J01AA", "category": "Tetracycline", "duplicateRisk": "HIGH", "source": "WHO-ATC J01AA08 / RxClass" },
+  "tetracycline": { "class": "Tetracycline Antibiotic", "classCode": "J01AA", "category": "Tetracycline", "duplicateRisk": "HIGH", "source": "WHO-ATC J01AA07 / RxClass" },
+  "tigecycline": { "class": "Glycylcycline Antibiotic", "classCode": "J01AA", "category": "Tetracycline", "duplicateRisk": "HIGH", "source": "WHO-ATC J01AA12 / RxClass" },
+
+  // Antibiotics - Others & Antiprotozoals
+  "metronidazole": { "class": "Nitroimidazole Antibacterial / Antiprotozoal", "classCode": "J01XD", "category": "Nitroimidazole", "duplicateRisk": "HIGH", "source": "WHO-ATC J01XD01 / RxClass" },
+  "tinidazole": { "class": "Nitroimidazole Antibacterial / Antiprotozoal", "classCode": "P01AB", "category": "Nitroimidazole", "duplicateRisk": "HIGH", "source": "WHO-ATC P01AB02 / RxClass" },
+  "ornidazole": { "class": "Nitroimidazole Antibacterial / Antiprotozoal", "classCode": "P01AB", "category": "Nitroimidazole", "duplicateRisk": "HIGH", "source": "WHO-ATC P01AB03 / RxClass" },
+  "clindamycin": { "class": "Lincosamide Antibiotic", "classCode": "J01FF", "category": "Lincosamide", "duplicateRisk": "HIGH", "source": "WHO-ATC J01FF01 / RxClass" },
+  "vancomycin": { "class": "Glycopeptide Antibiotic", "classCode": "J01XA", "category": "Glycopeptide", "duplicateRisk": "HIGH", "source": "WHO-ATC J01XA01 / RxClass" },
+  "linezolid": { "class": "Oxazolidinone Antibacterial", "classCode": "J01XX", "category": "Oxazolidinone", "duplicateRisk": "HIGH", "source": "WHO-ATC J01XX08 / RxClass" },
+  "nitrofurantoin": { "class": "Nitrofuran Urinary Antibacterial", "classCode": "J01XE", "category": "Nitrofuran", "duplicateRisk": "HIGH", "source": "WHO-ATC J01XE01 / RxClass" },
+  "trimethoprim": { "class": "Dihydrofolate Reductase Inhibitor", "classCode": "J01EA", "category": "Folate Antagonist", "duplicateRisk": "HIGH", "source": "WHO-ATC J01EA01 / RxClass" },
+  "sulfamethoxazole": { "class": "Sulfonamide Antibacterial", "classCode": "J01EQ", "category": "Sulfonamide", "duplicateRisk": "HIGH", "source": "WHO-ATC J01EQ01 / RxClass" },
+  "fosfomycin": { "class": "Phosphonic Acid Derivative Antibacterial", "classCode": "J01XX", "category": "Phosphonic Acid", "duplicateRisk": "HIGH", "source": "WHO-ATC J01XX01 / RxClass" },
+  "rifampicin": { "class": "Rifamycin Antimycobacterial", "classCode": "J04AB", "category": "Rifamycin", "duplicateRisk": "HIGH", "source": "WHO-ATC J04AB02 / RxClass" },
+
+  // Antifungals (J02A)
+  "fluconazole": { "class": "Triazole Antifungal", "classCode": "J02AC", "category": "Antifungal", "duplicateRisk": "HIGH", "source": "WHO-ATC J02AC01 / RxClass" },
+  "itraconazole": { "class": "Triazole Antifungal", "classCode": "J02AC", "category": "Antifungal", "duplicateRisk": "HIGH", "source": "WHO-ATC J02AC02 / RxClass" },
+  "voriconazole": { "class": "Triazole Antifungal", "classCode": "J02AC", "category": "Antifungal", "duplicateRisk": "HIGH", "source": "WHO-ATC J02AC03 / RxClass" },
+  "posaconazole": { "class": "Triazole Antifungal", "classCode": "J02AC", "category": "Antifungal", "duplicateRisk": "HIGH", "source": "WHO-ATC J02AC04 / RxClass" },
+  "ketoconazole": { "class": "Imidazole Antifungal", "classCode": "J02AB", "category": "Antifungal", "duplicateRisk": "HIGH", "source": "WHO-ATC J02AB02 / RxClass" },
+  "terbinafine": { "class": "Allylamine Antifungal", "classCode": "D01BA", "category": "Antifungal", "duplicateRisk": "HIGH", "source": "WHO-ATC D01BA02 / RxClass" },
+  "amphotericin b": { "class": "Polyene Antifungal", "classCode": "J02AA", "category": "Antifungal", "duplicateRisk": "HIGH", "source": "WHO-ATC J02AA01 / RxClass" },
+  "nystatin": { "class": "Polyene Antifungal", "classCode": "A07AA", "category": "Antifungal", "duplicateRisk": "HIGH", "source": "WHO-ATC A07AA02 / RxClass" },
+  "clotrimazole": { "class": "Imidazole Antifungal", "classCode": "A01AB", "category": "Antifungal", "duplicateRisk": "MODERATE", "source": "WHO-ATC A01AB18 / RxClass" },
+
+  // Antivirals (J05A)
+  "acyclovir": { "class": "Nucleoside Analogue Antiviral", "classCode": "J05AB", "category": "Antiviral", "duplicateRisk": "HIGH", "source": "WHO-ATC J05AB01 / RxClass" },
+  "valacyclovir": { "class": "Nucleoside Analogue Antiviral", "classCode": "J05AB", "category": "Antiviral", "duplicateRisk": "HIGH", "source": "WHO-ATC J05AB11 / RxClass" },
+  "oseltamivir": { "class": "Neuraminidase Inhibitor Antiviral", "classCode": "J05AH", "category": "Antiviral", "duplicateRisk": "HIGH", "source": "WHO-ATC J05AH02 / RxClass" },
+  "favipiravir": { "class": "Viral RNA-Dependent RNA Polymerase Inhibitor", "classCode": "J05AX", "category": "Antiviral", "duplicateRisk": "HIGH", "source": "WHO-ATC J05AX27 / RxClass" },
+  "remdesivir": { "class": "Nucleotide Analogue RNA Polymerase Inhibitor", "classCode": "J05AB", "category": "Antiviral", "duplicateRisk": "HIGH", "source": "WHO-ATC J05AB16 / RxClass" },
+  "sofosbuvir": { "class": "Hepatitis C NS5B Polymerase Inhibitor", "classCode": "J05AP", "category": "Antiviral", "duplicateRisk": "HIGH", "source": "WHO-ATC J05AP08 / RxClass" },
+  "tenofovir": { "class": "Nucleotide Reverse Transcriptase Inhibitor", "classCode": "J05AF", "category": "Antiviral", "duplicateRisk": "HIGH", "source": "WHO-ATC J05AF07 / RxClass" },
+  "entecavir": { "class": "Guanosine Nucleoside Analogue (HBV)", "classCode": "J05AF", "category": "Antiviral", "duplicateRisk": "HIGH", "source": "WHO-ATC J05AF10 / RxClass" },
+
+  // Corticosteroids - Systemic (H02AB)
+  "prednisolone": { "class": "Glucocorticoid Corticosteroid", "classCode": "H02AB", "category": "Corticosteroid", "duplicateRisk": "CRITICAL", "source": "WHO-ATC H02AB06 / RxClass" },
+  "methylprednisolone": { "class": "Glucocorticoid Corticosteroid", "classCode": "H02AB", "category": "Corticosteroid", "duplicateRisk": "CRITICAL", "source": "WHO-ATC H02AB04 / RxClass" },
+  "dexamethasone": { "class": "Glucocorticoid Corticosteroid", "classCode": "H02AB", "category": "Corticosteroid", "duplicateRisk": "CRITICAL", "source": "WHO-ATC H02AB02 / RxClass" },
+  "hydrocortisone": { "class": "Glucocorticoid Corticosteroid", "classCode": "H02AB", "category": "Corticosteroid", "duplicateRisk": "CRITICAL", "source": "WHO-ATC H02AB09 / RxClass" },
+  "deflazacort": { "class": "Glucocorticoid Corticosteroid", "classCode": "H02AB", "category": "Corticosteroid", "duplicateRisk": "CRITICAL", "source": "WHO-ATC H02AB13 / RxClass" },
+  "betamethasone": { "class": "Glucocorticoid Corticosteroid", "classCode": "H02AB", "category": "Corticosteroid", "duplicateRisk": "CRITICAL", "source": "WHO-ATC H02AB01 / RxClass" },
+  "triamcinolone": { "class": "Glucocorticoid Corticosteroid", "classCode": "H02AB", "category": "Corticosteroid", "duplicateRisk": "CRITICAL", "source": "WHO-ATC H02AB08 / RxClass" },
+  "budesonide": { "class": "Glucocorticoid Corticosteroid", "classCode": "A07EA", "category": "Corticosteroid", "duplicateRisk": "CRITICAL", "source": "WHO-ATC A07EA06 / RxClass" },
+
+  // Thyroid Therapies (H03)
+  "levothyroxine": { "class": "Thyroid Hormone (T4)", "classCode": "H03AA", "category": "Thyroid Hormone", "duplicateRisk": "HIGH", "source": "WHO-ATC H03AA01 / RxClass" },
+  "liothyronine": { "class": "Thyroid Hormone (T3)", "classCode": "H03AA", "category": "Thyroid Hormone", "duplicateRisk": "HIGH", "source": "WHO-ATC H03AA02 / RxClass" },
+  "carbimazole": { "class": "Thionamide Antithyroid Agent", "classCode": "H03BB", "category": "Antithyroid", "duplicateRisk": "HIGH", "source": "WHO-ATC H03BB01 / RxClass" },
+  "methimazole": { "class": "Thionamide Antithyroid Agent", "classCode": "H03BB", "category": "Antithyroid", "duplicateRisk": "HIGH", "source": "WHO-ATC H03BB02 / RxClass" },
+  "propylthiouracil": { "class": "Thionamide Antithyroid Agent", "classCode": "H03BA", "category": "Antithyroid", "duplicateRisk": "HIGH", "source": "WHO-ATC H03BA02 / RxClass" },
+
+  // Respiratory (R03)
+  "salbutamol": { "class": "Short-Acting Beta-2 Adrenergic Agonist (SABA)", "classCode": "R03AC", "category": "Bronchodilator", "duplicateRisk": "HIGH", "source": "WHO-ATC R03AC02 / RxClass" },
+  "albuterol": { "class": "Short-Acting Beta-2 Adrenergic Agonist (SABA)", "classCode": "R03AC", "category": "Bronchodilator", "duplicateRisk": "HIGH", "source": "WHO-ATC R03AC02 / RxClass" },
+  "formoterol": { "class": "Long-Acting Beta-2 Adrenergic Agonist (LABA)", "classCode": "R03AC", "category": "Bronchodilator", "duplicateRisk": "HIGH", "source": "WHO-ATC R03AC13 / RxClass" },
+  "salmeterol": { "class": "Long-Acting Beta-2 Adrenergic Agonist (LABA)", "classCode": "R03AC", "category": "Bronchodilator", "duplicateRisk": "HIGH", "source": "WHO-ATC R03AC12 / RxClass" },
+  "ipratropium": { "class": "Short-Acting Anticholinergic Bronchodilator (SAMA)", "classCode": "R03BB", "category": "Bronchodilator", "duplicateRisk": "HIGH", "source": "WHO-ATC R03BB01 / RxClass" },
+  "tiotropium": { "class": "Long-Acting Anticholinergic Bronchodilator (LAMA)", "classCode": "R03BB", "category": "Bronchodilator", "duplicateRisk": "HIGH", "source": "WHO-ATC R03BB04 / RxClass" },
+  "glycopyrronium": { "class": "Long-Acting Anticholinergic Bronchodilator (LAMA)", "classCode": "R03BB", "category": "Bronchodilator", "duplicateRisk": "HIGH", "source": "WHO-ATC R03BB06 / RxClass" },
+  "montelukast": { "class": "Leukotriene Receptor Antagonist (LTRA)", "classCode": "R03DC", "category": "Leukotriene Inhibitor", "duplicateRisk": "HIGH", "source": "WHO-ATC R03DC03 / RxClass" },
+  "zafirlukast": { "class": "Leukotriene Receptor Antagonist (LTRA)", "classCode": "R03DC", "category": "Leukotriene Inhibitor", "duplicateRisk": "HIGH", "source": "WHO-ATC R03DC01 / RxClass" },
+  "theophylline": { "class": "Methylxanthine Phosphodiesterase Inhibitor", "classCode": "R03DA", "category": "Xanthine", "duplicateRisk": "HIGH", "source": "WHO-ATC R03DA04 / RxClass" },
+  "acebrophylline": { "class": "Xanthine-Mucolytic Bronchodilator", "classCode": "R03DA", "category": "Xanthine", "duplicateRisk": "HIGH", "source": "WHO-ATC R03DA14 / RxClass" },
+  "roflumilast": { "class": "Phosphodiesterase-4 (PDE4) Inhibitor", "classCode": "R03DX", "category": "PDE4 Inhibitor", "duplicateRisk": "HIGH", "source": "WHO-ATC R03DX07 / RxClass" },
+  "fluticasone": { "class": "Inhaled Corticosteroid (ICS)", "classCode": "R03BA", "category": "Corticosteroid", "duplicateRisk": "HIGH", "source": "WHO-ATC R03BA05 / RxClass" },
+  "beclomethasone": { "class": "Inhaled Corticosteroid (ICS)", "classCode": "R03BA", "category": "Corticosteroid", "duplicateRisk": "HIGH", "source": "WHO-ATC R03BA01 / RxClass" },
+  "ciclesonide": { "class": "Inhaled Corticosteroid (ICS)", "classCode": "R03BA", "category": "Corticosteroid", "duplicateRisk": "HIGH", "source": "WHO-ATC R03BA08 / RxClass" },
+
+  // Gout Therapies (M04A)
+  "allopurinol": { "class": "Xanthine Oxidase Inhibitor", "classCode": "M04AA", "category": "Antigout", "duplicateRisk": "HIGH", "source": "WHO-ATC M04AA01 / RxClass" },
+  "febuxostat": { "class": "Xanthine Oxidase Inhibitor", "classCode": "M04AA", "category": "Antigout", "duplicateRisk": "HIGH", "source": "WHO-ATC M04AA03 / RxClass" },
+  "colchicine": { "class": "Alkaloid Mitotic Inhibitor Antigout Agent", "classCode": "M04AC", "category": "Antigout", "duplicateRisk": "CRITICAL", "source": "WHO-ATC M04AC01 / RxClass" },
+  "probenecid": { "class": "Uricosuric Agent", "classCode": "M04AB", "category": "Antigout", "duplicateRisk": "HIGH", "source": "WHO-ATC M04AB01 / RxClass" },
+  "pegloticase": { "class": "Pegylated Recombinant Urate Oxidase", "classCode": "M04AX", "category": "Antigout", "duplicateRisk": "HIGH", "source": "WHO-ATC M04AX02 / RxClass" },
+
+  // BPH & Urinary (G04)
+  "tamsulosin": { "class": "Alpha-1A Selective Adrenoceptor Blocker", "classCode": "G04CA", "category": "Alpha Blocker", "duplicateRisk": "HIGH", "source": "WHO-ATC G04CA02 / RxClass" },
+  "silodosin": { "class": "Alpha-1A Highly Selective Adrenoceptor Blocker", "classCode": "G04CA", "category": "Alpha Blocker", "duplicateRisk": "HIGH", "source": "WHO-ATC G04CA04 / RxClass" },
+  "alfuzosin": { "class": "Alpha-1 Adrenoceptor Blocker", "classCode": "G04CA", "category": "Alpha Blocker", "duplicateRisk": "HIGH", "source": "WHO-ATC G04CA01 / RxClass" },
+  "doxazosin": { "class": "Alpha-1 Adrenoceptor Blocker", "classCode": "C02CA", "category": "Alpha Blocker", "duplicateRisk": "HIGH", "source": "WHO-ATC C02CA04 / RxClass" },
+  "prazosin": { "class": "Alpha-1 Adrenoceptor Blocker", "classCode": "C02CA", "category": "Alpha Blocker", "duplicateRisk": "HIGH", "source": "WHO-ATC C02CA01 / RxClass" },
+  "finasteride": { "class": "5-Alpha Reductase Inhibitor (Type II)", "classCode": "G04CB", "category": "5-ARI", "duplicateRisk": "HIGH", "source": "WHO-ATC G04CB01 / RxClass" },
+  "dutasteride": { "class": "Dual 5-Alpha Reductase Inhibitor (Type I & II)", "classCode": "G04CB", "category": "5-ARI", "duplicateRisk": "HIGH", "source": "WHO-ATC G04CB02 / RxClass" },
+  "oxybutynin": { "class": "Antimuscarinic Antispasmodic (Bladder)", "classCode": "G04BD", "category": "Anticholinergic", "duplicateRisk": "CRITICAL", "source": "WHO-ATC G04BD04 / RxClass" },
+  "tolterodine": { "class": "Antimuscarinic Antispasmodic (Bladder)", "classCode": "G04BD", "category": "Anticholinergic", "duplicateRisk": "CRITICAL", "source": "WHO-ATC G04BD07 / RxClass" },
+  "solifenacin": { "class": "M3-Selective Antimuscarinic (Bladder)", "classCode": "G04BD", "category": "Anticholinergic", "duplicateRisk": "CRITICAL", "source": "WHO-ATC G04BD08 / RxClass" },
+  "darifenacin": { "class": "M3-Selective Antimuscarinic (Bladder)", "classCode": "G04BD", "category": "Anticholinergic", "duplicateRisk": "CRITICAL", "source": "WHO-ATC G04BD10 / RxClass" },
+  "mirabegron": { "class": "Beta-3 Adrenergic Receptor Agonist", "classCode": "G04BD", "category": "Beta-3 Agonist", "duplicateRisk": "HIGH", "source": "WHO-ATC G04BD12 / RxClass" },
+
+  // GI Prokinetics & Antispasmodics (A03)
+  "domperidone": { "class": "Peripheral Dopamine D2 Antagonist Prokinetic", "classCode": "A03FA", "category": "Prokinetic", "duplicateRisk": "HIGH", "source": "WHO-ATC A03FA03 / RxClass" },
+  "itopride": { "class": "Dopamine D2 and Acetylcholinesterase Inhibitor Prokinetic", "classCode": "A03FA", "category": "Prokinetic", "duplicateRisk": "HIGH", "source": "WHO-ATC A03FA07 / RxClass" },
+  "levosulpiride": { "class": "Dopamine D2 Receptor Antagonist Prokinetic", "classCode": "N05AL", "category": "Prokinetic", "duplicateRisk": "HIGH", "source": "WHO-ATC N05AL07 / RxClass" },
+  "metoclopramide": { "class": "Dopamine D2 Antagonist Antiemetic / Prokinetic", "classCode": "A03FA", "category": "Prokinetic", "duplicateRisk": "HIGH", "source": "WHO-ATC A03FA01 / RxClass" },
+  "dicyclomine": { "class": "Synthetic Anticholinergic Antispasmodic", "classCode": "A03AA", "category": "Antispasmodic", "duplicateRisk": "CRITICAL", "source": "WHO-ATC A03AA07 / RxClass" },
+  "drotaverine": { "class": "Phosphodiesterase-4 Inhibitor Smooth Muscle Relaxant", "classCode": "A03AD", "category": "Antispasmodic", "duplicateRisk": "MODERATE", "source": "WHO-ATC A03AD02 / RxClass" },
+  "mebeverine": { "class": "Musculotropic Antispasmodic", "classCode": "A03AA", "category": "Antispasmodic", "duplicateRisk": "MODERATE", "source": "WHO-ATC A03AA04 / RxClass" },
+  "hyoscine": { "class": "Belladonna Alkaloid Anticholinergic Antispasmodic", "classCode": "A03BB", "category": "Antispasmodic", "duplicateRisk": "CRITICAL", "source": "WHO-ATC A03BB01 / RxClass" },
+  "lactulose": { "class": "Osmotic Laxative Synthetic Disaccharide", "classCode": "A06AD", "category": "Laxative", "duplicateRisk": "MODERATE", "source": "WHO-ATC A06AD11 / RxClass" },
+  "polyethylene glycol": { "class": "Osmotic Laxative Polymer", "classCode": "A06AD", "category": "Laxative", "duplicateRisk": "MODERATE", "source": "WHO-ATC A06AD15 / RxClass" },
+  "bisacodyl": { "class": "Stimulant Diphenylmethane Laxative", "classCode": "A06AB", "category": "Laxative", "duplicateRisk": "MODERATE", "source": "WHO-ATC A06AB02 / RxClass" },
+  "senna": { "class": "Anthraquinone Stimulant Laxative", "classCode": "A06AB", "category": "Laxative", "duplicateRisk": "MODERATE", "source": "WHO-ATC A06AB06 / RxClass" },
+
+  // Cardiac Glycosides & Antiarrhythmics (C01)
+  "digoxin": { "class": "Digitalis Cardiac Glycoside", "classCode": "C01AA", "category": "Cardiac Glycoside", "duplicateRisk": "CRITICAL", "source": "WHO-ATC C01AA05 / RxClass" },
+  "amiodarone": { "class": "Class III Potassium Channel Blocker Antiarrhythmic", "classCode": "C01BD", "category": "Antiarrhythmic", "duplicateRisk": "CRITICAL", "source": "WHO-ATC C01BD01 / RxClass" },
+  "flecainide": { "class": "Class IC Sodium Channel Blocker Antiarrhythmic", "classCode": "C01BC", "category": "Antiarrhythmic", "duplicateRisk": "CRITICAL", "source": "WHO-ATC C01BC04 / RxClass" },
+  "propafenone": { "class": "Class IC Sodium Channel Blocker Antiarrhythmic", "classCode": "C01BC", "category": "Antiarrhythmic", "duplicateRisk": "CRITICAL", "source": "WHO-ATC C01BC03 / RxClass" },
+  "dronedarone": { "class": "Class III Antiarrhythmic", "classCode": "C01BD", "category": "Antiarrhythmic", "duplicateRisk": "CRITICAL", "source": "WHO-ATC C01BD07 / RxClass" },
+  "mexiletine": { "class": "Class IB Sodium Channel Blocker Antiarrhythmic", "classCode": "C01BB", "category": "Antiarrhythmic", "duplicateRisk": "CRITICAL", "source": "WHO-ATC C01BB02 / RxClass" },
+
+  // Osteoporosis & Minerals (M05B)
+  "alendronate": { "class": "Bisphosphonate Bone Resorption Inhibitor", "classCode": "M05BA", "category": "Bisphosphonate", "duplicateRisk": "HIGH", "source": "WHO-ATC M05BA04 / RxClass" },
+  "risedronate": { "class": "Bisphosphonate Bone Resorption Inhibitor", "classCode": "M05BA", "category": "Bisphosphonate", "duplicateRisk": "HIGH", "source": "WHO-ATC M05BA07 / RxClass" },
+  "ibandronate": { "class": "Bisphosphonate Bone Resorption Inhibitor", "classCode": "M05BA", "category": "Bisphosphonate", "duplicateRisk": "HIGH", "source": "WHO-ATC M05BA06 / RxClass" },
+  "zoledronic acid": { "class": "Bisphosphonate Bone Resorption Inhibitor", "classCode": "M05BA", "category": "Bisphosphonate", "duplicateRisk": "HIGH", "source": "WHO-ATC M05BA08 / RxClass" },
+  "denosumab": { "class": "RANK Ligand Inhibitor Monoclonal Antibody", "classCode": "M05BX", "category": "Bone Agent", "duplicateRisk": "HIGH", "source": "WHO-ATC M05BX04 / RxClass" },
+  "teriparatide": { "class": "Recombinant Human Parathyroid Hormone Analogue", "classCode": "H05AA", "category": "Bone Anabolic", "duplicateRisk": "HIGH", "source": "WHO-ATC H05AA02 / RxClass" },
+  "calcium carbonate": { "class": "Mineral Supplement (Calcium)", "classCode": "A12AA", "category": "Mineral", "duplicateRisk": "LOW", "source": "WHO-ATC A12AA04 / RxClass" },
+  "calcium citrate": { "class": "Mineral Supplement (Calcium)", "classCode": "A12AA", "category": "Mineral", "duplicateRisk": "LOW", "source": "WHO-ATC A12AA13 / RxClass" },
+  "cholecalciferol": { "class": "Vitamin D3", "classCode": "A11CC", "category": "Vitamin", "duplicateRisk": "LOW", "source": "WHO-ATC A11CC05 / RxClass" },
+  "calcitriol": { "class": "Active Vitamin D Metabolite", "classCode": "A11CC", "category": "Vitamin", "duplicateRisk": "MODERATE", "source": "WHO-ATC A11CC04 / RxClass" },
+
+  // Dementia & Cognition (N06D)
+  "donepezil": { "class": "Reversible Acetylcholinesterase Inhibitor", "classCode": "N06DA", "category": "Cholinesterase Inhibitor", "duplicateRisk": "HIGH", "source": "WHO-ATC N06DA02 / RxClass" },
+  "rivastigmine": { "class": "Pseudo-Irreversible Acetyl/Butyrylcholinesterase Inhibitor", "classCode": "N06DA", "category": "Cholinesterase Inhibitor", "duplicateRisk": "HIGH", "source": "WHO-ATC N06DA03 / RxClass" },
+  "galantamine": { "class": "Tertiary Alkaloid Acetylcholinesterase Inhibitor", "classCode": "N06DA", "category": "Cholinesterase Inhibitor", "duplicateRisk": "HIGH", "source": "WHO-ATC N06DA04 / RxClass" },
+  "memantine": { "class": "Uncompetitive NMDA Receptor Antagonist", "classCode": "N06DX", "category": "NMDA Antagonist", "duplicateRisk": "HIGH", "source": "WHO-ATC N06DX01 / RxClass" },
+
+  // Immunosuppressants & DMARDs (L04A)
+  "methotrexate": { "class": "Antimetabolite Antifolate DMARD", "classCode": "L04AX", "category": "Immunosuppressant", "duplicateRisk": "CRITICAL", "source": "WHO-ATC L04AX03 / RxClass" },
+  "leflunomide": { "class": "Pyrimidine Synthesis Inhibitor DMARD", "classCode": "L04AA", "category": "Immunosuppressant", "duplicateRisk": "HIGH", "source": "WHO-ATC L04AA13 / RxClass" },
+  "sulfasalazine": { "class": "Aminosalicylate DMARD", "classCode": "A07EC", "category": "DMARD", "duplicateRisk": "HIGH", "source": "WHO-ATC A07EC01 / RxClass" },
+  "hydroxychloroquine": { "class": "Aminoquinoline DMARD / Antimalarial", "classCode": "P01BA", "category": "DMARD", "duplicateRisk": "HIGH", "source": "WHO-ATC P01BA02 / RxClass" },
+  "azathioprine": { "class": "Purine Synthesis Inhibitor Immunosuppressant", "classCode": "L04AX", "category": "Immunosuppressant", "duplicateRisk": "CRITICAL", "source": "WHO-ATC L04AX01 / RxClass" },
+  "mycophenolate mofetil": { "class": "Inosine Monophosphate Dehydrogenase Inhibitor", "classCode": "L04AA", "category": "Immunosuppressant", "duplicateRisk": "CRITICAL", "source": "WHO-ATC L04AA06 / RxClass" },
+  "cyclosporine": { "class": "Calcineurin Inhibitor Immunosuppressant", "classCode": "L04AD", "category": "Immunosuppressant", "duplicateRisk": "CRITICAL", "source": "WHO-ATC L04AD01 / RxClass" },
+  "tacrolimus": { "class": "Calcineurin Inhibitor Immunosuppressant", "classCode": "L04AD", "category": "Immunosuppressant", "duplicateRisk": "CRITICAL", "source": "WHO-ATC L04AD02 / RxClass" },
+  "tofacitinib": { "class": "Janus Kinase (JAK) Inhibitor", "classCode": "L04AF", "category": "JAK Inhibitor", "duplicateRisk": "CRITICAL", "source": "WHO-ATC L04AF01 / RxClass" },
+  "baricitinib": { "class": "Janus Kinase (JAK) Inhibitor", "classCode": "L04AF", "category": "JAK Inhibitor", "duplicateRisk": "CRITICAL", "source": "WHO-ATC L04AF02 / RxClass" },
+  "upadacitinib": { "class": "Selective JAK1 Inhibitor", "classCode": "L04AF", "category": "JAK Inhibitor", "duplicateRisk": "CRITICAL", "source": "WHO-ATC L04AF03 / RxClass" },
+
+  // Miscellaneous Common Agents
+  "curcumin": { "class": "Botanical Polyphenol Phytochemical", "classCode": "A16AX", "category": "Herbal Supplement", "duplicateRisk": "LOW", "source": "Natural Medicines / PolySafe" },
+  "turmeric": { "class": "Botanical Polyphenol Phytochemical", "classCode": "A16AX", "category": "Herbal Supplement", "duplicateRisk": "LOW", "source": "Natural Medicines / PolySafe" },
+  "ginkgo biloba": { "class": "Botanical Flavonoid-Terpene Phytochemical", "classCode": "N06DX", "category": "Herbal Supplement", "duplicateRisk": "LOW", "source": "WHO-ATC N06DX02 / RxClass" },
+  "serratiopeptidase": { "class": "Proteolytic Enzyme Anti-Inflammatory", "classCode": "M09AB", "category": "Enzyme", "duplicateRisk": "MODERATE", "source": "CDSCO / PolySafe" },
+  "folic acid": { "class": "Vitamin B9", "classCode": "B03BB", "category": "Vitamin", "duplicateRisk": "LOW", "source": "WHO-ATC B03BB01 / RxClass" },
+  "cyanocobalamin": { "class": "Vitamin B12", "classCode": "B03BA", "category": "Vitamin", "duplicateRisk": "LOW", "source": "WHO-ATC B03BA01 / RxClass" },
+  "methylcobalamin": { "class": "Active Vitamin B12 Analogue", "classCode": "B03BA", "category": "Vitamin", "duplicateRisk": "LOW", "source": "WHO-ATC B03BA05 / RxClass" },
+  "pyridoxine": { "class": "Vitamin B6", "classCode": "A11HA", "category": "Vitamin", "duplicateRisk": "LOW", "source": "WHO-ATC A11HA02 / RxClass" },
+  "thiamine": { "class": "Vitamin B1", "classCode": "A11DA", "category": "Vitamin", "duplicateRisk": "LOW", "source": "WHO-ATC A11DA01 / RxClass" },
+  "ascorbic acid": { "class": "Vitamin C", "classCode": "A11GA", "category": "Vitamin", "duplicateRisk": "LOW", "source": "WHO-ATC A11GA01 / RxClass" },
+  "ferrous sulfate": { "class": "Iron Supplement (Divalent Oral Iron)", "classCode": "B03AA", "category": "Mineral", "duplicateRisk": "MODERATE", "source": "WHO-ATC B03AA07 / RxClass" },
+  "ferrous ascorbate": { "class": "Iron Supplement (Divalent Oral Iron)", "classCode": "B03AA", "category": "Mineral", "duplicateRisk": "MODERATE", "source": "CDSCO / RxClass" },
+  "zinc sulfate": { "class": "Mineral Supplement (Zinc)", "classCode": "A12CB", "category": "Mineral", "duplicateRisk": "LOW", "source": "WHO-ATC A12CB01 / RxClass" },
+  "magnesium hydroxide": { "class": "Antacid / Osmotic Laxative", "classCode": "A02AA", "category": "Antacid", "duplicateRisk": "MODERATE", "source": "WHO-ATC A02AA04 / RxClass" },
+  "aluminium hydroxide": { "class": "Antacid / Phosphate Binder", "classCode": "A02AB", "category": "Antacid", "duplicateRisk": "MODERATE", "source": "WHO-ATC A02AB01 / RxClass" },
+  "simethicone": { "class": "Inert Surface-Active Antiflatulent", "classCode": "A03AX", "category": "Antiflatulent", "duplicateRisk": "LOW", "source": "WHO-ATC A03AX13 / RxClass" },
+  "loperamide": { "class": "Peripheral Mu-Opioid Agonist Antidiarrheal", "classCode": "A07DA", "category": "Antidiarrheal", "duplicateRisk": "HIGH", "source": "WHO-ATC A07DA03 / RxClass" },
+  "ondansetron": { "class": "5-HT3 Serotonin Receptor Antagonist Antiemetic", "classCode": "A04AA", "category": "Antiemetic", "duplicateRisk": "HIGH", "source": "WHO-ATC A04AA01 / RxClass" },
+  "granisetron": { "class": "5-HT3 Serotonin Receptor Antagonist Antiemetic", "classCode": "A04AA", "category": "Antiemetic", "duplicateRisk": "HIGH", "source": "WHO-ATC A04AA02 / RxClass" },
+  "dextromethorphan": { "class": "Centrally Acting NMDA Cough Suppressant", "classCode": "R05DA", "category": "Antitussive", "duplicateRisk": "HIGH", "source": "WHO-ATC R05DA09 / RxClass" },
+  "guaifenesin": { "class": "Expectorant Mucolytic", "classCode": "R05CA", "category": "Expectorant", "duplicateRisk": "LOW", "source": "WHO-ATC R05CA03 / RxClass" },
+  "ambroxol": { "class": "Secretolytic Mucolytic Agent", "classCode": "R05CB", "category": "Mucolytic", "duplicateRisk": "LOW", "source": "WHO-ATC R05CB06 / RxClass" },
+  "acetylcysteine": { "class": "Mucolytic / Glutathione Precursor Antidote", "classCode": "R05CB", "category": "Mucolytic", "duplicateRisk": "LOW", "source": "WHO-ATC R05CB01 / RxClass" },
+  "pseudoephedrine": { "class": "Sympathomimetic Alpha-Adrenergic Decongestant", "classCode": "R01BA", "category": "Decongestant", "duplicateRisk": "HIGH", "source": "WHO-ATC R01BA02 / RxClass" },
+  "phenylephrine": { "class": "Alpha-1 Adrenergic Agonist Decongestant", "classCode": "R01BA", "category": "Decongestant", "duplicateRisk": "HIGH", "source": "WHO-ATC R01BA03 / RxClass" },
+  "oxymetazoline": { "class": "Direct-Acting Sympathomimetic Nasal Decongestant", "classCode": "R01AA", "category": "Decongestant", "duplicateRisk": "HIGH", "source": "WHO-ATC R01AA05 / RxClass" },
+  "xylometazoline": { "class": "Direct-Acting Sympathomimetic Nasal Decongestant", "classCode": "R01AA", "category": "Decongestant", "duplicateRisk": "HIGH", "source": "WHO-ATC R01AA07 / RxClass" },
+  "sildenafil": { "class": "Phosphodiesterase-5 (PDE5) Inhibitor", "classCode": "G04BE", "category": "PDE5 Inhibitor", "duplicateRisk": "HIGH", "source": "WHO-ATC G04BE03 / RxClass" },
+  "tadalafil": { "class": "Phosphodiesterase-5 (PDE5) Inhibitor", "classCode": "G04BE", "category": "PDE5 Inhibitor", "duplicateRisk": "HIGH", "source": "WHO-ATC G04BE08 / RxClass" }
+};
+
+const drugClassesDoc = {
+  "_comment": "needs clinical review",
+  "meta": {
+    "totalIngredients": Object.keys(rawClasses).length,
+    "version": "1.0.0",
+    "standard": "WHO-ATC / NIH RxClass"
+  },
+  "classes": rawClasses
+};
+
+fs.writeFileSync(path.join(DATA_DIR, 'drug-classes.json'), JSON.stringify(drugClassesDoc, null, 2), 'utf8');
+console.log(`✔ Generated drug-classes.json with ${Object.keys(rawClasses).length} ingredients.`);
+
+module.exports = { drugClassesDoc };

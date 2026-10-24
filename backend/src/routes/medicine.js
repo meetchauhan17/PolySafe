@@ -16,6 +16,7 @@ const { calculateCumulativeBurden } = require('../services/burdenIndex');
 const { generateExplanation } = require('../services/explanationGenerator');
 const { BRAND_ALIASES, resolveDrugCandidates, getRxCuiForDrug, getDrugPurpose } = require('../services/drugAliases');
 const { INDIAN_DRUGS } = require('../../data/indianDrugs');
+const { screenFoodDrugInteractions } = require('../services/foodDrugService');
 
 // ─── Zod schema ──────────────────────────────────────────────────────────────
 const medicineSchema = z.object({
@@ -273,6 +274,7 @@ router.post('/', auth, requireRole(['PATIENT', 'CAREGIVER']), async (req, res) =
         for (const r of rooms) {
           io.to(r).emit('interaction-checked', payload);
           io.to(r).emit('interaction-check-result', payload);
+          io.to(r).emit('safety_status_updated', { patientId: patient.id, action: 'add', medicineId: medicine.id });
         }
       };
 
@@ -532,6 +534,73 @@ router.post('/', auth, requireRole(['PATIENT', 'CAREGIVER']), async (req, res) =
 });
 
 // ═════════════════════════════════════════════════════════════════════════════
+// POST /medicine/preview-safety
+// Patient-auth: preview duplicate, allergy, and disease-drug alerts before saving
+// ═════════════════════════════════════════════════════════════════════════════
+router.post('/preview-safety', auth, async (req, res) => {
+  const { userId } = req.user;
+  const { name, type, dosage } = req.body || {};
+
+  const rawDrug = String(name || '').trim();
+  if (!rawDrug) {
+    return res.status(200).json({ alerts: [], duplicateAlerts: [], allergyAlerts: [], diseaseDrugAlerts: [] });
+  }
+
+  try {
+    const patient = await prisma.patient.findUnique({
+      where: { userId },
+      include: {
+        medicines: {
+          where: { removedAt: null },
+        },
+      },
+    });
+
+    if (!patient) {
+      return res.status(200).json({ alerts: [], duplicateAlerts: [], allergyAlerts: [], diseaseDrugAlerts: [] });
+    }
+
+    const { runSafetyChecks } = require('../services/safetyChecks');
+    const { resolveDrugWithAI } = require('../services/aiDrugResolver');
+
+    const resolved = await resolveDrugWithAI(rawDrug);
+    const resolvedName = resolved.resolvedName || rawDrug;
+    const genericName = resolved.genericName || rawDrug;
+    const constituents = resolved.genericSalts || [resolvedName];
+
+    const alerts = await runSafetyChecks({
+      patient,
+      medicines: patient.medicines || [],
+      newMedicine: {
+        name: rawDrug,
+        resolvedName,
+        genericName,
+        constituents,
+        class: resolved.class,
+      },
+      enableAiRephrasing: false,
+    });
+
+    const duplicateAlerts = alerts.filter(a => a.type === 'DUPLICATE_INGREDIENT' || a.type === 'DUPLICATE_CLASS');
+    const allergyAlerts = alerts.filter(a => a.type === 'ALLERGY');
+    const diseaseDrugAlerts = alerts.filter(a => a.type === 'DISEASE_DRUG');
+    const foodSpacingAlerts = alerts.filter(a => a.type === 'FOOD_SPACING');
+
+    return res.status(200).json({
+      alerts,
+      duplicateAlerts,
+      allergyAlerts,
+      diseaseDrugAlerts,
+      foodSpacingAlerts,
+      count: alerts.length,
+    });
+  } catch (err) {
+    console.error('[POST /medicine/preview-safety]', err);
+    return res.status(500).json({ error: 'Failed to preview medicine safety.' });
+  }
+});
+
+// ═════════════════════════════════════════════════════════════════════════════
 // POST /medicine/batch
 // Add multiple medications from prescription scans in one seamless batch
 // ═════════════════════════════════════════════════════════════════════════════
@@ -706,6 +775,14 @@ router.post('/batch', auth, async (req, res) => {
       });
     }
 
+    const io = req.app.get('io');
+    if (io) {
+      const rooms = [`patient-${userId}`, `patient-${patient.id}`];
+      for (const r of rooms) {
+        io.to(r).emit('safety_status_updated', { patientId: patient.id, action: 'batch-add', count: addedMeds.length });
+      }
+    }
+
     return res.status(201).json({
       message: `Successfully added ${addedMeds.length} medicine(s) to your regimen.`,
       addedCount: addedMeds.length,
@@ -830,6 +907,14 @@ router.put('/:id', auth, requireRole(['PATIENT']), async (req, res) => {
     // Recalculate cumulative burden score
     const cumulativeBurden = await calculateCumulativeBurden(patient.id);
 
+    const io = req.app.get('io');
+    if (io) {
+      const rooms = [`patient-${userId}`, `patient-${patient.id}`];
+      for (const r of rooms) {
+        io.to(r).emit('safety_status_updated', { patientId: patient.id, action: 'update', medicineId: id });
+      }
+    }
+
     return res.status(200).json({
       message: 'Medicine updated successfully.',
       medicine: {
@@ -887,6 +972,14 @@ router.delete('/:id', auth, requireRole(['PATIENT']), async (req, res) => {
 
     // Recalculate cumulative burden after discontinuation
     const cumulativeBurden = await calculateCumulativeBurden(patient.id);
+
+    const io = req.app.get('io');
+    if (io) {
+      const rooms = [`patient-${userId}`, `patient-${patient.id}`];
+      for (const r of rooms) {
+        io.to(r).emit('safety_status_updated', { patientId: patient.id, action: 'delete', medicineId: id });
+      }
+    }
 
     return res.status(200).json({
       message: `"${medicine.name}" has been marked as discontinued.`,
@@ -1327,6 +1420,28 @@ router.get('/search', auth, async (req, res) => {
   }
 
   return res.json({ suggestions: suggestions.slice(0, 10) });
+});
+
+// ═════════════════════════════════════════════════════════════════════════════
+// GET /medicine/food-interactions
+// Evaluates food & drink interactions for a list of drug names or active regimen
+// ═════════════════════════════════════════════════════════════════════════════
+router.get('/food-interactions', async (req, res) => {
+  try {
+    const rawDrugs = req.query.drugs || req.query.meds || '';
+    const drugList = typeof rawDrugs === 'string'
+      ? rawDrugs.split(',').map((d) => d.trim()).filter(Boolean)
+      : Array.isArray(rawDrugs) ? rawDrugs : [];
+
+    const conflicts = screenFoodDrugInteractions(drugList.map(name => ({ name })));
+    return res.status(200).json({
+      totalConflicts: conflicts.length,
+      conflicts,
+    });
+  } catch (err) {
+    console.error('[GET /medicine/food-interactions]', err);
+    res.status(500).json({ error: 'Failed to screen food-drug interactions.' });
+  }
 });
 
 module.exports = router;

@@ -3372,6 +3372,54 @@
       "score": 1,
       "category": "Inhaled Anticholinergic (LAMA)",
       "notes": "Seebri Breezhaler; inhaled muscarinic blocker"
+    },
+    {
+      "drugName": "pantoprazole",
+      "score": 1,
+      "category": "Proton Pump Inhibitor",
+      "notes": "Pantocid, Pan 40; mild anticholinergic cognitive effect reported in geriatric studies"
+    },
+    {
+      "drugName": "metformin",
+      "score": 0,
+      "category": "Biguanide Antidiabetic",
+      "notes": "Glycomet; zero anticholinergic cognitive burden"
+    },
+    {
+      "drugName": "amlodipine",
+      "score": 1,
+      "category": "Dihydropyridine Calcium Channel Blocker",
+      "notes": "Amlong, Stamlo; mild peripheral vasodilation"
+    },
+    {
+      "drugName": "telmisartan",
+      "score": 0,
+      "category": "Angiotensin II Receptor Blocker",
+      "notes": "Telma; zero anticholinergic cognitive burden"
+    },
+    {
+      "drugName": "rosuvastatin",
+      "score": 0,
+      "category": "HMG-CoA Reductase Inhibitor",
+      "notes": "Rosuvas; zero anticholinergic cognitive burden"
+    },
+    {
+      "drugName": "aspirin",
+      "score": 0,
+      "category": "Antiplatelet / Salicylate",
+      "notes": "Ecosprin; zero anticholinergic burden at antiplatelet doses"
+    },
+    {
+      "drugName": "clopidogrel",
+      "score": 0,
+      "category": "P2Y12 Platelet Inhibitor",
+      "notes": "Clopilet, Deplatt; zero anticholinergic cognitive burden"
+    },
+    {
+      "drugName": "losartan",
+      "score": 0,
+      "category": "Angiotensin II Receptor Blocker",
+      "notes": "Losacar; zero anticholinergic cognitive burden"
     }
   ]
 }

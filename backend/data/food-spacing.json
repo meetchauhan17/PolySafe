@@ -1,0 +1,667 @@
+{
+  "_comment": "needs clinical review",
+  "meta": {
+    "totalRules": 40,
+    "version": "1.0.0"
+  },
+  "rules": [
+    {
+      "id": "fs-grapefruit-statin",
+      "type": "FOOD_ADVICE",
+      "drugMatch": [
+        "atorvastatin",
+        "simvastatin",
+        "lovastatin"
+      ],
+      "interactor": "Grapefruit & Grapefruit Juice",
+      "severity": "MAJOR",
+      "title": "Grapefruit Juice with Statins · Muscle Toxicity Risk",
+      "clinicalText": "Furanocoumarins in grapefruit irreversibly inhibit intestinal CYP3A4. Simvastatin and Lovastatin AUC increases up to 10-fold; Atorvastatin AUC approximately 2.5-fold. All increases risk of statin myopathy and rhabdomyolysis.",
+      "plainText": "Do not eat grapefruit or drink grapefruit juice while taking these cholesterol medicines. Grapefruit reduces your liver's ability to process the medicine, causing drug levels to rise significantly and increasing the risk of muscle damage.",
+      "spacingRule": "Avoid grapefruit entirely while taking these statins.",
+      "rationale": "Mechanism-based irreversible inactivation of gut mucosal CYP3A4 increasing systemic bioavailability.",
+      "source": "FDA Consumer Health Advisory / Bailey et al., Br J Clin Pharmacol 2013"
+    },
+    {
+      "id": "fs-grapefruit-ccb",
+      "type": "FOOD_ADVICE",
+      "drugMatch": [
+        "amlodipine",
+        "felodipine",
+        "nifedipine",
+        "diltiazem",
+        "verapamil"
+      ],
+      "interactor": "Grapefruit & Grapefruit Juice",
+      "severity": "MODERATE",
+      "title": "Grapefruit Juice with Calcium Channel Blockers · Hypotension Alert",
+      "clinicalText": "Intestinal CYP3A4 inhibition elevates plasma CCB concentrations, amplifying peripheral vasodilation, reflex tachycardia, headaches, and profound orthostasis.",
+      "plainText": "Avoid large amounts of grapefruit juice while taking blood pressure medicines like Amlodipine or Nifedipine. It can cause blood pressure to drop too low, leading to dizziness.",
+      "spacingRule": "Limit or completely avoid grapefruit products.",
+      "rationale": "Inhibition of first-pass gut metabolism increasing systemic exposure.",
+      "source": "FDA / Clinical Pharmacokinetics"
+    },
+    {
+      "id": "fs-grapefruit-amiodarone",
+      "type": "FOOD_ADVICE",
+      "drugMatch": [
+        "amiodarone"
+      ],
+      "interactor": "Grapefruit & Grapefruit Juice",
+      "severity": "CRITICAL",
+      "title": "Grapefruit Juice with Amiodarone · Arrhythmia & QTc Prolongation",
+      "clinicalText": "Grapefruit blocks CYP3A4 clearance of amiodarone, dramatically increasing serum concentrations and elevating the risk of Torsades de Pointes and fatal ventricular arrhythmias.",
+      "plainText": "Strictly avoid grapefruit juice while taking Amiodarone. Grapefruit dangerously increases medicine levels in your bloodstream, risking abnormal heartbeats.",
+      "spacingRule": "Complete avoidance of grapefruit required.",
+      "rationale": "CYP3A4 clearance inhibition extends already prolonged terminal elimination half-life.",
+      "source": "FDA Prescribing Information"
+    },
+    {
+      "id": "fs-vitamink-warfarin",
+      "type": "FOOD_ADVICE",
+      "drugMatch": [
+        "warfarin",
+        "acenocoumarol"
+      ],
+      "interactor": "Vitamin K Rich Foods (Spinach, Kale, Broccoli, Fenugreek / Methi)",
+      "severity": "CRITICAL",
+      "title": "Vitamin K Rich Foods with Warfarin · Anticoagulant Opposition",
+      "clinicalText": "Vitamin K acts as an essential cofactor for gamma-glutamyl carboxylase, directly overcoming warfarin's competitive inhibition of VKORC1 and reducing INR, predisposing to stroke or clot recurrence.",
+      "plainText": "Maintain a steady, consistent intake of green leafy vegetables (spinach, methi, kale, broccoli). Sudden increases in vitamin K reduce your blood thinner's protection and cause clots.",
+      "spacingRule": "Keep daily green vegetable intake steady; do not make drastic changes without INR testing.",
+      "rationale": "Physiological substrate competition with vitamin K epoxide reductase complex 1.",
+      "source": "Chest Antithrombotic Guidelines / BNF"
+    },
+    {
+      "id": "fs-dairy-tetracycline",
+      "type": "FOOD_ADVICE",
+      "drugMatch": [
+        "doxycycline",
+        "tetracycline",
+        "minocycline"
+      ],
+      "interactor": "Dairy Products (Milk, Curd, Yogurt, Cheese)",
+      "severity": "MAJOR",
+      "title": "Dairy Products with Tetracyclines · Cation Chelation Inactivation",
+      "clinicalText": "Divalent calcium ions in milk and yogurt chelate tetracycline molecules, forming insoluble, non-absorbable complexes that reduce antibiotic absorption by 50-80%.",
+      "plainText": "Do not take Doxycycline or Tetracycline with milk, yogurt, or curd. Calcium binds the antibiotic in your stomach and prevents your body from absorbing it.",
+      "spacingRule": "Take 1 hour before or 2 hours after consuming dairy foods.",
+      "rationale": "Polyvalent metal ion chelation forming insoluble unabsorbable chelates.",
+      "source": "FDA Prescribing Information / BNF"
+    },
+    {
+      "id": "fs-dairy-fluoroquinolone",
+      "type": "FOOD_ADVICE",
+      "drugMatch": [
+        "ciprofloxacin",
+        "levofloxacin",
+        "norfloxacin",
+        "ofloxacin"
+      ],
+      "interactor": "Dairy Products (Milk, Curd, Paneer)",
+      "severity": "MAJOR",
+      "title": "Dairy Products with Fluoroquinolones · Chelation Malabsorption",
+      "clinicalText": "Calcium cations in dairy products bind fluoroquinolones in the gut lumen, causing up to a 70% decrease in peak serum concentrations and treatment failure.",
+      "plainText": "Avoid drinking milk or eating yogurt at the same time as Ciprofloxacin or Norfloxacin. Calcium blocks the antibiotic from entering your bloodstream.",
+      "spacingRule": "Separate antibiotic from dairy products by at least 2 hours.",
+      "rationale": "Chelation between polyvalent cations and the 4-keto and 3-carboxyl groups of quinolones.",
+      "source": "FDA Drug Safety / Clinical Pharmacokinetics"
+    },
+    {
+      "id": "fs-antacid-fluoroquinolone",
+      "type": "FOOD_ADVICE",
+      "drugMatch": [
+        "ciprofloxacin",
+        "levofloxacin",
+        "norfloxacin",
+        "moxifloxacin"
+      ],
+      "interactor": "Antacids (Digene, Gelusil, Magnesium & Aluminium Hydroxide)",
+      "severity": "MAJOR",
+      "title": "Antacids with Fluoroquinolones · Inactivation by Chelation",
+      "clinicalText": "Aluminium and magnesium hydroxide antacids form insoluble chelates with fluoroquinolones, virtually abolishing antibiotic bioavailability.",
+      "plainText": "Do not take antacids (like Digene or Gelusil) at the same time as Ciprofloxacin or Levofloxacin. Take the antibiotic 2 hours before or 4 hours after an antacid.",
+      "spacingRule": "Take antibiotic 2 hours before or 4 hours after taking any antacid.",
+      "rationale": "High-affinity binding of trivalent Al3+ and divalent Mg2+ ions.",
+      "source": "FDA Guidance / BNF"
+    },
+    {
+      "id": "fs-antacid-tetracycline",
+      "type": "FOOD_ADVICE",
+      "drugMatch": [
+        "doxycycline",
+        "tetracycline"
+      ],
+      "interactor": "Antacids containing Magnesium, Aluminium, or Calcium",
+      "severity": "MAJOR",
+      "title": "Antacids with Tetracyclines · Complete Absorption Blockade",
+      "clinicalText": "Metal cations in antacids bind tetracyclines in the gastric environment, creating unabsorbable precipitates and subtherapeutic antibiotic blood levels.",
+      "plainText": "Antacid syrups or tablets stop Doxycycline from working. Always separate taking your antibiotic and antacid by at least 2 to 3 hours.",
+      "spacingRule": "Separate by at least 2 hours before or 3 hours after antacids.",
+      "rationale": "Formation of insoluble non-ionizable metal chelate complexes.",
+      "source": "FDA Prescribing Information"
+    },
+    {
+      "id": "fs-levothyroxine-calcium",
+      "type": "TIMING_SPACING",
+      "drugMatch": [
+        "levothyroxine"
+      ],
+      "interactor": "calcium carbonate",
+      "severity": "MAJOR",
+      "title": "Levothyroxine and Calcium Spacing · Adsorption & Hypothyroidism",
+      "clinicalText": "Calcium carbonate adsorbs levothyroxine in an acidic milieu, forming an insoluble precipitate and reducing T4 absorption by over 30%, destabilizing TSH control.",
+      "plainText": "Take Levothyroxine on an empty stomach in the morning, and wait at least 4 hours before taking your Calcium supplement (Shelcal). Calcium blocks thyroid hormone absorption.",
+      "spacingRule": "Separate Levothyroxine and Calcium by at least 4 hours.",
+      "rationale": "Physicochemical adsorption in gastric and upper small intestinal lumen.",
+      "source": "American Thyroid Association (ATA) Guidelines"
+    },
+    {
+      "id": "fs-levothyroxine-iron",
+      "type": "TIMING_SPACING",
+      "drugMatch": [
+        "levothyroxine"
+      ],
+      "interactor": "ferrous sulfate",
+      "severity": "MAJOR",
+      "title": "Levothyroxine and Oral Iron Spacing · Ferric Ion Chelation",
+      "clinicalText": "Oral ferrous and ferric ions bind levothyroxine directly to form a poorly soluble purple chelate complex, causing significant reduction in free thyroxine absorption.",
+      "plainText": "Separate your thyroid pill (Levothyroxine) from Iron tablets by at least 4 hours. Iron binds to the hormone and prevents absorption.",
+      "spacingRule": "Separate Levothyroxine and Iron supplements by at least 4 hours.",
+      "rationale": "Chelation between ferric iron and phenolic and amino groups of thyroxine.",
+      "source": "ATA Guidelines / Endocrine Society"
+    },
+    {
+      "id": "fs-calcium-iron",
+      "type": "TIMING_SPACING",
+      "drugMatch": [
+        "calcium carbonate",
+        "calcium citrate"
+      ],
+      "interactor": "ferrous sulfate",
+      "severity": "MODERATE",
+      "title": "Calcium and Iron Supplement Spacing · Competitive Absorption Inhibition",
+      "clinicalText": "Calcium and iron compete for the divalent metal transporter 1 (DMT1) on intestinal enterocytes; simultaneous intake reduces non-heme iron absorption by up to 50%.",
+      "plainText": "Take Calcium and Iron supplements at different times of the day (at least 2 hours apart). Calcium blocks your body from absorbing iron effectively.",
+      "spacingRule": "Separate Calcium and Iron supplements by at least 2 hours.",
+      "rationale": "Competitive antagonism at enterocyte divalent metal transporter 1 (DMT1).",
+      "source": "WHO Iron Supplementation Guidelines / BNF"
+    },
+    {
+      "id": "fs-alcohol-metformin",
+      "type": "FOOD_ADVICE",
+      "drugMatch": [
+        "metformin"
+      ],
+      "interactor": "Alcohol & Alcoholic Beverages",
+      "severity": "CRITICAL",
+      "title": "Alcohol with Metformin · Fatal Lactic Acidosis Risk",
+      "clinicalText": "Ethanol metabolism increases the hepatic NADH/NAD+ ratio, converting pyruvate to lactate while inhibiting hepatic gluconeogenesis, synergistically amplifying metformin-associated lactic acidosis risk.",
+      "plainText": "Do not consume alcohol while taking Metformin. Alcohol severely disrupts how your liver processes lactate, creating a dangerous risk of lactic acidosis.",
+      "spacingRule": "Avoid excessive or binge alcohol consumption completely.",
+      "rationale": "Redox shift increasing lactate production coupled with suppressed clearance.",
+      "source": "FDA Black Box Warning"
+    },
+    {
+      "id": "fs-alcohol-benzo",
+      "type": "FOOD_ADVICE",
+      "drugMatch": [
+        "alprazolam",
+        "clonazepam",
+        "diazepam",
+        "lorazepam",
+        "temazepam",
+        "chlordiazepoxide"
+      ],
+      "interactor": "Alcohol & Alcoholic Beverages",
+      "severity": "CRITICAL",
+      "title": "Alcohol with Benzodiazepines · Fatal Respiratory Depression",
+      "clinicalText": "Ethanol and benzodiazepines exert synergistic allosteric modulation on GABA-A receptor chloride channels, producing profound central nervous system depression, respiratory arrest, and coma.",
+      "plainText": "Never drink alcohol while taking calming medications (Benzodiazepines). The combination can severely slow or stop your breathing.",
+      "spacingRule": "Strictly avoid alcohol while taking benzodiazepines.",
+      "rationale": "Synergistic positive allosteric GABA-A receptor modulation.",
+      "source": "FDA Black Box Warning / CDC"
+    },
+    {
+      "id": "fs-alcohol-zdrug",
+      "type": "FOOD_ADVICE",
+      "drugMatch": [
+        "zolpidem",
+        "zopiclone",
+        "eszopiclone"
+      ],
+      "interactor": "Alcohol & Alcoholic Beverages",
+      "severity": "CRITICAL",
+      "title": "Alcohol with Z-Hypnotics · Profound Sedation & Complex Behaviors",
+      "clinicalText": "Co-ingestion of ethanol with z-hypnotics dramatically increases the risk of severe CNS depression, respiratory compromise, and hazardous complex sleep behaviors (sleep-driving, sleepwalking).",
+      "plainText": "Do not drink alcohol on evenings you take sleeping pills like Zolpidem. Combining them causes severe amnesia, sleepwalking, and breathing trouble.",
+      "spacingRule": "Zero alcohol intake on nights when sleeping pills are taken.",
+      "rationale": "Potentiation of alpha-1 GABA-A subunit-mediated psychomotor depression.",
+      "source": "FDA Safety Announcement"
+    },
+    {
+      "id": "fs-alcohol-paracetamol",
+      "type": "FOOD_ADVICE",
+      "drugMatch": [
+        "paracetamol",
+        "acetaminophen"
+      ],
+      "interactor": "Alcohol & Alcoholic Beverages",
+      "severity": "MAJOR",
+      "title": "Alcohol with Paracetamol · Acute Hepatotoxicity Hazard",
+      "clinicalText": "Chronic alcohol ingestion induces hepatic CYP2E1 while depleting liver glutathione stores, dramatically shifting paracetamol metabolism into the hepatotoxic intermediate NAPQI.",
+      "plainText": "Avoid alcohol when taking Paracetamol. Alcohol strains liver enzymes and depletes protective antioxidants, increasing the risk of liver damage from standard pain doses.",
+      "spacingRule": "Do not combine alcohol with paracetamol; limit daily dose to under 2,000 mg.",
+      "rationale": "CYP2E1 induction and hepatic glutathione depletion.",
+      "source": "FDA Overdose Advisory / AASLD"
+    },
+    {
+      "id": "fs-alcohol-nsaid",
+      "type": "FOOD_ADVICE",
+      "drugMatch": [
+        "aspirin",
+        "ibuprofen",
+        "naproxen",
+        "diclofenac",
+        "aceclofenac"
+      ],
+      "interactor": "Alcohol & Alcoholic Beverages",
+      "severity": "MAJOR",
+      "title": "Alcohol with NSAIDs · Severe Gastrointestinal Bleeding Hazard",
+      "clinicalText": "Ethanol produces direct mucosal irritation and microvascular disruption; combined with NSAID-induced prostaglandin depletion, the risk of acute gastric erosions and hemorrhage quadruples.",
+      "plainText": "Avoid drinking alcohol while taking painkillers like Ibuprofen or Aspirin. Both irritate your stomach lining and together greatly raise the risk of stomach ulcers and internal bleeding.",
+      "spacingRule": "Avoid alcohol consumption during NSAID therapy.",
+      "rationale": "Additive mucosal barrier breakdown and impaired hemostatic response.",
+      "source": "FDA NSAID Warning / ACG Guidelines"
+    },
+    {
+      "id": "fs-alcohol-opioid",
+      "type": "FOOD_ADVICE",
+      "drugMatch": [
+        "tramadol",
+        "codeine",
+        "morphine",
+        "oxycodone",
+        "fentanyl"
+      ],
+      "interactor": "Alcohol & Alcoholic Beverages",
+      "severity": "CRITICAL",
+      "title": "Alcohol with Opioids · Black Box Warning for Fatal Overdose",
+      "clinicalText": "Ethanol significantly accelerates extended-release opioid dissolution ('dose dumping') and exerts synergistic depression of brainstem medullary respiratory centers, causing fatal hypoxia.",
+      "plainText": "Never consume alcohol while taking opioid painkillers. Alcohol can cause fatal respiratory depression and accidental overdose.",
+      "spacingRule": "Absolute prohibition of alcohol.",
+      "rationale": "Dose dumping and profound brainstem respiratory depressant synergy.",
+      "source": "FDA Black Box Warning"
+    },
+    {
+      "id": "fs-alcohol-metronidazole",
+      "type": "FOOD_ADVICE",
+      "drugMatch": [
+        "metronidazole",
+        "tinidazole"
+      ],
+      "interactor": "Alcohol & Alcoholic Beverages",
+      "severity": "MAJOR",
+      "title": "Alcohol with Metronidazole · Disulfiram-Like Reaction",
+      "clinicalText": "Metronidazole inhibits acetaldehyde dehydrogenase, leading to toxic acetaldehyde accumulation upon ethanol intake, characterized by severe facial flushing, throbbing headache, nausea, and tachycardia.",
+      "plainText": "Do not drink any alcohol while taking Metronidazole or Tinidazole, and for 48 hours after finishing. It triggers severe throbbing headaches, vomiting, chest pounding, and flushing.",
+      "spacingRule": "Avoid alcohol during treatment and for at least 48 hours after the last dose.",
+      "rationale": "Inhibition of hepatic aldehyde dehydrogenase causing acetaldehyde accumulation.",
+      "source": "FDA Prescribing Information / BNF"
+    },
+    {
+      "id": "fs-bisphosphonate-food",
+      "type": "FOOD_ADVICE",
+      "drugMatch": [
+        "alendronate",
+        "risedronate",
+        "ibandronate"
+      ],
+      "interactor": "Any Food, Coffee, Juice, or Mineral Water",
+      "severity": "CRITICAL",
+      "title": "Bisphosphonates Administration · Strict Fasting & Posture Protocol",
+      "clinicalText": "Oral bioavailability of bisphosphonates is <1% and virtually eliminated if taken with food or beverages other than plain water. Standing upright prevents severe chemical esophagitis and esophageal perforation.",
+      "plainText": "Take your bone medicine (Alendronate) first thing in the morning with a full glass of plain tap water only, 30 minutes before any food or coffee. Remain standing or sitting upright for 30 minutes to protect your esophagus.",
+      "spacingRule": "Take with 200ml plain water 30 minutes before any food; stay upright for 30 minutes.",
+      "rationale": "Negligible oral bioavailability and severe esophageal mucosal corrosiveness.",
+      "source": "FDA Prescribing Information / NOF Osteoporosis Guidelines"
+    },
+    {
+      "id": "fs-levodopa-protein",
+      "type": "FOOD_ADVICE",
+      "drugMatch": [
+        "levodopa"
+      ],
+      "interactor": "High-Protein Meals (Eggs, Meat, Dal / Lentils, Paneer)",
+      "severity": "MAJOR",
+      "title": "Levodopa with High-Protein Meals · Large Neutral Amino Acid Competition",
+      "clinicalText": "Dietary amino acids compete with levodopa for transport across the intestinal mucosa and blood-brain barrier via the L-type amino acid transporter 1 (LAT1), resulting in sudden 'off' motor fluctuations.",
+      "plainText": "High-protein foods (like lentils, eggs, or paneer) compete with Levodopa for entry into your brain, making the medication feel ineffective. Take Levodopa at least 30-45 minutes before meals.",
+      "spacingRule": "Take 30 to 45 minutes before high-protein meals or 1-2 hours after.",
+      "rationale": "Competitive transport antagonism at enterocyte and blood-brain barrier LAT1 transporters.",
+      "source": "Movement Disorder Society Clinical Practice Guidelines"
+    },
+    {
+      "id": "fs-potassium-acei",
+      "type": "FOOD_ADVICE",
+      "drugMatch": [
+        "ramipril",
+        "enalapril",
+        "lisinopril",
+        "perindopril"
+      ],
+      "interactor": "High-Potassium Foods (Bananas, Coconut Water, Salt Substitutes)",
+      "severity": "MAJOR",
+      "title": "Potassium Foods with ACE Inhibitors · Hyperkalemia Alert",
+      "clinicalText": "ACE inhibitors suppress angiotensin II and subsequent aldosterone secretion, reducing renal potassium excretion. Excessive intake of coconut water or potassium-chloride salt substitutes can trigger dangerous hyperkalemia.",
+      "plainText": "Your blood pressure medication (ACE inhibitor) reduces how much potassium your kidneys flush out. Avoid excessive coconut water and potassium salt substitutes to prevent dangerous heart rhythm problems.",
+      "spacingRule": "Avoid potassium salt substitutes and excessive coconut water; monitor serum K+.",
+      "rationale": "Hypoaldosteronism induced by suppression of renin-angiotensin system.",
+      "source": "AHA/ACC Hypertension Guidelines"
+    },
+    {
+      "id": "fs-potassium-arb",
+      "type": "FOOD_ADVICE",
+      "drugMatch": [
+        "telmisartan",
+        "losartan",
+        "valsartan",
+        "olmesartan"
+      ],
+      "interactor": "High-Potassium Foods & Salt Substitutes (Potassium Chloride)",
+      "severity": "MAJOR",
+      "title": "Potassium Foods with ARBs · Elevated Blood Potassium Alert",
+      "clinicalText": "Angiotensin II receptor blockade blunts distal tubular potassium secretion. High dietary potassium or salt substitutes increase the risk of hyperkalemia, especially with borderline kidney function.",
+      "plainText": "ARBs like Telmisartan or Losartan raise your body's potassium levels. Be cautious with potassium-based salt substitutes and large amounts of high-potassium drinks.",
+      "spacingRule": "Avoid potassium supplements and salt substitutes unless specifically prescribed.",
+      "rationale": "Blockade of AT1-mediated aldosterone release.",
+      "source": "European Society of Cardiology (ESC) Guidelines"
+    },
+    {
+      "id": "fs-potassium-spironolactone",
+      "type": "FOOD_ADVICE",
+      "drugMatch": [
+        "spironolactone",
+        "eplerenone"
+      ],
+      "interactor": "Potassium Supplements & Potassium Salt Substitutes",
+      "severity": "CRITICAL",
+      "title": "Potassium Supplements with Aldosterone Antagonists · Fatal Arrhythmia Risk",
+      "clinicalText": "Concurrent administration of potassium supplements or potassium-enriched salt substitutes with aldosterone antagonists produces rapidly escalating hyperkalemia and ventricular fibrillation.",
+      "plainText": "Strictly avoid potassium supplements and potassium-based low-sodium salts while taking Spironolactone. Combining them can cause your heart's electrical system to stop.",
+      "spacingRule": "Never take potassium supplements with potassium-sparing diuretics without close laboratory monitoring.",
+      "rationale": "Direct distal renal tubular blockade of sodium-potassium exchange.",
+      "source": "FDA Warning / Heart Failure Society of America"
+    },
+    {
+      "id": "fs-tyramine-maoi",
+      "type": "FOOD_ADVICE",
+      "drugMatch": [
+        "linezolid",
+        "selegiline",
+        "moclobemide"
+      ],
+      "interactor": "Tyramine-Rich Foods (Aged Cheese, Fermented Soy, Cured Meats, Red Wine)",
+      "severity": "CRITICAL",
+      "title": "Tyramine Foods with MAOIs · Hypertensive Crisis Alert",
+      "clinicalText": "Inhibition of gastrointestinal monoamine oxidase allows dietary tyramine to enter systemic circulation and displace norepinephrine from sympathetic nerve terminals, triggering life-threatening hypertensive crisis.",
+      "plainText": "Avoid aged cheese, soy sauce, fermented foods, and red wine while taking Linezolid or MAOI medicines. Tyramine in these foods can trigger a sudden, dangerous spike in blood pressure.",
+      "spacingRule": "Strictly restrict high-tyramine dietary foods during therapy.",
+      "rationale": "Massive catecholamine surge via displacement from presynaptic storage vesicles.",
+      "source": "FDA Warning / BNF"
+    },
+    {
+      "id": "fs-fiber-digoxin",
+      "type": "FOOD_ADVICE",
+      "drugMatch": [
+        "digoxin"
+      ],
+      "interactor": "High Dietary Fiber / Wheat Bran",
+      "severity": "MODERATE",
+      "title": "Dietary Fiber with Digoxin · Insoluble Binding & Malabsorption",
+      "clinicalText": "Large amounts of bran and dietary insoluble fiber physically bind digoxin molecules in the intestinal lumen, significantly decreasing cardiac glycoside absorption.",
+      "plainText": "Taking large amounts of high-fiber cereal or wheat bran at the exact same time as Digoxin reduces how much medicine your body absorbs. Separate by at least 2 hours.",
+      "spacingRule": "Separate Digoxin from high-fiber bran meals by 2 hours.",
+      "rationale": "Luminal adsorption to non-digestible polysaccharides.",
+      "source": "Clinical Pharmacokinetics"
+    },
+    {
+      "id": "fs-fiber-levothyroxine",
+      "type": "FOOD_ADVICE",
+      "drugMatch": [
+        "levothyroxine"
+      ],
+      "interactor": "Soy Products & High-Fiber Foods",
+      "severity": "MODERATE",
+      "title": "Soy Products & Fiber with Levothyroxine · Intestinal Binding",
+      "clinicalText": "Soybean flour and concentrated dietary fiber bind levothyroxine within the gastrointestinal tract, necessitating increased thyroid hormone replacement doses.",
+      "plainText": "Soy milk, edamame, and high-fiber foods interfere with how well your body absorbs thyroid medicine. Take Levothyroxine with water 30-60 minutes before breakfast.",
+      "spacingRule": "Take Levothyroxine 30-60 minutes before morning meals.",
+      "rationale": "Soy isoflavone and fiber binding in the proximal gut.",
+      "source": "ATA Guidelines / Endocrine Practice"
+    },
+    {
+      "id": "fs-caffeine-ciprofloxacin",
+      "type": "FOOD_ADVICE",
+      "drugMatch": [
+        "ciprofloxacin"
+      ],
+      "interactor": "Caffeine (Coffee, Tea, Energy Drinks, Colas)",
+      "severity": "MODERATE",
+      "title": "Caffeine with Ciprofloxacin · CYP1A2 Inhibition & Nervousness",
+      "clinicalText": "Ciprofloxacin potently inhibits hepatic CYP1A2, reducing caffeine clearance by over 60% and leading to exaggerated caffeine levels, tremors, palpitations, and severe insomnia.",
+      "plainText": "Ciprofloxacin stops your body from breaking down caffeine. Drinking coffee or energy drinks while taking this antibiotic can cause severe jitters, rapid heartbeat, and anxiety.",
+      "spacingRule": "Reduce or eliminate coffee and caffeinated drinks during ciprofloxacin treatment.",
+      "rationale": "Competitive and mechanism-based inhibition of hepatic CYP1A2 clearance.",
+      "source": "FDA Prescribing Information / Clinical Pharmacology"
+    },
+    {
+      "id": "fs-tea-iron",
+      "type": "FOOD_ADVICE",
+      "drugMatch": [
+        "ferrous sulfate",
+        "ferrous ascorbate"
+      ],
+      "interactor": "Tea & Coffee (Tannins & Polyphenols)",
+      "severity": "MODERATE",
+      "title": "Tea & Coffee with Iron Supplements · Tannin Precipitation",
+      "clinicalText": "Tannins and polyphenols in black tea and coffee bind non-heme iron to form insoluble ferric tannate complexes, reducing oral iron absorption by up to 60-70%.",
+      "plainText": "Do not drink tea or coffee within 1 to 2 hours of taking your Iron tablet. The tannins in tea bind to iron and stop your body from absorbing it to fix anemia.",
+      "spacingRule": "Wait at least 1 to 2 hours between tea/coffee and taking iron supplements.",
+      "rationale": "Complexation of iron with phenolic compounds preventing enterocyte uptake.",
+      "source": "WHO Nutritional Anemia Guidance / BNF"
+    },
+    {
+      "id": "fs-greentea-statin",
+      "type": "FOOD_ADVICE",
+      "drugMatch": [
+        "atorvastatin",
+        "simvastatin",
+        "rosuvastatin"
+      ],
+      "interactor": "Green Tea (Concentrated Epigallocatechin Gallate)",
+      "severity": "MINOR",
+      "title": "High-Dose Green Tea with Statins · OATP Transport Alteration",
+      "clinicalText": "Epigallocatechin gallate (EGCG) in large quantities of green tea modulates OATP1B1 and OATP1B3 hepatic uptake transporters, altering statin pharmacokinetics.",
+      "plainText": "Drinking moderate green tea is fine, but avoid concentrated green tea extract supplements when taking statins.",
+      "spacingRule": "Avoid concentrated green tea extract capsules; moderate tea is acceptable.",
+      "rationale": "In vitro and in vivo inhibition of organic anion transporting polypeptides.",
+      "source": "Natural Medicines Database / NIH ODS"
+    },
+    {
+      "id": "fs-licorice-antihypertensive",
+      "type": "FOOD_ADVICE",
+      "drugMatch": [
+        "telmisartan",
+        "amlodipine",
+        "losartan",
+        "ramipril"
+      ],
+      "interactor": "Licorice (Glycyrrhizin / Mulethi)",
+      "severity": "MAJOR",
+      "title": "Licorice Root with Blood Pressure Drugs · Sodium Retention Paradox",
+      "clinicalText": "Glycyrrhizin inhibits 11-beta-HSD2, precipitating cortisol-mediated mineralocorticoid activation that directly counteracts antihypertensive treatment.",
+      "plainText": "Avoid herbal licorice root (mulethi) supplements. Licorice causes your body to hold onto salt and water, driving up blood pressure and defeating your medication.",
+      "spacingRule": "Avoid herbal licorice supplements during blood pressure therapy.",
+      "rationale": "Apparent mineralocorticoid excess secondary to 11-beta-HSD2 inhibition.",
+      "source": "European Society of Cardiology / WHO"
+    },
+    {
+      "id": "fs-licorice-digoxin",
+      "type": "FOOD_ADVICE",
+      "drugMatch": [
+        "digoxin"
+      ],
+      "interactor": "Licorice (Glycyrrhizin)",
+      "severity": "CRITICAL",
+      "title": "Licorice with Digoxin · Hypokalemic Arrhythmia Trigger",
+      "clinicalText": "Licorice-induced urinary potassium wasting produces hypokalemia, which dramatically potentiates digoxin binding to myocardial Na+/K+ ATPase, triggering fatal digitalis toxicity.",
+      "plainText": "Do not consume natural licorice root with Digoxin. Licorice lowers potassium in your blood, making Digoxin dangerously toxic to your heart.",
+      "spacingRule": "Strictly avoid licorice root products.",
+      "rationale": "Hypokalemia amplifies digitalis glycoside affinity for myocardial sodium-potassium pump.",
+      "source": "FDA Warning / American Heart Association"
+    },
+    {
+      "id": "fs-antacid-iron",
+      "type": "FOOD_ADVICE",
+      "drugMatch": [
+        "ferrous sulfate",
+        "ferrous ascorbate"
+      ],
+      "interactor": "Antacids & Acid Reducers (Pantoprazole, Omeprazole, Digene)",
+      "severity": "MODERATE",
+      "title": "Antacids with Iron Supplements · Reduced Acid Solubility",
+      "clinicalText": "Gastric acid is required to reduce ferric iron to the more absorbable ferrous state; hypochlorhydria induced by PPIs and antacids significantly reduces oral iron absorption.",
+      "plainText": "Stomach acid helps your body absorb iron. Taking antacids or PPIs at the exact same time as your iron pill reduces iron absorption. Separate by at least 2 hours.",
+      "spacingRule": "Take iron 2 hours before or after taking antacids.",
+      "rationale": "Elevation of gastric pH impairs dissolution and ferric-to-ferrous ion reduction.",
+      "source": "British Society of Gastroenterology Iron Deficiency Guidelines"
+    },
+    {
+      "id": "fs-antacid-ketoconazole",
+      "type": "FOOD_ADVICE",
+      "drugMatch": [
+        "ketoconazole",
+        "itraconazole"
+      ],
+      "interactor": "Antacids & Acid Blockers (Pantoprazole, Digene, Gelusil)",
+      "severity": "MAJOR",
+      "title": "Antacids with Azole Antifungals · Severe Bioavailability Loss",
+      "clinicalText": "Ketoconazole and itraconazole are weak bases requiring an acidic intragastric environment for dissolution; antacid-induced pH elevation reduces absorption by up to 80%.",
+      "plainText": "Antifungal pills like Itraconazole need stomach acid to dissolve properly. Antacids stop them from absorbing. Take antifungal pills 2 hours before or after antacids.",
+      "spacingRule": "Separate antacids from azole antifungals by at least 2 hours.",
+      "rationale": "pH-dependent dissolution failure.",
+      "source": "FDA Prescribing Information"
+    },
+    {
+      "id": "fs-ampicillin-food",
+      "type": "FOOD_ADVICE",
+      "drugMatch": [
+        "ampicillin"
+      ],
+      "interactor": "Any Meals & Solid Food",
+      "severity": "MODERATE",
+      "title": "Ampicillin with Food · Decreased Antibiotic Bioavailability",
+      "clinicalText": "Gastric contents and food delay gastric emptying and physically adsorb ampicillin, reducing peak plasma concentration and bioavailability by over 50%.",
+      "plainText": "Ampicillin must be taken on an empty stomach with a full glass of water, either 1 hour before a meal or 2 hours after, to ensure proper infection fighting.",
+      "spacingRule": "Take on an empty stomach: 1 hour before or 2 hours after meals.",
+      "rationale": "Food-induced delay in gastric emptying and impaired mucosal dissolution.",
+      "source": "FDA Prescribing Information / BNF"
+    },
+    {
+      "id": "fs-griseofulvin-fat",
+      "type": "FOOD_ADVICE",
+      "drugMatch": [
+        "griseofulvin"
+      ],
+      "interactor": "High-Fat Meals (Milk, Ghee, Butter)",
+      "severity": "INFO",
+      "title": "Griseofulvin Administration · Fat-Enhanced Absorption Protocol",
+      "clinicalText": "Griseofulvin is highly lipophilic; administration with fatty meals (e.g. milk, butter, fatty food) stimulates biliary secretions and enhances absorption up to twofold.",
+      "plainText": "Take Griseofulvin with a meal containing some fat or milk. Fat in food helps your body absorb this antifungal medicine much better.",
+      "spacingRule": "Take with or immediately after a meal containing fat.",
+      "rationale": "Lipid micellar solubilization and enhanced lymphatic/portal absorption.",
+      "source": "FDA Prescribing Information"
+    },
+    {
+      "id": "fs-cefuroxime-food",
+      "type": "FOOD_ADVICE",
+      "drugMatch": [
+        "cefuroxime"
+      ],
+      "interactor": "Food / Post-Meal Administration",
+      "severity": "INFO",
+      "title": "Cefuroxime Axetil Administration · Food-Enhanced Bioavailability",
+      "clinicalText": "Cefuroxime axetil bioavailability increases from 37% in the fasting state to 52% when taken immediately following food, while reducing upper gastrointestinal irritation.",
+      "plainText": "Always take your Cefuroxime antibiotic immediately after a meal. Taking it with food helps your body absorb it better and prevents stomach upset.",
+      "spacingRule": "Take immediately after meals.",
+      "rationale": "Postprandial gastric residence time promotes ester hydrolysis and optimal dissolution.",
+      "source": "FDA Prescribing Information / BNF"
+    },
+    {
+      "id": "fs-nitrofurantoin-food",
+      "type": "FOOD_ADVICE",
+      "drugMatch": [
+        "nitrofurantoin"
+      ],
+      "interactor": "Meals or Milk",
+      "severity": "INFO",
+      "title": "Nitrofurantoin Administration · Food-Enhanced Urinary Excretion",
+      "clinicalText": "Taking macrocrystalline nitrofurantoin with food or milk doubles its gastrointestinal transit time, increasing therapeutic urinary concentrations by up to 40% and minimizing nausea.",
+      "plainText": "Take Nitrofurantoin with meals or a glass of milk. Food helps reduce nausea and boosts the amount of medicine reaching your urinary bladder.",
+      "spacingRule": "Take with or immediately after meals or milk.",
+      "rationale": "Delayed transit promotes dissolution and increases urinary therapeutic recovery.",
+      "source": "FDA Prescribing Information / BNF"
+    },
+    {
+      "id": "fs-lithium-sodium",
+      "type": "FOOD_ADVICE",
+      "drugMatch": [
+        "lithium"
+      ],
+      "interactor": "Low-Sodium Diets or Sudden Salt Restriction",
+      "severity": "MAJOR",
+      "title": "Sodium Balance with Lithium · Renal Reabsorption & Toxicity Alert",
+      "clinicalText": "Lithium is handled identically to sodium in the proximal renal tubule. Hyponatremia or sudden dietary salt restriction stimulates compensatory lithium reabsorption, causing severe lithium toxicity.",
+      "plainText": "Maintain a normal, steady salt intake while taking Lithium. Suddenly cutting salt or becoming dehydrated makes your kidneys hold onto Lithium, causing dangerous toxic levels.",
+      "spacingRule": "Maintain consistent dietary sodium and fluid intake; avoid crash low-salt diets.",
+      "rationale": "Competitive proximal tubular reabsorption via sodium-hydrogen exchanger 3 (NHE3).",
+      "source": "FDA Prescribing Information / APA Guidelines"
+    },
+    {
+      "id": "fs-stjohnswort-immunosuppressant",
+      "type": "FOOD_ADVICE",
+      "drugMatch": [
+        "cyclosporine",
+        "tacrolimus"
+      ],
+      "interactor": "St. John's Wort (Hypericum Perforatum)",
+      "severity": "CRITICAL",
+      "title": "St. John's Wort with Immunosuppressants · Organ Rejection Risk",
+      "clinicalText": "Hyperforin in St. John's Wort is a potent activator of the pregnane X receptor (PXR), profoundly inducing hepatic/intestinal CYP3A4 and P-glycoprotein, precipitating acute organ graft rejection.",
+      "plainText": "Never take St. John's Wort herbal supplements with transplant or immunosuppressive drugs. It rapidly cleans the medicine out of your blood, leading to organ rejection.",
+      "spacingRule": "Strictly avoid St. John's Wort supplements.",
+      "rationale": "PXR-mediated induction of intestinal and hepatic CYP3A4 and ABCB1 efflux pump.",
+      "source": "FDA Public Health Advisory"
+    },
+    {
+      "id": "fs-garlic-anticoagulant",
+      "type": "FOOD_ADVICE",
+      "drugMatch": [
+        "warfarin",
+        "aspirin",
+        "clopidogrel",
+        "rivaroxaban",
+        "apixaban"
+      ],
+      "interactor": "High-Dose Garlic & Ginger Dietary Supplements",
+      "severity": "MODERATE",
+      "title": "High-Dose Garlic & Ginger with Antithrombotics · Antiplatelet Synergy",
+      "clinicalText": "Ajoene in garlic and gingerols in ginger inhibit platelet cyclooxygenase and thromboxane synthetase; high-dose herbal concentrates synergize with antithrombotics, increasing spontaneous bleeding risk.",
+      "plainText": "Normal culinary amounts in cooked food are safe, but avoid high-dose garlic or ginger dietary extract pills while taking blood thinners due to bleeding risk.",
+      "spacingRule": "Culinary cooking quantities are safe; avoid high-dose medicinal extract pills.",
+      "rationale": "Additive inhibition of platelet aggregation and thromboxane A2 production.",
+      "source": "Natural Medicines Database / American Society of Anesthesiologists"
+    }
+  ]
+}

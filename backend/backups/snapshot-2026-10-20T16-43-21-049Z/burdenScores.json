@@ -1,0 +1,2837 @@
+[
+  {
+    "id": 133,
+    "drugName": "carbinoxamine",
+    "score": 3
+  },
+  {
+    "id": 180,
+    "drugName": "methocarbamol",
+    "score": 3
+  },
+  {
+    "id": 172,
+    "drugName": "triprolidine",
+    "score": 3
+  },
+  {
+    "id": 10,
+    "drugName": "amitriptyline",
+    "score": 3
+  },
+  {
+    "id": 74,
+    "drugName": "nortriptyline",
+    "score": 3
+  },
+  {
+    "id": 136,
+    "drugName": "chlorzoxazone",
+    "score": 3
+  },
+  {
+    "id": 11,
+    "drugName": "imipramine",
+    "score": 3
+  },
+  {
+    "id": 15,
+    "drugName": "quetiapine",
+    "score": 2
+  },
+  {
+    "id": 143,
+    "drugName": "desipramine",
+    "score": 3
+  },
+  {
+    "id": 12,
+    "drugName": "doxepin",
+    "score": 3
+  },
+  {
+    "id": 218,
+    "drugName": "fluvoxamine",
+    "score": 2
+  },
+  {
+    "id": 64,
+    "drugName": "clomipramine",
+    "score": 3
+  },
+  {
+    "id": 171,
+    "drugName": "trimipramine",
+    "score": 3
+  },
+  {
+    "id": 181,
+    "drugName": "nefazodone",
+    "score": 2
+  },
+  {
+    "id": 194,
+    "drugName": "carvedilol",
+    "score": 1
+  },
+  {
+    "id": 29,
+    "drugName": "amlodipine",
+    "score": 1
+  },
+  {
+    "id": 215,
+    "drugName": "felodipine",
+    "score": 1
+  },
+  {
+    "id": 30,
+    "drugName": "ashwagandha",
+    "score": 0
+  },
+  {
+    "id": 116,
+    "drugName": "curcumin",
+    "score": 0
+  },
+  {
+    "id": 117,
+    "drugName": "ginger",
+    "score": 0
+  },
+  {
+    "id": 118,
+    "drugName": "ginkgo biloba",
+    "score": 0
+  },
+  {
+    "id": 125,
+    "drugName": "turmeric",
+    "score": 0
+  },
+  {
+    "id": 7,
+    "drugName": "oxybutynin",
+    "score": 3
+  },
+  {
+    "id": 8,
+    "drugName": "tolterodine",
+    "score": 3
+  },
+  {
+    "id": 9,
+    "drugName": "solifenacin",
+    "score": 3
+  },
+  {
+    "id": 79,
+    "drugName": "darifenacin",
+    "score": 3
+  },
+  {
+    "id": 71,
+    "drugName": "fesoterodine",
+    "score": 3
+  },
+  {
+    "id": 173,
+    "drugName": "trospium",
+    "score": 3
+  },
+  {
+    "id": 150,
+    "drugName": "flavoxate",
+    "score": 3
+  },
+  {
+    "id": 164,
+    "drugName": "protriptyline",
+    "score": 3
+  },
+  {
+    "id": 62,
+    "drugName": "benztropine",
+    "score": 3
+  },
+  {
+    "id": 78,
+    "drugName": "trihexyphenidyl",
+    "score": 3
+  },
+  {
+    "id": 131,
+    "drugName": "biperiden",
+    "score": 3
+  },
+  {
+    "id": 163,
+    "drugName": "propantheline",
+    "score": 3
+  },
+  {
+    "id": 161,
+    "drugName": "procyclidine",
+    "score": 3
+  },
+  {
+    "id": 1,
+    "drugName": "diphenhydramine",
+    "score": 3
+  },
+  {
+    "id": 17,
+    "drugName": "diazepam",
+    "score": 2
+  },
+  {
+    "id": 19,
+    "drugName": "alprazolam",
+    "score": 2
+  },
+  {
+    "id": 158,
+    "drugName": "orphenadrine",
+    "score": 3
+  },
+  {
+    "id": 92,
+    "drugName": "clonazepam",
+    "score": 2
+  },
+  {
+    "id": 196,
+    "drugName": "chlordiazepoxide",
+    "score": 2
+  },
+  {
+    "id": 200,
+    "drugName": "clobazam",
+    "score": 2
+  },
+  {
+    "id": 135,
+    "drugName": "chlorpromazine",
+    "score": 3
+  },
+  {
+    "id": 167,
+    "drugName": "thioridazine",
+    "score": 3
+  },
+  {
+    "id": 20,
+    "drugName": "zolpidem",
+    "score": 2
+  },
+  {
+    "id": 96,
+    "drugName": "diltiazem",
+    "score": 1
+  },
+  {
+    "id": 191,
+    "drugName": "bumetanide",
+    "score": 1
+  },
+  {
+    "id": 197,
+    "drugName": "chlorthalidone",
+    "score": 1
+  },
+  {
+    "id": 89,
+    "drugName": "captopril",
+    "score": 1
+  },
+  {
+    "id": 211,
+    "drugName": "enalapril",
+    "score": 1
+  },
+  {
+    "id": 120,
+    "drugName": "losartan",
+    "score": 1
+  },
+  {
+    "id": 2,
+    "drugName": "chlorpheniramine",
+    "score": 3
+  },
+  {
+    "id": 3,
+    "drugName": "hydroxyzine",
+    "score": 3
+  },
+  {
+    "id": 4,
+    "drugName": "promethazine",
+    "score": 3
+  },
+  {
+    "id": 67,
+    "drugName": "cyproheptadine",
+    "score": 3
+  },
+  {
+    "id": 132,
+    "drugName": "brompheniramine",
+    "score": 3
+  },
+  {
+    "id": 137,
+    "drugName": "clemastine",
+    "score": 3
+  },
+  {
+    "id": 145,
+    "drugName": "dimenhydrinate",
+    "score": 3
+  },
+  {
+    "id": 5,
+    "drugName": "doxylamine",
+    "score": 3
+  },
+  {
+    "id": 21,
+    "drugName": "meclizine",
+    "score": 3
+  },
+  {
+    "id": 16,
+    "drugName": "clozapine",
+    "score": 3
+  },
+  {
+    "id": 14,
+    "drugName": "olanzapine",
+    "score": 3
+  },
+  {
+    "id": 151,
+    "drugName": "fluphenazine",
+    "score": 3
+  },
+  {
+    "id": 160,
+    "drugName": "perphenazine",
+    "score": 3
+  },
+  {
+    "id": 169,
+    "drugName": "trifluoperazine",
+    "score": 3
+  },
+  {
+    "id": 178,
+    "drugName": "loxapine",
+    "score": 3
+  },
+  {
+    "id": 185,
+    "drugName": "pimozide",
+    "score": 3
+  },
+  {
+    "id": 128,
+    "drugName": "atropine",
+    "score": 3
+  },
+  {
+    "id": 22,
+    "drugName": "scopolamine",
+    "score": 3
+  },
+  {
+    "id": 154,
+    "drugName": "hyoscyamine",
+    "score": 3
+  },
+  {
+    "id": 144,
+    "drugName": "dicyclomine",
+    "score": 3
+  },
+  {
+    "id": 129,
+    "drugName": "belladonna",
+    "score": 3
+  },
+  {
+    "id": 152,
+    "drugName": "glycopyrrolate",
+    "score": 3
+  },
+  {
+    "id": 6,
+    "drugName": "cyclobenzaprine",
+    "score": 3
+  },
+  {
+    "id": 213,
+    "drugName": "eszopiclone",
+    "score": 2
+  },
+  {
+    "id": 216,
+    "drugName": "fentanyl",
+    "score": 2
+  },
+  {
+    "id": 179,
+    "drugName": "meperidine",
+    "score": 2
+  },
+  {
+    "id": 184,
+    "drugName": "pethidine",
+    "score": 2
+  },
+  {
+    "id": 93,
+    "drugName": "codeine",
+    "score": 2
+  },
+  {
+    "id": 24,
+    "drugName": "carbamazepine",
+    "score": 2
+  },
+  {
+    "id": 183,
+    "drugName": "oxcarbazepine",
+    "score": 2
+  },
+  {
+    "id": 177,
+    "drugName": "disopyramide",
+    "score": 2
+  },
+  {
+    "id": 23,
+    "drugName": "baclofen",
+    "score": 2
+  },
+  {
+    "id": 187,
+    "drugName": "tizanidine",
+    "score": 2
+  },
+  {
+    "id": 174,
+    "drugName": "amantadine",
+    "score": 2
+  },
+  {
+    "id": 199,
+    "drugName": "citalopram",
+    "score": 1
+  },
+  {
+    "id": 212,
+    "drugName": "escitalopram",
+    "score": 1
+  },
+  {
+    "id": 205,
+    "drugName": "desvenlafaxine",
+    "score": 1
+  },
+  {
+    "id": 210,
+    "drugName": "duloxetine",
+    "score": 1
+  },
+  {
+    "id": 192,
+    "drugName": "bupropion",
+    "score": 1
+  },
+  {
+    "id": 189,
+    "drugName": "aripiprazole",
+    "score": 1
+  },
+  {
+    "id": 87,
+    "drugName": "atenolol",
+    "score": 1
+  },
+  {
+    "id": 124,
+    "drugName": "telmisartan",
+    "score": 1
+  },
+  {
+    "id": 91,
+    "drugName": "cimetidine",
+    "score": 1
+  },
+  {
+    "id": 214,
+    "drugName": "famotidine",
+    "score": 1
+  },
+  {
+    "id": 195,
+    "drugName": "cetirizine",
+    "score": 1
+  },
+  {
+    "id": 204,
+    "drugName": "desloratadine",
+    "score": 1
+  },
+  {
+    "id": 217,
+    "drugName": "fexofenadine",
+    "score": 1
+  },
+  {
+    "id": 206,
+    "drugName": "dexamethasone",
+    "score": 1
+  },
+  {
+    "id": 95,
+    "drugName": "digoxin",
+    "score": 1
+  },
+  {
+    "id": 203,
+    "drugName": "colchicine",
+    "score": 1
+  },
+  {
+    "id": 25,
+    "drugName": "metformin",
+    "score": 0
+  },
+  {
+    "id": 27,
+    "drugName": "atorvastatin",
+    "score": 0
+  },
+  {
+    "id": 123,
+    "drugName": "pantoprazole",
+    "score": 0
+  },
+  {
+    "id": 122,
+    "drugName": "omeprazole",
+    "score": 0
+  },
+  {
+    "id": 114,
+    "drugName": "aspirin",
+    "score": 0
+  },
+  {
+    "id": 296,
+    "drugName": "tofacitinib",
+    "score": 0
+  },
+  {
+    "id": 308,
+    "drugName": "emepronium",
+    "score": 3
+  },
+  {
+    "id": 309,
+    "drugName": "propiverine",
+    "score": 3
+  },
+  {
+    "id": 321,
+    "drugName": "dexchlorpheniramine",
+    "score": 3
+  },
+  {
+    "id": 322,
+    "drugName": "pheniramine",
+    "score": 3
+  },
+  {
+    "id": 323,
+    "drugName": "tripelennamine",
+    "score": 3
+  },
+  {
+    "id": 325,
+    "drugName": "buclizine",
+    "score": 3
+  },
+  {
+    "id": 326,
+    "drugName": "alimemazine",
+    "score": 3
+  },
+  {
+    "id": 327,
+    "drugName": "trimeprazine",
+    "score": 3
+  },
+  {
+    "id": 328,
+    "drugName": "dimetindene",
+    "score": 3
+  },
+  {
+    "id": 329,
+    "drugName": "pyrathiazine",
+    "score": 3
+  },
+  {
+    "id": 338,
+    "drugName": "amoxapine",
+    "score": 3
+  },
+  {
+    "id": 339,
+    "drugName": "maprotiline",
+    "score": 3
+  },
+  {
+    "id": 340,
+    "drugName": "dosulepin",
+    "score": 3
+  },
+  {
+    "id": 341,
+    "drugName": "dothiepin",
+    "score": 3
+  },
+  {
+    "id": 342,
+    "drugName": "lofepramine",
+    "score": 3
+  },
+  {
+    "id": 348,
+    "drugName": "dexetimide",
+    "score": 3
+  },
+  {
+    "id": 349,
+    "drugName": "metixene",
+    "score": 3
+  },
+  {
+    "id": 350,
+    "drugName": "bornaprine",
+    "score": 3
+  },
+  {
+    "id": 360,
+    "drugName": "levomepromazine",
+    "score": 3
+  },
+  {
+    "id": 361,
+    "drugName": "methotrimeprazine",
+    "score": 3
+  },
+  {
+    "id": 362,
+    "drugName": "prochlorperazine",
+    "score": 3
+  },
+  {
+    "id": 368,
+    "drugName": "clidinium",
+    "score": 3
+  },
+  {
+    "id": 369,
+    "drugName": "methscopolamine",
+    "score": 3
+  },
+  {
+    "id": 370,
+    "drugName": "homatropine",
+    "score": 3
+  },
+  {
+    "id": 372,
+    "drugName": "mebeverine",
+    "score": 3
+  },
+  {
+    "id": 373,
+    "drugName": "otilonium",
+    "score": 3
+  },
+  {
+    "id": 374,
+    "drugName": "pinaverium",
+    "score": 3
+  },
+  {
+    "id": 375,
+    "drugName": "hyoscine butylbromide",
+    "score": 3
+  },
+  {
+    "id": 376,
+    "drugName": "buscopan",
+    "score": 3
+  },
+  {
+    "id": 378,
+    "drugName": "carisoprodol",
+    "score": 3
+  },
+  {
+    "id": 381,
+    "drugName": "metaxalone",
+    "score": 3
+  },
+  {
+    "id": 107,
+    "drugName": "risperidone",
+    "score": 2
+  },
+  {
+    "id": 255,
+    "drugName": "ziprasidone",
+    "score": 2
+  },
+  {
+    "id": 385,
+    "drugName": "iloperidone",
+    "score": 2
+  },
+  {
+    "id": 386,
+    "drugName": "paliperidone",
+    "score": 2
+  },
+  {
+    "id": 99,
+    "drugName": "haloperidol",
+    "score": 2
+  },
+  {
+    "id": 388,
+    "drugName": "molindone",
+    "score": 2
+  },
+  {
+    "id": 389,
+    "drugName": "lithium",
+    "score": 2
+  },
+  {
+    "id": 390,
+    "drugName": "sulpiride",
+    "score": 2
+  },
+  {
+    "id": 391,
+    "drugName": "amisulpride",
+    "score": 2
+  },
+  {
+    "id": 392,
+    "drugName": "droperidol",
+    "score": 2
+  },
+  {
+    "id": 13,
+    "drugName": "paroxetine",
+    "score": 2
+  },
+  {
+    "id": 101,
+    "drugName": "mirtazapine",
+    "score": 2
+  },
+  {
+    "id": 110,
+    "drugName": "trazodone",
+    "score": 2
+  },
+  {
+    "id": 398,
+    "drugName": "mianserin",
+    "score": 2
+  },
+  {
+    "id": 18,
+    "drugName": "lorazepam",
+    "score": 2
+  },
+  {
+    "id": 108,
+    "drugName": "temazepam",
+    "score": 2
+  },
+  {
+    "id": 404,
+    "drugName": "oxazepam",
+    "score": 2
+  },
+  {
+    "id": 406,
+    "drugName": "flurazepam",
+    "score": 2
+  },
+  {
+    "id": 407,
+    "drugName": "triazolam",
+    "score": 2
+  },
+  {
+    "id": 408,
+    "drugName": "midazolam",
+    "score": 2
+  },
+  {
+    "id": 409,
+    "drugName": "nitrazepam",
+    "score": 2
+  },
+  {
+    "id": 411,
+    "drugName": "estazolam",
+    "score": 2
+  },
+  {
+    "id": 412,
+    "drugName": "brotizolam",
+    "score": 2
+  },
+  {
+    "id": 413,
+    "drugName": "lormetazepam",
+    "score": 2
+  },
+  {
+    "id": 414,
+    "drugName": "flunitrazepam",
+    "score": 2
+  },
+  {
+    "id": 257,
+    "drugName": "zopiclone",
+    "score": 2
+  },
+  {
+    "id": 418,
+    "drugName": "zaleplon",
+    "score": 2
+  },
+  {
+    "id": 233,
+    "drugName": "morphine",
+    "score": 2
+  },
+  {
+    "id": 420,
+    "drugName": "oxycodone",
+    "score": 2
+  },
+  {
+    "id": 422,
+    "drugName": "hydromorphone",
+    "score": 2
+  },
+  {
+    "id": 423,
+    "drugName": "methadone",
+    "score": 2
+  },
+  {
+    "id": 426,
+    "drugName": "buprenorphine",
+    "score": 2
+  },
+  {
+    "id": 109,
+    "drugName": "tramadol",
+    "score": 2
+  },
+  {
+    "id": 246,
+    "drugName": "tapentadol",
+    "score": 2
+  },
+  {
+    "id": 430,
+    "drugName": "dihydrocodeine",
+    "score": 2
+  },
+  {
+    "id": 431,
+    "drugName": "pentazocine",
+    "score": 2
+  },
+  {
+    "id": 432,
+    "drugName": "remifentanil",
+    "score": 2
+  },
+  {
+    "id": 433,
+    "drugName": "sufentanil",
+    "score": 2
+  },
+  {
+    "id": 434,
+    "drugName": "alfentanil",
+    "score": 2
+  },
+  {
+    "id": 437,
+    "drugName": "phenobarbital",
+    "score": 2
+  },
+  {
+    "id": 438,
+    "drugName": "primidone",
+    "score": 2
+  },
+  {
+    "id": 439,
+    "drugName": "phenytoin",
+    "score": 2
+  },
+  {
+    "id": 440,
+    "drugName": "valproate",
+    "score": 2
+  },
+  {
+    "id": 441,
+    "drugName": "divalproex",
+    "score": 2
+  },
+  {
+    "id": 442,
+    "drugName": "sodium valproate",
+    "score": 2
+  },
+  {
+    "id": 443,
+    "drugName": "topiramate",
+    "score": 2
+  },
+  {
+    "id": 444,
+    "drugName": "zonisamide",
+    "score": 2
+  },
+  {
+    "id": 446,
+    "drugName": "procainamide",
+    "score": 2
+  },
+  {
+    "id": 447,
+    "drugName": "quinidine",
+    "score": 2
+  },
+  {
+    "id": 448,
+    "drugName": "flecainide",
+    "score": 2
+  },
+  {
+    "id": 451,
+    "drugName": "dantrolene",
+    "score": 2
+  },
+  {
+    "id": 453,
+    "drugName": "diphenoxylate",
+    "score": 2
+  },
+  {
+    "id": 456,
+    "drugName": "fluoxetine",
+    "score": 1
+  },
+  {
+    "id": 244,
+    "drugName": "sertraline",
+    "score": 1
+  },
+  {
+    "id": 253,
+    "drugName": "venlafaxine",
+    "score": 1
+  },
+  {
+    "id": 462,
+    "drugName": "vilazodone",
+    "score": 1
+  },
+  {
+    "id": 463,
+    "drugName": "vortioxetine",
+    "score": 1
+  },
+  {
+    "id": 464,
+    "drugName": "milnacipran",
+    "score": 1
+  },
+  {
+    "id": 465,
+    "drugName": "levomilnacipran",
+    "score": 1
+  },
+  {
+    "id": 466,
+    "drugName": "agomelatine",
+    "score": 1
+  },
+  {
+    "id": 467,
+    "drugName": "reboxetine",
+    "score": 1
+  },
+  {
+    "id": 469,
+    "drugName": "brexpiprazole",
+    "score": 1
+  },
+  {
+    "id": 470,
+    "drugName": "cariprazine",
+    "score": 1
+  },
+  {
+    "id": 471,
+    "drugName": "lumateperone",
+    "score": 1
+  },
+  {
+    "id": 472,
+    "drugName": "asenapine",
+    "score": 1
+  },
+  {
+    "id": 473,
+    "drugName": "lurasidone",
+    "score": 1
+  },
+  {
+    "id": 231,
+    "drugName": "metoprolol",
+    "score": 1
+  },
+  {
+    "id": 240,
+    "drugName": "propranolol",
+    "score": 1
+  },
+  {
+    "id": 477,
+    "drugName": "bisoprolol",
+    "score": 1
+  },
+  {
+    "id": 479,
+    "drugName": "labetalol",
+    "score": 1
+  },
+  {
+    "id": 480,
+    "drugName": "nebivolol",
+    "score": 1
+  },
+  {
+    "id": 102,
+    "drugName": "nifedipine",
+    "score": 1
+  },
+  {
+    "id": 268,
+    "drugName": "cilnidipine",
+    "score": 1
+  },
+  {
+    "id": 97,
+    "drugName": "furosemide",
+    "score": 1
+  },
+  {
+    "id": 249,
+    "drugName": "torsemide",
+    "score": 1
+  },
+  {
+    "id": 223,
+    "drugName": "hydrochlorothiazide",
+    "score": 1
+  },
+  {
+    "id": 224,
+    "drugName": "indapamide",
+    "score": 1
+  },
+  {
+    "id": 245,
+    "drugName": "spironolactone",
+    "score": 1
+  },
+  {
+    "id": 252,
+    "drugName": "triamterene",
+    "score": 1
+  },
+  {
+    "id": 28,
+    "drugName": "lisinopril",
+    "score": 1
+  },
+  {
+    "id": 298,
+    "drugName": "valsartan",
+    "score": 1
+  },
+  {
+    "id": 106,
+    "drugName": "ranitidine",
+    "score": 1
+  },
+  {
+    "id": 235,
+    "drugName": "nizatidine",
+    "score": 1
+  },
+  {
+    "id": 227,
+    "drugName": "levocetirizine",
+    "score": 1
+  },
+  {
+    "id": 229,
+    "drugName": "loratadine",
+    "score": 1
+  },
+  {
+    "id": 104,
+    "drugName": "prednisone",
+    "score": 1
+  },
+  {
+    "id": 103,
+    "drugName": "prednisolone",
+    "score": 1
+  },
+  {
+    "id": 225,
+    "drugName": "isosorbide dinitrate",
+    "score": 1
+  },
+  {
+    "id": 226,
+    "drugName": "isosorbide mononitrate",
+    "score": 1
+  },
+  {
+    "id": 222,
+    "drugName": "hydralazine",
+    "score": 1
+  },
+  {
+    "id": 26,
+    "drugName": "warfarin",
+    "score": 1
+  },
+  {
+    "id": 270,
+    "drugName": "clopidogrel",
+    "score": 1
+  },
+  {
+    "id": 286,
+    "drugName": "montelukast",
+    "score": 1
+  },
+  {
+    "id": 105,
+    "drugName": "pregabalin",
+    "score": 1
+  },
+  {
+    "id": 98,
+    "drugName": "gabapentin",
+    "score": 1
+  },
+  {
+    "id": 280,
+    "drugName": "glimepiride",
+    "score": 0
+  },
+  {
+    "id": 279,
+    "drugName": "gliclazide",
+    "score": 0
+  },
+  {
+    "id": 294,
+    "drugName": "sitagliptin",
+    "score": 0
+  },
+  {
+    "id": 299,
+    "drugName": "vildagliptin",
+    "score": 0
+  },
+  {
+    "id": 272,
+    "drugName": "dapagliflozin",
+    "score": 0
+  },
+  {
+    "id": 274,
+    "drugName": "empagliflozin",
+    "score": 0
+  },
+  {
+    "id": 292,
+    "drugName": "rosuvastatin",
+    "score": 0
+  },
+  {
+    "id": 293,
+    "drugName": "simvastatin",
+    "score": 0
+  },
+  {
+    "id": 275,
+    "drugName": "esomeprazole",
+    "score": 0
+  },
+  {
+    "id": 258,
+    "drugName": "acetaminophen",
+    "score": 0
+  },
+  {
+    "id": 290,
+    "drugName": "paracetamol",
+    "score": 0
+  },
+  {
+    "id": 281,
+    "drugName": "ibuprofen",
+    "score": 0
+  },
+  {
+    "id": 287,
+    "drugName": "naproxen",
+    "score": 0
+  },
+  {
+    "id": 273,
+    "drugName": "diclofenac",
+    "score": 0
+  },
+  {
+    "id": 260,
+    "drugName": "amoxicillin",
+    "score": 0
+  },
+  {
+    "id": 266,
+    "drugName": "cefixime",
+    "score": 0
+  },
+  {
+    "id": 269,
+    "drugName": "ciprofloxacin",
+    "score": 0
+  },
+  {
+    "id": 264,
+    "drugName": "azithromycin",
+    "score": 0
+  },
+  {
+    "id": 282,
+    "drugName": "levothyroxine",
+    "score": 0
+  },
+  {
+    "id": 276,
+    "drugName": "folic acid",
+    "score": 0
+  },
+  {
+    "id": 267,
+    "drugName": "cholecalciferol",
+    "score": 0
+  },
+  {
+    "id": 285,
+    "drugName": "methotrexate",
+    "score": 0
+  },
+  {
+    "id": 481,
+    "drugName": "pindolol",
+    "score": 1
+  },
+  {
+    "id": 482,
+    "drugName": "sotalol",
+    "score": 1
+  },
+  {
+    "id": 483,
+    "drugName": "timolol",
+    "score": 1
+  },
+  {
+    "id": 484,
+    "drugName": "acebutolol",
+    "score": 1
+  },
+  {
+    "id": 485,
+    "drugName": "betaxolol",
+    "score": 1
+  },
+  {
+    "id": 486,
+    "drugName": "esmolol",
+    "score": 1
+  },
+  {
+    "id": 487,
+    "drugName": "nadolol",
+    "score": 1
+  },
+  {
+    "id": 492,
+    "drugName": "verapamil",
+    "score": 1
+  },
+  {
+    "id": 493,
+    "drugName": "lercanidipine",
+    "score": 1
+  },
+  {
+    "id": 494,
+    "drugName": "nimodipine",
+    "score": 1
+  },
+  {
+    "id": 495,
+    "drugName": "nicardipine",
+    "score": 1
+  },
+  {
+    "id": 496,
+    "drugName": "isradipine",
+    "score": 1
+  },
+  {
+    "id": 497,
+    "drugName": "nisoldipine",
+    "score": 1
+  },
+  {
+    "id": 506,
+    "drugName": "eplerenone",
+    "score": 1
+  },
+  {
+    "id": 507,
+    "drugName": "amiloride",
+    "score": 1
+  },
+  {
+    "id": 509,
+    "drugName": "metolazone",
+    "score": 1
+  },
+  {
+    "id": 241,
+    "drugName": "ramipril",
+    "score": 1
+  },
+  {
+    "id": 514,
+    "drugName": "perindopril",
+    "score": 1
+  },
+  {
+    "id": 515,
+    "drugName": "quinapril",
+    "score": 1
+  },
+  {
+    "id": 516,
+    "drugName": "benazepril",
+    "score": 1
+  },
+  {
+    "id": 517,
+    "drugName": "fosinopril",
+    "score": 1
+  },
+  {
+    "id": 518,
+    "drugName": "trandolapril",
+    "score": 1
+  },
+  {
+    "id": 519,
+    "drugName": "moexipril",
+    "score": 1
+  },
+  {
+    "id": 522,
+    "drugName": "candesartan",
+    "score": 1
+  },
+  {
+    "id": 523,
+    "drugName": "irbesartan",
+    "score": 1
+  },
+  {
+    "id": 524,
+    "drugName": "olmesartan",
+    "score": 1
+  },
+  {
+    "id": 526,
+    "drugName": "azilsartan",
+    "score": 1
+  },
+  {
+    "id": 527,
+    "drugName": "eprosartan",
+    "score": 1
+  },
+  {
+    "id": 532,
+    "drugName": "roxatidine",
+    "score": 1
+  },
+  {
+    "id": 538,
+    "drugName": "bilastine",
+    "score": 1
+  },
+  {
+    "id": 539,
+    "drugName": "rupatadine",
+    "score": 1
+  },
+  {
+    "id": 540,
+    "drugName": "ebastine",
+    "score": 1
+  },
+  {
+    "id": 541,
+    "drugName": "azelastine",
+    "score": 1
+  },
+  {
+    "id": 542,
+    "drugName": "olopatadine",
+    "score": 1
+  },
+  {
+    "id": 546,
+    "drugName": "methylprednisolone",
+    "score": 1
+  },
+  {
+    "id": 547,
+    "drugName": "hydrocortisone",
+    "score": 1
+  },
+  {
+    "id": 548,
+    "drugName": "triamcinolone",
+    "score": 1
+  },
+  {
+    "id": 549,
+    "drugName": "budesonide",
+    "score": 1
+  },
+  {
+    "id": 550,
+    "drugName": "betamethasone",
+    "score": 1
+  },
+  {
+    "id": 551,
+    "drugName": "deflazacort",
+    "score": 1
+  },
+  {
+    "id": 555,
+    "drugName": "nitroglycerin",
+    "score": 1
+  },
+  {
+    "id": 557,
+    "drugName": "minoxidil",
+    "score": 1
+  },
+  {
+    "id": 558,
+    "drugName": "clonidine",
+    "score": 1
+  },
+  {
+    "id": 559,
+    "drugName": "methyldopa",
+    "score": 1
+  },
+  {
+    "id": 560,
+    "drugName": "moxonidine",
+    "score": 1
+  },
+  {
+    "id": 561,
+    "drugName": "rilmenidine",
+    "score": 1
+  },
+  {
+    "id": 564,
+    "drugName": "prasugrel",
+    "score": 1
+  },
+  {
+    "id": 565,
+    "drugName": "ticagrelor",
+    "score": 1
+  },
+  {
+    "id": 566,
+    "drugName": "dipyridamole",
+    "score": 1
+  },
+  {
+    "id": 248,
+    "drugName": "theophylline",
+    "score": 1
+  },
+  {
+    "id": 568,
+    "drugName": "aminophylline",
+    "score": 1
+  },
+  {
+    "id": 570,
+    "drugName": "allopurinol",
+    "score": 1
+  },
+  {
+    "id": 571,
+    "drugName": "febuxostat",
+    "score": 1
+  },
+  {
+    "id": 573,
+    "drugName": "zafirlukast",
+    "score": 1
+  },
+  {
+    "id": 574,
+    "drugName": "roflumilast",
+    "score": 1
+  },
+  {
+    "id": 577,
+    "drugName": "levetiracetam",
+    "score": 1
+  },
+  {
+    "id": 578,
+    "drugName": "brivaracetam",
+    "score": 1
+  },
+  {
+    "id": 579,
+    "drugName": "lamotrigine",
+    "score": 1
+  },
+  {
+    "id": 580,
+    "drugName": "lacosamide",
+    "score": 1
+  },
+  {
+    "id": 581,
+    "drugName": "rufinamide",
+    "score": 1
+  },
+  {
+    "id": 582,
+    "drugName": "perampanel",
+    "score": 1
+  },
+  {
+    "id": 583,
+    "drugName": "cannabidiol",
+    "score": 1
+  },
+  {
+    "id": 584,
+    "drugName": "metronidazole",
+    "score": 1
+  },
+  {
+    "id": 585,
+    "drugName": "domperidone",
+    "score": 1
+  },
+  {
+    "id": 586,
+    "drugName": "itopride",
+    "score": 1
+  },
+  {
+    "id": 587,
+    "drugName": "levosulpiride",
+    "score": 1
+  },
+  {
+    "id": 591,
+    "drugName": "glipizide",
+    "score": 0
+  },
+  {
+    "id": 592,
+    "drugName": "glyburide",
+    "score": 0
+  },
+  {
+    "id": 593,
+    "drugName": "glibenclamide",
+    "score": 0
+  },
+  {
+    "id": 596,
+    "drugName": "linagliptin",
+    "score": 0
+  },
+  {
+    "id": 597,
+    "drugName": "saxagliptin",
+    "score": 0
+  },
+  {
+    "id": 598,
+    "drugName": "teneligliptin",
+    "score": 0
+  },
+  {
+    "id": 599,
+    "drugName": "alogliptin",
+    "score": 0
+  },
+  {
+    "id": 600,
+    "drugName": "gemigliptin",
+    "score": 0
+  },
+  {
+    "id": 603,
+    "drugName": "canagliflozin",
+    "score": 0
+  },
+  {
+    "id": 604,
+    "drugName": "ertugliflozin",
+    "score": 0
+  },
+  {
+    "id": 605,
+    "drugName": "remogliflozin",
+    "score": 0
+  },
+  {
+    "id": 606,
+    "drugName": "pioglitazone",
+    "score": 0
+  },
+  {
+    "id": 607,
+    "drugName": "rosiglitazone",
+    "score": 0
+  },
+  {
+    "id": 608,
+    "drugName": "acarbose",
+    "score": 0
+  },
+  {
+    "id": 609,
+    "drugName": "voglibose",
+    "score": 0
+  },
+  {
+    "id": 610,
+    "drugName": "miglitol",
+    "score": 0
+  },
+  {
+    "id": 611,
+    "drugName": "semaglutide",
+    "score": 0
+  },
+  {
+    "id": 612,
+    "drugName": "liraglutide",
+    "score": 0
+  },
+  {
+    "id": 613,
+    "drugName": "dulaglutide",
+    "score": 0
+  },
+  {
+    "id": 614,
+    "drugName": "exenatide",
+    "score": 0
+  },
+  {
+    "id": 615,
+    "drugName": "lixisenatide",
+    "score": 0
+  },
+  {
+    "id": 616,
+    "drugName": "tirzepatide",
+    "score": 0
+  },
+  {
+    "id": 617,
+    "drugName": "insulin glargine",
+    "score": 0
+  },
+  {
+    "id": 618,
+    "drugName": "insulin lispro",
+    "score": 0
+  },
+  {
+    "id": 619,
+    "drugName": "insulin aspart",
+    "score": 0
+  },
+  {
+    "id": 620,
+    "drugName": "insulin degludec",
+    "score": 0
+  },
+  {
+    "id": 621,
+    "drugName": "insulin detemir",
+    "score": 0
+  },
+  {
+    "id": 622,
+    "drugName": "insulin glulisine",
+    "score": 0
+  },
+  {
+    "id": 623,
+    "drugName": "regular insulin",
+    "score": 0
+  },
+  {
+    "id": 627,
+    "drugName": "pravastatin",
+    "score": 0
+  },
+  {
+    "id": 628,
+    "drugName": "lovastatin",
+    "score": 0
+  },
+  {
+    "id": 629,
+    "drugName": "pitavastatin",
+    "score": 0
+  },
+  {
+    "id": 630,
+    "drugName": "fluvastatin",
+    "score": 0
+  },
+  {
+    "id": 631,
+    "drugName": "ezetimibe",
+    "score": 0
+  },
+  {
+    "id": 632,
+    "drugName": "fenofibrate",
+    "score": 0
+  },
+  {
+    "id": 633,
+    "drugName": "gemfibrozil",
+    "score": 0
+  },
+  {
+    "id": 634,
+    "drugName": "bempedoic acid",
+    "score": 0
+  },
+  {
+    "id": 635,
+    "drugName": "evolocumab",
+    "score": 0
+  },
+  {
+    "id": 636,
+    "drugName": "alirocumab",
+    "score": 0
+  },
+  {
+    "id": 637,
+    "drugName": "inclisiran",
+    "score": 0
+  },
+  {
+    "id": 638,
+    "drugName": "icosapent ethyl",
+    "score": 0
+  },
+  {
+    "id": 639,
+    "drugName": "omega-3 acid ethyl esters",
+    "score": 0
+  },
+  {
+    "id": 640,
+    "drugName": "colesevelam",
+    "score": 0
+  },
+  {
+    "id": 641,
+    "drugName": "cholestyramine",
+    "score": 0
+  },
+  {
+    "id": 291,
+    "drugName": "rabeprazole",
+    "score": 0
+  },
+  {
+    "id": 646,
+    "drugName": "lansoprazole",
+    "score": 0
+  },
+  {
+    "id": 647,
+    "drugName": "dexlansoprazole",
+    "score": 0
+  },
+  {
+    "id": 648,
+    "drugName": "ilaprazole",
+    "score": 0
+  },
+  {
+    "id": 649,
+    "drugName": "vonoprazan",
+    "score": 0
+  },
+  {
+    "id": 654,
+    "drugName": "celecoxib",
+    "score": 0
+  },
+  {
+    "id": 656,
+    "drugName": "meloxicam",
+    "score": 0
+  },
+  {
+    "id": 657,
+    "drugName": "etodolac",
+    "score": 0
+  },
+  {
+    "id": 658,
+    "drugName": "indomethacin",
+    "score": 0
+  },
+  {
+    "id": 659,
+    "drugName": "ketorolac",
+    "score": 0
+  },
+  {
+    "id": 660,
+    "drugName": "ketoprofen",
+    "score": 0
+  },
+  {
+    "id": 661,
+    "drugName": "dexketoprofen",
+    "score": 0
+  },
+  {
+    "id": 662,
+    "drugName": "etoricoxib",
+    "score": 0
+  },
+  {
+    "id": 663,
+    "drugName": "piroxicam",
+    "score": 0
+  },
+  {
+    "id": 664,
+    "drugName": "mefenamic acid",
+    "score": 0
+  },
+  {
+    "id": 665,
+    "drugName": "aceclofenac",
+    "score": 0
+  },
+  {
+    "id": 666,
+    "drugName": "nabumetone",
+    "score": 0
+  },
+  {
+    "id": 667,
+    "drugName": "sulindac",
+    "score": 0
+  },
+  {
+    "id": 669,
+    "drugName": "diflunisal",
+    "score": 0
+  },
+  {
+    "id": 670,
+    "drugName": "salsalate",
+    "score": 0
+  },
+  {
+    "id": 672,
+    "drugName": "ampicillin",
+    "score": 0
+  },
+  {
+    "id": 673,
+    "drugName": "augmentin",
+    "score": 0
+  },
+  {
+    "id": 674,
+    "drugName": "piperacillin",
+    "score": 0
+  },
+  {
+    "id": 675,
+    "drugName": "tazobactam",
+    "score": 0
+  },
+  {
+    "id": 676,
+    "drugName": "cephalexin",
+    "score": 0
+  },
+  {
+    "id": 677,
+    "drugName": "cefazolin",
+    "score": 0
+  },
+  {
+    "id": 678,
+    "drugName": "cefuroxime",
+    "score": 0
+  },
+  {
+    "id": 679,
+    "drugName": "cefaclor",
+    "score": 0
+  },
+  {
+    "id": 680,
+    "drugName": "cefprozil",
+    "score": 0
+  },
+  {
+    "id": 681,
+    "drugName": "ceftriaxone",
+    "score": 0
+  },
+  {
+    "id": 682,
+    "drugName": "cefotaxime",
+    "score": 0
+  },
+  {
+    "id": 683,
+    "drugName": "ceftazidime",
+    "score": 0
+  },
+  {
+    "id": 685,
+    "drugName": "cefpodoxime",
+    "score": 0
+  },
+  {
+    "id": 686,
+    "drugName": "cefepime",
+    "score": 0
+  },
+  {
+    "id": 687,
+    "drugName": "meropenem",
+    "score": 0
+  },
+  {
+    "id": 688,
+    "drugName": "imipenem",
+    "score": 0
+  },
+  {
+    "id": 689,
+    "drugName": "ertapenem",
+    "score": 0
+  },
+  {
+    "id": 690,
+    "drugName": "vancomycin",
+    "score": 0
+  },
+  {
+    "id": 691,
+    "drugName": "teicoplanin",
+    "score": 0
+  },
+  {
+    "id": 692,
+    "drugName": "linezolid",
+    "score": 0
+  },
+  {
+    "id": 693,
+    "drugName": "daptomycin",
+    "score": 0
+  },
+  {
+    "id": 694,
+    "drugName": "gentamicin",
+    "score": 0
+  },
+  {
+    "id": 695,
+    "drugName": "tobramycin",
+    "score": 0
+  },
+  {
+    "id": 696,
+    "drugName": "amikacin",
+    "score": 0
+  },
+  {
+    "id": 698,
+    "drugName": "levofloxacin",
+    "score": 0
+  },
+  {
+    "id": 699,
+    "drugName": "moxifloxacin",
+    "score": 0
+  },
+  {
+    "id": 700,
+    "drugName": "ofloxacin",
+    "score": 0
+  },
+  {
+    "id": 701,
+    "drugName": "norfloxacin",
+    "score": 0
+  },
+  {
+    "id": 703,
+    "drugName": "clarithromycin",
+    "score": 0
+  },
+  {
+    "id": 704,
+    "drugName": "erythromycin",
+    "score": 0
+  },
+  {
+    "id": 705,
+    "drugName": "roxithromycin",
+    "score": 0
+  },
+  {
+    "id": 706,
+    "drugName": "clindamycin",
+    "score": 0
+  },
+  {
+    "id": 707,
+    "drugName": "doxycycline",
+    "score": 0
+  },
+  {
+    "id": 708,
+    "drugName": "minocycline",
+    "score": 0
+  },
+  {
+    "id": 709,
+    "drugName": "tigecycline",
+    "score": 0
+  },
+  {
+    "id": 710,
+    "drugName": "nitrofurantoin",
+    "score": 0
+  },
+  {
+    "id": 711,
+    "drugName": "trimethoprim",
+    "score": 0
+  },
+  {
+    "id": 712,
+    "drugName": "sulfamethoxazole",
+    "score": 0
+  },
+  {
+    "id": 713,
+    "drugName": "fosfomycin",
+    "score": 0
+  },
+  {
+    "id": 714,
+    "drugName": "colistin",
+    "score": 0
+  },
+  {
+    "id": 715,
+    "drugName": "rifampin",
+    "score": 0
+  },
+  {
+    "id": 716,
+    "drugName": "isoniazid",
+    "score": 0
+  },
+  {
+    "id": 717,
+    "drugName": "pyrazinamide",
+    "score": 0
+  },
+  {
+    "id": 718,
+    "drugName": "ethambutol",
+    "score": 0
+  },
+  {
+    "id": 719,
+    "drugName": "fluconazole",
+    "score": 0
+  },
+  {
+    "id": 720,
+    "drugName": "itraconazole",
+    "score": 0
+  },
+  {
+    "id": 721,
+    "drugName": "voriconazole",
+    "score": 0
+  },
+  {
+    "id": 722,
+    "drugName": "posaconazole",
+    "score": 0
+  },
+  {
+    "id": 723,
+    "drugName": "caspofungin",
+    "score": 0
+  },
+  {
+    "id": 724,
+    "drugName": "terbinafine",
+    "score": 0
+  },
+  {
+    "id": 725,
+    "drugName": "acyclovir",
+    "score": 0
+  },
+  {
+    "id": 726,
+    "drugName": "valacyclovir",
+    "score": 0
+  },
+  {
+    "id": 727,
+    "drugName": "famciclovir",
+    "score": 0
+  },
+  {
+    "id": 728,
+    "drugName": "ganciclovir",
+    "score": 0
+  },
+  {
+    "id": 729,
+    "drugName": "oseltamivir",
+    "score": 0
+  },
+  {
+    "id": 730,
+    "drugName": "zanamivir",
+    "score": 0
+  },
+  {
+    "id": 731,
+    "drugName": "remdesivir",
+    "score": 0
+  },
+  {
+    "id": 732,
+    "drugName": "apixaban",
+    "score": 0
+  },
+  {
+    "id": 733,
+    "drugName": "rivaroxaban",
+    "score": 0
+  },
+  {
+    "id": 734,
+    "drugName": "dabigatran",
+    "score": 0
+  },
+  {
+    "id": 735,
+    "drugName": "edoxaban",
+    "score": 0
+  },
+  {
+    "id": 736,
+    "drugName": "betrixaban",
+    "score": 0
+  },
+  {
+    "id": 737,
+    "drugName": "enoxaparin",
+    "score": 0
+  },
+  {
+    "id": 738,
+    "drugName": "dalteparin",
+    "score": 0
+  },
+  {
+    "id": 739,
+    "drugName": "tinzaparin",
+    "score": 0
+  },
+  {
+    "id": 740,
+    "drugName": "fondaparinux",
+    "score": 0
+  },
+  {
+    "id": 741,
+    "drugName": "heparin",
+    "score": 0
+  },
+  {
+    "id": 743,
+    "drugName": "liothyronine",
+    "score": 0
+  },
+  {
+    "id": 744,
+    "drugName": "methimazole",
+    "score": 0
+  },
+  {
+    "id": 745,
+    "drugName": "carbimazole",
+    "score": 0
+  },
+  {
+    "id": 746,
+    "drugName": "propylthiouracil",
+    "score": 0
+  },
+  {
+    "id": 747,
+    "drugName": "fludrocortisone",
+    "score": 0
+  },
+  {
+    "id": 748,
+    "drugName": "alendronate",
+    "score": 0
+  },
+  {
+    "id": 749,
+    "drugName": "risedronate",
+    "score": 0
+  },
+  {
+    "id": 750,
+    "drugName": "ibandronate",
+    "score": 0
+  },
+  {
+    "id": 751,
+    "drugName": "zoledronic acid",
+    "score": 0
+  },
+  {
+    "id": 752,
+    "drugName": "pamidronate",
+    "score": 0
+  },
+  {
+    "id": 753,
+    "drugName": "denosumab",
+    "score": 0
+  },
+  {
+    "id": 754,
+    "drugName": "romosozumab",
+    "score": 0
+  },
+  {
+    "id": 755,
+    "drugName": "teriparatide",
+    "score": 0
+  },
+  {
+    "id": 756,
+    "drugName": "probenecid",
+    "score": 0
+  },
+  {
+    "id": 757,
+    "drugName": "lesinurad",
+    "score": 0
+  },
+  {
+    "id": 758,
+    "drugName": "cyanocobalamin",
+    "score": 0
+  },
+  {
+    "id": 759,
+    "drugName": "methylcobalamin",
+    "score": 0
+  },
+  {
+    "id": 762,
+    "drugName": "ergocalciferol",
+    "score": 0
+  },
+  {
+    "id": 763,
+    "drugName": "calcitriol",
+    "score": 0
+  },
+  {
+    "id": 265,
+    "drugName": "calcium carbonate",
+    "score": 0
+  },
+  {
+    "id": 765,
+    "drugName": "calcium citrate",
+    "score": 0
+  },
+  {
+    "id": 766,
+    "drugName": "calcium acetate",
+    "score": 0
+  },
+  {
+    "id": 767,
+    "drugName": "sevelamer",
+    "score": 0
+  },
+  {
+    "id": 768,
+    "drugName": "ferrous sulfate",
+    "score": 0
+  },
+  {
+    "id": 769,
+    "drugName": "ferrous fumarate",
+    "score": 0
+  },
+  {
+    "id": 770,
+    "drugName": "ferrous gluconate",
+    "score": 0
+  },
+  {
+    "id": 771,
+    "drugName": "iron sucrose",
+    "score": 0
+  },
+  {
+    "id": 772,
+    "drugName": "ferric carboxymaltose",
+    "score": 0
+  },
+  {
+    "id": 773,
+    "drugName": "zinc sulfate",
+    "score": 0
+  },
+  {
+    "id": 774,
+    "drugName": "potassium chloride",
+    "score": 0
+  },
+  {
+    "id": 775,
+    "drugName": "magnesium oxide",
+    "score": 0
+  },
+  {
+    "id": 776,
+    "drugName": "magnesium citrate",
+    "score": 0
+  },
+  {
+    "id": 777,
+    "drugName": "sodium bicarbonate",
+    "score": 0
+  },
+  {
+    "id": 778,
+    "drugName": "lactulose",
+    "score": 0
+  },
+  {
+    "id": 779,
+    "drugName": "polyethylene glycol",
+    "score": 0
+  },
+  {
+    "id": 780,
+    "drugName": "senna",
+    "score": 0
+  },
+  {
+    "id": 781,
+    "drugName": "bisacodyl",
+    "score": 0
+  },
+  {
+    "id": 782,
+    "drugName": "docusate",
+    "score": 0
+  },
+  {
+    "id": 783,
+    "drugName": "tamsulosin",
+    "score": 0
+  },
+  {
+    "id": 784,
+    "drugName": "alfuzosin",
+    "score": 0
+  },
+  {
+    "id": 785,
+    "drugName": "silodosin",
+    "score": 0
+  },
+  {
+    "id": 786,
+    "drugName": "finasteride",
+    "score": 0
+  },
+  {
+    "id": 787,
+    "drugName": "dutasteride",
+    "score": 0
+  },
+  {
+    "id": 788,
+    "drugName": "sildenafil",
+    "score": 0
+  },
+  {
+    "id": 789,
+    "drugName": "tadalafil",
+    "score": 0
+  },
+  {
+    "id": 790,
+    "drugName": "vardenafil",
+    "score": 0
+  },
+  {
+    "id": 791,
+    "drugName": "avanafil",
+    "score": 0
+  },
+  {
+    "id": 792,
+    "drugName": "mirabegron",
+    "score": 0
+  },
+  {
+    "id": 793,
+    "drugName": "vibegron",
+    "score": 0
+  },
+  {
+    "id": 794,
+    "drugName": "latanoprost",
+    "score": 0
+  },
+  {
+    "id": 795,
+    "drugName": "bimatoprost",
+    "score": 0
+  },
+  {
+    "id": 796,
+    "drugName": "travoprost",
+    "score": 0
+  },
+  {
+    "id": 797,
+    "drugName": "brimonidine",
+    "score": 0
+  },
+  {
+    "id": 798,
+    "drugName": "dorzolamide",
+    "score": 0
+  },
+  {
+    "id": 799,
+    "drugName": "brinzolamide",
+    "score": 0
+  },
+  {
+    "id": 800,
+    "drugName": "cyclosporine ophthalmic",
+    "score": 0
+  },
+  {
+    "id": 802,
+    "drugName": "azathioprine",
+    "score": 0
+  },
+  {
+    "id": 803,
+    "drugName": "mycophenolate mofetil",
+    "score": 0
+  },
+  {
+    "id": 804,
+    "drugName": "mycophenolic acid",
+    "score": 0
+  },
+  {
+    "id": 805,
+    "drugName": "leflunomide",
+    "score": 0
+  },
+  {
+    "id": 806,
+    "drugName": "hydroxychloroquine",
+    "score": 0
+  },
+  {
+    "id": 807,
+    "drugName": "chloroquine",
+    "score": 0
+  },
+  {
+    "id": 808,
+    "drugName": "tacrolimus",
+    "score": 0
+  },
+  {
+    "id": 809,
+    "drugName": "cyclosporine",
+    "score": 0
+  },
+  {
+    "id": 810,
+    "drugName": "sirolimus",
+    "score": 0
+  },
+  {
+    "id": 811,
+    "drugName": "everolimus",
+    "score": 0
+  },
+  {
+    "id": 812,
+    "drugName": "pan 40",
+    "score": 0
+  },
+  {
+    "id": 813,
+    "drugName": "pan-d",
+    "score": 0
+  },
+  {
+    "id": 814,
+    "drugName": "omez",
+    "score": 0
+  },
+  {
+    "id": 815,
+    "drugName": "glycomet",
+    "score": 0
+  },
+  {
+    "id": 816,
+    "drugName": "glycomet-gp",
+    "score": 0
+  },
+  {
+    "id": 817,
+    "drugName": "ecosprin",
+    "score": 0
+  },
+  {
+    "id": 818,
+    "drugName": "thyronorm",
+    "score": 0
+  },
+  {
+    "id": 819,
+    "drugName": "eltroxin",
+    "score": 0
+  },
+  {
+    "id": 820,
+    "drugName": "telma",
+    "score": 0
+  },
+  {
+    "id": 821,
+    "drugName": "telma-h",
+    "score": 0
+  },
+  {
+    "id": 822,
+    "drugName": "amlong",
+    "score": 0
+  },
+  {
+    "id": 823,
+    "drugName": "cilacar",
+    "score": 0
+  },
+  {
+    "id": 824,
+    "drugName": "dytor",
+    "score": 0
+  },
+  {
+    "id": 825,
+    "drugName": "januvia",
+    "score": 0
+  },
+  {
+    "id": 826,
+    "drugName": "galvus",
+    "score": 0
+  },
+  {
+    "id": 827,
+    "drugName": "forxiga",
+    "score": 0
+  },
+  {
+    "id": 828,
+    "drugName": "jardiance",
+    "score": 0
+  },
+  {
+    "id": 829,
+    "drugName": "azithral",
+    "score": 0
+  },
+  {
+    "id": 830,
+    "drugName": "calpol",
+    "score": 0
+  },
+  {
+    "id": 831,
+    "drugName": "dolo 650",
+    "score": 0
+  },
+  {
+    "id": 832,
+    "drugName": "voveran",
+    "score": 0
+  },
+  {
+    "id": 833,
+    "drugName": "combiflam",
+    "score": 0
+  },
+  {
+    "id": 834,
+    "drugName": "crocin",
+    "score": 0
+  },
+  {
+    "id": 835,
+    "drugName": "saridon",
+    "score": 0
+  },
+  {
+    "id": 836,
+    "drugName": "disprin",
+    "score": 0
+  },
+  {
+    "id": 837,
+    "drugName": "zerodol",
+    "score": 0
+  },
+  {
+    "id": 838,
+    "drugName": "zerodol-p",
+    "score": 0
+  },
+  {
+    "id": 839,
+    "drugName": "zerodol-sp",
+    "score": 0
+  },
+  {
+    "id": 840,
+    "drugName": "hifenac",
+    "score": 0
+  },
+  {
+    "id": 841,
+    "drugName": "meftal-spas",
+    "score": 3
+  },
+  {
+    "id": 842,
+    "drugName": "rantac",
+    "score": 1
+  },
+  {
+    "id": 843,
+    "drugName": "aciloc",
+    "score": 1
+  },
+  {
+    "id": 844,
+    "drugName": "urimax",
+    "score": 0
+  },
+  {
+    "id": 845,
+    "drugName": "silodal",
+    "score": 0
+  },
+  {
+    "id": 846,
+    "drugName": "albuterol",
+    "score": 0
+  },
+  {
+    "id": 847,
+    "drugName": "salbutamol",
+    "score": 0
+  },
+  {
+    "id": 848,
+    "drugName": "salmeterol",
+    "score": 0
+  },
+  {
+    "id": 849,
+    "drugName": "formoterol",
+    "score": 0
+  },
+  {
+    "id": 850,
+    "drugName": "vilanterol",
+    "score": 0
+  },
+  {
+    "id": 851,
+    "drugName": "indacaterol",
+    "score": 0
+  },
+  {
+    "id": 852,
+    "drugName": "fluticasone",
+    "score": 0
+  },
+  {
+    "id": 853,
+    "drugName": "mometasone",
+    "score": 0
+  },
+  {
+    "id": 854,
+    "drugName": "beclomethasone",
+    "score": 0
+  },
+  {
+    "id": 855,
+    "drugName": "ciclesonide",
+    "score": 0
+  },
+  {
+    "id": 856,
+    "drugName": "ipratropium",
+    "score": 1
+  },
+  {
+    "id": 857,
+    "drugName": "tiotropium",
+    "score": 1
+  },
+  {
+    "id": 858,
+    "drugName": "umeclidinium",
+    "score": 1
+  },
+  {
+    "id": 859,
+    "drugName": "aclidinium",
+    "score": 1
+  },
+  {
+    "id": 860,
+    "drugName": "glycopyrronium",
+    "score": 1
+  }
+]

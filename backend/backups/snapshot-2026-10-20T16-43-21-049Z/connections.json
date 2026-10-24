@@ -1,0 +1,332 @@
+[
+  {
+    "id": "1dd87cc2-3730-4661-a79d-dfd245a1db4d",
+    "patientId": "a781a185-2407-4945-a9fa-e0cee1c6f10f",
+    "connectedUserId": "6cce2998-07dc-43ec-9cee-bd625922342f",
+    "role": "CAREGIVER",
+    "status": "APPROVED",
+    "shareCode": "891362",
+    "expiresAt": "2026-10-21T13:38:25.923Z",
+    "createdAt": "2026-10-20T13:38:25.924Z"
+  },
+  {
+    "id": "f4f776a3-727e-476c-a13c-1c069aff308b",
+    "patientId": "7912deea-e31d-4bae-aae0-3f006a89d1bc",
+    "connectedUserId": "850378d0-d9db-47e4-abfa-6cdb567bb430",
+    "role": "CAREGIVER",
+    "status": "APPROVED",
+    "shareCode": "935786",
+    "expiresAt": "2026-10-21T13:48:27.013Z",
+    "createdAt": "2026-10-20T13:48:27.014Z"
+  },
+  {
+    "id": "115b7347-9ab4-40e8-948b-e558d2808975",
+    "patientId": "1fb2f576-9106-4fdc-9e9a-e639a7b5a2f1",
+    "connectedUserId": "e95e73fc-14c4-4b60-b82f-f642b43451ca",
+    "role": "DOCTOR",
+    "status": "REVOKED",
+    "shareCode": "180155",
+    "expiresAt": null,
+    "createdAt": "2026-10-04T11:24:07.350Z"
+  },
+  {
+    "id": "0185a613-4503-46b1-8961-5b8234cfd748",
+    "patientId": "1fb2f576-9106-4fdc-9e9a-e639a7b5a2f1",
+    "connectedUserId": "3c4795f1-020c-4fd1-9fd3-bdc6b8ae3e7e",
+    "role": "CAREGIVER",
+    "status": "APPROVED",
+    "shareCode": null,
+    "expiresAt": null,
+    "createdAt": "2026-10-20T13:55:31.084Z"
+  },
+  {
+    "id": "04f104b8-eb7f-45d9-a9d9-f4c19b29298b",
+    "patientId": "1fb2f576-9106-4fdc-9e9a-e639a7b5a2f1",
+    "connectedUserId": null,
+    "role": "DOCTOR",
+    "status": "PENDING",
+    "shareCode": "109967",
+    "expiresAt": "2026-10-21T14:47:22.217Z",
+    "createdAt": "2026-10-20T14:47:22.218Z"
+  },
+  {
+    "id": "022ca1ec-2a39-47e6-937f-5227e2c821e5",
+    "patientId": "55c64387-abc4-42e9-ac73-a54dc5ac26df",
+    "connectedUserId": "1558b9b0-0f2d-4955-be7b-9b70c9f2b326",
+    "role": "DOCTOR",
+    "status": "APPROVED",
+    "shareCode": "201347",
+    "expiresAt": "2026-08-22T06:41:55.718Z",
+    "createdAt": "2026-08-21T06:41:55.719Z"
+  },
+  {
+    "id": "e915d0f3-ed92-4d9f-bf43-e750f7758246",
+    "patientId": "5740a2d2-b18e-49bb-8b94-e60447fe6196",
+    "connectedUserId": null,
+    "role": "DOCTOR",
+    "status": "PENDING",
+    "shareCode": "873023",
+    "expiresAt": "2026-08-22T12:17:54.579Z",
+    "createdAt": "2026-08-21T12:17:54.583Z"
+  },
+  {
+    "id": "da71849a-494a-4c3a-9645-7646fc219042",
+    "patientId": "27b32849-5b4e-461a-b145-52a6587f42b6",
+    "connectedUserId": "d7761053-cdb3-4c15-9758-f6618e35bebb",
+    "role": "DOCTOR",
+    "status": "APPROVED",
+    "shareCode": "426469",
+    "expiresAt": "2026-08-22T06:51:27.656Z",
+    "createdAt": "2026-08-21T06:51:27.657Z"
+  },
+  {
+    "id": "d8252312-c9f8-4035-9696-59b335123976",
+    "patientId": "2fd8c63b-f83d-4edd-88f6-3e0beab1dfbf",
+    "connectedUserId": "86835431-20e2-42df-9787-9ae4bdd4742b",
+    "role": "CAREGIVER",
+    "status": "APPROVED",
+    "shareCode": "327687",
+    "expiresAt": "2026-10-21T15:20:47.670Z",
+    "createdAt": "2026-10-20T15:20:47.671Z"
+  },
+  {
+    "id": "f57ee4bf-e45c-4511-891b-d85669ef8e46",
+    "patientId": "1fb2f576-9106-4fdc-9e9a-e639a7b5a2f1",
+    "connectedUserId": null,
+    "role": "DOCTOR",
+    "status": "REVOKED",
+    "shareCode": "868518",
+    "expiresAt": "2026-08-23T12:11:58.148Z",
+    "createdAt": "2026-08-22T12:11:58.149Z"
+  },
+  {
+    "id": "d01d969c-b749-4993-9c84-89ca9842cf71",
+    "patientId": "06b44ce3-6043-45f6-b281-b60bdf027a25",
+    "connectedUserId": null,
+    "role": "DOCTOR",
+    "status": "PENDING",
+    "shareCode": "461066",
+    "expiresAt": "2026-08-22T10:34:46.348Z",
+    "createdAt": "2026-08-21T10:34:46.349Z"
+  },
+  {
+    "id": "e723379c-519b-4ad8-a8af-4ca36ec7fa6c",
+    "patientId": "21ec5d48-fa14-4641-9011-30f2d4d65b11",
+    "connectedUserId": "0662fed4-c0c7-4fab-8d18-5d5d99a79fb0",
+    "role": "DOCTOR",
+    "status": "PENDING",
+    "shareCode": "985274",
+    "expiresAt": "2026-08-22T10:34:59.903Z",
+    "createdAt": "2026-08-21T10:34:59.904Z"
+  },
+  {
+    "id": "45c2bd9e-f90d-409b-873d-75e9ffbcae81",
+    "patientId": "635ca11e-4ca9-48e3-baef-b410ec87b4d7",
+    "connectedUserId": "2b59e374-6b89-43fe-8f14-f4de487bc317",
+    "role": "DOCTOR",
+    "status": "PENDING",
+    "shareCode": "629943",
+    "expiresAt": "2026-08-22T06:58:52.652Z",
+    "createdAt": "2026-08-21T06:58:52.653Z"
+  },
+  {
+    "id": "b57ea8f2-e10d-49d7-a57c-6afc6ab5738b",
+    "patientId": "0a4a59e4-065c-45eb-a84d-d39489fbe398",
+    "connectedUserId": "65cbb031-5fac-447a-8d67-742e29545458",
+    "role": "DOCTOR",
+    "status": "APPROVED",
+    "shareCode": "584883",
+    "expiresAt": "2026-08-22T10:35:12.931Z",
+    "createdAt": "2026-08-21T10:35:12.932Z"
+  },
+  {
+    "id": "a99840d5-41ab-4416-95e1-030494d10396",
+    "patientId": "da08b9a3-a8e7-4cf3-92c9-d0cf7e96bf7c",
+    "connectedUserId": "14a5a454-d72e-41a6-b9d0-9ede23788937",
+    "role": "DOCTOR",
+    "status": "PENDING",
+    "shareCode": "407780",
+    "expiresAt": "2026-08-22T06:59:08.686Z",
+    "createdAt": "2026-08-21T06:59:08.687Z"
+  },
+  {
+    "id": "2341830b-fd06-4415-9d37-d73767cb73bc",
+    "patientId": "31d7ff66-7f90-459e-a6d2-676dd199f1ca",
+    "connectedUserId": "b3e7be15-26c3-42ac-93b6-220f55341f02",
+    "role": "DOCTOR",
+    "status": "PENDING",
+    "shareCode": "317889",
+    "expiresAt": "2026-08-22T06:59:34.553Z",
+    "createdAt": "2026-08-21T06:59:34.554Z"
+  },
+  {
+    "id": "5c50c3ff-9f9c-47ec-b465-57b6871e9a7e",
+    "patientId": "11e00247-1b2b-4815-96e1-d8399b354c05",
+    "connectedUserId": "515cc900-99f6-41f4-9cf9-65b072cdb93f",
+    "role": "DOCTOR",
+    "status": "APPROVED",
+    "shareCode": "890228",
+    "expiresAt": "2026-08-22T10:36:17.817Z",
+    "createdAt": "2026-08-21T10:36:17.819Z"
+  },
+  {
+    "id": "e3ec2a96-35dd-4eb3-81de-833416d4bbdd",
+    "patientId": "5a51c2a2-7dae-4f96-85ea-df13bc0d0003",
+    "connectedUserId": "81c61220-4a0b-4b9a-9562-c740b24497b9",
+    "role": "DOCTOR",
+    "status": "PENDING",
+    "shareCode": "929508",
+    "expiresAt": "2026-08-22T06:59:57.006Z",
+    "createdAt": "2026-08-21T06:59:57.007Z"
+  },
+  {
+    "id": "7efbea49-041c-4b2c-b07f-d11ad0e1495f",
+    "patientId": "1cd1be61-ed66-4ce5-b36a-0550aa132428",
+    "connectedUserId": "f99daa85-b765-4abc-8994-f6138be85322",
+    "role": "DOCTOR",
+    "status": "APPROVED",
+    "shareCode": "226360",
+    "expiresAt": "2026-08-21T18:10:00.180Z",
+    "createdAt": "2026-08-20T18:10:00.181Z"
+  },
+  {
+    "id": "eacdc187-fa4a-4bcb-a2a4-e23a0ac5e7d9",
+    "patientId": "542692a2-514f-4331-bf48-d19188e092bc",
+    "connectedUserId": "1e4f523b-0c00-40bb-a8e5-f38a6e80d7d3",
+    "role": "DOCTOR",
+    "status": "APPROVED",
+    "shareCode": "818586",
+    "expiresAt": "2026-08-21T18:17:49.378Z",
+    "createdAt": "2026-08-20T18:17:49.379Z"
+  },
+  {
+    "id": "2b8e19ed-0f27-4db8-a37d-cb342a74c421",
+    "patientId": "a8ab0ac5-a3c6-445f-a86e-cfc3ef333bbb",
+    "connectedUserId": "9d5c3ca1-f4d7-49bf-ba29-bc1c1e704d47",
+    "role": "DOCTOR",
+    "status": "APPROVED",
+    "shareCode": "689106",
+    "expiresAt": "2026-08-22T06:34:39.904Z",
+    "createdAt": "2026-08-21T06:34:39.913Z"
+  },
+  {
+    "id": "0e752140-435e-4dfe-98c8-afd541dfe4c4",
+    "patientId": "0eedaee4-4f0d-47eb-a7a7-4a6891f4d13e",
+    "connectedUserId": "c40dd420-9850-45a2-9254-d85be0e43849",
+    "role": "DOCTOR",
+    "status": "APPROVED",
+    "shareCode": "636290",
+    "expiresAt": "2026-08-22T07:00:11.721Z",
+    "createdAt": "2026-08-21T07:00:11.723Z"
+  },
+  {
+    "id": "305b1d7a-4a5d-48cf-9b72-20d4adb7a945",
+    "patientId": "e4c662c4-078f-44a0-b2b1-bef6ab908acd",
+    "connectedUserId": "0252326c-9611-497d-97bd-0960d99d02d1",
+    "role": "DOCTOR",
+    "status": "APPROVED",
+    "shareCode": "122027",
+    "expiresAt": "2026-08-22T06:40:32.771Z",
+    "createdAt": "2026-08-21T06:40:32.772Z"
+  },
+  {
+    "id": "86936dd4-7c07-441a-9cd8-e6a2d00eac02",
+    "patientId": "1fb2f576-9106-4fdc-9e9a-e639a7b5a2f1",
+    "connectedUserId": "b899ff35-926d-4595-bac9-6dd42f03dbe2",
+    "role": "DOCTOR",
+    "status": "APPROVED",
+    "shareCode": "300146",
+    "expiresAt": "2026-08-23T18:13:23.125Z",
+    "createdAt": "2026-08-22T18:13:23.126Z"
+  },
+  {
+    "id": "96d677ce-31a8-413e-932d-93b1dca6e6ca",
+    "patientId": "cdfde0c2-1448-4af2-92cc-6582790e9afd",
+    "connectedUserId": "20f4d654-a5c3-4ab7-9718-f5061fb74bcd",
+    "role": "DOCTOR",
+    "status": "APPROVED",
+    "shareCode": "771594",
+    "expiresAt": "2026-08-22T07:00:57.758Z",
+    "createdAt": "2026-08-21T07:00:57.759Z"
+  },
+  {
+    "id": "4c1592c7-fb37-488b-9e20-199d0c8df389",
+    "patientId": "ed90878f-d404-477a-bf5a-4f95506e120f",
+    "connectedUserId": "70ed97eb-1079-48c8-af92-2b5c45809219",
+    "role": "DOCTOR",
+    "status": "APPROVED",
+    "shareCode": "948124",
+    "expiresAt": "2026-08-22T10:36:51.123Z",
+    "createdAt": "2026-08-21T10:36:51.124Z"
+  },
+  {
+    "id": "725001b6-37dc-4f62-973b-43c3a0f7449c",
+    "patientId": "35f8d329-3482-4eb1-bc20-91cfafd3e3ac",
+    "connectedUserId": "c164e7d8-e941-417d-8211-7ce90cc37ab1",
+    "role": "DOCTOR",
+    "status": "APPROVED",
+    "shareCode": "547530",
+    "expiresAt": "2026-08-22T07:01:27.832Z",
+    "createdAt": "2026-08-21T07:01:27.833Z"
+  },
+  {
+    "id": "41c75a87-b3c7-45d7-8397-14e6908df96b",
+    "patientId": "f7892cf8-752f-4cb4-899a-8b21e4fcc12a",
+    "connectedUserId": "1ab688aa-92cd-4681-9603-d02c7d4bfcf7",
+    "role": "DOCTOR",
+    "status": "APPROVED",
+    "shareCode": "968310",
+    "expiresAt": "2026-08-22T07:01:42.234Z",
+    "createdAt": "2026-08-21T07:01:42.236Z"
+  },
+  {
+    "id": "da2c6e94-41bc-4e02-a2dc-89c9403b83b7",
+    "patientId": "1fb2f576-9106-4fdc-9e9a-e639a7b5a2f1",
+    "connectedUserId": "b899ff35-926d-4595-bac9-6dd42f03dbe2",
+    "role": "DOCTOR",
+    "status": "APPROVED",
+    "shareCode": "325451",
+    "expiresAt": "2026-08-23T13:37:50.335Z",
+    "createdAt": "2026-08-22T13:37:50.337Z"
+  },
+  {
+    "id": "48be71f5-bb5b-401c-96b1-7bf63ec721c8",
+    "patientId": "1fb2f576-9106-4fdc-9e9a-e639a7b5a2f1",
+    "connectedUserId": null,
+    "role": "DOCTOR",
+    "status": "REVOKED",
+    "shareCode": "912486",
+    "expiresAt": "2026-08-23T13:37:50.318Z",
+    "createdAt": "2026-08-22T13:37:50.321Z"
+  },
+  {
+    "id": "44682afb-7fe5-4c47-8da9-5cdac04a2cf8",
+    "patientId": "1fb2f576-9106-4fdc-9e9a-e639a7b5a2f1",
+    "connectedUserId": null,
+    "role": "DOCTOR",
+    "status": "REVOKED",
+    "shareCode": "569323",
+    "expiresAt": "2026-08-23T18:09:56.120Z",
+    "createdAt": "2026-08-22T18:09:56.121Z"
+  },
+  {
+    "id": "9414b50d-fe74-415d-817e-c8699acec01f",
+    "patientId": "9b5e329c-4dc2-4897-b5e8-edc57c442cdf",
+    "connectedUserId": null,
+    "role": "DOCTOR",
+    "status": "PENDING",
+    "shareCode": "490524",
+    "expiresAt": "2026-10-05T09:54:28.944Z",
+    "createdAt": "2026-10-04T09:54:28.948Z"
+  },
+  {
+    "id": "e9ebe75d-60ad-4e9a-88a2-bd6f1882d164",
+    "patientId": "b281b073-2e50-408c-b9dd-782d578a1336",
+    "connectedUserId": null,
+    "role": "DOCTOR",
+    "status": "PENDING",
+    "shareCode": "144967",
+    "expiresAt": "2026-10-05T09:57:33.269Z",
+    "createdAt": "2026-10-04T09:57:33.270Z"
+  }
+]

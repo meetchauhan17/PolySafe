@@ -53,6 +53,17 @@ const BRAND_ALIASES = {
   'metformin':   { display: 'Metformin', generic: 'Metformin', rxcui: '6809', dosage: '500 mg', purpose: 'Type 2 Diabetes (Blood Sugar Control)', category: 'Antidiabetic (Biguanide)', safetyTip: 'Take with or immediately after meals to reduce gastrointestinal upset.', dosageOptions: ['250 mg', '500 mg', '850 mg', '1000 mg'], commonFrequency: 'twice', foodInstruction: 'with_food' },
   'glycomet':    { display: 'Glycomet 500 (Metformin)', generic: 'Metformin', rxcui: '6809', dosage: '500 mg', purpose: 'Type 2 Diabetes (Blood Sugar Control)', category: 'Antidiabetic (Biguanide)', safetyTip: 'Take with food. Reduces hepatic glucose production.', dosageOptions: ['500 mg', '850 mg', '1000 mg'], commonFrequency: 'twice', foodInstruction: 'with_food' },
   'atorvastatin':{ display: 'Atorvastatin', generic: 'Atorvastatin', rxcui: '83367', dosage: '10 mg', purpose: 'High Cholesterol & Heart Health', category: 'Statin / Cholesterol', safetyTip: 'Usually taken at bedtime. Avoid excessive grapefruit juice. Report muscle pain.', dosageOptions: ['10 mg', '20 mg', '40 mg', '80 mg'], commonFrequency: 'once', foodInstruction: 'after_food' },
+  'atorva':      { display: 'Atorva (Atorvastatin)', generic: 'Atorvastatin', rxcui: '83367', dosage: '10 mg', purpose: 'High Cholesterol & Heart Health', category: 'Statin / Cholesterol', safetyTip: 'Usually taken at bedtime. Avoid excessive grapefruit juice. Report muscle pain.', dosageOptions: ['10 mg', '20 mg', '40 mg', '80 mg'], commonFrequency: 'once', foodInstruction: 'after_food' },
+  'lipitor':     { display: 'Lipitor (Atorvastatin)', generic: 'Atorvastatin', rxcui: '83367', dosage: '10 mg', purpose: 'High Cholesterol & Heart Health', category: 'Statin / Cholesterol', safetyTip: 'Avoid grapefruit juice while taking. Report unexplained muscle aches or pain.', dosageOptions: ['10 mg', '20 mg', '40 mg', '80 mg'], commonFrequency: 'once', foodInstruction: 'after_food' },
+  'atorlip':     { display: 'Atorlip (Atorvastatin)', generic: 'Atorvastatin', rxcui: '83367', dosage: '10 mg', purpose: 'High Cholesterol & Heart Health', category: 'Statin / Cholesterol', safetyTip: 'Avoid grapefruit juice. Take once daily at bedtime.', dosageOptions: ['10 mg', '20 mg', '40 mg'], commonFrequency: 'once', foodInstruction: 'after_food' },
+  'lipvas':      { display: 'Lipvas (Atorvastatin)', generic: 'Atorvastatin', rxcui: '83367', dosage: '10 mg', purpose: 'High Cholesterol & Heart Health', category: 'Statin / Cholesterol', safetyTip: 'Avoid grapefruit products. Report muscle weakness.', dosageOptions: ['10 mg', '20 mg', '40 mg'], commonFrequency: 'once', foodInstruction: 'after_food' },
+  'acitrom':     { display: 'Acitrom (Acenocoumarol)', generic: 'Acenocoumarol', rxcui: '11289', dosage: '2 mg', purpose: 'Oral Anticoagulant / Stroke Prevention', category: 'Anticoagulant (Blood Thinner)', safetyTip: 'CRITICAL: Maintain consistent Vitamin K diet. Regular INR blood monitoring required.', dosageOptions: ['1 mg', '2 mg', '3 mg', '4 mg'], commonFrequency: 'once', foodInstruction: 'with_water' },
+  'coumadin':    { display: 'Coumadin (Warfarin)', generic: 'Warfarin', rxcui: '11289', dosage: '5 mg', purpose: 'Prevent Blood Clots & Stroke Risk', category: 'Anticoagulant (Blood Thinner)', safetyTip: 'CRITICAL: Strict INR monitoring. Avoid NSAIDs and abrupt dietary Vitamin K fluctuations.', dosageOptions: ['1 mg', '2 mg', '2.5 mg', '5 mg'], commonFrequency: 'once', foodInstruction: 'with_water' },
+  'warf':        { display: 'Warf (Warfarin)', generic: 'Warfarin', rxcui: '11289', dosage: '5 mg', purpose: 'Prevent Blood Clots & Stroke Risk', category: 'Anticoagulant (Blood Thinner)', safetyTip: 'Regular INR surveillance essential. Do not take with Aspirin/Ibuprofen without MD approval.', dosageOptions: ['1 mg', '2 mg', '5 mg'], commonFrequency: 'once', foodInstruction: 'with_water' },
+  'amlong':      { display: 'Amlong (Amlodipine)', generic: 'Amlodipine', rxcui: '17767', dosage: '5 mg', purpose: 'High Blood Pressure (Hypertension)', category: 'Calcium Channel Blocker', safetyTip: 'Monitor blood pressure regularly. Avoid large amounts of grapefruit juice.', dosageOptions: ['2.5 mg', '5 mg', '10 mg'], commonFrequency: 'once', foodInstruction: 'before_food' },
+  'stamlo':      { display: 'Stamlo (Amlodipine)', generic: 'Amlodipine', rxcui: '17767', dosage: '5 mg', purpose: 'High Blood Pressure (Hypertension)', category: 'Calcium Channel Blocker', safetyTip: 'Check for ankle swelling or lightheadedness.', dosageOptions: ['2.5 mg', '5 mg', '10 mg'], commonFrequency: 'once', foodInstruction: 'before_food' },
+  'zifi':        { display: 'Zifi (Cefixime)', generic: 'Cefixime', rxcui: '2193', dosage: '200 mg', purpose: 'Bacterial Infection Treatment', category: 'Cephalosporin Antibiotic', safetyTip: 'Complete entire course as prescribed. Take with or without food.', dosageOptions: ['100 mg', '200 mg'], commonFrequency: 'twice', foodInstruction: 'with_food' },
+  'azithral':    { display: 'Azithral (Azithromycin)', generic: 'Azithromycin', rxcui: '18631', dosage: '500 mg', purpose: 'Respiratory & Throat Infection', category: 'Macrolide Antibiotic', safetyTip: 'Take 1 hour before or 2 hours after meals. Complete full 3 or 5 day regimen.', dosageOptions: ['250 mg', '500 mg'], commonFrequency: 'once', foodInstruction: 'before_food' },
   'lisinopril':  { display: 'Lisinopril', generic: 'Lisinopril', rxcui: '29046', dosage: '10 mg', purpose: 'High Blood Pressure & Heart Failure', category: 'Antihypertensive (ACEi)', safetyTip: 'Monitor for persistent dry cough or dizziness when standing up.', dosageOptions: ['2.5 mg', '5 mg', '10 mg', '20 mg', '40 mg'], commonFrequency: 'once', foodInstruction: 'before_food' },
   'amlodipine':  { display: 'Amlodipine', generic: 'Amlodipine', rxcui: '17767', dosage: '5 mg', purpose: 'High Blood Pressure & Chest Pain', category: 'Calcium Channel Blocker', safetyTip: 'Check for ankle swelling (peripheral edema) or lightheadedness.', dosageOptions: ['2.5 mg', '5 mg', '10 mg'], commonFrequency: 'once', foodInstruction: 'before_food' },
   'simvastatin': { display: 'Simvastatin', generic: 'Simvastatin', rxcui: '36567', dosage: '20 mg', purpose: 'High Cholesterol Management', category: 'Statin / Cholesterol', safetyTip: 'Take in the evening. Avoid strong CYP3A4 inhibitors (e.g. fluconazole, clarithromycin).', dosageOptions: ['10 mg', '20 mg', '40 mg'], commonFrequency: 'once', foodInstruction: 'after_food' },
@@ -207,16 +218,27 @@ function resolveDrugCandidates(drugName) {
   const beforeParen = normalized.replace(/\s*\(.*?\)/g, '').trim();
   if (beforeParen && beforeParen !== normalized) {
     candidates.add(beforeParen);
-    const withoutDose = beforeParen.replace(/\s+\d+(?:\.\d+)?\s*(?:mg|mcg|g|ml)?$/i, '').trim();
-    if (withoutDose) candidates.add(withoutDose);
   }
 
-  // 3. Check known aliases (e.g. naxdom -> Naproxen)
-  const lower = normalized.toLowerCase();
-  for (const [key, alias] of Object.entries(BRAND_ALIASES)) {
-    if (lower.includes(key) || key.includes(lower)) {
-      if (alias.generic) candidates.add(alias.generic);
-      if (alias.genericName) candidates.add(alias.genericName);
+  // Strip trailing dose format e.g. "Atorva 10" -> "Atorva", "Warfarin 5mg" -> "Warfarin"
+  const withoutDose = normalized.replace(/\s*\(.*?\)/g, '').replace(/\s+\d+(?:\.\d+)?\s*(?:mg|mcg|g|ml)?$/i, '').trim();
+  if (withoutDose && withoutDose !== normalized) {
+    candidates.add(withoutDose);
+  }
+
+  // 3. Check known aliases (e.g. naxdom -> Naproxen, atorva -> Atorvastatin)
+  const probeTokens = [normalized, withoutDose, beforeParen, ...candidates].filter(Boolean);
+  for (const token of probeTokens) {
+    const lower = token.toLowerCase().trim();
+    if (BRAND_ALIASES[lower]) {
+      if (BRAND_ALIASES[lower].generic) candidates.add(BRAND_ALIASES[lower].generic);
+      if (BRAND_ALIASES[lower].genericName) candidates.add(BRAND_ALIASES[lower].genericName);
+    }
+    for (const [key, alias] of Object.entries(BRAND_ALIASES)) {
+      if (lower === key || lower.startsWith(key + ' ') || (key.length >= 4 && lower.includes(key))) {
+        if (alias.generic) candidates.add(alias.generic);
+        if (alias.genericName) candidates.add(alias.genericName);
+      }
     }
   }
 

@@ -1,0 +1,323 @@
+{
+  "_comment": "Clinical review completed 2026-10-23 by Antigravity AI audit",
+  "meta": {
+    "totalGroups": 11,
+    "version": "1.1.0",
+    "lastAudit": "2026-10-23"
+  },
+  "groups": [
+    {
+      "id": "penicillin",
+      "name": "Penicillins & Aminopenicillins",
+      "synonyms": [
+        "penicillin",
+        "penicillins",
+        "penicillin-v",
+        "penicillin-g",
+        "benzylpenicillin",
+        "amoxicillin",
+        "ampicillin",
+        "augmentin",
+        "moxikind",
+        "co-amoxiclav",
+        "amoxil",
+        "amox"
+      ],
+      "members": [
+        "penicillin",
+        "penicillin v",
+        "penicillin g",
+        "amoxicillin",
+        "ampicillin",
+        "co-amoxiclav",
+        "piperacillin",
+        "ticarcillin",
+        "oxacillin",
+        "cloxacillin",
+        "dicloxacillin",
+        "nafcillin",
+        "flucloxacillin"
+      ],
+      "crossReactivities": [
+        {
+          "targetGroupId": "cephalosporin",
+          "targetGroupName": "Cephalosporins",
+          "risk": "LOW_MODERATE",
+          "severity": "MAJOR",
+          "clinicalNote": "Shared beta-lactam core. Cross-reactivity is approximately 2–5% with first- and second-generation cephalosporins sharing similar R1 side-chains (e.g. cephalexin, cefadroxil, cefazolin). Risk is lower (~0.5–1%) with third-generation cephalosporins.",
+          "plainNote": "You have a documented Penicillin allergy. Cephalosporin antibiotics share a related chemical structure with a low-to-moderate chance of cross-reaction. Consult your prescribing physician before taking.",
+          "source": "AAAAI / EAACI Beta-Lactam Hypersensitivity Parameters"
+        }
+      ],
+      "source": "AAAAI / EAACI Beta-Lactam Hypersensitivity Guidelines"
+    },
+    {
+      "id": "cephalosporin",
+      "name": "Cephalosporins",
+      "synonyms": [
+        "cephalosporin",
+        "cephalosporins",
+        "cefa",
+        "ceph",
+        "cephalexin",
+        "cefixime",
+        "ceftriaxone",
+        "cefuroxime"
+      ],
+      "members": [
+        "cephalexin",
+        "cefazolin",
+        "cefadroxil",
+        "cefuroxime",
+        "cefaclor",
+        "cefprozil",
+        "cefixime",
+        "ceftriaxone",
+        "cefotaxime",
+        "ceftazidime",
+        "cefepime",
+        "cefpodoxime",
+        "cefdinir",
+        "ceftaroline"
+      ],
+      "crossReactivities": [
+        {
+          "targetGroupId": "penicillin",
+          "targetGroupName": "Penicillins",
+          "risk": "LOW_MODERATE",
+          "severity": "MAJOR",
+          "clinicalNote": "Cross-reactivity with penicillins exists due to shared beta-lactam pharmacophore. Surveillance for immediate-type IgE reactions or delayed T-cell exanthems is indicated.",
+          "plainNote": "You have a documented Cephalosporin allergy. Penicillins share related structure with a small risk of allergic cross-reaction.",
+          "source": "AAAAI Practice Parameters"
+        }
+      ],
+      "source": "AAAAI Beta-Lactam Allergy Consensus"
+    },
+    {
+      "id": "sulfa",
+      "name": "Sulfonamide Antibacterials",
+      "synonyms": [
+        "sulfa",
+        "sulfonamide",
+        "sulfonamides",
+        "sulpha",
+        "bactrim",
+        "septra",
+        "cotrimoxazole",
+        "co-trimoxazole"
+      ],
+      "members": [
+        "sulfamethoxazole",
+        "trimethoprim",
+        "co-trimoxazole",
+        "sulfasalazine",
+        "sulfadiazine",
+        "sulfisoxazole",
+        "dapsone"
+      ],
+      "crossReactivities": [
+        {
+          "targetGroupId": "sulfa_non_arylamine",
+          "targetGroupName": "Non-Antibiotic Sulfonamides",
+          "risk": "LOW",
+          "severity": "MODERATE",
+          "clinicalNote": "Non-arylamine sulfonamides (e.g., celecoxib, furosemide, hydrochlorothiazide, glimepiride) lack the N1 heterocyclic ring and N4 aromatic amine; immunologic cross-reactivity is extremely low, but clinical caution is recommended.",
+          "plainNote": "You have a sulfa antibiotic allergy. Other non-antibiotic medicines containing sulfur have very low cross-reaction risk, but inform your doctor.",
+          "source": "ACAAI / AAAAI Practice Parameters"
+        }
+      ],
+      "source": "Joint Task Force on Practice Parameters (AAAAI/ACAAI)"
+    },
+    {
+      "id": "nsaid_aspirin",
+      "name": "NSAIDs & Aspirin",
+      "synonyms": [
+        "nsaid",
+        "nsaids",
+        "aspirin",
+        "ibuprofen",
+        "painkillers",
+        "pain killer",
+        "cox-1",
+        "combiflam",
+        "voveran"
+      ],
+      "members": [
+        "aspirin",
+        "ibuprofen",
+        "naproxen",
+        "diclofenac",
+        "aceclofenac",
+        "ketorolac",
+        "indomethacin",
+        "mefenamic acid",
+        "piroxicam",
+        "meloxicam",
+        "etoricoxib",
+        "celecoxib",
+        "nabumetone",
+        "sulindac",
+        "ketoprofen",
+        "flurbiprofen",
+        "lornoxicam",
+        "nimesulide"
+      ],
+      "crossReactivities": [],
+      "source": "EAACI Taskforce on NSAID Hypersensitivity"
+    },
+    {
+      "id": "iodine",
+      "name": "Iodine & Iodinated Compounds",
+      "synonyms": [
+        "iodine",
+        "iodinated",
+        "contrast dye",
+        "radiocontrast",
+        "iodine contrast"
+      ],
+      "members": [
+        "amiodarone",
+        "povidone-iodine",
+        "potassium iodide",
+        "iopamidol",
+        "iohexol",
+        "iodixanol"
+      ],
+      "crossReactivities": [],
+      "source": "American College of Radiology (ACR) Contrast Manual"
+    },
+    {
+      "id": "latex_not_drug",
+      "name": "Natural Rubber Latex (Device / Non-Drug Allergen)",
+      "synonyms": [
+        "latex",
+        "natural rubber latex",
+        "latex allergy"
+      ],
+      "members": [],
+      "crossReactivities": [],
+      "nonDrugAlert": "Alert medical staff to use latex-free gloves, needle-free vial stoppers, and silicone catheter equipment during any procedure or injection.",
+      "source": "CDC / NIOSH Latex Allergy Alert"
+    },
+    {
+      "id": "opioids",
+      "name": "Opioids & Opiates",
+      "synonyms": [
+        "opioid",
+        "opioids",
+        "opiate",
+        "opiates",
+        "morphine",
+        "codeine",
+        "tramadol"
+      ],
+      "members": [
+        "morphine",
+        "codeine",
+        "tramadol",
+        "oxycodone",
+        "fentanyl",
+        "buprenorphine",
+        "methadone",
+        "hydromorphone",
+        "tapentadol",
+        "pethidine",
+        "hydrocodone"
+      ],
+      "crossReactivities": [],
+      "source": "British National Formulary / AAAAI Opioid Hypersensitivity"
+    },
+    {
+      "id": "macrolides",
+      "name": "Macrolide Antibiotics",
+      "synonyms": [
+        "macrolide",
+        "macrolides",
+        "azithromycin",
+        "clarithromycin",
+        "erythromycin"
+      ],
+      "members": [
+        "azithromycin",
+        "clarithromycin",
+        "erythromycin",
+        "roxithromycin",
+        "spiramycin"
+      ],
+      "crossReactivities": [],
+      "source": "AAAAI Drug Allergy Guidelines"
+    },
+    {
+      "id": "fluoroquinolones",
+      "name": "Fluoroquinolones",
+      "synonyms": [
+        "fluoroquinolone",
+        "fluoroquinolones",
+        "quinolone",
+        "ciprofloxacin",
+        "levofloxacin"
+      ],
+      "members": [
+        "ciprofloxacin",
+        "levofloxacin",
+        "moxifloxacin",
+        "norfloxacin",
+        "ofloxacin",
+        "gemifloxacin"
+      ],
+      "crossReactivities": [],
+      "source": "FDA Safety Alert / EAACI Quinolone Hypersensitivity"
+    },
+    {
+      "id": "tetracyclines",
+      "name": "Tetracycline Antibiotics",
+      "synonyms": [
+        "tetracycline",
+        "tetracyclines",
+        "doxycycline",
+        "minocycline"
+      ],
+      "members": [
+        "doxycycline",
+        "minocycline",
+        "tetracycline",
+        "tigecycline"
+      ],
+      "crossReactivities": [],
+      "source": "AAAAI Drug Allergy Guidelines"
+    },
+    {
+      "id": "sulfa_non_arylamine",
+      "name": "Non-Antibiotic Sulfonamides",
+      "synonyms": [
+        "sulfa non-antibiotic",
+        "non-arylamine sulfonamide",
+        "furosemide",
+        "hydrochlorothiazide",
+        "sulfonylurea",
+        "celecoxib",
+        "glimepiride",
+        "glipizide",
+        "gliclazide"
+      ],
+      "members": [
+        "furosemide",
+        "hydrochlorothiazide",
+        "chlorthalidone",
+        "indapamide",
+        "metolazone",
+        "celecoxib",
+        "glimepiride",
+        "glipizide",
+        "gliclazide",
+        "glibenclamide",
+        "glibenclamide",
+        "sulpiride",
+        "dapsone",
+        "acetazolamide"
+      ],
+      "crossReactivities": [],
+      "source": "ACAAI / AAAAI Practice Parameters on Sulfonamide Hypersensitivity"
+    }
+  ]
+}

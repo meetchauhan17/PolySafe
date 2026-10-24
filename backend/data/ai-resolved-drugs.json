@@ -4815,5 +4815,139 @@
     "safetyTip": "Do not exceed 4000mg total daily intake to prevent severe hepatotoxicity.",
     "standardizedCode": "161",
     "layer": "Layer 5 (gemini_gemini-3.1-flash-lite)"
+  },
+  "escitalopram": {
+    "resolvedName": "Escitalopram",
+    "genericName": "Escitalopram",
+    "genericSalts": [
+      "Escitalopram"
+    ],
+    "constituents": [
+      "Escitalopram"
+    ],
+    "harmLevel": 4,
+    "class": "RxNorm Standard Drug",
+    "foodInstruction": "after_food",
+    "dosageOptions": [
+      "Standard dose"
+    ],
+    "safetyTip": "RxNorm validated medication. Take as directed.",
+    "standardizedCode": "321988",
+    "layer": "Layer 4 (RxNorm REST API)"
+  },
+  "turmeric curcumin": {
+    "resolvedName": "Turmeric (Curcumin)",
+    "genericName": "Curcumin",
+    "genericSalts": [
+      "Curcuminoids"
+    ],
+    "constituents": [
+      "Curcuminoids"
+    ],
+    "harmLevel": 1,
+    "class": "Herbal Supplement / Anti-inflammatory",
+    "foodInstruction": "with_food",
+    "dosageOptions": [
+      "500 mg",
+      "1000 mg"
+    ],
+    "safetyTip": "Take with food and black pepper extract (piperine) to enhance bioavailability; consult your doctor if you take blood thinners.",
+    "standardizedCode": null,
+    "layer": "Layer 5 (gemini_gemini-flash-lite-latest)"
+  },
+  "metformin hcl": {
+    "resolvedName": "Metformin HCl",
+    "genericName": "Metformin HCl",
+    "genericSalts": [
+      "Metformin HCl"
+    ],
+    "constituents": [
+      "Metformin HCl"
+    ],
+    "harmLevel": 4,
+    "class": "RxNorm Standard Drug",
+    "foodInstruction": "after_food",
+    "dosageOptions": [
+      "Standard dose"
+    ],
+    "safetyTip": "RxNorm validated medication. Take as directed.",
+    "standardizedCode": "235743",
+    "layer": "Layer 4 (RxNorm REST API)"
+  },
+  "telmisartan": {
+    "resolvedName": "Telmisartan",
+    "genericName": "Telmisartan",
+    "genericSalts": [
+      "Telmisartan"
+    ],
+    "constituents": [
+      "Telmisartan"
+    ],
+    "harmLevel": 4,
+    "class": "RxNorm Standard Drug",
+    "foodInstruction": "after_food",
+    "dosageOptions": [
+      "Standard dose"
+    ],
+    "safetyTip": "RxNorm validated medication. Take as directed.",
+    "standardizedCode": "73494",
+    "layer": "Layer 4 (RxNorm REST API)"
+  },
+  "vitamin b complex": {
+    "resolvedName": "Vitamin B Complex",
+    "genericName": "Vitamin B Complex",
+    "genericSalts": [
+      "Vitamin B Complex"
+    ],
+    "constituents": [
+      "Vitamin B Complex"
+    ],
+    "harmLevel": 1,
+    "class": "RxNorm Standard Drug",
+    "foodInstruction": "after_food",
+    "dosageOptions": [
+      "Standard dose"
+    ],
+    "safetyTip": "RxNorm validated medication. Take as directed.",
+    "standardizedCode": "11251",
+    "layer": "Layer 4 (RxNorm REST API)"
+  },
+  "vitamin c": {
+    "resolvedName": "Vitamin C",
+    "genericName": "Vitamin C",
+    "genericSalts": [
+      "Vitamin C"
+    ],
+    "constituents": [
+      "Vitamin C"
+    ],
+    "harmLevel": 1,
+    "class": "RxNorm Standard Drug",
+    "foodInstruction": "after_food",
+    "dosageOptions": [
+      "Standard dose"
+    ],
+    "safetyTip": "RxNorm validated medication. Take as directed.",
+    "standardizedCode": "1151",
+    "layer": "Layer 4 (RxNorm REST API)"
+  },
+  "maxoken": {
+    "resolvedName": "Maxoken 500",
+    "genericName": "Naproxen Sodium",
+    "genericSalts": [
+      "Naproxen Sodium"
+    ],
+    "constituents": [
+      "Naproxen Sodium"
+    ],
+    "harmLevel": 3,
+    "class": "Non-steroidal anti-inflammatory drug (NSAID)",
+    "foodInstruction": "after_food",
+    "dosageOptions": [
+      "500 mg"
+    ],
+    "safetyTip": "Take with a full glass of water and food to minimize risk of gastrointestinal irritation or ulceration.",
+    "standardizedCode": "142442",
+    "layer": "Layer 5 (gemini_gemini-3.1-flash-lite)"
   }
 }

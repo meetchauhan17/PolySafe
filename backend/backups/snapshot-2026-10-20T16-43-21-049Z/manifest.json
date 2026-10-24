@@ -1,0 +1,26 @@
+{
+  "timestamp": "2026-10-20T16:43:21.051Z",
+  "tables": {
+    "users": 107,
+    "patients": 57,
+    "medicines": 77,
+    "symptoms": 7,
+    "interactionFlags": 22,
+    "doseLogs": 56,
+    "connections": 33,
+    "burdenScores": 567,
+    "cascadeReferences": 581
+  },
+  "totalRecords": 1507,
+  "checksums": {
+    "users": "7f80dacb8a549edc0dc1f7f1ace67edc01f0d9b7a2cb6937ef5e15f3f0d2ceec",
+    "patients": "a3011c161b6339b134f3202b50f52240d5b51efb9c51e7b481cfd27fd19b8949",
+    "medicines": "1e686707107388906b007b0620fa07b47bea13d37706be043e118dd2279435fa",
+    "symptoms": "fa8f9d7bb71452c48b853ec41843d937bb8801110a53b326d3011a6621648758",
+    "interactionFlags": "a9549ae565c89bdc6e90b7c13c3d0fce4a32e1d05fe6643a595dde72d328ef06",
+    "doseLogs": "dc52a92e91a0dd345c3416ddabaaf0ee926ba964da09a800822e18f42b7113f6",
+    "connections": "9f134d9e75dd9b5237c67bcf92c3de44fc2876ab58bdfc9252e279b83d23a3d6",
+    "burdenScores": "9985b399fa41b1c4385c0272a8835a8fdc168e577e2a9bf5474ddd75e434214e",
+    "cascadeReferences": "6d7a06e4c43541789b7b4b7430915ccca4ce9060a65085a2bac36c2623a611a6"
+  }
+}

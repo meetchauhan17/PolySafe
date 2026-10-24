@@ -1,0 +1,1053 @@
+{
+  "_comment": "needs clinical review",
+  "meta": {
+    "totalRules": 50,
+    "version": "1.0.0",
+    "standards": [
+      "AGS Beers Criteria 2023",
+      "STOPP/START Criteria v3"
+    ]
+  },
+  "rules": [
+    {
+      "id": "dd-kidney-nsaid",
+      "conditionKeywords": [
+        "kidney",
+        "renal",
+        "ckd",
+        "nephropathy"
+      ],
+      "drugMatch": [
+        "ibuprofen",
+        "naproxen",
+        "diclofenac",
+        "aceclofenac",
+        "indomethacin",
+        "ketorolac",
+        "piroxicam",
+        "meloxicam",
+        "mefenamic acid",
+        "etoricoxib",
+        "celecoxib"
+      ],
+      "severity": "CRITICAL",
+      "title": "NSAID in Kidney Disease · Acute Renal Failure Risk",
+      "clinicalText": "NSAIDs inhibit renal prostaglandin E2 synthesis, precipitating pre-renal vasoconstriction, acute interstitial nephritis, and acceleration of chronic kidney disease.",
+      "plainText": "You have kidney issues and are taking an NSAID pain reliever. NSAIDs reduce blood flow to your kidneys and can cause acute kidney injury or worsening kidney disease.",
+      "rationale": "Inhibition of vasodilatory renal prostaglandins causes abrupt reduction in glomerular filtration rate.",
+      "source": "AGS Beers Criteria 2023"
+    },
+    {
+      "id": "dd-kidney-metformin",
+      "conditionKeywords": [
+        "kidney",
+        "renal",
+        "ckd",
+        "nephropathy"
+      ],
+      "drugMatch": [
+        "metformin"
+      ],
+      "severity": "MAJOR",
+      "title": "Metformin in Renal Impairment · Lactic Acidosis Caution",
+      "clinicalText": "Metformin is cleared primarily by renal tubular secretion. Impaired eGFR increases plasma metformin concentrations, elevating the risk of potentially fatal lactic acidosis.",
+      "plainText": "You have kidney issues and take Metformin. If kidney function drops (eGFR below 30 mL/min), Metformin can build up and cause severe lactic acidosis. Regular kidney blood tests are required.",
+      "rationale": "Decreased renal elimination leads to toxic accumulation and suppression of hepatic gluconeogenesis.",
+      "source": "FDA Black Box Warning / STOPP/START v3"
+    },
+    {
+      "id": "dd-kidney-spironolactone",
+      "conditionKeywords": [
+        "kidney",
+        "renal",
+        "ckd",
+        "nephropathy"
+      ],
+      "drugMatch": [
+        "spironolactone",
+        "eplerenone",
+        "amiloride",
+        "triamterene"
+      ],
+      "severity": "CRITICAL",
+      "title": "Potassium-Sparing Diuretic in Kidney Disease · Severe Hyperkalemia",
+      "clinicalText": "Aldosterone antagonists inhibit renal potassium excretion; in existing renal impairment, severe life-threatening hyperkalemia (>6.0 mEq/L) and fatal cardiac arrhythmias can occur rapidly.",
+      "plainText": "Taking water pills that hold potassium (like Spironolactone) with kidney issues can cause potassium to spike dangerously high, risking sudden heart rhythm arrest.",
+      "rationale": "Impaired baseline glomerular filtration compounds drug-induced inhibition of distal tubular potassium secretion.",
+      "source": "AGS Beers Criteria 2023"
+    },
+    {
+      "id": "dd-kidney-digoxin",
+      "conditionKeywords": [
+        "kidney",
+        "renal",
+        "ckd",
+        "nephropathy"
+      ],
+      "drugMatch": [
+        "digoxin"
+      ],
+      "severity": "CRITICAL",
+      "title": "Digoxin in Renal Dysfunction · Digitalis Toxicity",
+      "clinicalText": "Digoxin has a narrow therapeutic index and 70-80% renal excretion. In renal impairment, accumulation triggers heart block, fatal ventricular arrhythmias, and visual disturbances.",
+      "plainText": "Digoxin is cleared by your kidneys. Because you have kidney issues, Digoxin can easily build up to toxic levels, causing heart rhythm disturbances and nausea.",
+      "rationale": "Clearance correlates directly with creatinine clearance; doses > 0.125 mg/day strongly discouraged in impaired renal function.",
+      "source": "AGS Beers Criteria 2023"
+    },
+    {
+      "id": "dd-kidney-sulfonylurea",
+      "conditionKeywords": [
+        "kidney",
+        "renal",
+        "ckd",
+        "nephropathy"
+      ],
+      "drugMatch": [
+        "glimepiride",
+        "glyburide",
+        "glibenclamide",
+        "chlorpropamide"
+      ],
+      "severity": "MAJOR",
+      "title": "Sulfonylurea in Renal Impairment · Prolonged Hypoglycemia Risk",
+      "clinicalText": "Active metabolites of long-acting sulfonylureas accumulate in renal insufficiency, causing prolonged, severe, and potentially life-threatening hypoglycemia in older adults.",
+      "plainText": "Your diabetes medicine (sulfonylurea) takes longer to leave your body because of kidney impairment, causing sudden severe low blood sugar episodes.",
+      "rationale": "Decreased clearance of active metabolites causes sustained stimulation of pancreatic beta-cell insulin secretion.",
+      "source": "AGS Beers Criteria 2023 / STOPP v3"
+    },
+    {
+      "id": "dd-kidney-lithium",
+      "conditionKeywords": [
+        "kidney",
+        "renal",
+        "ckd",
+        "nephropathy"
+      ],
+      "drugMatch": [
+        "lithium"
+      ],
+      "severity": "CRITICAL",
+      "title": "Lithium in Renal Impairment · Acute Neurotoxicity",
+      "clinicalText": "Lithium is 100% renally excreted. Reduced renal filtration rapidly precipitates systemic lithium toxicity characterized by coarse tremor, ataxia, convulsions, and irreversible nephrotoxicity.",
+      "plainText": "Lithium levels depend entirely on kidney clearance. With kidney impairment, dangerous toxic levels build up quickly.",
+      "rationale": "Narrow therapeutic window and purely renal elimination.",
+      "source": "FDA / AGS Beers Criteria 2023"
+    },
+    {
+      "id": "dd-kidney-methotrexate",
+      "conditionKeywords": [
+        "kidney",
+        "renal",
+        "ckd",
+        "nephropathy"
+      ],
+      "drugMatch": [
+        "methotrexate"
+      ],
+      "severity": "CRITICAL",
+      "title": "Methotrexate in Renal Dysfunction · Bone Marrow Suppression",
+      "clinicalText": "Methotrexate clearance depends on glomerular filtration. In renal impairment, systemic exposure increases exponentially, causing profound myelosuppression and severe mucositis.",
+      "plainText": "Methotrexate can cause life-threatening blood and marrow toxicity if kidneys cannot clear it rapidly.",
+      "rationale": "Impaired excretion leads to sustained high free-drug levels inhibiting dihydrofolate reductase in non-target tissues.",
+      "source": "STOPP/START Criteria v3"
+    },
+    {
+      "id": "dd-kidney-sglt2",
+      "conditionKeywords": [
+        "kidney",
+        "renal",
+        "ckd",
+        "nephropathy"
+      ],
+      "drugMatch": [
+        "dapagliflozin",
+        "empagliflozin",
+        "canagliflozin",
+        "ertugliflozin"
+      ],
+      "severity": "MODERATE",
+      "title": "SGLT2 Inhibitor with Reduced Kidney Function · Glycemic Efficacy Alert",
+      "clinicalText": "SGLT2 inhibitors depend on filtered glucose load for glycemic efficacy; while renoprotective in CKD, blood-sugar lowering declines markedly when eGFR < 45 mL/min.",
+      "plainText": "Your SGLT2 diabetes medicine protects kidney and heart health, but its blood-sugar lowering strength weakens if kidney filtration is low.",
+      "rationale": "Mechanistic dependence on glomerular filtration for glucosuria.",
+      "source": "KDIGO 2023 Clinical Practice Guideline"
+    },
+    {
+      "id": "dd-heart-nsaid",
+      "conditionKeywords": [
+        "heart",
+        "cardiac",
+        "chf",
+        "heart failure",
+        "cad",
+        "arrhythmia"
+      ],
+      "drugMatch": [
+        "ibuprofen",
+        "naproxen",
+        "diclofenac",
+        "aceclofenac",
+        "indomethacin",
+        "ketorolac",
+        "piroxicam",
+        "meloxicam",
+        "etoricoxib",
+        "celecoxib"
+      ],
+      "severity": "CRITICAL",
+      "title": "NSAID in Heart Failure · Acute Decompensation & Fluid Retention",
+      "clinicalText": "NSAIDs promote renal sodium and water retention, blunting loop diuretic responsiveness and triggering congestive heart failure exacerbation and hospitalizations.",
+      "plainText": "You have a heart condition and take an NSAID. NSAIDs cause your body to hold extra fluid, causing swollen legs and worsening shortness of breath or heart failure.",
+      "rationale": "Inhibition of renal prostaglandins results in sodium retention and systemic vascular resistance elevation.",
+      "source": "AHA Scientific Statement / AGS Beers 2023"
+    },
+    {
+      "id": "dd-heart-ccb-non-dhp",
+      "conditionKeywords": [
+        "heart",
+        "cardiac",
+        "chf",
+        "heart failure"
+      ],
+      "drugMatch": [
+        "verapamil",
+        "diltiazem"
+      ],
+      "severity": "CRITICAL",
+      "title": "Non-Dihydropyridine CCB in Heart Failure · Negative Inotropic Collapse",
+      "clinicalText": "Verapamil and diltiazem possess potent negative inotropic properties that significantly depress left ventricular contractility, precipitating acute cardiogenic decompensation in systolic heart failure.",
+      "plainText": "Verapamil or Diltiazem weakens the squeezing power of your heart muscle, which can severely worsen congestive heart failure.",
+      "rationale": "Negative inotropic effect on myocardium with compromised ejection fraction.",
+      "source": "ACC/AHA Heart Failure Guidelines / Beers 2023"
+    },
+    {
+      "id": "dd-heart-amiodarone",
+      "conditionKeywords": [
+        "heart",
+        "bradycardia",
+        "heart block",
+        "arrhythmia"
+      ],
+      "drugMatch": [
+        "amiodarone"
+      ],
+      "severity": "CRITICAL",
+      "title": "Amiodarone with Conduction Disease · Severe Bradycardia Risk",
+      "clinicalText": "Amiodarone depresses sinus node automaticity and AV conduction; in pre-existing bradycardia or sick sinus syndrome without a pacemaker, complete AV block and asystole can occur.",
+      "plainText": "Amiodarone strongly slows your heart's electrical wiring. In patients with slow pulse or conduction defects, it can cause severe dizziness or fainting.",
+      "rationale": "Combined beta-blockade and calcium/potassium channel inhibition slows AV nodal conduction.",
+      "source": "ACC/AHA/HRS Arrhythmia Guidelines"
+    },
+    {
+      "id": "dd-heart-tca",
+      "conditionKeywords": [
+        "heart",
+        "cardiac",
+        "arrhythmia",
+        "cad"
+      ],
+      "drugMatch": [
+        "amitriptyline",
+        "imipramine",
+        "clomipramine",
+        "nortriptyline",
+        "doxepin"
+      ],
+      "severity": "CRITICAL",
+      "title": "Tricyclic Antidepressant in Heart Disease · QTc Prolongation & Arrhythmia",
+      "clinicalText": "TCAs possess quinidine-like Class IA antiarrhythmic actions, prolonging the QTc interval and precipitating fatal ventricular arrhythmias, orthostatic syncope, and tachycardia.",
+      "plainText": "Amitriptyline and related antidepressants affect heart electrical rhythms. In heart disease, they increase the danger of fainting and abnormal heartbeats.",
+      "rationale": "Sodium and potassium channel blockade extends myocardial repolarization times.",
+      "source": "AGS Beers Criteria 2023"
+    },
+    {
+      "id": "dd-heart-decongestant",
+      "conditionKeywords": [
+        "heart",
+        "cardiac",
+        "cad",
+        "angina",
+        "arrhythmia"
+      ],
+      "drugMatch": [
+        "pseudoephedrine",
+        "phenylephrine"
+      ],
+      "severity": "MAJOR",
+      "title": "Oral Decongestants in Heart Disease · Tachycardia & Ischemia",
+      "clinicalText": "Sympathomimetic vasoconstrictors cause reflex tachycardia and coronary vasoconstriction, increasing myocardial oxygen demand and precipitating angina or arrhythmias.",
+      "plainText": "Cold medicines with pseudoephedrine or phenylephrine stimulate the heart, causing fast palpitations and chest tightness in heart patients.",
+      "rationale": "Alpha-1 and beta-1 adrenergic stimulation elevates cardiac workload and myocardial oxygen consumption.",
+      "source": "AHA Advisory on OTC Cough/Cold Products"
+    },
+    {
+      "id": "dd-heart-donepezil",
+      "conditionKeywords": [
+        "heart",
+        "cardiac",
+        "bradycardia",
+        "syncope",
+        "arrhythmia"
+      ],
+      "drugMatch": [
+        "donepezil",
+        "rivastigmine",
+        "galantamine"
+      ],
+      "severity": "MAJOR",
+      "title": "Cholinesterase Inhibitor in Cardiac Conduction Disease · Syncope Alert",
+      "clinicalText": "Cholinesterase inhibitors enhance central and peripheral vagal tone, producing sinus bradycardia, sinoatrial block, syncope, and fall-related fractures in older adults.",
+      "plainText": "Dementia medications like Donepezil increase vagal nerve activity, which can slow your heart rate too much, causing lightheadedness and fainting spells.",
+      "rationale": "Vagomimetic action on sinoatrial and atrioventricular nodes.",
+      "source": "AGS Beers Criteria 2023"
+    },
+    {
+      "id": "dd-heart-fluoroquinolone",
+      "conditionKeywords": [
+        "heart",
+        "cardiac",
+        "arrhythmia",
+        "qtc"
+      ],
+      "drugMatch": [
+        "moxifloxacin",
+        "levofloxacin",
+        "ciprofloxacin"
+      ],
+      "severity": "MAJOR",
+      "title": "Fluoroquinolone in Heart Disease · QTc Prolongation & Torsades",
+      "clinicalText": "Fluoroquinolones block the myocardial HERG potassium channel, prolonging ventricular repolarization and precipitating Torsades de Pointes, particularly in patients with baseline cardiac disease.",
+      "plainText": "This antibiotic can prolong the electrical reset of your heartbeat. In heart patients, this raises the risk of dangerous irregular heart rhythms.",
+      "rationale": "Blockade of rapid delayed rectifier potassium current (IKr).",
+      "source": "FDA Drug Safety Communication / Beers 2023"
+    },
+    {
+      "id": "dd-heart-macrolide",
+      "conditionKeywords": [
+        "heart",
+        "cardiac",
+        "arrhythmia",
+        "cad"
+      ],
+      "drugMatch": [
+        "clarithromycin",
+        "erythromycin",
+        "azithromycin"
+      ],
+      "severity": "MAJOR",
+      "title": "Macrolide in Cardiovascular Disease · Cardiac Mortality Signal",
+      "clinicalText": "Macrolide antibiotics delay cardiac repolarization and carry an established epidemiological signal for sudden cardiac death and acute coronary syndromes in patients with baseline CAD.",
+      "plainText": "Macrolide antibiotics (like Clarithromycin or Azithromycin) require caution in heart disease due to potential heart rhythm irregularities.",
+      "rationale": "IKr potassium channel inhibition and post-market epidemiological cardiovascular safety signals.",
+      "source": "FDA Safety Alert / NEJM Cardiovascular Warning"
+    },
+    {
+      "id": "dd-htn-nsaid",
+      "conditionKeywords": [
+        "hypertension",
+        "high blood pressure",
+        "htn"
+      ],
+      "drugMatch": [
+        "ibuprofen",
+        "naproxen",
+        "diclofenac",
+        "aceclofenac",
+        "indomethacin",
+        "etoricoxib",
+        "celecoxib"
+      ],
+      "severity": "MAJOR",
+      "title": "NSAID in Hypertension · Blunted BP Control & Pressure Spikes",
+      "clinicalText": "NSAIDs antagonize the antihypertensive action of ACE inhibitors, ARBs, beta-blockers, and diuretics, producing an average 3 to 6 mmHg increase in mean arterial pressure.",
+      "plainText": "You have high blood pressure and take an NSAID. NSAIDs counteract your blood pressure medicines, causing blood pressure to rise.",
+      "rationale": "Renal prostaglandin inhibition promotes systemic vasoconstriction and blunts natriuresis.",
+      "source": "AGS Beers Criteria 2023 / AHA Hypertension Guidelines"
+    },
+    {
+      "id": "dd-htn-steroid",
+      "conditionKeywords": [
+        "hypertension",
+        "high blood pressure",
+        "htn"
+      ],
+      "drugMatch": [
+        "prednisolone",
+        "methylprednisolone",
+        "dexamethasone",
+        "hydrocortisone",
+        "deflazacort",
+        "betamethasone"
+      ],
+      "severity": "MAJOR",
+      "title": "Systemic Corticosteroid in Hypertension · Sodium Retention Alert",
+      "clinicalText": "Glucocorticoids possess mineralocorticoid activity, stimulating distal tubular sodium reabsorption and volume expansion, destabilizing blood pressure control.",
+      "plainText": "Steroids make your body retain salt and water, which can push your blood pressure up significantly. Monitor your blood pressure daily.",
+      "rationale": "Mineralocorticoid receptor activation leading to intravascular volume expansion.",
+      "source": "AHA Hypertension Management Parameters"
+    },
+    {
+      "id": "dd-htn-decongestant",
+      "conditionKeywords": [
+        "hypertension",
+        "high blood pressure",
+        "htn"
+      ],
+      "drugMatch": [
+        "pseudoephedrine",
+        "phenylephrine"
+      ],
+      "severity": "MAJOR",
+      "title": "Oral Decongestant in Hypertension · Acute Vasoconstriction",
+      "clinicalText": "Alpha-1 adrenergic stimulation produces arterial smooth muscle contraction and peripheral vascular resistance elevation, potentially precipitating hypertensive crisis.",
+      "plainText": "Over-the-counter decongestants tighten your blood vessels and can cause dangerous blood pressure spikes in people with hypertension.",
+      "rationale": "Direct peripheral alpha-1 vasoconstriction.",
+      "source": "ACC/AHA Guideline for Prevention & Treatment of High Blood Pressure"
+    },
+    {
+      "id": "dd-htn-licorice",
+      "conditionKeywords": [
+        "hypertension",
+        "high blood pressure",
+        "htn"
+      ],
+      "drugMatch": [
+        "licorice",
+        "glycyrrhizin"
+      ],
+      "severity": "MAJOR",
+      "title": "Licorice Supplement in Hypertension · Pseudohyperaldosteronism",
+      "clinicalText": "Glycyrrhizin inhibits 11-beta-hydroxysteroid dehydrogenase type 2, allowing cortisol to bind mineralocorticoid receptors, causing severe hypokalemia, sodium retention, and severe hypertension.",
+      "plainText": "Licorice root supplements block the enzyme that protects your kidneys from stress hormones, driving blood pressure up and wasting potassium.",
+      "rationale": "Inhibition of 11-beta-HSD2 produces apparent mineralocorticoid excess.",
+      "source": "WHO / European Society of Hypertension"
+    },
+    {
+      "id": "dd-htn-stimulant",
+      "conditionKeywords": [
+        "hypertension",
+        "high blood pressure",
+        "htn"
+      ],
+      "drugMatch": [
+        "modafinil",
+        "armodafinil"
+      ],
+      "severity": "MODERATE",
+      "title": "Wakefulness Promoters in Hypertension · Sympathomimetic BP Elevation",
+      "clinicalText": "Central wakefulness agents elevate circulating catecholamines, producing mild-to-moderate sustained increases in systolic blood pressure and resting heart rate.",
+      "plainText": "Stimulant or wakefulness medicines can increase your blood pressure and heart rate. Frequent blood pressure checks are advised.",
+      "rationale": "Central monoaminergic stimulation elevating adrenergic tone.",
+      "source": "FDA Prescribing Information"
+    },
+    {
+      "id": "dd-diab-steroid",
+      "conditionKeywords": [
+        "diabetes",
+        "type 2 diabetes",
+        "t2d",
+        "t1d"
+      ],
+      "drugMatch": [
+        "prednisolone",
+        "methylprednisolone",
+        "dexamethasone",
+        "hydrocortisone",
+        "deflazacort",
+        "betamethasone"
+      ],
+      "severity": "MAJOR",
+      "title": "Systemic Corticosteroids in Diabetes · Severe Hyperglycemia Spikes",
+      "clinicalText": "Glucocorticoids induce acute peripheral insulin resistance, stimulate hepatic gluconeogenesis, and suppress pancreatic insulin release, causing severe steroid-induced hyperglycemia.",
+      "plainText": "Steroids dramatically raise blood sugar levels by making your body resist insulin. You will likely need to adjust your diabetes medication while on steroids.",
+      "rationale": "Up-regulation of phosphoenolpyruvate carboxykinase and glucose-6-phosphatase coupled with inhibition of GLUT4 translocation.",
+      "source": "American Diabetes Association (ADA) Standards of Care"
+    },
+    {
+      "id": "dd-diab-betablocker",
+      "conditionKeywords": [
+        "diabetes",
+        "type 2 diabetes",
+        "t2d"
+      ],
+      "drugMatch": [
+        "propranolol",
+        "atenolol",
+        "metoprolol"
+      ],
+      "severity": "MODERATE",
+      "title": "Non-Selective Beta-Blocker in Diabetes · Hypoglycemia Masking",
+      "clinicalText": "Beta-adrenergic antagonists blunt catecholamine-mediated warning symptoms of hypoglycemia (tremor, palpitations, anxiety), leaving diaphoresis as the sole identifiable sign.",
+      "plainText": "Beta-blockers can hide common warning signs of low blood sugar, such as shakiness and fast heartbeat, making low blood sugar harder to detect early.",
+      "rationale": "Sympathetic antagonism blunts physiological adrenergic response to falling blood glucose.",
+      "source": "ADA Standards of Care / STOPP Criteria"
+    },
+    {
+      "id": "dd-diab-quinolone",
+      "conditionKeywords": [
+        "diabetes",
+        "type 2 diabetes",
+        "t2d"
+      ],
+      "drugMatch": [
+        "levofloxacin",
+        "ciprofloxacin",
+        "moxifloxacin"
+      ],
+      "severity": "MAJOR",
+      "title": "Fluoroquinolone in Diabetes · Severe Dysglycemia Risk",
+      "clinicalText": "Fluoroquinolones interfere with pancreatic ATP-sensitive K+ channels, causing unpredictable, severe glycemic fluctuations ranging from profound hypoglycemia to diabetic ketoacidosis.",
+      "plainText": "This antibiotic can cause sudden severe drops or sharp spikes in blood sugar in diabetic patients. Monitor your glucose levels frequently.",
+      "rationale": "Direct modulation of pancreatic beta-cell potassium channels.",
+      "source": "FDA Drug Safety Communication on Fluoroquinolone Dysglycemia"
+    },
+    {
+      "id": "dd-diab-antipsychotic",
+      "conditionKeywords": [
+        "diabetes",
+        "type 2 diabetes",
+        "t2d"
+      ],
+      "drugMatch": [
+        "olanzapine",
+        "clozapine",
+        "quetiapine"
+      ],
+      "severity": "MAJOR",
+      "title": "Second-Generation Antipsychotic in Diabetes · Metabolic Decompensation",
+      "clinicalText": "Olanzapine and clozapine produce substantial metabolic adverse effects, including profound weight gain, marked insulin resistance, and diabetic ketoacidosis or hyperosmolar coma.",
+      "plainText": "Antipsychotic medications like Olanzapine can cause significant weight gain and make diabetes much harder to control.",
+      "rationale": "Central 5-HT2C and H1 antagonism coupled with peripheral impairment of insulin secretion and sensitivity.",
+      "source": "ADA / APA Consensus on Antipsychotic Drugs and Diabetes"
+    },
+    {
+      "id": "dd-diab-thiazide",
+      "conditionKeywords": [
+        "diabetes",
+        "type 2 diabetes",
+        "t2d"
+      ],
+      "drugMatch": [
+        "hydrochlorothiazide",
+        "chlorthalidone"
+      ],
+      "severity": "MODERATE",
+      "title": "Thiazide Diuretics in Diabetes · Impaired Glycemic Control",
+      "clinicalText": "Thiazide-induced hypokalemia impairs insulin secretion from pancreatic beta cells, worsening HbA1c and glucose tolerance over long-term treatment.",
+      "plainText": "Thiazide water pills can slightly raise blood sugar by lowering potassium levels. Maintaining healthy potassium helps keep blood sugar steady.",
+      "rationale": "Hypokalemia blunts beta-cell membrane depolarization and insulin exocytosis.",
+      "source": "AHA/ADA Cardiometabolic Guidance"
+    },
+    {
+      "id": "dd-dementia-benzo",
+      "conditionKeywords": [
+        "dementia",
+        "alzheimer",
+        "cognitive impairment",
+        "memory loss"
+      ],
+      "drugMatch": [
+        "alprazolam",
+        "clonazepam",
+        "diazepam",
+        "lorazepam",
+        "midazolam",
+        "temazepam",
+        "chlordiazepoxide",
+        "clobazam"
+      ],
+      "severity": "CRITICAL",
+      "title": "Benzodiazepine in Dementia · Delirium & Accelerated Decline",
+      "clinicalText": "Benzodiazepines exacerbate baseline cognitive impairment, induce delirium, produce anterograde amnesia, and significantly increase mortality and hospitalizations in patients with dementia.",
+      "plainText": "You or your family member has memory impairment or dementia. Benzodiazepines (calming pills) worsen confusion, memory loss, and can cause sudden delirium.",
+      "rationale": "GABA-A agonism worsens central cholinergic deficits in neurodegenerative disease.",
+      "source": "AGS Beers Criteria 2023"
+    },
+    {
+      "id": "dd-dementia-anticholinergic",
+      "conditionKeywords": [
+        "dementia",
+        "alzheimer",
+        "cognitive impairment",
+        "memory loss"
+      ],
+      "drugMatch": [
+        "amitriptyline",
+        "chlorpheniramine",
+        "dicyclomine",
+        "hydroxyzine",
+        "oxybutynin",
+        "hyoscine",
+        "promethazine",
+        "tolterodine"
+      ],
+      "severity": "CRITICAL",
+      "title": "Potent Anticholinergic in Dementia · Severe Confusion & Toxidrome",
+      "clinicalText": "Dementia is characterized by profound central cholinergic deficits; anticholinergic medications directly antagonize remaining muscarinic receptors, causing acute delirium, hallucinations, and rapid cognitive deterioration.",
+      "plainText": "This medication has strong anticholinergic properties that block acetylcholine, the key chemical brain messenger for memory. In dementia, this causes severe confusion and hallucinations.",
+      "rationale": "Antagonism of central muscarinic receptors severely exacerbates cholinergic deficit.",
+      "source": "AGS Beers Criteria 2023 / STOPP Criteria v3"
+    },
+    {
+      "id": "dd-dementia-antipsychotic",
+      "conditionKeywords": [
+        "dementia",
+        "alzheimer",
+        "cognitive impairment",
+        "memory loss"
+      ],
+      "drugMatch": [
+        "olanzapine",
+        "quetiapine",
+        "risperidone",
+        "haloperidol",
+        "aripiprazole"
+      ],
+      "severity": "CRITICAL",
+      "title": "Antipsychotic in Dementia · Black Box Warning for Mortality & Stroke",
+      "clinicalText": "Antipsychotics carry an FDA Black Box warning in dementia-related psychosis due to a 1.6- to 1.7-fold increase in all-cause mortality, predominantly from cardiovascular events and pneumonia, alongside stroke risk.",
+      "plainText": "Antipsychotic drugs carry an FDA warning when used in dementia because they significantly increase the danger of stroke and overall mortality. They should only be used as a last resort.",
+      "rationale": "Increased cerebrovascular events, sedation-related aspiration pneumonia, and accelerated cognitive loss.",
+      "source": "FDA Black Box Warning / AGS Beers Criteria 2023"
+    },
+    {
+      "id": "dd-dementia-z-drug",
+      "conditionKeywords": [
+        "dementia",
+        "alzheimer",
+        "cognitive impairment",
+        "memory loss"
+      ],
+      "drugMatch": [
+        "zolpidem",
+        "zopiclone",
+        "eszopiclone"
+      ],
+      "severity": "CRITICAL",
+      "title": "Z-Hypnotic in Dementia · Nighttime Wandering & Confusion",
+      "clinicalText": "Non-benzodiazepine receptor agonists worsen sleep architecture, trigger paradoxical excitement, sleepwalking, delirium, and nocturnal wandering in cognitively impaired elders.",
+      "plainText": "Sleeping pills like Zolpidem can cause severe night-time confusion, wandering, and dangerous falls in people with memory impairment.",
+      "rationale": "Selective alpha-1 GABA-A subunit agonism produces psychomotor impairment and amnesia.",
+      "source": "AGS Beers Criteria 2023"
+    },
+    {
+      "id": "dd-dementia-tca",
+      "conditionKeywords": [
+        "dementia",
+        "alzheimer",
+        "cognitive impairment",
+        "memory loss"
+      ],
+      "drugMatch": [
+        "amitriptyline",
+        "imipramine",
+        "clomipramine",
+        "doxepin"
+      ],
+      "severity": "CRITICAL",
+      "title": "Tricyclic Antidepressant in Dementia · High Cognitive Burden",
+      "clinicalText": "High anticholinergic and sedative properties of TCAs severely impair memory consolidation and cause prominent daytime sedation in patients with cognitive impairment.",
+      "plainText": "Tricyclic antidepressants (like Amitriptyline) heavily impair memory and should be avoided in patients with dementia in favor of safer alternatives.",
+      "rationale": "High Anticholinergic Cognitive Burden (ACB score = 3) directly counteracts cognitive functioning.",
+      "source": "AGS Beers Criteria 2023"
+    },
+    {
+      "id": "dd-dementia-muscle-relaxant",
+      "conditionKeywords": [
+        "dementia",
+        "alzheimer",
+        "cognitive impairment",
+        "memory loss"
+      ],
+      "drugMatch": [
+        "cyclobenzaprine",
+        "carisoprodol",
+        "chlorzoxazone"
+      ],
+      "severity": "CRITICAL",
+      "title": "Skeletal Muscle Relaxant in Dementia · Sedation & Delirium",
+      "clinicalText": "Muscle relaxants possess central anticholinergic and depressant properties that are poorly tolerated in older adults with cognitive impairment, precipitating profound disorientation.",
+      "plainText": "Muscle relaxant medications cause heavy brain sedation and disorientation in older adults with memory issues.",
+      "rationale": "Central nervous system depression combined with peripheral and central anticholinergic activity.",
+      "source": "AGS Beers Criteria 2023"
+    },
+    {
+      "id": "dd-dementia-antispasmodic",
+      "conditionKeywords": [
+        "dementia",
+        "alzheimer",
+        "cognitive impairment",
+        "memory loss"
+      ],
+      "drugMatch": [
+        "dicyclomine",
+        "hyoscine"
+      ],
+      "severity": "CRITICAL",
+      "title": "Antispasmodic in Dementia · Muscarinic Blockade Warning",
+      "clinicalText": "Tertiary amine antispasmodics readily cross the blood-brain barrier and cause acute delirium and severe constipation in patients with baseline dementia.",
+      "plainText": "Stomach cramp medicines like Dicyclomine easily cross into the brain and block memory function, causing acute confusion.",
+      "rationale": "Blood-brain barrier penetration with central antimuscarinic action.",
+      "source": "AGS Beers Criteria 2023"
+    },
+    {
+      "id": "dd-falls-benzo",
+      "conditionKeywords": [
+        "history of falls",
+        "falls",
+        "balance",
+        "fall risk",
+        "ataxia"
+      ],
+      "drugMatch": [
+        "alprazolam",
+        "clonazepam",
+        "diazepam",
+        "lorazepam",
+        "temazepam",
+        "midazolam",
+        "chlordiazepoxide"
+      ],
+      "severity": "CRITICAL",
+      "title": "Benzodiazepine with Fall History · High Fracture & Ataxia Risk",
+      "clinicalText": "Benzodiazepines cause psychomotor slowing, prolonged reaction times, vestibular dysfunction, and daytime drowsiness, increasing the risk of falls and hip fractures by 50-100% in older adults.",
+      "plainText": "You have a history of falls and take a calming medicine (Benzodiazepine). These medicines impair your balance and double the risk of severe falls and broken bones.",
+      "rationale": "Sedation, motor incoordination, and blunted postural reflex recovery.",
+      "source": "AGS Beers Criteria 2023 / CDC STEADI Fall Guidelines"
+    },
+    {
+      "id": "dd-falls-z-drug",
+      "conditionKeywords": [
+        "history of falls",
+        "falls",
+        "balance",
+        "fall risk",
+        "ataxia"
+      ],
+      "drugMatch": [
+        "zolpidem",
+        "zopiclone",
+        "eszopiclone"
+      ],
+      "severity": "CRITICAL",
+      "title": "Z-Hypnotic with Fall History · Nocturnal Awakening Fractures",
+      "clinicalText": "Z-drugs carry a fall risk hazard ratio comparable to long-acting benzodiazepines, especially upon nighttime awakening for micturition when residual ataxia is elevated.",
+      "plainText": "Sleeping pills (Z-drugs) cause residual morning unsteadiness and grogginess, leading to serious trips and falls when getting up at night.",
+      "rationale": "Rapid onset cerebellar-vestibular psychomotor slowing and nocturnal disorientation.",
+      "source": "AGS Beers Criteria 2023"
+    },
+    {
+      "id": "dd-falls-anticholinergic",
+      "conditionKeywords": [
+        "history of falls",
+        "falls",
+        "balance",
+        "fall risk",
+        "ataxia"
+      ],
+      "drugMatch": [
+        "amitriptyline",
+        "hydroxyzine",
+        "diphenhydramine",
+        "chlorpheniramine",
+        "oxybutynin"
+      ],
+      "severity": "CRITICAL",
+      "title": "Anticholinergic with Fall History · Sedation & Blurred Vision",
+      "clinicalText": "Anticholinergics cause pupillary dilation (mydriasis), blurred vision, orthostasis, and central sedation, directly contributing to trip-and-fall hazards in ambulatory older adults.",
+      "plainText": "This medication causes blurred vision, dizziness upon standing, and drowsiness, greatly increasing the danger of tripping and falling.",
+      "rationale": "Combination of cycloplegia, orthostatic hypotension, and central psychomotor impairment.",
+      "source": "AGS Beers Criteria 2023"
+    },
+    {
+      "id": "dd-falls-alpha-blocker",
+      "conditionKeywords": [
+        "history of falls",
+        "falls",
+        "balance",
+        "fall risk",
+        "ataxia"
+      ],
+      "drugMatch": [
+        "prazosin",
+        "doxazosin",
+        "terazosin"
+      ],
+      "severity": "MAJOR",
+      "title": "Non-Selective Alpha-1 Blocker with Fall History · Orthostatic Syncope",
+      "clinicalText": "Peripherally acting alpha-1 blockers produce prominent first-dose and maintenance orthostatic hypotension, causing transient cerebral hypoperfusion and syncopal falls.",
+      "plainText": "Alpha-blockers can cause a sudden blood pressure drop when you stand up from a bed or chair, leading to dizziness, blackouts, and falls.",
+      "rationale": "Sympathetic vascular tone inhibition preventing reflex vasoconstriction on standing.",
+      "source": "AGS Beers Criteria 2023"
+    },
+    {
+      "id": "dd-falls-antipsychotic",
+      "conditionKeywords": [
+        "history of falls",
+        "falls",
+        "balance",
+        "fall risk",
+        "ataxia"
+      ],
+      "drugMatch": [
+        "haloperidol",
+        "risperidone",
+        "olanzapine",
+        "quetiapine"
+      ],
+      "severity": "CRITICAL",
+      "title": "Antipsychotic with Fall History · Extrapyramidal Gait Instability",
+      "clinicalText": "Antipsychotics cause dopamine receptor antagonism leading to drug-induced parkinsonism, muscle rigidity, akathisia, and orthostatic hypotension, compounding fall injury risk.",
+      "plainText": "Antipsychotic medications cause muscle stiffness, balance problems, and sudden lightheadedness that lead to dangerous falls in older adults.",
+      "rationale": "Extrapyramidal motor dysfunction combined with alpha-1 adrenergic blockade.",
+      "source": "AGS Beers Criteria 2023 / STOPP v3"
+    },
+    {
+      "id": "dd-falls-opioid",
+      "conditionKeywords": [
+        "history of falls",
+        "falls",
+        "balance",
+        "fall risk",
+        "ataxia"
+      ],
+      "drugMatch": [
+        "tramadol",
+        "codeine",
+        "morphine",
+        "oxycodone",
+        "fentanyl"
+      ],
+      "severity": "CRITICAL",
+      "title": "Opioid Analgesic with Fall History · Central Sedation & Balance Loss",
+      "clinicalText": "Opioids produce central nervous system depression, dizziness, blurred vision, and cognitive clouding, directly increasing fall-related trauma and fractures in older adults.",
+      "plainText": "Opioid painkillers slow reflexes and cause dizziness and drowsiness. In patients with past falls, they significantly increase the chance of another injury.",
+      "rationale": "Central mu-opioid stimulation impairs vestibular and motor reflexes.",
+      "source": "AGS Beers Criteria 2023"
+    },
+    {
+      "id": "dd-falls-gabapentinoid",
+      "conditionKeywords": [
+        "history of falls",
+        "falls",
+        "balance",
+        "fall risk",
+        "ataxia"
+      ],
+      "drugMatch": [
+        "gabapentin",
+        "pregabalin"
+      ],
+      "severity": "MAJOR",
+      "title": "Gabapentinoid with Fall History · Ataxia & Vestibular Dizziness",
+      "clinicalText": "Gabapentin and pregabalin inhibit presynaptic voltage-gated calcium channels; dose-dependent somnolence, dizziness, and peripheral edema frequently precipitate falls in geriatric patients.",
+      "plainText": "Nerve pain medicines (Pregabalin / Gabapentin) commonly cause dizziness and unsteady walking. Extra caution and fall prevention measures are required.",
+      "rationale": "Presynaptic calcium channel modulation in cerebellar and vestibular pathways.",
+      "source": "AGS Beers Criteria 2023"
+    },
+    {
+      "id": "dd-liver-paracetamol",
+      "conditionKeywords": [
+        "liver",
+        "hepatic",
+        "cirrhosis",
+        "hepatitis",
+        "fatty liver"
+      ],
+      "drugMatch": [
+        "paracetamol",
+        "acetaminophen"
+      ],
+      "severity": "MAJOR",
+      "title": "Paracetamol in Hepatic Impairment · Glutathione Depletion Caution",
+      "clinicalText": "In severe liver disease or cirrhosis, hepatic glutathione reserves are depleted, reducing detoxication of the reactive metabolite NAPQI and increasing hepatotoxicity risk at standard doses.",
+      "plainText": "You have a liver condition and take Paracetamol. Because your liver's protective antioxidants are reduced, do not exceed 2,000 mg (2 grams) per day across all medicines.",
+      "rationale": "Impaired glucuronidation and depleted glutathione shift paracetamol metabolism toward toxic CYP2E1 oxidation.",
+      "source": "FDA Hepatotoxicity Advisory / AASLD Guidelines"
+    },
+    {
+      "id": "dd-liver-statin",
+      "conditionKeywords": [
+        "liver",
+        "hepatic",
+        "cirrhosis",
+        "hepatitis"
+      ],
+      "drugMatch": [
+        "atorvastatin",
+        "simvastatin",
+        "rosuvastatin",
+        "lovastatin"
+      ],
+      "severity": "MODERATE",
+      "title": "Statin in Active Hepatic Dysfunction · Transaminase Monitoring",
+      "clinicalText": "Statins undergo extensive first-pass hepatic metabolism. While safe in stable NAFLD/NASH, active acute hepatitis or decompensated cirrhosis requires cautious dosing and LFT monitoring.",
+      "plainText": "Your statin cholesterol medication is processed by your liver. In active liver issues, routine liver function blood tests are needed to ensure safety.",
+      "rationale": "Altered hepatic uptake transporters (OATP) and reduced CYP metabolism increase systemic statin bioavailability.",
+      "source": "National Lipid Association Statin Safety Guidance"
+    },
+    {
+      "id": "dd-liver-sedative",
+      "conditionKeywords": [
+        "liver",
+        "hepatic",
+        "cirrhosis",
+        "hepatitis"
+      ],
+      "drugMatch": [
+        "diazepam",
+        "chlordiazepoxide",
+        "flurazepam"
+      ],
+      "severity": "CRITICAL",
+      "title": "Long-Acting Benzodiazepine in Liver Disease · Hepatic Encephalopathy",
+      "clinicalText": "Long-acting benzodiazepines undergo hepatic oxidative metabolism (CYP) with prolonged elimination half-lives in cirrhosis, precipitating or worsening hepatic encephalopathy and coma.",
+      "plainText": "Long-acting sedatives take days to clear from an impaired liver, building up toxic levels that cause severe confusion, stupor, and hepatic encephalopathy.",
+      "rationale": "Severe clearance reduction of parent drug and active desmethyl metabolites.",
+      "source": "AASLD / EASL Hepatic Encephalopathy Guidelines"
+    },
+    {
+      "id": "dd-liver-methotrexate",
+      "conditionKeywords": [
+        "liver",
+        "hepatic",
+        "cirrhosis",
+        "hepatitis"
+      ],
+      "drugMatch": [
+        "methotrexate"
+      ],
+      "severity": "CRITICAL",
+      "title": "Methotrexate in Hepatic Disease · Progressive Fibrosis & Cirrhosis",
+      "clinicalText": "Methotrexate possesses intrinsic hepatotoxic potential, inducing stellate cell activation, portal tract inflammation, and progressive liver fibrosis and cirrhosis.",
+      "plainText": "Methotrexate can cause progressive scarring and liver damage. It is strictly contraindicated in patients with significant pre-existing liver disease.",
+      "rationale": "Metabolic accumulation of polyglutamated metabolites in hepatocytes inducing fibrogenesis.",
+      "source": "ACR Rheumatoid Arthritis Practice Guidelines"
+    },
+    {
+      "id": "dd-liver-anticoagulant",
+      "conditionKeywords": [
+        "liver",
+        "hepatic",
+        "cirrhosis",
+        "hepatitis"
+      ],
+      "drugMatch": [
+        "warfarin",
+        "acenocoumarol",
+        "rivaroxaban"
+      ],
+      "severity": "CRITICAL",
+      "title": "Oral Anticoagulant in Liver Disease · Supratherapeutic Bleeding Risk",
+      "clinicalText": "Impaired hepatic synthesis of baseline clotting factors (II, VII, IX, X) coupled with reduced drug clearance produces unpredictable, supratherapeutic anticoagulation and catastrophic bleeding.",
+      "plainText": "Your liver naturally produces the proteins that help your blood clot. Taking blood thinners with liver disease creates an extreme risk of severe internal bleeding.",
+      "rationale": "Additive synthetic liver failure and impaired pharmacological clearance.",
+      "source": "AASLD Coagulopathy in Cirrhosis Guidance"
+    },
+    {
+      "id": "dd-ulcer-nsaid",
+      "conditionKeywords": [
+        "peptic ulcer",
+        "ulcer",
+        "gi bleed",
+        "gastric ulcer",
+        "gastritis"
+      ],
+      "drugMatch": [
+        "ibuprofen",
+        "naproxen",
+        "diclofenac",
+        "aceclofenac",
+        "indomethacin",
+        "ketorolac",
+        "piroxicam",
+        "meloxicam",
+        "mefenamic acid"
+      ],
+      "severity": "CRITICAL",
+      "title": "NSAID with Peptic Ulcer History · Severe Recurrent Perforation Risk",
+      "clinicalText": "Systemic COX-1 inhibition depletes cytoprotective gastric mucosal prostaglandins, leading to high rates of recurrent peptic ulceration, life-threatening gastrointestinal hemorrhage, and perforation.",
+      "plainText": "You have a history of stomach ulcers or gastrointestinal bleeding. NSAID pain relievers directly attack your stomach lining and can trigger severe bleeding ulcers.",
+      "rationale": "Depletion of gastric mucosal bicarbonate and mucus protective barriers.",
+      "source": "ACG Clinical Guideline: Bleeding Peptic Ulcer / AGS Beers 2023"
+    },
+    {
+      "id": "dd-ulcer-aspirin",
+      "conditionKeywords": [
+        "peptic ulcer",
+        "ulcer",
+        "gi bleed",
+        "gastric ulcer"
+      ],
+      "drugMatch": [
+        "aspirin"
+      ],
+      "severity": "CRITICAL",
+      "title": "Aspirin with Peptic Ulcer History · Gastric Mucosal Erosion",
+      "clinicalText": "Aspirin produces direct topical chemical injury to gastric mucosa and irreversible platelet inhibition, dramatically elevating the risk of severe upper gastrointestinal bleeding.",
+      "plainText": "Aspirin irritates the stomach lining and prevents blood clotting. With your ulcer history, you must take stomach-protective medicine (PPI) alongside or consult your doctor.",
+      "rationale": "Dual topical acid injury and systemic irreversible platelet COX-1 inhibition.",
+      "source": "ACG / AGA Gastrointestinal Bleeding Guidelines"
+    },
+    {
+      "id": "dd-ulcer-steroid",
+      "conditionKeywords": [
+        "peptic ulcer",
+        "ulcer",
+        "gi bleed",
+        "gastric ulcer"
+      ],
+      "drugMatch": [
+        "prednisolone",
+        "dexamethasone",
+        "methylprednisolone"
+      ],
+      "severity": "MAJOR",
+      "title": "Corticosteroid with Ulcer History · Impaired Mucosal Healing",
+      "clinicalText": "Glucocorticoids impair fibroblast proliferation and capillary endothelial growth, delaying ulcer healing and predisposing patients to ulcer reactivation and perforation.",
+      "plainText": "Steroids slow down your stomach lining's ability to heal and protect itself, increasing ulcer risk in patients with prior ulcer history.",
+      "rationale": "Anti-inflammatory suppression of tissue repair and angiogenesis.",
+      "source": "STOPP/START Criteria v3"
+    },
+    {
+      "id": "dd-ulcer-anticoagulant",
+      "conditionKeywords": [
+        "peptic ulcer",
+        "ulcer",
+        "gi bleed",
+        "gastric ulcer"
+      ],
+      "drugMatch": [
+        "warfarin",
+        "dabigatran",
+        "rivaroxaban",
+        "apixaban"
+      ],
+      "severity": "CRITICAL",
+      "title": "Anticoagulant with Ulcer History · Severe Gastrointestinal Hemorrhage",
+      "clinicalText": "Full-dose anticoagulation in patients with active or recent peptic ulceration produces severe, potentially fatal hemorrhage from unhealed vascular lesions in the stomach or duodenum.",
+      "plainText": "Blood thinners with an active or recent stomach ulcer can cause massive internal bleeding. Immediate medical evaluation and gastroprotection are critical.",
+      "rationale": "Systemic hemostatic suppression unmasks bleeding from underlying mucosal defects.",
+      "source": "AHA/ACC Antithrombotic Safety Guidelines"
+    },
+    {
+      "id": "dd-gout-thiazide",
+      "conditionKeywords": [
+        "gout",
+        "hyperuricemia",
+        "urate"
+      ],
+      "drugMatch": [
+        "hydrochlorothiazide",
+        "chlorthalidone",
+        "indapamide"
+      ],
+      "severity": "MAJOR",
+      "title": "Thiazide Diuretic in Gout · Hyperuricemia & Severe Flare Trigger",
+      "clinicalText": "Thiazide and thiazide-like diuretics compete with uric acid for organic anion transporters in the proximal tubule, reducing urate clearance and precipitating acute gouty flares.",
+      "plainText": "Thiazide water pills stop your kidneys from getting rid of uric acid, which can trigger painful acute gout attacks in your joints.",
+      "rationale": "Enhanced renal proximal tubular urate reabsorption secondary to volume contraction and OAT competition.",
+      "source": "ACR Guideline for the Management of Gout / STOPP Criteria v3"
+    }
+  ]
+}

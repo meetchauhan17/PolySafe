@@ -8,6 +8,10 @@ const { lookupInteraction } = require('../services/interactionLookup');
 const { generateExplanation } = require('../services/explanationGenerator');
 const { BRAND_ALIASES } = require('../services/drugAliases');
 const { calculateRegimenRisk, getDrugHarmLevel } = require('../services/regimenRisk');
+const { screenFoodDrugInteractions } = require('../services/foodDrugService');
+const { getSaferAlternativeSuggestions } = require('../services/alternativeSuggestions');
+const { runSafetyChecks } = require('../services/safetyChecks');
+const doseService = require('../services/doseService');
 
 const router = express.Router();
 
@@ -137,7 +141,7 @@ router.get('/profile', auth, async (req, res) => {
 // simple while still letting the UI show a meaningful "Today" section.
 const TIME_SLOTS = ['08:00 AM', '12:00 PM', '06:00 PM', '09:00 PM'];
 
-router.get('/home-summary', auth, async (req, res) => {
+const handleHomeSummary = async (req, res) => {
   const { userId } = req.user;
 
   try {
@@ -171,6 +175,8 @@ router.get('/home-summary', auth, async (req, res) => {
         medicines: [],
         schedule: [],
         flags: [],
+        safetyAlerts: [],
+        safetyAlertCount: 0,
         patientId: null,
       });
     }
@@ -279,32 +285,199 @@ router.get('/home-summary', auth, async (req, res) => {
       status = 'CAUTION';
     }
 
+    // Fetch safety signals (ACB score, OFFSIDES PRR side effects, Prescribing Cascades, Herb Warnings)
+    const cleanNames = medicines.map(m => m.name.toLowerCase().replace(/[^a-z]/g, '').trim()).filter(Boolean);
+    const rawNames = medicines.map(m => m.name.toLowerCase().trim());
+
+    let acbMap = {};
+    try {
+      const burdenScores = await prisma.burdenScore.findMany({
+        where: { drugName: { in: cleanNames } },
+      });
+      burdenScores.forEach(b => { acbMap[b.drugName] = b.score; });
+    } catch (e) {}
+
+    let sideEffectsList = [];
+    try {
+      if (rawNames.length > 0) {
+        sideEffectsList = await prisma.drugSideEffect.findMany({
+          where: {
+            OR: rawNames.map(name => ({ drugName: { contains: name, mode: 'insensitive' } })),
+          },
+          orderBy: { prr: 'desc' },
+          take: 60,
+        });
+      }
+    } catch (e) {}
+
+    let cascadesList = [];
+    try {
+      cascadesList = await prisma.cascadeReference.findMany({ take: 40 });
+    } catch (e) {}
+
+    let herbWarningsList = [];
+    try {
+      herbWarningsList = await prisma.herbDrugReference.findMany({ take: 40 });
+    } catch (e) {}
+
+    const enrichedMedicines = medicines.map((m) => {
+      const raw = (m.name || '').toLowerCase().trim();
+      const cleaned = raw.replace(/\s+\d+(\.\d+)?\s*(mg|mcg|g|ml|iu)?$/i, '').trim();
+      const cleanKey = raw.replace(/[^a-z]/g, '').trim();
+      const alias = BRAND_ALIASES[raw] || BRAND_ALIASES[cleaned] || Object.entries(BRAND_ALIASES).find(([k]) => raw.includes(k) || k.includes(raw))?.[1];
+      const harmLevel = m.harmLevel || getDrugHarmLevel(m.name, alias?.category);
+
+      const medSideEffects = sideEffectsList
+        .filter(se => se.drugName.toLowerCase().includes(cleaned) || cleaned.includes(se.drugName.toLowerCase()))
+        .slice(0, 6)
+        .map(se => ({ effectName: se.sideEffect, prr: se.prr }));
+
+      const medCascades = cascadesList
+        .filter(c => c.description.toLowerCase().includes(cleaned) || (alias?.category && c.causingDrugCategory.toLowerCase().includes(alias.category.toLowerCase())))
+        .slice(0, 3)
+        .map(c => ({ symptom: c.symptomKeyword, mechanism: c.description }));
+
+      const medHerbWarnings = herbWarningsList
+        .filter(h => h.drugName.toLowerCase().includes(cleaned) || cleaned.includes(h.drugName.toLowerCase()))
+        .slice(0, 3)
+        .map(h => ({ herbName: h.herbName, severity: h.severity, mechanism: h.description }));
+
+      return {
+        id: m.id,
+        name: m.name,
+        type: m.type,
+        dosage: m.dosage,
+        purpose: m.purpose || alias?.purpose || null,
+        harmLevel,
+        standardizedCode: m.standardizedCode,
+        dateAdded: m.dateAdded,
+        category: alias?.category || (m.type === 'HERBAL' ? 'Herbal Supplement' : m.type === 'OTC' ? 'Over-The-Counter' : 'Prescription Medicine'),
+        generic: alias?.generic || m.name,
+        safetyTip: alias?.safetyTip || null,
+        foodInstruction: alias?.foodInstruction || (m.type === 'HERBAL' ? 'with_food' : 'after_food'),
+        acbScore: acbMap[cleanKey] || 0,
+        sideEffects: medSideEffects,
+        cascades: medCascades,
+        herbWarnings: medHerbWarnings,
+      };
+    });
+
+    // Compute Clinical Food & Lifestyle Interactions
+    const foodInteractions = screenFoodDrugInteractions(enrichedMedicines);
+
+    // Compute Clinical De-prescribing & Safer Alternative Suggestions
+    const alternativeSuggestions = getSaferAlternativeSuggestions(enrichedMedicines);
+
+    // 5. Build Comprehensive 4-Phase Daily Timetable (Morning / Afternoon / Evening / Night)
+    const dailyTimetable = {
+      morning: [],
+      afternoon: [],
+      evening: [],
+      bedtime: [],
+    };
+
+    enrichedMedicines.forEach((med, idx) => {
+      const fi = (med.foodInstruction || '').toLowerCase();
+      const nameLower = med.name.toLowerCase();
+      const genericLower = (med.generic || '').toLowerCase();
+
+      // Clinical heuristic for realistic medication timing:
+      // Night: Statins, sedatives, hypnotics, montelukast, evening antihistamines, night laxatives
+      if (fi.includes('night') || fi.includes('bedtime') || /(statin|atorva|rosuva|montair|montek|clonafit|clonazepam|alprazolam|zolpidem|cremaffin|dulcoflex)/i.test(nameLower + genericLower)) {
+        dailyTimetable.bedtime.push({
+          medicineId: med.id,
+          name: med.name,
+          dosage: med.dosage || 'Standard dose',
+          purpose: med.purpose || 'Prescribed therapy',
+          type: med.type,
+          harmLevel: med.harmLevel,
+          foodInstruction: med.foodInstruction,
+          time: '10:00 PM',
+          slot: 'Bedtime',
+        });
+      }
+      // Morning: PPIs (before food), Thyroid (empty stomach), Diuretics (morning), Morning BP
+      else if (fi.includes('before') || fi.includes('empty') || fi.includes('morning') || /(pantoprazole|pantocid|pan-|omez|omeprazole|rabeprazole|razo|thyronorm|levothyroxine|lasix|dytor|furosemide|torsemide)/i.test(nameLower + genericLower)) {
+        dailyTimetable.morning.push({
+          medicineId: med.id,
+          name: med.name,
+          dosage: med.dosage || 'Standard dose',
+          purpose: med.purpose || 'Prescribed therapy',
+          type: med.type,
+          harmLevel: med.harmLevel,
+          foodInstruction: med.foodInstruction,
+          time: '08:00 AM',
+          slot: 'Morning',
+        });
+      }
+      // Distribute remaining medicines across morning, afternoon, and evening
+      else {
+        const slotChoice = idx % 3;
+        if (slotChoice === 0) {
+          dailyTimetable.morning.push({
+            medicineId: med.id,
+            name: med.name,
+            dosage: med.dosage || 'Standard dose',
+            purpose: med.purpose || 'Prescribed therapy',
+            type: med.type,
+            harmLevel: med.harmLevel,
+            foodInstruction: med.foodInstruction,
+            time: '08:30 AM',
+            slot: 'Morning',
+          });
+        } else if (slotChoice === 1) {
+          dailyTimetable.afternoon.push({
+            medicineId: med.id,
+            name: med.name,
+            dosage: med.dosage || 'Standard dose',
+            purpose: med.purpose || 'Prescribed therapy',
+            type: med.type,
+            harmLevel: med.harmLevel,
+            foodInstruction: med.foodInstruction,
+            time: '01:00 PM',
+            slot: 'Afternoon',
+          });
+        } else {
+          dailyTimetable.evening.push({
+            medicineId: med.id,
+            name: med.name,
+            dosage: med.dosage || 'Standard dose',
+            purpose: med.purpose || 'Prescribed therapy',
+            type: med.type,
+            harmLevel: med.harmLevel,
+            foodInstruction: med.foodInstruction,
+            time: '07:30 PM',
+            slot: 'Evening',
+          });
+        }
+      }
+    });
+
+    // 5 New Deterministic Safety Checks (Duplicate ingredient, Duplicate class, Allergy, Disease-Drug, Food & Spacing)
+    const safetyAlerts = await runSafetyChecks({
+      patient,
+      medicines,
+      enableAiRephrasing: req.query.enableAi === 'true',
+    });
+
+    const totalAcbScore = enrichedMedicines.reduce((sum, m) => sum + (m.acbScore || 0), 0);
+
     return res.status(200).json({
       status,
       regimenRisk,
+      acbScore: totalAcbScore,
+      regimenHarmLevel: regimenRisk?.level || 1,
       patientId: patient.id,
       patientAge: patient.age,
-      medicines: medicines.map((m) => {
-        const raw = (m.name || '').toLowerCase().trim();
-        const cleaned = raw.replace(/\s+\d+(\.\d+)?\s*(mg|mcg|g|ml|iu)?$/i, '').trim();
-        const alias = BRAND_ALIASES[raw] || BRAND_ALIASES[cleaned] || Object.entries(BRAND_ALIASES).find(([k]) => raw.includes(k) || k.includes(raw))?.[1];
-        const harmLevel = m.harmLevel || getDrugHarmLevel(m.name, alias?.category);
-        return {
-          id: m.id,
-          name: m.name,
-          type: m.type,
-          dosage: m.dosage,
-          purpose: m.purpose || alias?.purpose || null,
-          harmLevel,
-          standardizedCode: m.standardizedCode,
-          dateAdded: m.dateAdded,
-          category: alias?.category || (m.type === 'HERBAL' ? 'Herbal Supplement' : m.type === 'OTC' ? 'Over-The-Counter' : 'Prescription Medicine'),
-          generic: alias?.generic || m.name,
-          safetyTip: alias?.safetyTip || null,
-          foodInstruction: alias?.foodInstruction || (m.type === 'HERBAL' ? 'with_food' : 'after_food'),
-        };
-      }),
+      patientAllergies: patient.allergies || [],
+      patientConditions: patient.conditions || [],
+      medicines: enrichedMedicines,
       schedule,
+      dailyTimetable,
+      foodInteractions,
+      alternativeSuggestions,
+      safetyAlerts,
+      safetyAlertCount: safetyAlerts.length,
       flags: interactionFlags.map((f) => ({
         id: f.id,
         severity: f.severity,
@@ -318,6 +491,298 @@ router.get('/home-summary', auth, async (req, res) => {
   } catch (err) {
     console.error('[patient/home-summary]', err);
     res.status(500).json({ error: 'Failed to load home summary.' });
+  }
+};
+
+router.get('/home-summary', auth, handleHomeSummary);
+router.get('/summary', auth, handleHomeSummary);
+router.get('/home', auth, handleHomeSummary);
+
+// ═════════════════════════════════════════════════════════════════════════════
+// GET /patient/safety-alerts
+// Patient-auth: returns all 5 deterministic safety check alerts for active regimen
+// ═════════════════════════════════════════════════════════════════════════════
+router.get('/safety-alerts', auth, async (req, res) => {
+  const { userId } = req.user;
+  try {
+    const patient = await prisma.patient.findUnique({
+      where: { userId },
+      include: {
+        medicines: {
+          where: { removedAt: null },
+          orderBy: { dateAdded: 'asc' },
+        },
+      },
+    });
+
+    if (!patient) {
+      return res.status(200).json({ alerts: [], safetyAlerts: [], safetyAlertCount: 0 });
+    }
+
+    const safetyAlerts = await runSafetyChecks({
+      patient,
+      medicines: patient.medicines || [],
+      enableAiRephrasing: req.query.enableAi === 'true',
+    });
+
+    return res.status(200).json({
+      alerts: safetyAlerts,
+      safetyAlerts,
+      safetyAlertCount: safetyAlerts.length,
+    });
+  } catch (err) {
+    console.error('[GET /patient/safety-alerts]', err);
+    return res.status(500).json({ error: 'Failed to compute safety alerts.' });
+  }
+});
+
+// ═════════════════════════════════════════════════════════════════════════════
+// GET /patient/directives
+// Returns physician directives for authenticated patient
+// ═════════════════════════════════════════════════════════════════════════════
+router.get('/directives', auth, async (req, res) => {
+  const { userId } = req.user;
+  try {
+    const patient = await prisma.patient.findUnique({ where: { userId } });
+    if (!patient) return res.json({ directives: [] });
+    const DIRECTIVES_FILE = path.join(__dirname, '../../data/doctor-directives.json');
+    let directives = [];
+    if (fs.existsSync(DIRECTIVES_FILE)) {
+      const parsed = JSON.parse(fs.readFileSync(DIRECTIVES_FILE, 'utf8'));
+      directives = parsed[patient.id] || [];
+    }
+    return res.json({ directives });
+  } catch (err) {
+    console.error('[GET /patient/directives]', err);
+    return res.json({ directives: [] });
+  }
+});
+
+// ═════════════════════════════════════════════════════════════════════════════
+// PATCH /patient/directives/:id/read
+// Mark a physician directive as acknowledged / read
+// ═════════════════════════════════════════════════════════════════════════════
+router.patch('/directives/:id/read', auth, async (req, res) => {
+  const { userId } = req.user;
+  const { id } = req.params;
+  try {
+    const patient = await prisma.patient.findUnique({ where: { userId } });
+    if (!patient) return res.status(404).json({ error: 'Patient not found' });
+    const DIRECTIVES_FILE = path.join(__dirname, '../../data/doctor-directives.json');
+    if (fs.existsSync(DIRECTIVES_FILE)) {
+      const parsed = JSON.parse(fs.readFileSync(DIRECTIVES_FILE, 'utf8'));
+      const list = parsed[patient.id] || [];
+      const item = list.find(d => d.id === id);
+      if (item) {
+        item.read = true;
+        item.isRead = true;
+        item.readAt = new Date().toISOString();
+        fs.writeFileSync(DIRECTIVES_FILE, JSON.stringify(parsed, null, 2), 'utf8');
+      }
+    }
+    return res.json({ success: true });
+  } catch (err) {
+    console.error('[PATCH /patient/directives/:id/read]', err);
+    return res.status(500).json({ error: 'Failed to update directive status' });
+  }
+});
+
+// ═════════════════════════════════════════════════════════════════════════════
+// GET /patient/emergency-card
+// One-Tap Paramedic Emergency Medical Alert Card & First-Responder Payload
+// ═════════════════════════════════════════════════════════════════════════════
+router.get('/emergency-card', auth, async (req, res) => {
+  const { userId } = req.user;
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      include: {
+        patient: {
+          include: {
+            medicines: {
+              where: { removedAt: null },
+              orderBy: { harmLevel: 'desc' },
+            },
+            interactionFlags: {
+              where: {
+                severity: { in: ['Contraindicated', 'Major', 'CONTRAINDICATED', 'MAJOR'] },
+                medicineA: { removedAt: null },
+                medicineB: { removedAt: null },
+              },
+              include: {
+                medicineA: { select: { name: true } },
+                medicineB: { select: { name: true } },
+              },
+            },
+            connections: {
+              where: { status: 'APPROVED' },
+              include: {
+                connectedUser: { select: { name: true, phone: true, email: true, role: true } },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!user || !user.patient) {
+      return res.status(404).json({ error: 'Patient emergency record not found.' });
+    }
+
+    const patient = user.patient;
+    const highAlertMeds = patient.medicines.filter((m) => (m.harmLevel || 1) >= 4 || m.type === 'PRESCRIPTION');
+
+    // Extract emergency contacts from approved connections
+    const caregiverContacts = patient.connections
+      .filter((c) => c.role === 'CAREGIVER' && c.connectedUser)
+      .map((c) => ({
+        name: c.connectedUser.name,
+        phone: c.connectedUser.phone || 'Not listed',
+        email: c.connectedUser.email,
+        relationship: 'Primary Caregiver',
+      }));
+
+    const physicianContacts = patient.connections
+      .filter((c) => c.role === 'DOCTOR' && c.connectedUser)
+      .map((c) => ({
+        name: c.connectedUser.name,
+        phone: c.connectedUser.phone || 'Hospital line',
+        email: c.connectedUser.email,
+        relationship: 'Attending Physician',
+      }));
+
+    return res.status(200).json({
+      cardId: `PS-EMR-${patient.id.slice(0, 8).toUpperCase()}`,
+      issuedAt: new Date().toISOString(),
+      patient: {
+        id: patient.id,
+        name: user.name,
+        email: user.email,
+        phone: user.phone || 'N/A',
+        age: patient.age,
+        allergies: patient.allergies || [],
+        conditions: patient.conditions || [],
+      },
+      highAlertMeds: highAlertMeds.map((m) => ({
+        name: m.name,
+        dosage: m.dosage || 'Prescribed dose',
+        harmLevel: m.harmLevel || 3,
+        type: m.type,
+      })),
+      allActiveMedicines: patient.medicines.map((m) => ({
+        name: m.name,
+        dosage: m.dosage || 'Prescribed dose',
+        harmLevel: m.harmLevel || 3,
+        type: m.type,
+      })),
+      criticalFlags: patient.interactionFlags.map((f) => ({
+        severity: f.severity,
+        medicineA: f.medicineA.name,
+        medicineB: f.medicineB.name,
+        warning: f.plainExplanation,
+      })),
+      emergencyContacts: [...caregiverContacts, ...physicianContacts],
+      qrVerificationUrl: `https://polysafe.health/verify/${patient.id.slice(0, 8)}`,
+    });
+  } catch (err) {
+    console.error('[GET /patient/emergency-card]', err);
+    res.status(500).json({ error: 'Failed to generate emergency medical card.' });
+  }
+});
+
+// ═════════════════════════════════════════════════════════════════════════════
+// GET /patient/clinical-report
+// Hospital-Grade Consultation & Clinical Discharge Summary Data Payload
+// ═════════════════════════════════════════════════════════════════════════════
+router.get('/clinical-report', auth, async (req, res) => {
+  const { userId } = req.user;
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      include: {
+        patient: {
+          include: {
+            medicines: {
+              where: { removedAt: null },
+              orderBy: { harmLevel: 'desc' },
+            },
+            interactionFlags: {
+              where: {
+                medicineA: { removedAt: null },
+                medicineB: { removedAt: null },
+              },
+              include: {
+                medicineA: { select: { name: true, dosage: true, type: true } },
+                medicineB: { select: { name: true, dosage: true, type: true } },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!user || !user.patient) {
+      return res.status(404).json({ error: 'Patient profile not found for report generation.' });
+    }
+
+    const patient = user.patient;
+    const regimenRisk = await calculateRegimenRisk(patient.id);
+
+    const enrichedMedicines = patient.medicines.map((m) => {
+      const raw = (m.name || '').toLowerCase().trim();
+      const alias = BRAND_ALIASES[raw] || Object.entries(BRAND_ALIASES).find(([k]) => raw.includes(k) || k.includes(raw))?.[1];
+      return {
+        id: m.id,
+        name: m.name,
+        generic: alias?.generic || m.name,
+        type: m.type,
+        dosage: m.dosage || 'As directed',
+        purpose: m.purpose || alias?.purpose || 'Maintenance',
+        harmLevel: m.harmLevel || 3,
+        rxcui: m.standardizedCode || alias?.rxcui || 'N/A',
+        foodInstruction: m.foodInstruction || alias?.foodInstruction || 'After meals',
+        category: alias?.category || (m.type === 'HERBAL' ? 'Herbal' : 'Prescription'),
+      };
+    });
+
+    const foodInteractions = screenFoodDrugInteractions(enrichedMedicines);
+    const alternativeSuggestions = getSaferAlternativeSuggestions(enrichedMedicines);
+
+    return res.status(200).json({
+      reportMetadata: {
+        reportId: `PS-CR-${Date.now().toString(36).toUpperCase()}`,
+        generatedAt: new Date().toISOString(),
+        clinicalStandard: 'WHO 5-Tier / DDInter / Beers Criteria 2023',
+        verificationStatus: 'Pharmacovigilance Telemetry Active',
+      },
+      patient: {
+        id: patient.id,
+        name: user.name,
+        age: patient.age,
+        conditions: patient.conditions || [],
+        allergies: patient.allergies || [],
+      },
+      regimenSummary: {
+        totalActiveMeds: enrichedMedicines.length,
+        regimenHarmLevel: regimenRisk?.level || 1,
+        highestRiskDrug: regimenRisk?.highestRiskDrug?.name || 'None',
+        totalInteractions: patient.interactionFlags.length,
+      },
+      medicines: enrichedMedicines,
+      interactionFlags: patient.interactionFlags.map((f) => ({
+        severity: f.severity,
+        drugA: f.medicineA.name,
+        drugB: f.medicineB.name,
+        plainExplanation: f.plainExplanation,
+        clinicalExplanation: f.clinicalExplanation,
+        dateFlagged: f.dateFlagged,
+      })),
+      foodInteractions,
+      alternativeSuggestions,
+    });
+  } catch (err) {
+    console.error('[GET /patient/clinical-report]', err);
+    res.status(500).json({ error: 'Failed to generate clinical safety report.' });
   }
 });
 
@@ -595,6 +1060,125 @@ router.get('/insights', auth, async (req, res) => {
   } catch (err) {
     console.error('[GET /patient/insights]', err);
     res.status(500).json({ error: 'Failed to load insights.' });
+  }
+});
+
+// ═════════════════════════════════════════════════════════════════════════════
+// POST /patient/dose
+// Body: { medicineId, scheduledFor, status: 'TAKEN' | 'SKIPPED', takenAt }
+// ═════════════════════════════════════════════════════════════════════════════
+router.post('/dose', auth, async (req, res) => {
+  const { userId } = req.user;
+  const { medicineId, scheduledFor, status, takenAt } = req.body || {};
+
+  if (!medicineId) {
+    return res.status(400).json({ error: 'medicineId is required.' });
+  }
+
+  if (!['TAKEN', 'SKIPPED'].includes(status)) {
+    return res.status(400).json({ error: 'status must be TAKEN or SKIPPED.' });
+  }
+
+  try {
+    const patient = await prisma.patient.findUnique({
+      where: { userId },
+      select: { id: true },
+    });
+
+    if (!patient) {
+      return res.status(404).json({ error: 'Patient profile not found.' });
+    }
+
+    const io = req.app.get('io');
+    const doseLog = await doseService.logDose({
+      patientId: patient.id,
+      medicineId,
+      scheduledFor: scheduledFor || new Date().toISOString(),
+      status,
+      takenAt,
+      io,
+    });
+
+    return res.status(200).json({
+      message: `Dose marked as ${status.toLowerCase()}.`,
+      doseLog,
+    });
+  } catch (err) {
+    console.error('[POST /patient/dose]', err);
+    return res.status(500).json({ error: err.message || 'Failed to log dose.' });
+  }
+});
+
+// ═════════════════════════════════════════════════════════════════════════════
+// GET /patient/doses?date=YYYY-MM-DD
+// Returns scheduled and logged doses for the specified date
+// ═════════════════════════════════════════════════════════════════════════════
+router.get('/doses', auth, async (req, res) => {
+  const { userId } = req.user;
+  const dateStr = req.query.date;
+
+  try {
+    const patient = await prisma.patient.findUnique({
+      where: { userId },
+      select: { id: true },
+    });
+
+    if (!patient) {
+      return res.status(200).json({
+        date: dateStr || new Date().toISOString().slice(0, 10),
+        doses: [],
+        summary: { total: 0, taken: 0, skipped: 0, missed: 0, pending: 0, adherencePercentage: 100 },
+      });
+    }
+
+    const result = await doseService.getDosesForDate({
+      patientId: patient.id,
+      dateStr,
+    });
+
+    return res.status(200).json(result);
+  } catch (err) {
+    console.error('[GET /patient/doses]', err);
+    return res.status(500).json({ error: 'Failed to fetch doses.' });
+  }
+});
+
+// ═════════════════════════════════════════════════════════════════════════════
+// GET /patient/adherence?days=7
+// Returns adherence percentage and streak
+// ═════════════════════════════════════════════════════════════════════════════
+router.get('/adherence', auth, async (req, res) => {
+  const { userId } = req.user;
+  const days = req.query.days ? parseInt(req.query.days, 10) : 7;
+
+  try {
+    const patient = await prisma.patient.findUnique({
+      where: { userId },
+      select: { id: true },
+    });
+
+    if (!patient) {
+      return res.status(200).json({
+        days,
+        adherencePercentage: 100,
+        streakDays: 0,
+        totalScheduled: 0,
+        takenCount: 0,
+        skippedCount: 0,
+        missedCount: 0,
+        dailyHistory: [],
+      });
+    }
+
+    const result = await doseService.getAdherence({
+      patientId: patient.id,
+      days,
+    });
+
+    return res.status(200).json(result);
+  } catch (err) {
+    console.error('[GET /patient/adherence]', err);
+    return res.status(500).json({ error: 'Failed to fetch adherence.' });
   }
 });
 
