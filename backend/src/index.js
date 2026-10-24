@@ -128,18 +128,21 @@ io.on('connection', (socket) => {
 });
 
 // ─── Overdue Dose Sweeper Job (MISSED Status) ─────────────────────────────────
-const { checkOverdueDoses } = require('./services/doseService');
-const isFastDoseTiming = process.env.DEMO_DOSE_TIMING === 'fast';
-const DOSE_CHECK_INTERVAL = isFastDoseTiming ? 10 * 1000 : 5 * 60 * 1000;
+// Only run interval jobs in long-running server mode, not in serverless
+if (require.main === module) {
+  const { checkOverdueDoses } = require('./services/doseService');
+  const isFastDoseTiming = process.env.DEMO_DOSE_TIMING === 'fast';
+  const DOSE_CHECK_INTERVAL = isFastDoseTiming ? 10 * 1000 : 5 * 60 * 1000;
 
-setInterval(() => {
-  checkOverdueDoses(io);
-}, DOSE_CHECK_INTERVAL);
+  setInterval(() => {
+    checkOverdueDoses(io);
+  }, DOSE_CHECK_INTERVAL);
 
-// Run initial check after 5 seconds on startup
-setTimeout(() => {
-  checkOverdueDoses(io);
-}, 5000);
+  // Run initial check after 5 seconds on startup
+  setTimeout(() => {
+    checkOverdueDoses(io);
+  }, 5000);
+}
 
 const PORT = process.env.PORT || 5000;
 if (require.main === module) {
