@@ -142,8 +142,14 @@ setTimeout(() => {
 }, 5000);
 
 const PORT = process.env.PORT || 5000;
-server.listen(PORT, '0.0.0.0', () => {
-  console.log(`PolySafe Backend → http://0.0.0.0:${PORT}`);
-  console.log(`Email OTP: ${process.env.SMTP_USER ? `SMTP Live (${process.env.SMTP_USER})` : (process.env.RESEND_API_KEY ? 'Resend Live' : 'Console Stub')}`);
-  console.log(`Dose Sweeper Active (Timing: ${isFastDoseTiming ? 'FAST (10s interval, 1m overdue)' : 'Standard (5m interval, 60m overdue)'})`);
-});
+if (require.main === module) {
+  server.listen(PORT, '0.0.0.0', () => {
+    console.log(`PolySafe Backend → http://0.0.0.0:${PORT}`);
+    console.log(`Email OTP: ${process.env.SMTP_USER ? `SMTP Live (${process.env.SMTP_USER})` : (process.env.RESEND_API_KEY ? 'Resend Live' : 'Console Stub')}`);
+    console.log(`Dose Sweeper Active (Timing: ${isFastDoseTiming ? 'FAST (10s interval, 1m overdue)' : 'Standard (5m interval, 60m overdue)'})`);
+  });
+}
+
+module.exports = app;
+
+
