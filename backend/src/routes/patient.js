@@ -18,6 +18,7 @@ const router = express.Router();
 // ─── Zod Schemas ─────────────────────────────────────────────────────────────
 
 const profileSchema = z.object({
+  name: z.string().trim().min(2, 'Name must be at least 2 characters').max(100).optional(),
   age: z
     .number({ required_error: 'Age is required.' })
     .int()
@@ -77,6 +78,16 @@ router.post('/profile', auth, async (req, res) => {
       return res.status(404).json({ error: 'User account not found.' });
     }
 
+    // If name is provided, update the User record as well
+    let updatedUserName = user.name;
+    if (data.name && data.name !== user.name) {
+      const updatedUser = await prisma.user.update({
+        where: { id: userId },
+        data: { name: data.name },
+      });
+      updatedUserName = updatedUser.name;
+    }
+
     // Upsert Patient — create if new, update if onboarding again (e.g., editing profile)
     const patient = await prisma.patient.upsert({
       where: { userId },
@@ -95,6 +106,7 @@ router.post('/profile', auth, async (req, res) => {
 
     return res.status(200).json({
       message: 'Patient profile saved.',
+      name: updatedUserName,
       patient: {
         id: patient.id,
         userId: patient.userId,
@@ -141,11 +153,75 @@ router.get('/profile', auth, async (req, res) => {
 // simple while still letting the UI show a meaningful "Today" section.
 const TIME_SLOTS = ['08:00 AM', '12:00 PM', '06:00 PM', '09:00 PM'];
 
+// In-memory cache for static reference tables to avoid repeated slow network round trips
+let _cachedCascades = null;
+let _cachedHerbRefs = null;
+let _cachedBurdenMap = null;
+let _hasDrugSideEffects = null;
+let _cachedRefExpiry = 0;
+
+async function getCachedCascades() {
+  const now = Date.now();
+  if (_cachedCascades && now < _cachedRefExpiry) return _cachedCascades;
+  try {
+    _cachedCascades = await prisma.cascadeReference.findMany({ take: 60 });
+    _cachedRefExpiry = now + 30 * 60 * 1000;
+    return _cachedCascades;
+  } catch {
+    return _cachedCascades || [];
+  }
+}
+
+async function getCachedHerbRefs() {
+  const now = Date.now();
+  if (_cachedHerbRefs && now < _cachedRefExpiry) return _cachedHerbRefs;
+  try {
+    _cachedHerbRefs = await prisma.herbDrugReference.findMany({ take: 60 });
+    _cachedRefExpiry = now + 30 * 60 * 1000;
+    return _cachedHerbRefs;
+  } catch {
+    return _cachedHerbRefs || [];
+  }
+}
+
+async function getCachedBurdenMap() {
+  const now = Date.now();
+  if (_cachedBurdenMap && now < _cachedRefExpiry) return _cachedBurdenMap;
+  try {
+    const scores = await prisma.burdenScore.findMany({ select: { drugName: true, score: true } });
+    const map = {};
+    scores.forEach((b) => { map[b.drugName.toLowerCase()] = b.score; });
+    _cachedBurdenMap = map;
+    _cachedRefExpiry = now + 30 * 60 * 1000;
+    return _cachedBurdenMap;
+  } catch {
+    return _cachedBurdenMap || {};
+  }
+}
+
+async function getDrugSideEffects(rawNames) {
+  if (_hasDrugSideEffects === false || !rawNames.length) return [];
+  try {
+    if (_hasDrugSideEffects === null) {
+      const c = await prisma.drugSideEffect.count();
+      _hasDrugSideEffects = c > 0;
+      if (!_hasDrugSideEffects) return [];
+    }
+    return await prisma.drugSideEffect.findMany({
+      where: { OR: rawNames.map(name => ({ drugName: { contains: name, mode: 'insensitive' } })) },
+      orderBy: { prr: 'desc' },
+      take: 60,
+    });
+  } catch {
+    return [];
+  }
+}
+
 const handleHomeSummary = async (req, res) => {
   const { userId } = req.user;
 
   try {
-    // 1. Find the patient row
+    // 1. Find the patient row with flat includes (avoids multiple slow network round-trips for nested relations)
     const patient = await prisma.patient.findUnique({
       where: { userId },
       include: {
@@ -154,14 +230,6 @@ const handleHomeSummary = async (req, res) => {
           orderBy: { dateAdded: 'asc' },
         },
         interactionFlags: {
-          where: {
-            medicineA: { removedAt: null },
-            medicineB: { removedAt: null },
-          },
-          include: {
-            medicineA: { select: { id: true, name: true, type: true, dosage: true } },
-            medicineB: { select: { id: true, name: true, type: true, dosage: true } },
-          },
           orderBy: { dateFlagged: 'desc' },
         },
       },
@@ -182,73 +250,81 @@ const handleHomeSummary = async (req, res) => {
     }
 
     const { medicines } = patient;
-    let interactionFlags = [...(patient.interactionFlags || [])];
+    const medMap = new Map(medicines.map((m) => [m.id, { id: m.id, name: m.name, type: m.type, dosage: m.dosage }]));
+    const interactionFlags = (patient.interactionFlags || [])
+      .filter((f) => medMap.has(f.medicineAId) && medMap.has(f.medicineBId))
+      .map((f) => ({
+        ...f,
+        medicineA: medMap.get(f.medicineAId),
+        medicineB: medMap.get(f.medicineBId),
+      }));
 
-    // Auto-reconcile pairwise DDInter interactions across active medicines
+    // Background reconciliation: verify any unflagged pairs without blocking the immediate HTTP response
     if (medicines.length >= 2) {
-      for (let i = 0; i < medicines.length; i++) {
-        for (let j = i + 1; j < medicines.length; j++) {
-          const medA = medicines[i];
-          const medB = medicines[j];
-          const alreadyFlagged = interactionFlags.some(
-            (f) =>
-              (f.medicineAId === medA.id && f.medicineBId === medB.id) ||
-              (f.medicineAId === medB.id && f.medicineBId === medA.id)
-          );
-          if (!alreadyFlagged) {
-            let match = await lookupInteraction(medA.name, medB.name);
-            let herbRef = null;
+      setImmediate(async () => {
+        try {
+          for (let i = 0; i < medicines.length; i++) {
+            for (let j = i + 1; j < medicines.length; j++) {
+              const medA = medicines[i];
+              const medB = medicines[j];
+              const alreadyFlagged = interactionFlags.some(
+                (f) =>
+                  (f.medicineAId === medA.id && f.medicineBId === medB.id) ||
+                  (f.medicineAId === medB.id && f.medicineBId === medA.id)
+              );
+              if (!alreadyFlagged) {
+                const match = await lookupInteraction(medA.name, medB.name);
+                let herbRef = null;
 
-            if (!match.found && (medA.type === 'HERBAL' || medB.type === 'HERBAL')) {
-              const herbMed = medA.type === 'HERBAL' ? medA : medB;
-              const drugMed = medA.type === 'HERBAL' ? medB : medA;
-              const allHerbRefs = await prisma.herbDrugReference.findMany();
-              const herbNameLower = herbMed.name.toLowerCase().trim();
-              const drugNameLower = drugMed.name.toLowerCase().trim();
+                if (!match.found && (medA.type === 'HERBAL' || medB.type === 'HERBAL')) {
+                  const herbMed = medA.type === 'HERBAL' ? medA : medB;
+                  const drugMed = medA.type === 'HERBAL' ? medB : medA;
+                  const allHerbRefs = await getCachedHerbRefs();
+                  const herbNameLower = herbMed.name.toLowerCase().trim();
+                  const drugNameLower = drugMed.name.toLowerCase().trim();
 
-              herbRef = allHerbRefs.find((ref) => {
-                const refHerb = ref.herbName.toLowerCase();
-                const refDrug = ref.drugName.toLowerCase();
-                const herbMatch = herbNameLower.includes(refHerb) || refHerb.includes(herbNameLower);
-                if (!herbMatch) return false;
-                return (
-                  drugNameLower.includes(refDrug) ||
-                  refDrug.includes(drugNameLower) ||
-                  refDrug.split(/\s+/).some((w) => w.length > 3 && drugNameLower.includes(w))
-                );
-              });
-            }
+                  herbRef = allHerbRefs.find((ref) => {
+                    const refHerb = ref.herbName.toLowerCase();
+                    const refDrug = ref.drugName.toLowerCase();
+                    const herbMatch = herbNameLower.includes(refHerb) || refHerb.includes(herbNameLower);
+                    if (!herbMatch) return false;
+                    return (
+                      drugNameLower.includes(refDrug) ||
+                      refDrug.includes(drugNameLower) ||
+                      refDrug.split(/\s+/).some((w) => w.length > 3 && drugNameLower.includes(w))
+                    );
+                  });
+                }
 
-            if (match.found || herbRef) {
-              const severity = match.found ? match.severity : herbRef.severity;
-              const explanation = await generateExplanation({
-                drugA: medA.name,
-                drugB: medB.name,
-                severity,
-                patientAge: patient.age,
-                patientConditions: patient.conditions || [],
-              });
-              const newFlag = await prisma.interactionFlag.create({
-                data: {
-                  patientId: patient.id,
-                  medicineAId: medA.id,
-                  medicineBId: medB.id,
-                  severity,
-                  clinicalExplanation: explanation.clinical || herbRef?.description,
-                  plainExplanation: explanation.plain || herbRef?.description,
-                  generatedBy: explanation.generatedBy ?? (herbRef ? 'herb-drug' : 'fallback'),
-                  dateFlagged: new Date(),
-                },
-                include: {
-                  medicineA: { select: { id: true, name: true, type: true, dosage: true } },
-                  medicineB: { select: { id: true, name: true, type: true, dosage: true } },
-                },
-              });
-              interactionFlags.push(newFlag);
+                if (match.found || herbRef) {
+                  const severity = match.found ? match.severity : herbRef.severity;
+                  const explanation = await generateExplanation({
+                    drugA: medA.name,
+                    drugB: medB.name,
+                    severity,
+                    patientAge: patient.age,
+                    patientConditions: patient.conditions || [],
+                  });
+                  await prisma.interactionFlag.create({
+                    data: {
+                      patientId: patient.id,
+                      medicineAId: medA.id,
+                      medicineBId: medB.id,
+                      severity,
+                      clinicalExplanation: explanation.clinical || herbRef?.description,
+                      plainExplanation: explanation.plain || herbRef?.description,
+                      generatedBy: explanation.generatedBy ?? (herbRef ? 'herb-drug' : 'fallback'),
+                      dateFlagged: new Date(),
+                    },
+                  });
+                }
+              }
             }
           }
+        } catch (bgErr) {
+          console.warn('[patient/home-summary background reconciliation]', bgErr?.message);
         }
-      }
+      });
     }
 
     // 2. Derive "today's schedule" from the active medicine list
@@ -268,8 +344,11 @@ const handleHomeSummary = async (req, res) => {
       date: today,
     }));
 
-    // 3. Compute WHO/NCI 5-Tier Regimen Risk
-    const regimenRisk = await calculateRegimenRisk(patient.id);
+    // 3. Compute WHO/NCI 5-Tier Regimen Risk using preloaded meds and flags (0ms redundant DB round trips)
+    const regimenRisk = await calculateRegimenRisk(patient.id, {
+      activeMeds: medicines,
+      activeFlags: interactionFlags,
+    });
 
     // 4. Determine overall status (integrates pairwise interaction flags + WHO/NCI regimen risk tier)
     const hasMajorFlag = interactionFlags.some(f =>
@@ -285,40 +364,17 @@ const handleHomeSummary = async (req, res) => {
       status = 'CAUTION';
     }
 
-    // Fetch safety signals (ACB score, OFFSIDES PRR side effects, Prescribing Cascades, Herb Warnings)
-    const cleanNames = medicines.map(m => m.name.toLowerCase().replace(/[^a-z]/g, '').trim()).filter(Boolean);
+    // Fetch safety signals concurrently in parallel with in-memory caching
     const rawNames = medicines.map(m => m.name.toLowerCase().trim());
 
-    let acbMap = {};
-    try {
-      const burdenScores = await prisma.burdenScore.findMany({
-        where: { drugName: { in: cleanNames } },
-      });
-      burdenScores.forEach(b => { acbMap[b.drugName] = b.score; });
-    } catch (e) {}
+    const [burdenMap, sideEffectsList, cascadesList, herbWarningsList] = await Promise.all([
+      getCachedBurdenMap(),
+      getDrugSideEffects(rawNames),
+      getCachedCascades(),
+      getCachedHerbRefs(),
+    ]);
 
-    let sideEffectsList = [];
-    try {
-      if (rawNames.length > 0) {
-        sideEffectsList = await prisma.drugSideEffect.findMany({
-          where: {
-            OR: rawNames.map(name => ({ drugName: { contains: name, mode: 'insensitive' } })),
-          },
-          orderBy: { prr: 'desc' },
-          take: 60,
-        });
-      }
-    } catch (e) {}
-
-    let cascadesList = [];
-    try {
-      cascadesList = await prisma.cascadeReference.findMany({ take: 40 });
-    } catch (e) {}
-
-    let herbWarningsList = [];
-    try {
-      herbWarningsList = await prisma.herbDrugReference.findMany({ take: 40 });
-    } catch (e) {}
+    const acbMap = burdenMap || {};
 
     const enrichedMedicines = medicines.map((m) => {
       const raw = (m.name || '').toLowerCase().trim();

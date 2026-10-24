@@ -1,7 +1,6 @@
-// src/components/Input.jsx
 import React, { forwardRef, useState, useId } from 'react';
 import { clsx } from 'clsx';
-import { AlertCircle, Check, ChevronDown } from 'lucide-react';
+import { AlertCircle, Check, ChevronDown, Eye, EyeOff } from 'lucide-react';
 
 const Input = forwardRef(function Input(
   {
@@ -16,6 +15,7 @@ const Input = forwardRef(function Input(
     iconRight,
     leftIcon,
     rightIcon,
+    showPasswordToggle = true,
     className,
     id,
     style,
@@ -34,9 +34,13 @@ const Input = forwardRef(function Input(
   const inputId = id || (label ? label.toLowerCase().replace(/[^a-z0-9]/g, '-') : `ps-input-${generatedId}`);
   const finalIcon = icon || leftIcon;
   const isNumeric = numeric || dose || type === 'number';
+  const isPasswordField = type === 'password';
 
   const [isFocused, setIsFocused] = useState(false);
   const [internalValue, setInternalValue] = useState(value ?? defaultValue ?? '');
+  const [showPassword, setShowPassword] = useState(false);
+
+  const actualType = isPasswordField ? (showPassword ? 'text' : 'password') : type;
 
   const hasValue = (value !== undefined ? String(value).length > 0 : String(internalValue).length > 0);
 
@@ -58,9 +62,26 @@ const Input = forwardRef(function Input(
     onChange?.(e);
   };
 
-  // Resolve right icon: custom iconRight > success icon
+  // Resolve right icon: custom iconRight > password visibility toggle > success icon
   let finalIconRight = iconRight || rightIcon;
-  if (!finalIconRight && success) {
+  if (!finalIconRight && isPasswordField && showPasswordToggle) {
+    finalIconRight = (
+      <button
+        type="button"
+        onClick={() => setShowPassword((prev) => !prev)}
+        tabIndex={-1}
+        aria-label={showPassword ? 'Hide password' : 'Show password'}
+        title={showPassword ? 'Hide password' : 'Show password'}
+        className="p-1 rounded-lg text-[var(--ink-3)] hover:text-[var(--ink)] hover:bg-[var(--surface-hover)] focus:outline-none transition-colors cursor-pointer pointer-events-auto flex items-center justify-center"
+      >
+        {showPassword ? (
+          <EyeOff className="w-4 h-4 text-[var(--brand-600)]" />
+        ) : (
+          <Eye className="w-4 h-4 text-[var(--ink-3)] hover:text-[var(--ink)]" />
+        )}
+      </button>
+    );
+  } else if (!finalIconRight && success) {
     finalIconRight = <Check className="w-4 h-4 text-[var(--safe-600)]" aria-hidden="true" />;
   }
 
@@ -114,7 +135,7 @@ const Input = forwardRef(function Input(
         <input
           ref={ref}
           id={inputId}
-          type={type}
+          type={actualType}
           value={value}
           defaultValue={defaultValue}
           onChange={handleChange}
@@ -148,11 +169,14 @@ const Input = forwardRef(function Input(
           {...props}
         />
 
-        {/* Right Icon / Success indicator */}
+        {/* Right Icon / Password Toggle / Success indicator */}
         {finalIconRight && (
           <span
-            className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[var(--ink-3)] flex-shrink-0 z-10 flex items-center justify-center pointer-events-none"
-            aria-hidden="true"
+            className={clsx(
+              'absolute right-3.5 top-1/2 -translate-y-1/2 flex-shrink-0 z-10 flex items-center justify-center',
+              isPasswordField ? 'pointer-events-auto' : 'pointer-events-none text-[var(--ink-3)]'
+            )}
+            aria-hidden={isPasswordField ? undefined : 'true'}
           >
             {finalIconRight}
           </span>

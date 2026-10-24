@@ -102,7 +102,7 @@ export default function ProfilePage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const shouldReduceMotion = useReducedMotion();
-  const { user, token, logout, isGuest } = useAuth();
+  const { user, token, logout, isGuest, updateUser } = useAuth();
   const { t, lang, setLang, textSize, setTextSize } = useT();
   const {
     theme,
@@ -115,14 +115,23 @@ export default function ProfilePage() {
   // ── 1. Tab Navigation State ──
   const [activeTab, setActiveTab] = useState('profile'); // 'profile' | 'care_team' | 'security' | 'preferences'
 
-  // ── 2. Patient Form State ──
+  // ── 2. Profile Identity State ──
+  const [name, setName] = useState(user?.name || '');
+
+  useEffect(() => {
+    if (user?.name) {
+      setName(user.name);
+    }
+  }, [user?.name]);
+
+  // ── 3. Patient Form State ──
   const [age, setAge] = useState('68');
   const [gender, setGender] = useState('MALE');
   const [conditions, setConditions] = useState(['Hypertension', 'Type 2 Diabetes', 'Osteoarthritis']);
   const [allergies, setAllergies] = useState(['Penicillin', 'Sulfa drugs']);
   const [newAllergyInput, setNewAllergyInput] = useState('');
 
-  // ── 3. Doctor Form State ──
+  // ── 4. Doctor Form State ──
   const [doctorRegNo, setDoctorRegNo] = useState(
     () => localStorage.getItem('polysafe_doc_reg') || 'MCI-2024-88492'
   );
@@ -133,7 +142,7 @@ export default function ProfilePage() {
     () => localStorage.getItem('polysafe_doc_hosp') || 'Apollo Multispeciality Hospitals'
   );
 
-  // ── 4. Caregiver Form State ──
+  // ── 5. Caregiver Form State ──
   const [caregiverPhone, setCaregiverPhone] = useState(
     () => localStorage.getItem('polysafe_cg_phone') || '+91 98765 43210'
   );
@@ -141,7 +150,7 @@ export default function ProfilePage() {
     () => localStorage.getItem('polysafe_cg_rel') || 'Adult Child / Guardian'
   );
 
-  // ── 5. Modals State ──
+  // ── 6. Modals State ──
   const [showEmergencyCard, setShowEmergencyCard] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteConfirmText, setDeleteConfirmText] = useState('');
@@ -181,36 +190,60 @@ export default function ProfilePage() {
     }
   }, [serverProfile]);
 
-  // Profile Save Mutation
+  // Profile Save Mutation (Patient)
   const saveMutation = useMutation({
     mutationFn: (payload) => axios.post('/patient/profile', payload).then((r) => r.data),
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['patient-profile'] });
-      notify.success('Profile Updated', 'Clinical identity records saved.');
+      if (data?.name && updateUser) {
+        updateUser({ name: data.name });
+      }
+      notify.success('Profile Updated', 'Clinical identity and display name saved.');
     },
     onError: (err) => {
       notify.error('Update Failed', err?.response?.data?.error || 'Could not update profile.');
     },
   });
 
+  // User Profile Update Mutation (Doctor, Caregiver, or Direct User info)
+  const updateGeneralProfileMutation = useMutation({
+    mutationFn: (payload) => axios.patch('/auth/profile', payload).then((r) => r.data),
+    onSuccess: (data) => {
+      if (data?.user?.name && updateUser) {
+        updateUser({ name: data.user.name });
+      }
+      notify.success('Profile Saved', 'Profile name and contact details updated.');
+    },
+    onError: (err) => {
+      notify.error('Update Failed', err?.response?.data?.error || 'Failed to update profile.');
+    },
+  });
+
   const handleSaveProfile = (e) => {
     e.preventDefault();
+    const trimmedName = name.trim();
+    if (!trimmedName) {
+      notify.error('Name Required', 'Please enter your full name.');
+      return;
+    }
+
     if (currentRole === 'PATIENT') {
       saveMutation.mutate({
+        name: trimmedName,
         age: parseInt(age, 10) || 68,
         gender,
         conditions,
         allergies,
       });
     } else if (currentRole === 'DOCTOR') {
+      updateGeneralProfileMutation.mutate({ name: trimmedName });
       localStorage.setItem('polysafe_doc_reg', doctorRegNo);
       localStorage.setItem('polysafe_doc_spec', specialty);
       localStorage.setItem('polysafe_doc_hosp', hospital);
-      notify.success('Credentials Saved', 'Physician practice credentials updated.');
     } else {
+      updateGeneralProfileMutation.mutate({ name: trimmedName, phone: caregiverPhone });
       localStorage.setItem('polysafe_cg_phone', caregiverPhone);
       localStorage.setItem('polysafe_cg_rel', relationship);
-      notify.success('Caregiver Profile Saved', 'Family contact details updated.');
     }
   };
 
@@ -250,10 +283,11 @@ export default function ProfilePage() {
   };
 
   // User display metadata
-  const displayName = user?.name || (currentRole === 'DOCTOR' ? 'Dr. Sarah Wilson' : 'Ramesh Patel');
+  const displayName = name.trim() || user?.name || (currentRole === 'DOCTOR' ? 'Dr. Sarah Wilson' : 'Ramesh Patel');
   const displayEmail = user?.email || (currentRole === 'DOCTOR' ? 'dr.wilson@apollo.health' : 'ramesh.patel@example.com');
-  const userInitials = displayName
+  const userInitials = (displayName || 'PS')
     .split(' ')
+    .filter(Boolean)
     .map((w) => w[0])
     .slice(0, 2)
     .join('')
@@ -355,6 +389,46 @@ export default function ProfilePage() {
               className="p-6 sm:p-8 space-y-6"
             >
               <form onSubmit={handleSaveProfile} className="space-y-6 text-xs font-sans">
+                {/* ── User Full Name & Registered Email (Editable Name) ── */}
+                <div className="p-5 rounded-2xl bg-[var(--surface-2)]/40 border border-[var(--border)] space-y-4">
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold font-mono text-[var(--ink)] uppercase tracking-wider text-[11px] flex items-center gap-1.5">
+                      <User className="w-3.5 h-3.5 text-[var(--accent-500)]" />
+                      <span>Account Identity & Legal Name</span>
+                    </span>
+                    <span className="text-[10px] text-[var(--ink-3)] font-mono">Synced with clinical records</span>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="space-y-1.5">
+                      <label className="font-bold font-mono text-[var(--ink)] uppercase tracking-wider text-[11px] flex items-center justify-between">
+                        <span>Full Name / Display Name</span>
+                        <span className="text-[10px] text-emerald-600 font-bold uppercase tracking-wider font-mono">Editable</span>
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        placeholder="e.g. Ramesh Patel, Dr. Priya Sharma"
+                        className="w-full px-4 py-3 rounded-2xl bg-[var(--canvas)] border border-[var(--border)] text-sm font-bold text-[var(--ink)] outline-none focus:border-[var(--brand-600)] transition-all shadow-xs"
+                      />
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <label className="font-bold font-mono text-[var(--ink)] uppercase tracking-wider text-[11px]">
+                        Registered Email
+                      </label>
+                      <input
+                        type="email"
+                        disabled
+                        value={displayEmail}
+                        className="w-full px-4 py-3 rounded-2xl bg-[var(--surface-2)]/80 border border-[var(--border)] text-sm font-mono text-[var(--ink-2)] outline-none cursor-not-allowed opacity-80"
+                      />
+                    </div>
+                  </div>
+                </div>
+
                 {currentRole === 'PATIENT' && (
                   <>
                     {/* Age and Gender */}
@@ -540,10 +614,17 @@ export default function ProfilePage() {
                 <div className="pt-4 border-t border-[var(--border)] flex justify-end">
                   <button
                     type="submit"
-                    disabled={saveMutation.isPending}
-                    className="px-6 py-3 rounded-2xl bg-[var(--ink)] text-white hover:bg-[var(--brand-800)] font-bold text-xs uppercase tracking-wider shadow-sm transition-all cursor-pointer active:scale-95 disabled:opacity-50"
+                    disabled={saveMutation.isPending || updateGeneralProfileMutation.isPending}
+                    className="px-6 py-3 rounded-2xl bg-[var(--ink)] text-white hover:bg-[var(--brand-800)] font-bold text-xs uppercase tracking-wider shadow-sm transition-all cursor-pointer active:scale-95 disabled:opacity-50 flex items-center gap-2"
                   >
-                    {saveMutation.isPending ? 'Saving...' : 'Save Profile Changes'}
+                    {(saveMutation.isPending || updateGeneralProfileMutation.isPending) && (
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    )}
+                    <span>
+                      {saveMutation.isPending || updateGeneralProfileMutation.isPending
+                        ? 'Saving Changes...'
+                        : 'Save Profile Changes'}
+                    </span>
                   </button>
                 </div>
               </form>

@@ -213,6 +213,21 @@ export function AuthProvider({ children }) {
     });
   }, []);
 
+  // ─── Update User Fields in Context & Storage ───────────────────────────────
+  const updateUser = useCallback((updatedFields) => {
+    setUser((prev) => {
+      if (!prev) return prev;
+      const next = { ...prev, ...updatedFields };
+      try {
+        const stored = JSON.parse(localStorage.getItem(USER_KEY) || '{}');
+        localStorage.setItem(USER_KEY, JSON.stringify({ ...stored, ...updatedFields }));
+      } catch (err) {
+        console.error('[AuthContext] Failed to persist updated user:', err);
+      }
+      return next;
+    });
+  }, []);
+
   const isGuest = Boolean(user?.isGuest);
 
   const value = useMemo(
@@ -224,6 +239,7 @@ export function AuthProvider({ children }) {
       isAuthenticated: !!user && !user.isGuest && !!token,
       login,
       logout,
+      updateUser,
       enterGuestMode,
       openGuestLockModal,
       closeGuestLockModal,
@@ -237,6 +253,7 @@ export function AuthProvider({ children }) {
       isGuest,
       login,
       logout,
+      updateUser,
       enterGuestMode,
       openGuestLockModal,
       closeGuestLockModal,

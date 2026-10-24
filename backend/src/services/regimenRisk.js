@@ -82,7 +82,7 @@ function getDrugHarmLevel(drugName, category = '') {
  *   majorFlagCount: number
  * }>}
  */
-async function calculateRegimenRisk(patientId) {
+async function calculateRegimenRisk(patientId, preloadedData = null) {
   if (!patientId) {
     return {
       averageRisk: 0,
@@ -98,8 +98,8 @@ async function calculateRegimenRisk(patientId) {
     };
   }
 
-  // 1. Fetch active medicines (removedAt: null)
-  const activeMeds = await prisma.medicine.findMany({
+  // 1. Fetch active medicines (or use preloaded)
+  const activeMeds = preloadedData?.activeMeds || await prisma.medicine.findMany({
     where: {
       patientId,
       removedAt: null,
@@ -113,8 +113,8 @@ async function calculateRegimenRisk(patientId) {
     },
   });
 
-  // 2. Fetch active interaction flags
-  const activeFlags = await prisma.interactionFlag.findMany({
+  // 2. Fetch active interaction flags (or use preloaded)
+  const activeFlags = preloadedData?.activeFlags || await prisma.interactionFlag.findMany({
     where: {
       patientId,
       medicineA: { removedAt: null },

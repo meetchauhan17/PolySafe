@@ -18,53 +18,76 @@ async function resetDemoData() {
 
   const hashedPassword = await bcrypt.hash('Meet@123', 10);
 
-  // 1. Ensure Patient User
+  // 1. Ensure Demo Patient User (demo@gmail.com)
   let patientUser = await prisma.user.findUnique({
-    where: { email: 'meetc8030@gmail.com' },
+    where: { email: 'demo@gmail.com' },
   });
 
   if (!patientUser) {
     patientUser = await prisma.user.create({
       data: {
-        email: 'meetc8030@gmail.com',
+        email: 'demo@gmail.com',
         passwordHash: hashedPassword,
         name: 'Ramesh Patel',
         role: 'PATIENT',
       },
     });
-    console.log('✔ Created demo patient user: meetc8030@gmail.com');
+    console.log('✔ Created demo patient user: demo@gmail.com');
   } else {
     await prisma.user.update({
       where: { id: patientUser.id },
-      data: { passwordHash: hashedPassword, name: 'Ramesh Patel' },
+      data: { passwordHash: hashedPassword, name: 'Ramesh Patel', failedLoginAttempts: 0, lockedUntil: null },
     });
-    console.log('✔ Updated demo patient user: meetc8030@gmail.com');
+    console.log('✔ Updated demo patient user: demo@gmail.com');
   }
 
-  // 2. Ensure Doctor User
+  // 2. Ensure Demo Doctor User (demodoc@gmail.com)
   let doctorUser = await prisma.user.findUnique({
-    where: { email: 'cse.230840131016@gmail.com' },
+    where: { email: 'demodoc@gmail.com' },
   });
 
   if (!doctorUser) {
     doctorUser = await prisma.user.create({
       data: {
-        email: 'cse.230840131016@gmail.com',
+        email: 'demodoc@gmail.com',
         passwordHash: hashedPassword,
         name: 'Dr. Priya Sharma, MD',
         role: 'DOCTOR',
       },
     });
-    console.log('✔ Created demo doctor user: cse.230840131016@gmail.com');
+    console.log('✔ Created demo doctor user: demodoc@gmail.com');
   } else {
     await prisma.user.update({
       where: { id: doctorUser.id },
-      data: { passwordHash: hashedPassword, name: 'Dr. Priya Sharma, MD' },
+      data: { passwordHash: hashedPassword, name: 'Dr. Priya Sharma, MD', failedLoginAttempts: 0, lockedUntil: null },
     });
-    console.log('✔ Updated demo doctor user: cse.230840131016@gmail.com');
+    console.log('✔ Updated demo doctor user: demodoc@gmail.com');
   }
 
-  // 3. Upsert Patient Profile
+  // 3. Ensure Demo Caregiver User (democar@gmail.com)
+  let caregiverUser = await prisma.user.findUnique({
+    where: { email: 'democar@gmail.com' },
+  });
+
+  if (!caregiverUser) {
+    caregiverUser = await prisma.user.create({
+      data: {
+        email: 'democar@gmail.com',
+        passwordHash: hashedPassword,
+        name: 'Sunita Patel (Caregiver)',
+        role: 'CAREGIVER',
+      },
+    });
+    console.log('✔ Created demo caregiver user: democar@gmail.com');
+  } else {
+    await prisma.user.update({
+      where: { id: caregiverUser.id },
+      data: { passwordHash: hashedPassword, name: 'Sunita Patel (Caregiver)', failedLoginAttempts: 0, lockedUntil: null },
+    });
+    console.log('✔ Updated demo caregiver user: democar@gmail.com');
+  }
+
+  // 4. Upsert Patient Profile for demo@gmail.com
   const patient = await prisma.patient.upsert({
     where: { userId: patientUser.id },
     create: {
@@ -81,12 +104,44 @@ async function resetDemoData() {
   });
   console.log(`✔ Patient profile configured (ID: ${patient.id})`);
 
-  // 4. Clean previous medicines & flags for this patient
+  // Ensure Doctor and Caregiver connections to demo patient
+  await prisma.connection.upsert({
+    where: {
+      id: (await prisma.connection.findFirst({
+        where: { patientId: patient.id, connectedUserId: doctorUser.id, role: 'DOCTOR' },
+      }))?.id || 'doc-demo-connection-placeholder',
+    },
+    create: {
+      patientId: patient.id,
+      connectedUserId: doctorUser.id,
+      role: 'DOCTOR',
+      status: 'APPROVED',
+    },
+    update: { status: 'APPROVED' },
+  });
+
+  await prisma.connection.upsert({
+    where: {
+      id: (await prisma.connection.findFirst({
+        where: { patientId: patient.id, connectedUserId: caregiverUser.id, role: 'CAREGIVER' },
+      }))?.id || 'car-demo-connection-placeholder',
+    },
+    create: {
+      patientId: patient.id,
+      connectedUserId: caregiverUser.id,
+      role: 'CAREGIVER',
+      status: 'APPROVED',
+    },
+    update: { status: 'APPROVED' },
+  });
+  console.log('✔ Verified APPROVED doctor & caregiver connections to demo patient.');
+
+  // 5. Clean previous medicines & flags for this patient
   await prisma.interactionFlag.deleteMany({ where: { patientId: patient.id } });
   await prisma.symptom.deleteMany({ where: { patientId: patient.id } });
   await prisma.medicine.deleteMany({ where: { patientId: patient.id } });
 
-  // 5. Seed Core Demo Medicines
+  // 6. Seed Core Demo Medicines
   const meds = [
     {
       name: 'Warfarin',
@@ -155,7 +210,7 @@ async function resetDemoData() {
   }
   console.log(`✔ Seeded ${createdMeds.length} demo medications.`);
 
-  // 6. Seed Interactive High-Severity Flags
+  // 7. Seed Interactive High-Severity Flags
   const medMap = Object.fromEntries(createdMeds.map((m) => [m.name, m.id]));
 
   if (medMap['Warfarin'] && medMap['Turmeric (Curcumin)']) {
@@ -207,11 +262,72 @@ async function resetDemoData() {
   }
   console.log('✔ Seeded clinical interaction flags with deterministic explanations.');
 
+  // 8. Ensure empty accounts are clean
+  const emptyPatient = await prisma.user.upsert({
+    where: { email: 'meetc8030@gmail.com' },
+    create: {
+      email: 'meetc8030@gmail.com',
+      passwordHash: hashedPassword,
+      name: 'Meet Chauhan',
+      role: 'PATIENT',
+      patient: {
+        create: { age: 0, conditions: [], allergies: [] },
+      },
+    },
+    update: {
+      passwordHash: hashedPassword,
+      failedLoginAttempts: 0,
+      lockedUntil: null,
+    },
+    include: { patient: true },
+  });
+  if (emptyPatient.patient) {
+    await prisma.medicine.deleteMany({ where: { patientId: emptyPatient.patient.id } });
+    await prisma.interactionFlag.deleteMany({ where: { patientId: emptyPatient.patient.id } });
+    await prisma.connection.deleteMany({ where: { patientId: emptyPatient.patient.id } });
+  }
+
+  const emptyDoc = await prisma.user.upsert({
+    where: { email: 'cse.230840131016@gmail.com' },
+    create: {
+      email: 'cse.230840131016@gmail.com',
+      passwordHash: hashedPassword,
+      name: 'Dr. Priya Sharma, MD',
+      role: 'DOCTOR',
+    },
+    update: {
+      passwordHash: hashedPassword,
+      failedLoginAttempts: 0,
+      lockedUntil: null,
+    },
+  });
+  await prisma.connection.deleteMany({ where: { connectedUserId: emptyDoc.id } });
+
+  const emptyCar = await prisma.user.upsert({
+    where: { email: 'meetc8031@gmail.com' },
+    create: {
+      email: 'meetc8031@gmail.com',
+      passwordHash: hashedPassword,
+      name: 'Caregiver Meet',
+      role: 'CAREGIVER',
+    },
+    update: {
+      passwordHash: hashedPassword,
+      failedLoginAttempts: 0,
+      lockedUntil: null,
+    },
+  });
+  await prisma.connection.deleteMany({ where: { connectedUserId: emptyCar.id } });
+  console.log('✔ Verified empty accounts meetc8030@gmail.com, cse.230840131016@gmail.com, meetc8031@gmail.com.');
+
   console.log('\n================================================================');
   console.log('🎉 DEMO DATA RESET COMPLETE!');
   console.log('Credentials:');
-  console.log('  Patient: meetc8030@gmail.com / Meet@123');
-  console.log('  Doctor:  cse.230840131016@gmail.com / Meet@123');
+  console.log('  • Patient:   demo@gmail.com    / Meet@123 (Active clinical data)');
+  console.log('  • Doctor:    demodoc@gmail.com / Meet@123 (Connected to demo patient)');
+  console.log('  • Caregiver: democar@gmail.com / Meet@123 (Connected to demo patient)');
+  console.log('Empty accounts:');
+  console.log('  • meetc8030@gmail.com, cse.230840131016@gmail.com, meetc8031@gmail.com (Meet@123)');
   console.log('================================================================\n');
 }
 

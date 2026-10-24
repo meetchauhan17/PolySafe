@@ -654,8 +654,8 @@ function PhysicianDirectivesBanner({ patientId, token }) {
 export default function HomePage() {
   const { t, lang } = useT();
   const queryClient = useQueryClient();
- const shouldReduceMotion = useReducedMotion();
- const { token, user, isGuest, openGuestLockModal } = useAuth();
+  const shouldReduceMotion = useReducedMotion();
+  const { token, user, isGuest, openGuestLockModal, logout } = useAuth();
 
  // State for Edit / Discontinue modals
  const [editingMed, setEditingMed] = useState(null);
@@ -725,24 +725,27 @@ export default function HomePage() {
     queryKey: ['home-summary', token],
     queryFn: () => patientApi.getHomeSummary(token),
     enabled: !!token && !user?.isGuest,
-    staleTime: 10000,
-    refetchInterval: 15000, // Responsive 15s sync for live doctor prescriptions & safety updates
+    staleTime: 60000, // 60s freshness: instantaneous 0ms tab switching
+    gcTime: 10 * 60 * 1000,
+    refetchOnWindowFocus: false, // Prevents loading skeleton flashes when switching tabs
+    refetchInterval: 30000, // Background sync every 30s
+    placeholderData: (previousData) => previousData, // Seamless background updates without skeleton flicker
   });
 
- // ─── Mutations for Edit & Discontinue ──────────────────────────────────────
- const editMutation = useMutation({
- mutationFn: ({ id, dosage, type }) =>
- axios.put(`/medicine/${id}`, { dosage, type }),
- onSuccess: (_res, vars) => {
- queryClient.invalidateQueries({ queryKey: ['home-summary'] });
- queryClient.invalidateQueries({ queryKey: ['patient-timeline'] });
- queryClient.invalidateQueries({ queryKey: ['patient-insights'] });
- setEditingMed(null);
- notify.success('Medicine Updated', `Updated settings for "${vars.name || 'medicine'}".`);
- },
- onError: (err) => {
- notify.error('Update Failed', err?.response?.data?.error || 'Could not update medicine.');
- },
+  // ─── Mutations for Edit & Discontinue ──────────────────────────────────────
+  const editMutation = useMutation({
+    mutationFn: ({ id, dosage, type }) =>
+      axios.put(`/medicine/${id}`, { dosage, type }),
+    onSuccess: (_res, vars) => {
+      queryClient.invalidateQueries({ queryKey: ['home-summary'] });
+      queryClient.invalidateQueries({ queryKey: ['patient-timeline'] });
+      queryClient.invalidateQueries({ queryKey: ['patient-insights'] });
+      setEditingMed(null);
+      notify.success('Medicine Updated', `Updated settings for "${vars.name || 'medicine'}".`);
+    },
+    onError: (err) => {
+      notify.error('Update Failed', err?.response?.data?.error || 'Could not update medicine.');
+    },
   });
 
   const deleteMutation = useMutation({
@@ -763,23 +766,41 @@ export default function HomePage() {
   const isDemo = !token || user?.isGuest;
   const data = isDemo ? DEMO_DATA : (summary || DEMO_DATA);
 
-  if (isLoading) {
+  // Only display full-page skeleton when there is no cached data and initial query is actively loading
+  if (isLoading && !summary && !isDemo) {
     return <HomeSkeleton />;
   }
 
   if (isError && token) {
+    const isSessionExpired = error?.response?.status === 401;
     return (
       <div className="min-h-[80vh] flex items-center justify-center bg-[var(--canvas)] px-4">
         <div className="bg-[var(--surface)] rounded-3xl p-8 max-w-md w-full text-center space-y-4 border border-[var(--border)] shadow-[var(--shadow-lg)]">
           <AlertCircle className="w-12 h-12 text-[var(--critical-fg)] mx-auto" />
-          <h2 className="text-xl font-bold text-[var(--ink)] font-[var(--font-heading)]">Couldn't load your data</h2>
+          <h2 className="text-xl font-bold text-[var(--ink)] font-[var(--font-heading)]">
+            {isSessionExpired ? 'Session Expired' : "Couldn't load your data"}
+          </h2>
           <p className="text-sm text-[var(--ink-3)]">
-            {error?.response?.data?.error || 'Something went wrong. Please try again.'}
+            {isSessionExpired
+              ? 'Your sign-in session has expired. Please sign in again to view your medication dashboard.'
+              : (error?.response?.data?.error || 'Something went wrong. Please try again.')}
           </p>
-          <button onClick={() => refetch()} className="ps-btn ps-btn-primary px-6 py-2.5 text-sm mx-auto">
-            <RefreshCw className="w-4 h-4" />
-            <span>Retry</span>
-          </button>
+          {isSessionExpired ? (
+            <button
+              onClick={() => {
+                if (typeof logout === 'function') logout();
+                window.location.href = '/login';
+              }}
+              className="ps-btn ps-btn-primary px-6 py-2.5 text-sm mx-auto"
+            >
+              <span>Sign In</span>
+            </button>
+          ) : (
+            <button onClick={() => refetch()} className="ps-btn ps-btn-primary px-6 py-2.5 text-sm mx-auto">
+              <RefreshCw className="w-4 h-4" />
+              <span>Retry</span>
+            </button>
+          )}
         </div>
       </div>
     );
