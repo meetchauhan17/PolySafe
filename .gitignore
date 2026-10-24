@@ -84,9 +84,11 @@ backend/tmp/
 TWOSIDES.csv/
 
 # ------------------------------------------------------------------------------
-# Temporary Inspection & Test Scripts
+# Temporary Inspection & Test Scripts & Captured Screenshots
 # ------------------------------------------------------------------------------
 scratch/
+docs/poster-screenshots/
+docs/ui-screenshots/
 backend/scripts/*.png
 backend/scripts/*.cjs
 
