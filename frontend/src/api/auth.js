@@ -2,6 +2,7 @@ import axios from 'axios';
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || '',
+  timeout: 8000,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -78,4 +79,52 @@ export const patientApi = {
     );
     return response.data;
   },
+
+  getDirectives: async (token) => {
+    const response = await api.get(
+      '/patient/directives',
+      token ? { headers: { Authorization: `Bearer ${token}` } } : undefined
+    );
+    return response.data;
+  },
+
+  markDirectiveRead: async (directiveId, token) => {
+    const response = await api.patch(
+      `/patient/directives/${directiveId}/read`,
+      {},
+      token ? { headers: { Authorization: `Bearer ${token}` } } : undefined
+    );
+    return response.data;
+  },
 };
+
+export const analyticsApi = {
+  getRegimenScore: async () => {
+    const response = await api.get('/analytics/regimen-score');
+    return response.data;
+  },
+  getPolypharmacyTrend: async () => {
+    const response = await api.get('/analytics/polypharmacy-trend');
+    return response.data;
+  },
+  getDrugClasses: async () => {
+    const response = await api.get('/analytics/drug-classes');
+    return response.data;
+  },
+  getAcbTimeline: async () => {
+    const response = await api.get('/analytics/acb-timeline');
+    return response.data;
+  },
+  getTopInteractions: async () => {
+    const response = await api.get('/analytics/top-interactions');
+    return response.data;
+  },
+  getCascadeRiskMap: async () => {
+    const response = await api.get('/analytics/cascade-risk-map');
+    return response.data;
+  },
+};
+
+export { api };
+export default api;
+

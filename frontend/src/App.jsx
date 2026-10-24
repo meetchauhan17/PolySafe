@@ -3,6 +3,8 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'sonner';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { LanguageProvider } from './context/LanguageContext';
+import { DisplaySettingsProvider } from './context/DisplaySettingsContext';
 
 // Layouts (loaded eagerly for shell stability)
 import PatientLayout from './layouts/PatientLayout';
@@ -11,6 +13,10 @@ import CaregiverLayout from './layouts/CaregiverLayout';
 import ProtectedRoute from './components/ProtectedRoute';
 import ErrorBoundary from './components/ErrorBoundary';
 import { HomeSkeleton } from './components/Skeletons';
+import OfflineBanner from './components/OfflineBanner';
+import ServerWakeSplash from './components/ServerWakeSplash';
+
+import PageTransition from './motion/PageTransition';
 
 // Auto-recovering lazy import helper to prevent blank screens on chunk mismatch
 function lazyWithRetry(componentImport) {
@@ -49,6 +55,16 @@ const DoctorSharePage      = lazyWithRetry(() => import('./pages/DoctorSharePage
 const CaregiverViewPage    = lazyWithRetry(() => import('./pages/CaregiverViewPage'));
 const ConnectedPeoplePage  = lazyWithRetry(() => import('./pages/ConnectedPeoplePage'));
 const ProfilePage          = lazyWithRetry(() => import('./pages/ProfilePage'));
+const StatusPage           = lazyWithRetry(() => import('./pages/StatusPage'));
+const MedicationPassportPage = lazyWithRetry(() => import('./pages/MedicationPassportPage'));
+const PrivacyPolicyPage    = lazyWithRetry(() => import('./pages/PrivacyPolicyPage'));
+const TermsPage            = lazyWithRetry(() => import('./pages/TermsPage'));
+const StyleguidePage       = lazyWithRetry(() => import('./pages/StyleguidePage'));
+const NotFoundPage         = lazyWithRetry(() => import('./pages/NotFoundPage'));
+const ForbiddenPage        = lazyWithRetry(() => import('./pages/ForbiddenPage'));
+const OfflinePage          = lazyWithRetry(() => import('./pages/OfflinePage'));
+const MaintenancePage      = lazyWithRetry(() => import('./pages/MaintenancePage'));
+import PillLoader from './components/PillLoader';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -60,17 +76,14 @@ const queryClient = new QueryClient({
 });
 
 function RouteLoadingFallback() {
-  return (
-    <div className="min-h-screen bg-[var(--canvas)] flex items-center justify-center">
-      <HomeSkeleton />
-    </div>
-  );
+  return <PillLoader size="fullscreen" />;
 }
 
 function RootRedirect() {
   const { user, isLoading } = useAuth();
   if (isLoading) return <RouteLoadingFallback />;
-  if (!user || user.isGuest) return <Navigate to="/login" replace />;
+  if (!user) return <Navigate to="/login" replace />;
+  if (user.isGuest) return <Navigate to="/home" replace />;
   const role = (user.role || '').toUpperCase();
   if (role === 'DOCTOR') return <Navigate to="/doctor-dashboard" replace />;
   if (role === 'CAREGIVER') return <Navigate to="/caregiver-view" replace />;
@@ -91,7 +104,9 @@ export default function App() {
     <QueryClientProvider client={queryClient}>
       <Router>
         <AuthProvider>
-          <Toaster
+          <LanguageProvider>
+            <DisplaySettingsProvider>
+              <Toaster
             position="top-right"
             expand={false}
             duration={4000}
@@ -105,12 +120,19 @@ export default function App() {
               },
             }}
           />
+          <OfflineBanner />
+          <ServerWakeSplash />
           <ErrorBoundary>
             <Suspense fallback={<RouteLoadingFallback />}>
               <Routes>
-                {/* ── Public Auth Routes ── */}
+                {/* ── Public Auth, Legal & Diagnostic Routes ── */}
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/onboarding" element={<OnboardingPage />} />
+                <Route path="/status" element={<PageTransition><StatusPage /></PageTransition>} />
+                <Route path="/privacy" element={<PageTransition><PrivacyPolicyPage /></PageTransition>} />
+                <Route path="/terms" element={<PageTransition><TermsPage /></PageTransition>} />
+                <Route path="/styleguide" element={<PageTransition><StyleguidePage /></PageTransition>} />
+
 
                 {/* ── 1. PATIENT LAYOUT & PROTECTED ROUTES ── */}
                 <Route element={<ProtectedRoute allowedRoles={['PATIENT']} />}>
@@ -130,7 +152,9 @@ export default function App() {
                     <Route path="/connected" element={<ConnectedPeoplePage />} />
                     <Route path="/connected-people" element={<ConnectedPeoplePage />} />
                     <Route path="/share" element={<DoctorSharePage />} />
+                    <Route path="/doctor-share" element={<DoctorSharePage />} />
                     <Route path="/share-with-doctor" element={<DoctorSharePage />} />
+                    <Route path="/passport" element={<MedicationPassportPage />} />
                   </Route>
                 </Route>
 
@@ -139,6 +163,7 @@ export default function App() {
                   <Route element={<DoctorLayout />}>
                     <Route path="/doctor-dashboard" element={<DoctorDashboardPage />} />
                     <Route path="/doctor" element={<DoctorDashboardPage />} />
+                    <Route path="/doctor/patients" element={<DoctorDashboardPage />} />
                   </Route>
                 </Route>
 
@@ -157,13 +182,19 @@ export default function App() {
                   </Route>
                 </Route>
 
-                {/* ── Default & Fallback Redirects ── */}
+                {/* ── Default & System Routes ── */}
+                <Route path="/403" element={<ForbiddenPage />} />
+                <Route path="/forbidden" element={<ForbiddenPage />} />
+                <Route path="/offline" element={<OfflinePage />} />
+                <Route path="/maintenance" element={<MaintenancePage />} />
                 <Route path="/" element={<RootRedirect />} />
-                <Route path="*" element={<RootRedirect />} />
+                <Route path="*" element={<NotFoundPage />} />
               </Routes>
             </Suspense>
           </ErrorBoundary>
-        </AuthProvider>
+        </DisplaySettingsProvider>
+      </LanguageProvider>
+      </AuthProvider>
       </Router>
     </QueryClientProvider>
   );

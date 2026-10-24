@@ -1,0 +1,25 @@
+{
+  "name": "polysafe",
+  "version": "1.0.0",
+  "description": "PolySafe — Clinical AI Polypharmacy Risk Platform (Production Hackathon Edition)",
+  "private": true,
+  "scripts": {
+    "demo": "node scripts/demo-runner.js",
+    "demo:reset": "node backend/scripts/reset-demo-data.js",
+    "build": "npm --prefix frontend run build",
+    "test": "npm --prefix backend test",
+    "test:resolver": "node backend/test-resolver.js",
+    "dev:backend": "npm --prefix backend run dev",
+    "dev:frontend": "npm --prefix frontend run dev"
+  },
+  "keywords": [
+    "polypharmacy",
+    "clinical-ai",
+    "ddi",
+    "healthtech",
+    "offline-first",
+    "pwa"
+  ],
+  "author": "PolySafe Team",
+  "license": "ISC"
+}

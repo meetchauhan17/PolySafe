@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
@@ -46,6 +47,12 @@ import {
  ChevronRight,
  Shield,
  Zap,
+  HeartPulse,
+  FileText,
+  Lightbulb,
+  ShieldAlert,
+  FileBadge,
+  HelpCircle,
 } from 'lucide-react';
 import { patientApi } from '../api/auth';
 import Card from '../components/Card';
@@ -57,6 +64,19 @@ import { notify } from '../utils/toast';
 import { DrugHarmBadge, DrugHarmPanel, PolypharmacyHarmDashboard } from '../components/DrugHarmLevel';
 import LedIndicator from '../components/LedIndicator';
 import { getMedicineIndication } from '../utils/indications';
+import DailyRegimenTimetable from '../components/DailyRegimenTimetable';
+import NotificationOptInBanner from '../components/NotificationOptInBanner';
+import FoodDrugSafetyPanel from '../components/FoodDrugSafetyPanel';
+import MedicationCard from '../components/MedicationCard';
+import SafetyAlertsSection from '../components/SafetyAlertsSection';
+import RiskRing from '../components/RiskRing';
+import { ACBMeter } from '../components/Meter';
+import RiskStoryStrip from '../components/RiskStoryStrip';
+import EmergencyMedicalCardModal from '../components/EmergencyMedicalCardModal';
+import ClinicalReportModal from '../components/ClinicalReportModal';
+import AlternativeSuggestionsModal from '../components/AlternativeSuggestionsModal';
+import ClinicalScoreExplainerModal from '../components/ClinicalScoreExplainerModal';
+import { useT } from '../i18n/useT';
 
 // ─── Severity colour map ─────────────────────────────────────────────────────
 const SEVERITY_STYLES = {
@@ -72,7 +92,7 @@ const SEVERITY_STYLES = {
   MAJOR: {
     border: 'border-[var(--critical-fg)]/40',
     bg: 'bg-[var(--canvas)]',
-    badge: 'bg-[var(--critical-fg)]/15 text-[var(--critical-fg)] border-[var(--critical-fg)]/30 font-bold font-mono',
+    badge: 'bg-[var(--critical-fg)]/15 text-rose-900 dark:text-rose-200 border-[var(--critical-fg)]/30 font-bold font-mono',
     icon: <AlertTriangle className="w-4 h-4 text-[var(--critical-fg)] flex-shrink-0" />,
     dot: 'bg-[var(--critical-fg)]',
     ledStatus: 'critical',
@@ -98,7 +118,6 @@ const SEVERITY_STYLES = {
   },
 };
 
-// ─── Medicine type icon/badge ─────────────────────────────────────────────
 function MedicineTypeBadge({ type }) {
   const map = {
     PRESCRIPTION: { icon: <Stethoscope className="w-3 h-3" />, label: 'Rx', cls: 'bg-[var(--doctor-600)]/10 text-[var(--doctor-600)] border-[var(--doctor-600)]/20' },
@@ -638,13 +657,30 @@ function PhysicianDirectivesBanner({ patientId, token }) {
 
 // ─── Main Component ──────────────────────────────────────────────────────────
 export default function HomePage() {
- const queryClient = useQueryClient();
+  const { t, lang } = useT();
+  const queryClient = useQueryClient();
  const shouldReduceMotion = useReducedMotion();
  const { token, user, isGuest, openGuestLockModal } = useAuth();
 
  // State for Edit / Discontinue modals
  const [editingMed, setEditingMed] = useState(null);
  const [discontinuingMed, setDiscontinuingMed] = useState(null);
+  const [dashboardTab, setDashboardTab] = useState('REGIMEN'); // 'REGIMEN' | 'TIMETABLE' | 'FOOD_LIFESTYLE' | 'EMERGENCY_DIRECTIVES'
+  const [showEmergencyCard, setShowEmergencyCard] = useState(false);
+  const [showClinicalReport, setShowClinicalReport] = useState(false);
+  const [showAlternatives, setShowAlternatives] = useState(false);
+  const [showScoreExplainer, setShowScoreExplainer] = useState(false);
+  const [scoreExplainerTab, setScoreExplainerTab] = useState('harm');
+
+  useEffect(() => {
+    const handler = (e) => {
+      const tab = e.detail?.tab || 'harm';
+      setScoreExplainerTab(tab);
+      setShowScoreExplainer(true);
+    };
+    window.addEventListener('polysafe:open-score-explainer', handler);
+    return () => window.removeEventListener('polysafe:open-score-explainer', handler);
+  }, []);
  const [remindersEnabled, setRemindersEnabled] = useState(() => {
  try { return localStorage.getItem('polysafe_reminders') === 'true'; } catch { return false; }
  });
@@ -711,33 +747,33 @@ export default function HomePage() {
  onError: (err) => {
  notify.error('Update Failed', err?.response?.data?.error || 'Could not update medicine.');
  },
- });
+  });
 
- const deleteMutation = useMutation({
- mutationFn: (id) => axios.delete(`/medicine/${id}`),
- onSuccess: () => {
- queryClient.invalidateQueries({ queryKey: ['home-summary'] });
- queryClient.invalidateQueries({ queryKey: ['patient-timeline'] });
- queryClient.invalidateQueries({ queryKey: ['patient-insights'] });
- setDiscontinuingMed(null);
- notify.success('Medicine Discontinued', 'Marked as discontinued and preserved on your timeline.');
- },
- onError: (err) => {
- notify.error('Discontinue Failed', err?.response?.data?.error || 'Could not discontinue medicine.');
- },
- });
+  const deleteMutation = useMutation({
+    mutationFn: (id) => axios.delete(`/medicine/${id}`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['home-summary'] });
+      queryClient.invalidateQueries({ queryKey: ['patient-timeline'] });
+      queryClient.invalidateQueries({ queryKey: ['patient-insights'] });
+      setDiscontinuingMed(null);
+      notify.success('Medicine Discontinued', 'Marked as discontinued and preserved on your timeline.');
+    },
+    onError: (err) => {
+      notify.error('Discontinue Failed', err?.response?.data?.error || 'Could not discontinue medicine.');
+    },
+  });
 
- // Use real data when authenticated, demo data otherwise
- const isDemo = !token || user?.isGuest;
- const data = isDemo ? DEMO_DATA : (summary || DEMO_DATA);
+  // Use real data when authenticated, demo data otherwise
+  const isDemo = !token || user?.isGuest;
+  const data = isDemo ? DEMO_DATA : (summary || DEMO_DATA);
 
- if (isLoading) {
- return <HomeSkeleton />;
- }
+  if (isLoading) {
+    return <HomeSkeleton />;
+  }
 
- if (isError && token) {
- return (
-    <div className="min-h-[80vh] flex items-center justify-center bg-[var(--canvas)] px-4">
+  if (isError && token) {
+    return (
+      <div className="min-h-[80vh] flex items-center justify-center bg-[var(--canvas)] px-4">
         <div className="bg-[var(--surface)] rounded-3xl p-8 max-w-md w-full text-center space-y-4 border border-[var(--border)] shadow-[var(--shadow-lg)]">
           <AlertCircle className="w-12 h-12 text-[var(--critical-fg)] mx-auto" />
           <h2 className="text-xl font-bold text-[var(--ink)] font-[var(--font-heading)]">Couldn't load your data</h2>
@@ -751,12 +787,13 @@ export default function HomePage() {
         </div>
       </div>
     );
- }
+  }
 
   const medicines = data?.medicines ?? [];
   const schedule = data?.schedule ?? [];
   const flags = data?.flags ?? [];
   const status = data?.status ?? 'SAFE';
+  const safetyAlerts = data?.safetyAlerts ?? [];
   const isEmpty = medicines.length === 0;
 
   const regimenRisk = data?.regimenRisk;
@@ -764,20 +801,93 @@ export default function HomePage() {
   const highestRiskDrug = regimenRisk?.highestRiskDrug || (medicines.length > 0 ? medicines.reduce((prev, curr) => ((curr.harmLevel || 1) > (prev?.harmLevel || 1) ? curr : prev), medicines[0]) : null);
   const highestRiskDrugName = highestRiskDrug?.name || 'high-risk medication';
 
- const todayLabel = new Date().toLocaleDateString('en-IN', {
-   weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
- });
+  const acbScoreVal = data?.acbScore ?? (medicines.reduce((sum, m) => sum + (m.acbScore || 0), 0) || (status === 'CRITICAL' ? 3 : status === 'CAUTION' ? 1 : 0));
+  const homeRiskScore = regimenRisk?.score ?? data?.regimenHarmLevel ?? highestHarmLevel ?? (flags.length > 0 ? 4 : 1);
+  const homeRiskLabel = status === 'CRITICAL' ? t('home.critical_risk', 'Critical Risk') : status === 'CAUTION' ? t('home.caution_needed', 'Caution Needed') : t('home.safe_regimen', 'Safe Regimen');
 
- return (
-    <div className="min-h-[88vh] pb-28 md:pb-12">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 space-y-6">
+  const emergencyCardData = {
+    patient: {
+      name: user?.name || data?.patientName || 'Priya Sharma (Sample)',
+      age: data?.patientAge || 68,
+      bloodType: data?.patientBloodType || 'O Positive',
+      conditions: data?.patientConditions || ['Type 2 Diabetes', 'Hypertension', 'Osteoarthritis'],
+      allergies: data?.patientAllergies || ['Penicillin', 'Sulfa Antibiotics'],
+    },
+    highAlertMeds: medicines
+      .filter((m) => (m.harmLevel || 1) >= 3)
+      .map((m) => ({
+        name: m.name,
+        dosage: m.dosage || 'Prescribed dose',
+        harmLevel: m.harmLevel || 3,
+        type: m.type || 'PRESCRIPTION',
+      })),
+    criticalFlags: flags.map((f) => ({
+      severity: f.severity || 'MAJOR',
+      medicineA: f.medicineA?.name || 'Medicine A',
+      medicineB: f.medicineB?.name || 'Medicine B',
+      warning: f.plainExplanation || 'Critical pharmacological interaction detected.',
+    })),
+    emergencyContacts: data?.emergencyContacts || [
+      { name: 'Dr. Jane Foster', phone: '+91 98200 12345', relationship: 'Attending Cardiologist' },
+      { name: 'Rahul Sharma', phone: '+91 98450 67890', relationship: 'Primary Caregiver (Son)' },
+    ],
+    cardId: data?.patientId ? ('PS-EMR-' + data.patientId.slice(0, 8).toUpperCase()) : 'PS-EMR-88A4F12',
+    qrVerificationUrl: 'https://polysafe.health/emergency/' + (data?.patientId || 'demo'),
+  };
+
+  const clinicalReportData = {
+    reportMetadata: {
+      reportId: data?.patientId ? ('PS-CR-' + data.patientId.slice(0, 6).toUpperCase()) : 'PS-CR-992B4F',
+      generatedAt: new Date().toISOString(),
+      clinicalStandard: 'WHO 5-Tier / DDInter / Beers Criteria 2023',
+      verificationStatus: 'Continuous Telemetry Active',
+    },
+    patient: {
+      name: user?.name || data?.patientName || 'Priya Sharma (Sample)',
+      age: data?.patientAge || 68,
+      conditions: data?.patientConditions || ['Type 2 Diabetes', 'Hypertension', 'Osteoarthritis'],
+      allergies: data?.patientAllergies || ['Penicillin', 'Sulfa Drugs'],
+    },
+    regimenSummary: {
+      totalActiveMeds: medicines.length,
+      regimenHarmLevel: data?.regimenHarmLevel || (flags.length > 0 ? 5 : 2),
+      highestRiskDrug: highestRiskDrugName || 'Warfarin 5mg',
+      totalInteractions: flags.length,
+    },
+    medicines: medicines.map((m) => ({
+      name: m.name,
+      generic: m.generic || m.name,
+      type: m.type || 'PRESCRIPTION',
+      dosage: m.dosage || 'Prescribed dose',
+      purpose: m.purpose || 'Therapeutic treatment',
+      harmLevel: m.harmLevel || 2,
+      rxcui: m.rxcui || 'N/A',
+      foodInstruction: m.foodInstruction || 'With water',
+    })),
+    interactionFlags: flags.map((f) => ({
+      severity: f.severity || 'MAJOR',
+      drugA: f.medicineA?.name || 'Medicine A',
+      drugB: f.medicineB?.name || 'Medicine B',
+      plainExplanation: f.plainExplanation || 'Significant pharmacological conflict identified.',
+    })),
+  };
+
+  const dateLocale = lang === 'hi' ? 'hi-IN' : lang === 'gu' ? 'gu-IN' : 'en-IN';
+  const todayLabel = new Date().toLocaleDateString(dateLocale, {
+    weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
+  });
+
+  return (
+    <div className="max-w-5xl mx-auto space-y-6">
 
         {/* ── Demo mode banner ─────────────────────────────────────────────── */}
         {isDemo && (
-          <div className="flex items-start space-x-3 p-3.5 bg-blue-500/10 border border-blue-500/25 rounded-2xl text-xs text-blue-800 shadow-2xs">
-            <FlaskConical className="w-4 h-4 flex-shrink-0 mt-0.5 text-blue-600" />
+          <div className="flex items-start space-x-3 p-3.5 bg-blue-500/10 dark:bg-blue-950/40 border border-blue-500/25 dark:border-blue-800/50 rounded-2xl text-xs text-blue-900 dark:text-blue-100 shadow-2xs">
+            <FlaskConical className="w-4 h-4 flex-shrink-0 mt-0.5 text-blue-600 dark:text-blue-400" />
             <p>
-              <strong>Demo Mode</strong> — this is a sample data preview. <Link to="/login" className="underline font-bold text-blue-700">Sign in</Link> to see your real medication summary.
+              <strong>{t('home.demo_mode', 'Demo Mode')}</strong> {t('home.demo_preview', '— this is a sample data preview.')}{' '}
+              <Link to="/login" className="underline font-bold text-blue-700 dark:text-blue-300">{t('common.sign_in', 'Sign in')}</Link>{' '}
+              {t('home.demo_signin_tail', 'to see your real medication summary.')}
             </p>
           </div>
         )}
@@ -788,65 +898,186 @@ export default function HomePage() {
           <div className="ps-orb ps-orb--primary" style={{ width: 180, height: 180, top: -60, right: -40, opacity: 0.18 }} />
           <div className="ps-orb ps-orb--secondary" style={{ width: 120, height: 120, bottom: -40, left: 60, opacity: 0.14 }} />
 
-          <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-5">
-            <div className="space-y-3">
-              {/* Status eyebrow pill */}
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[var(--surface)]/80 backdrop-blur-md border border-[var(--brand-600)]/20 shadow-sm">
-                <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--brand-600)] opacity-60"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-[var(--brand-600)]"></span>
-                </span>
-                <Zap className="w-3 h-3 text-[var(--brand-600)]" />
-                <span className="text-[11px] font-bold tracking-widest uppercase text-[var(--brand-600)] font-mono">
-                  Continuous Clinical Safety
-                </span>
+          <div className="relative z-10 space-y-4">
+            {/* Top Tier: Title & Primary Action CTAs */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="space-y-2 min-w-0">
+                {/* Status eyebrow pill */}
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--surface)]/90 backdrop-blur-md border border-[var(--brand-600)]/20 shadow-xs whitespace-nowrap">
+                  <span className="relative flex h-2 w-2 flex-shrink-0">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--brand-600)] opacity-60"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-[var(--brand-600)]"></span>
+                  </span>
+                  <Zap className="w-3 h-3 text-[var(--brand-600)] flex-shrink-0" />
+                  <span className="text-[11px] font-bold tracking-wider uppercase text-[var(--brand-600)] font-mono whitespace-nowrap">
+                    {t('home.continuous_safety', 'Continuous Clinical Safety')}
+                  </span>
+                </div>
+
+                <div>
+                  <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold font-[var(--font-heading)] tracking-tight text-[var(--ink)] leading-tight">
+                    {t('home.my_safety', 'My Safety')}{' '}
+                    <span className="ps-glow-text">{t('home.dashboard_word', 'Dashboard')}</span>
+                  </h1>
+                  <p className="text-xs sm:text-sm text-[var(--ink-3)] font-mono mt-0.5">{todayLabel}</p>
+                </div>
               </div>
 
-              <div>
-                <h1 className="text-3xl sm:text-4xl font-extrabold font-[var(--font-heading)] tracking-tight text-[var(--ink)]">
-                  My Safety{' '}
-                  <span className="ps-glow-text">Dashboard</span>
-                </h1>
-                <p className="text-sm text-[var(--ink-3)] font-mono mt-1">{todayLabel}</p>
-              </div>
+              {/* Primary Header CTAs */}
+              <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap flex-shrink-0">
+                <button
+                  type="button"
+                  onClick={() => setShowEmergencyCard(true)}
+                  className="ps-btn py-2.5 px-3.5 text-xs font-mono font-extrabold uppercase tracking-wider flex items-center gap-2 bg-rose-600/10 hover:bg-rose-600 text-rose-700 dark:text-rose-300 hover:text-white border border-rose-600/30 transition-all rounded-2xl shadow-xs active:scale-95 cursor-pointer whitespace-nowrap"
+                  title="Paramedic Emergency Medical ID"
+                >
+                  <span className="relative flex h-2 w-2 flex-shrink-0">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-500 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-rose-600"></span>
+                  </span>
+                  <HeartPulse className="w-4 h-4 flex-shrink-0" />
+                  <span>{t('home.emergency_card_btn', 'SOS Card')}</span>
+                </button>
 
-              {/* Trust Metric Chips */}
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="inline-flex items-center gap-1.5 bg-[var(--surface)]/90 px-3 py-1.5 rounded-full border border-[var(--border)] text-[11px] font-semibold text-[var(--ink-2)] shadow-sm">
-                  <Shield className="w-3.5 h-3.5 text-[var(--brand-600)]" />
-                  222K+ Interaction Rules
-                </span>
-                <span className="inline-flex items-center gap-1.5 bg-[var(--surface)]/90 px-3 py-1.5 rounded-full border border-[var(--border)] text-[11px] font-semibold text-[var(--ink-2)] shadow-sm">
-                  <Activity className="w-3.5 h-3.5 text-[var(--safe-fg)]" />
-                  Real-Time ACB Radar
-                </span>
-                <span className="inline-flex items-center gap-1.5 bg-[var(--surface)]/90 px-3 py-1.5 rounded-full border border-[var(--border)] text-[11px] font-semibold text-[var(--ink-2)] shadow-sm">
-                  <Zap className="w-3.5 h-3.5 text-[var(--doctor-600)]" />
-                  DDInter Verified
-                </span>
+                <Link
+                  to="/add-medicine"
+                  className="ps-btn-shine ps-btn ps-btn-primary py-2.5 px-4 text-xs font-mono font-bold uppercase tracking-wider flex items-center gap-2 whitespace-nowrap shadow-sm"
+                >
+                  <Plus className="w-4 h-4 flex-shrink-0" />
+                  <span>{t('home.add_medicine_btn', 'Add Med')}</span>
+                </Link>
+
+                <button
+                  onClick={() => refetch()}
+                  disabled={isLoading || !token}
+                  className="ps-btn ps-btn-secondary p-2.5 rounded-2xl disabled:opacity-40 flex-shrink-0"
+                  title={t('home.refresh_telemetry', 'Refresh Telemetry')}
+                  aria-label="Refresh Dashboard Data"
+                >
+                  <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
+                </button>
               </div>
             </div>
 
-            <div className="flex items-center gap-2.5 flex-shrink-0 self-start sm:self-center">
-              <Link
-                to="/add-medicine"
-                className="ps-btn-shine ps-btn ps-btn-primary py-2.5 px-5 text-xs font-mono font-bold uppercase tracking-wider flex items-center gap-2"
-              >
-                <Plus className="w-4 h-4" />
-                <span>Add Medicine</span>
-              </Link>
-              <button
-                onClick={() => refetch()}
-                disabled={isLoading || !token}
-                className="ps-btn ps-btn-secondary p-2.5 rounded-2xl disabled:opacity-40"
-                title="Refresh Telemetry"
-                aria-label="Refresh Dashboard Data"
-              >
-                <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
-              </button>
+            {/* Bottom Tier: Trust Chips + Secondary Quick Tools */}
+            <div className="pt-3 border-t border-[var(--border)] flex flex-col md:flex-row md:items-center justify-between gap-3">
+              {/* Trust Metric Chips */}
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="inline-flex items-center gap-1.5 bg-[var(--surface)]/90 px-3 py-1.5 rounded-full border border-[var(--border)] text-[11px] font-semibold text-[var(--ink-2)] shadow-2xs whitespace-nowrap">
+                  <Shield className="w-3.5 h-3.5 text-[var(--brand-600)] flex-shrink-0" />
+                  {t('home.trust_interaction_rules', '222K+ Interaction Rules')}
+                </span>
+                <span className="inline-flex items-center gap-1.5 bg-[var(--surface)]/90 px-3 py-1.5 rounded-full border border-[var(--border)] text-[11px] font-semibold text-[var(--ink-2)] shadow-2xs whitespace-nowrap">
+                  <Activity className="w-3.5 h-3.5 text-[var(--safe-fg)] flex-shrink-0" />
+                  {t('home.trust_acb_radar', 'Real-Time ACB Radar')}
+                </span>
+                <span className="inline-flex items-center gap-1.5 bg-[var(--surface)]/90 px-3 py-1.5 rounded-full border border-[var(--border)] text-[11px] font-semibold text-[var(--ink-2)] shadow-2xs whitespace-nowrap">
+                  <Zap className="w-3.5 h-3.5 text-[var(--doctor-600)] flex-shrink-0" />
+                  {t('home.trust_ddinter_verified', 'DDInter Verified')}
+                </span>
+              </div>
+
+              {/* Secondary Clinical Tools Toolbar */}
+              <div className="flex flex-wrap items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setShowClinicalReport(true)}
+                  className="inline-flex items-center gap-1.5 py-1.5 px-3 rounded-xl text-xs font-bold text-[var(--ink)] bg-[var(--surface)] hover:bg-[var(--surface-2)] border border-[var(--border)] shadow-2xs hover:shadow-xs transition-all active:scale-95 cursor-pointer whitespace-nowrap"
+                  title="Hospital Consultation & Discharge Report (PDF)"
+                >
+                  <FileText className="w-3.5 h-3.5 text-blue-600 flex-shrink-0" />
+                  <span>{t('home.clinical_report_btn', 'Report')}</span>
+                </button>
+
+                <Link
+                  to="/passport"
+                  className="inline-flex items-center gap-1.5 py-1.5 px-3 rounded-xl text-xs font-bold text-[var(--ink)] bg-[var(--surface)] hover:bg-[var(--surface-2)] border border-[var(--border)] shadow-2xs hover:shadow-xs transition-all active:scale-95 cursor-pointer whitespace-nowrap"
+                  title="Official One-Page Medication Passport & Emergency Wallet Card"
+                >
+                  <FileBadge className="w-4 h-4 text-teal-600 flex-shrink-0" />
+                  <span>{t('nav.passport', 'Passport')}</span>
+                </Link>
+
+                <button
+                  type="button"
+                  onClick={() => setShowAlternatives(true)}
+                  className="inline-flex items-center gap-1.5 py-1.5 px-3 rounded-xl text-xs font-bold text-[var(--ink)] bg-[var(--surface)] hover:bg-[var(--surface-2)] border border-[var(--border)] shadow-2xs hover:shadow-xs transition-all active:scale-95 cursor-pointer whitespace-nowrap"
+                  title="Safer Drug Alternatives & De-prescribing"
+                >
+                  <Lightbulb className="w-3.5 h-3.5 text-amber-500 flex-shrink-0" />
+                  <span>{t('home.alternatives_btn', 'Alternatives')}</span>
+                </button>
+
+                <Link
+                  to="/insights"
+                  className="inline-flex items-center gap-1.5 py-1.5 px-3 rounded-xl text-xs font-bold text-[var(--ink)] bg-[var(--surface)] hover:bg-[var(--surface-2)] border border-[var(--border)] shadow-2xs hover:shadow-xs transition-all active:scale-95 cursor-pointer whitespace-nowrap"
+                  title="View Longitudinal Pharmacovigilance Insights"
+                >
+                  <TrendingUp className="w-3.5 h-3.5 text-[var(--brand-600)] flex-shrink-0" />
+                  <span>{t('nav.analytics', 'Insights')}</span>
+                </Link>
+              </div>
             </div>
           </div>
         </div>
+
+        {/* ── Regimen Tabs Navigator ────────────────────────────────────────── */}
+        {!isEmpty && (
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 p-1.5 rounded-2xl bg-[var(--surface)] border border-[var(--border)] shadow-xs no-print">
+            <button
+              type="button"
+              onClick={() => setDashboardTab('REGIMEN')}
+              className={`flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-xs font-sans font-semibold tracking-tight transition-all text-center cursor-pointer ${
+                dashboardTab === 'REGIMEN'
+                  ? 'bg-[var(--brand-600)] text-white shadow-xs'
+                  : 'text-[var(--ink-2)] hover:bg-[var(--canvas)] hover:text-[var(--ink)]'
+              }`}
+            >
+              <Pill className="w-3.5 h-3.5 flex-shrink-0" />
+              <span className="truncate">{t('home.active_regimen_title', 'Active Regimen')} ({medicines.length})</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setDashboardTab('TIMETABLE')}
+              className={`flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-xs font-sans font-semibold tracking-tight transition-all text-center cursor-pointer ${
+                dashboardTab === 'TIMETABLE'
+                  ? 'bg-[var(--brand-600)] text-white shadow-xs'
+                  : 'text-[var(--ink-2)] hover:bg-[var(--canvas)] hover:text-[var(--ink)]'
+              }`}
+            >
+              <Clock className="w-3.5 h-3.5 flex-shrink-0" />
+              <span className="truncate">{t('home.today_schedule_title', 'Daily Timetable')}</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setDashboardTab('FOOD_LIFESTYLE')}
+              className={`flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-xs font-sans font-semibold tracking-tight transition-all text-center cursor-pointer ${
+                dashboardTab === 'FOOD_LIFESTYLE'
+                  ? 'bg-[var(--brand-600)] text-white shadow-xs'
+                  : 'text-[var(--ink-2)] hover:bg-[var(--canvas)] hover:text-[var(--ink)]'
+              }`}
+            >
+              <UtensilsCrossed className="w-3.5 h-3.5 flex-shrink-0" />
+              <span className="truncate">{t('home.dietary_conflicts', 'Dietary Conflicts')} {(data?.foodInteractions || DEMO_DATA.foodInteractions || []).length > 0 ? `(${(data?.foodInteractions || DEMO_DATA.foodInteractions || []).length})` : ''}</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setDashboardTab('EMERGENCY_DIRECTIVES')}
+              className={`flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-xs font-sans font-semibold tracking-tight transition-all text-center cursor-pointer ${
+                dashboardTab === 'EMERGENCY_DIRECTIVES'
+                  ? 'bg-rose-600 text-white shadow-xs'
+                  : 'text-[var(--ink-2)] hover:bg-[var(--canvas)] hover:text-[var(--ink)]'
+              }`}
+            >
+              <HeartPulse className="w-3.5 h-3.5 flex-shrink-0" />
+              <span className="truncate">{t('home.emergency_directives_tab', 'Emergency SOS')}</span>
+            </button>
+          </div>
+        )}
+
  {/* ═══════════════════════════════════════════════════════════════════
  EMPTY STATE — no medicines yet
  ═══════════════════════════════════════════════════════════════════ */}
@@ -855,26 +1086,97 @@ export default function HomePage() {
             <EmptyMedicinesIllustration className="w-36 h-36 mx-auto mb-1" />
             <div className="space-y-1.5">
               <h2 className="text-xl font-bold text-[var(--ink)]">
-                No medicines yet
+                {t('home.no_meds_title', 'No medicines yet')}
               </h2>
               <p className="text-sm text-[var(--ink-3)] max-w-xs mx-auto leading-relaxed">
-                Add your first medicine to get started — PolySafe will begin checking for dangerous
-                interactions across all your prescriptions.
+                {t('home.no_meds_sub', 'Add your first medicine to get started — PolySafe will begin checking for dangerous interactions across all your prescriptions.')}
               </p>
             </div>
             <Link to="/add-medicine" className="ps-btn ps-btn-primary px-8 py-3.5 text-base">
               <Plus className="w-5 h-5" />
-              <span>Add Your First Medicine</span>
+              <span>{t('home.add_first_med_btn', 'Add Your First Medicine')}</span>
             </Link>
           </Card>
         ) : (
           <>
+            {/* ── TAB 1: ACTIVE REGIMEN & DRAWERS ── */}
+            {dashboardTab === 'REGIMEN' && (
+              <>
             {/* ═══════════════════════════════════════════════════════════════
                PHYSICIAN DIRECTIVES BANNER (live doctor updates)
                ═══════════════════════════════════════════════════════════════ */}
             {!isDemo && data?.patientId && (
               <PhysicianDirectivesBanner patientId={data.patientId} token={token} />
             )}
+
+            {/* ═══════════════════════════════════════════════════════════════
+               COMPACT RISK STORY STRIP (Deterministic 3-Sentence Narrative)
+               ═══════════════════════════════════════════════════════════════ */}
+            <RiskStoryStrip
+              medicines={medicines}
+              flags={flags}
+              prescribers={data?.prescribers}
+              acbScore={acbScoreVal}
+            />
+
+            {/* ═══════════════════════════════════════════════════════════════
+               ANIMATED CLINICAL METERS (RiskRing + Anticholinergic Burden)
+               ═══════════════════════════════════════════════════════════════ */}
+            <div className="p-4 sm:p-5 rounded-3xl bg-[var(--surface)] border border-[var(--border)] shadow-xs">
+              <div className="grid grid-cols-1 md:grid-cols-[180px_1fr] gap-6 items-center">
+                <div className="flex flex-col items-center justify-center pb-4 md:pb-0 border-b md:border-b-0 md:border-r border-[var(--border)]">
+                  <RiskRing
+                    score={homeRiskScore}
+                    maxScore={5}
+                    size={135}
+                    label={homeRiskLabel}
+                    sublabel={t('home.overall_harm_score', 'Overall Harm Score')}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setScoreExplainerTab('harm');
+                      setShowScoreExplainer(true);
+                    }}
+                    className="mt-2.5 inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold text-[var(--brand-600)] bg-[var(--brand-600)]/10 hover:bg-[var(--brand-600)]/20 border border-[var(--brand-600)]/20 transition-all cursor-pointer shadow-2xs"
+                    title="Click for clinical explanation and doctor talking points"
+                  >
+                    <HelpCircle className="w-3.5 h-3.5" />
+                    <span>Why is score {typeof homeRiskScore === 'number' ? homeRiskScore.toFixed(1) : homeRiskScore}?</span>
+                  </button>
+                </div>
+                <div className="space-y-3 min-w-0">
+                  <div className="flex items-center justify-between gap-2 flex-wrap">
+                    <div>
+                      <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--ink)] font-[var(--font-heading)]">
+                        {t('home.acb_surveillance_title', 'Anticholinergic Burden Surveillance')}
+                      </h3>
+                      <p className="text-[11px] text-[var(--ink-3)] font-mono mt-0.5">
+                        {t('home.acb_surveillance_sub', 'Cumulative multi-agent cognitive and psychomotor load')}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setScoreExplainerTab('acb');
+                          setShowScoreExplainer(true);
+                        }}
+                        className="inline-flex items-center gap-1 text-[11px] font-bold text-amber-700 dark:text-amber-400 hover:underline cursor-pointer"
+                        title="Click to see how ACB is calculated and what it means"
+                      >
+                        <HelpCircle className="w-3.5 h-3.5" />
+                        <span>Why is ACB {acbScoreVal}?</span>
+                      </button>
+                      <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-[var(--surface-2)] text-[var(--ink-2)] border border-[var(--border)]">
+                        {acbScoreVal >= 3 ? t('home.acb_high_risk', 'High Risk') : acbScoreVal >= 1 ? t('home.acb_moderate', 'Moderate') : t('home.acb_normal', 'Normal')}
+                      </span>
+                    </div>
+                  </div>
+                  <ACBMeter value={acbScoreVal} />
+                </div>
+              </div>
+            </div>
 
             {/* ═══════════════════════════════════════════════════════════════
                POLYPHARMACY RISK OVERVIEW (Harm Level Dashboard)
@@ -907,14 +1209,14 @@ export default function HomePage() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
                         <span className="text-base sm:text-lg font-extrabold text-[var(--ink)] font-[var(--font-heading)]">
-                          {flags.length} Severe Interaction Flag{flags.length !== 1 ? 's' : ''} Active
+                          {t('home.severe_flags_active', `${flags.length} Severe Interaction Flag${flags.length !== 1 ? 's' : ''} Active`, { count: flags.length })}
                         </span>
                         <span className="text-[10px] font-mono font-bold bg-rose-600 text-white px-2.5 py-0.5 rounded-full shadow-xs">
-                          CRITICAL RISK
+                          {t('common.critical', 'CRITICAL')} {t('home.risk_word', 'RISK')}
                         </span>
                       </div>
                       <p className="text-xs text-[var(--ink-2)] mt-0.5 leading-snug">
-                        Major or contraindicated pharmacological interactions detected. Immediate physician review and clinical evaluation advised.
+                        {t('home.severe_flags_desc', 'Major or contraindicated pharmacological interactions detected. Immediate physician review and clinical evaluation advised.')}
                       </p>
                     </div>
                   </Card>
@@ -935,14 +1237,14 @@ export default function HomePage() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
                         <span className="text-base sm:text-lg font-extrabold text-[var(--ink)] font-[var(--font-heading)]">
-                          {flags.length} Interaction Flag{flags.length !== 1 ? 's' : ''} Active
+                          {t('home.caution_flags_active', `${flags.length} Interaction Flag${flags.length !== 1 ? 's' : ''} Active`, { count: flags.length })}
                         </span>
                         <span className="text-[10px] font-mono font-bold bg-[var(--caution-fg)] text-white px-2.5 py-0.5 rounded-full shadow-xs">
-                          CAUTION
+                          {t('common.caution', 'CAUTION')}
                         </span>
                       </div>
                       <p className="text-xs text-[var(--ink-2)] mt-0.5 leading-snug">
-                        Potential pharmacological interactions detected in active regimen. Review interaction telemetry below and consult your doctor.
+                        {t('home.caution_flags_desc', 'Potential pharmacological interactions detected in active regimen. Review interaction telemetry below and consult your doctor.')}
                       </p>
                     </div>
                   </Card>
@@ -963,14 +1265,14 @@ export default function HomePage() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
                         <span className="text-base sm:text-lg font-extrabold text-[var(--ink)] font-[var(--font-heading)]">
-                          No Interaction Flags · High-Alert Medication Active
+                          {t('home.critical_drug_active', 'No Interaction Flags · High-Alert Medication Active')}
                         </span>
                         <span className="text-[10px] font-mono font-bold bg-rose-600 text-white px-2.5 py-0.5 rounded-full shadow-xs">
-                          L5 CRITICAL MONITORING
+                          {t('home.l5_critical_monitoring', 'L5 CRITICAL MONITORING')}
                         </span>
                       </div>
                       <p className="text-xs text-[var(--ink-2)] mt-0.5 leading-snug">
-                        No pairwise drug-drug interactions detected between active medicines. However, <strong className="text-rose-700 font-bold">{highestRiskDrugName}</strong> is an L5 Critical Risk agent (narrow therapeutic index) requiring specialized clinical monitoring.
+                        {t('home.critical_drug_desc', `No pairwise drug-drug interactions detected between active medicines. However, ${highestRiskDrugName} is an L5 Critical Risk agent (narrow therapeutic index) requiring specialized clinical monitoring.`, { name: highestRiskDrugName })}
                       </p>
                     </div>
                   </Card>
@@ -991,14 +1293,14 @@ export default function HomePage() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
                         <span className="text-base sm:text-lg font-extrabold text-[var(--ink)] font-[var(--font-heading)]">
-                          No Interaction Flags · High-Alert Drug in Regimen
+                          {t('home.high_risk_drug_active', 'No Interaction Flags · High-Alert Drug in Regimen')}
                         </span>
                         <span className="text-[10px] font-mono font-bold bg-[var(--caution-fg)] text-white px-2.5 py-0.5 rounded-full shadow-xs">
-                          L4 MONITORING
+                          {t('home.l4_monitoring', 'L4 MONITORING')}
                         </span>
                       </div>
                       <p className="text-xs text-[var(--ink-2)] mt-0.5 leading-snug">
-                        No pairwise drug-drug interactions detected between active medicines. However, <strong className="text-amber-700 font-bold">{highestRiskDrugName}</strong> is an L4 High Risk medication requiring standard clinical surveillance.
+                        {t('home.high_risk_drug_desc', `No pairwise drug-drug interactions detected between active medicines. However, ${highestRiskDrugName} is an L4 High Risk medication requiring standard clinical surveillance.`, { name: highestRiskDrugName })}
                       </p>
                     </div>
                   </Card>
@@ -1018,19 +1320,37 @@ export default function HomePage() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className="text-base sm:text-lg font-extrabold text-[var(--ink)] font-[var(--font-heading)]">
-                        No Harmful Interactions Detected
+                        {t('home.all_clear_title', 'No Harmful Interactions Detected')}
                       </span>
                       <span className="text-[10px] font-mono font-bold bg-[var(--safe-fg)] text-white px-2.5 py-0.5 rounded-full shadow-xs">
-                        SAFE
+                        {t('common.safe', 'SAFE')}
                       </span>
                     </div>
                     <p className="text-xs text-[var(--ink-2)] mt-0.5 leading-snug">
-                      All {medicines.length} active medicine{medicines.length !== 1 ? 's' : ''} in your regimen are verified safe against DDInter clinical benchmarks.
+                      {t('home.all_clear_desc', `All ${medicines.length} active medicine${medicines.length !== 1 ? 's' : ''} in your regimen are verified safe against DDInter clinical benchmarks.`, { count: medicines.length })}
                     </p>
                   </div>
                 </Card>
               );
             })()}
+
+        {/* ═══════════════════════════════════════════════════════════════
+           SAFETY ALERTS (NEW DETERMINISTIC CHECK TYPES)
+           ═══════════════════════════════════════════════════════════════ */}
+        {safetyAlerts.length > 0 && (
+          <Card
+            title={t('safety_alerts.title', 'Safety Alerts')}
+            icon={<ShieldAlert className="w-4 h-4 text-rose-600" />}
+            badge={
+              <span className="text-[11px] font-bold px-2.5 py-1 rounded-lg bg-rose-500/10 text-rose-700 border border-rose-500/25">
+                {safetyAlerts.length} {t('home.issues_label', 'Issues')}
+              </span>
+            }
+            className="space-y-4"
+          >
+            <SafetyAlertsSection alerts={safetyAlerts} compact={true} />
+          </Card>
+        )}
 
         {/* ═══════════════════════════════════════════════════════════════
            TODAY'S SCHEDULE
@@ -1068,11 +1388,45 @@ export default function HomePage() {
           }
           className="space-y-4"
         >
+          {/* Dose Spacing Guidance Header Tip */}
+          {(() => {
+            const spacingTips = safetyAlerts.filter(a => a.type === 'FOOD_SPACING');
+            if (spacingTips.length === 0) return null;
+            return (
+              <div className="p-3.5 rounded-2xl bg-teal-500/10 border border-teal-500/25 space-y-1.5 text-xs text-teal-950 dark:text-teal-200">
+                <div className="flex items-center gap-2 font-extrabold text-[var(--ink)]">
+                  <Clock className="w-4 h-4 text-teal-600" />
+                  <span>Dose Spacing & Food Timing Advice</span>
+                </div>
+                <div className="space-y-1 text-[11px] text-[var(--ink-2)]">
+                  {spacingTips.map((tip, idx) => (
+                    <div key={idx} className="flex items-start gap-1.5">
+                      <span className="text-teal-600 font-bold">•</span>
+                      <span>{tip.plainText}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            );
+          })()}
+
           <div className="space-y-3.5">
             <AnimatePresence initial={false}>
               {schedule.map((item, i) => {
                 const doseKey = `${item.medicineId}-${item.time}-${i}`;
                 const isDoseReminded = remindersEnabled || remindedDoses[doseKey];
+                const spacingTips = safetyAlerts.filter(a => a.type === 'FOOD_SPACING');
+                const medSpacingTip = spacingTips.find(s =>
+                  s.medicines?.some(m => {
+                    const mName = typeof m === 'string' ? m : (m?.name || m?.label || '');
+                    const itemName = item?.name || '';
+                    if (!mName || !itemName) return false;
+                    return (
+                      itemName.toLowerCase().includes(mName.toLowerCase()) ||
+                      mName.toLowerCase().includes(itemName.toLowerCase())
+                    );
+                  })
+                );
 
                 return (
                   <motion.div
@@ -1086,7 +1440,7 @@ export default function HomePage() {
                   >
                     {/* Time bubble */}
                     <div className="flex-shrink-0 w-16 text-center">
-                      <span className="text-[11px] font-bold text-[var(--brand-600)] bg-[var(--brand-600)]/10 border border-[var(--brand-600)]/20 px-2.5 py-1 rounded-xl block leading-snug font-mono shadow-xs">
+                      <span className="text-[11px] font-bold text-[var(--brand-700)] dark:text-cyan-300 bg-[var(--brand-600)]/10 border border-[var(--brand-600)]/20 px-2.5 py-1 rounded-xl block leading-snug font-mono shadow-xs">
                         {item.time}
                       </span>
                     </div>
@@ -1098,6 +1452,12 @@ export default function HomePage() {
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-bold text-[var(--ink)] truncate">{item.name}</p>
                       <p className="text-xs text-[var(--ink-2)] font-medium mt-0.5 leading-relaxed">{formatScheduleDose(item.dosage)}</p>
+                      {medSpacingTip && (
+                        <div className="mt-1 flex items-center gap-1 text-[10px] font-semibold text-teal-800 dark:text-teal-300 bg-teal-500/10 border border-teal-500/20 px-2 py-0.5 rounded-md w-fit">
+                          <Clock className="w-2.5 h-2.5 text-teal-600 flex-shrink-0" />
+                          <span>Tip: {medSpacingTip.plainText}</span>
+                        </div>
+                      )}
                     </div>
 
                     <MedicineTypeBadge type={item.type} />
@@ -1139,109 +1499,54 @@ export default function HomePage() {
           }
           className="space-y-4"
         >
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <AnimatePresence initial={false}>
-              {medicines.map((med, idx) => (
-                <motion.div
+          {medicines.length === 0 ? (
+            <div className="p-8 text-center space-y-3 bg-[var(--canvas)] rounded-2xl border border-[var(--border)]">
+              <EmptyMedicinesIllustration className="w-20 h-20 mx-auto" />
+              <h3 className="text-sm font-bold text-[var(--ink)] font-[var(--font-heading)]">No Active Medicines Yet</h3>
+              <p className="text-xs text-[var(--ink-3)] max-w-sm mx-auto">
+                Add your prescriptions, over-the-counter tablets, or herbal supplements to start real-time safety screening.
+              </p>
+              <Link
+                to="/add-medicine"
+                className="ps-btn ps-btn-primary inline-flex items-center gap-2 py-2 px-4 text-xs font-bold rounded-xl mt-2"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>Add First Medicine</span>
+              </Link>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <AnimatePresence initial={false}>
+                {medicines.map((med) => (
+                <MedicationCard
                   key={med.id}
-                  layout={!shouldReduceMotion}
-                  initial={shouldReduceMotion ? false : { opacity: 0, scale: 0.96, y: 8 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  exit={shouldReduceMotion ? undefined : { opacity: 0, scale: 0.95 }}
-                  transition={{ duration: 0.22, delay: idx * 0.04 }}
-                  className="ps-med-card space-y-3 flex flex-col justify-between"
-                >
-                  <div className="space-y-2">
-                    <div className="flex items-start justify-between gap-1 flex-wrap">
-                      <div className="flex-1 min-w-0 pr-1">
-                        <p className="text-sm font-bold text-[var(--ink)] leading-tight truncate">
-                          {med.name}
-                        </p>
-                        {med.generic && med.generic.toLowerCase() !== med.name.toLowerCase() && (
-                          <p className="text-[11px] text-[var(--ink-3)] truncate">
-                            {med.generic}
-                          </p>
-                        )}
-                      </div>
-                      <div className="flex items-center gap-1 flex-shrink-0">
-                        <DrugHarmBadge harmLevel={med.harmLevel} category={med.category} name={med.name} flags={flags} />
-                        <MedicineTypeBadge type={med.type} />
-                      </div>
-                    </div>
-
-                    {renderMedicationDetails(med)}
-
-                    {/* Primary Medical Indication / Used For */}
-                    {(() => {
-                      const indication = getMedicineIndication(med);
-                      if (!indication) return null;
-                      return (
-                        <div className="flex items-start gap-2 p-2.5 rounded-xl bg-teal-500/10 border border-teal-500/20 text-xs">
-                          <Stethoscope className="w-3.5 h-3.5 text-teal-700 dark:text-teal-400 flex-shrink-0 mt-0.5" />
-                          <div className="leading-snug">
-                            <span className="text-[10px] font-bold text-teal-800 dark:text-teal-300 uppercase tracking-wider block">
-                              Used For / Treats
-                            </span>
-                            <span className="font-semibold text-[var(--ink)] text-xs">
-                              {indication}
-                            </span>
-                          </div>
-                        </div>
-                      );
-                    })()}
-
-                    {/* Interactive Drug Harm & Side Effects Panel */}
-                    <DrugHarmPanel medicine={med} flags={flags} className="mt-1" />
-
-                    {med.safetyTip && (
-                      <p className="text-xs text-[var(--ink-2)] bg-[var(--canvas)] p-2.5 rounded-xl border border-[var(--border)] leading-tight">
-                        {med.safetyTip}
-                      </p>
-                    )}
-
-                    <p className="text-[10px] text-[var(--ink-3)] font-mono">
-                      Added {new Date(med.dateAdded).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}
-                    </p>
-                  </div>
-
-                  {/* Edit & Discontinue Action Bar */}
-                  <div className="flex items-center justify-end gap-2 pt-2 border-t border-[var(--border)]">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        if (isGuest) {
-                          openGuestLockModal('edit medication dosage and type');
-                          return;
-                        }
-                        setEditingMed(med);
-                      }}
-                      className="inline-flex items-center gap-1 px-3 py-1.5 text-[11px] font-bold text-[var(--brand-600)] bg-[var(--brand-600)]/10 border border-[var(--brand-600)]/20 hover:bg-[var(--brand-600)]/20 rounded-xl transition-all cursor-pointer"
-                      title="Edit dosage or type"
-                    >
-                      <Pencil className="w-3 h-3" />
-                      <span>Edit</span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        if (isGuest) {
-                          openGuestLockModal('discontinue medication');
-                          return;
-                        }
-                        setDiscontinuingMed(med);
-                      }}
-                      className="inline-flex items-center gap-1 px-3 py-1.5 text-[11px] font-bold text-[var(--critical-fg)] bg-[var(--surface)] border border-[var(--border)] shadow-xs hover:bg-rose-500/10 rounded-xl transition-all cursor-pointer"
-                      title="Discontinue medicine"
-                    >
-                      <Trash2 className="w-3 h-3" />
-                      <span>Discontinue</span>
-                    </button>
-                  </div>
-                </motion.div>
+                  medicine={med}
+                  acbScore={med.acbScore || 0}
+                  sideEffects={med.sideEffects || []}
+                  cascades={med.cascades || []}
+                  herbWarnings={med.herbWarnings || []}
+                  onEdit={() => {
+                    if (isGuest) {
+                      openGuestLockModal('edit medication dosage and type');
+                      return;
+                    }
+                    setEditingMed(med);
+                  }}
+                  onDiscontinue={() => {
+                    if (isGuest) {
+                      openGuestLockModal('discontinue medication');
+                      return;
+                    }
+                    setDiscontinuingMed(med);
+                  }}
+                  isReadOnly={isGuest}
+                  showActions={true}
+                />
               ))}
             </AnimatePresence>
           </div>
-        </Card>
+        )}
+      </Card>
 
         {/* ═══════════════════════════════════════════════════════════════
  RECENT FLAGS — only shown when flags exist
@@ -1406,19 +1711,74 @@ export default function HomePage() {
 								{isGuest && <Lock className="w-3.5 h-3.5 text-[var(--caregiver-600)] absolute top-2.5 right-2.5" />}
 							</Link>
 						</div>
-					</div></>
- )}
+					</div>
+              </>
+            )}
 
- {/* ─── Edit Medicine Modal ─── */}
- <EditMedicineModal
- med={editingMed}
- isOpen={!!editingMed}
- onClose={() => setEditingMed(null)}
- onSave={(vars) => editMutation.mutate(vars)}
- isPending={editMutation.isPending}
- />
+            {/* ── TAB 2: DAILY 4-SLOT REGIMEN TIMETABLE & ADHERENCE ── */}
+            {dashboardTab === 'TIMETABLE' && (
+              <DailyRegimenTimetable
+                timetableData={data?.dailyTimetable || DEMO_DATA.dailyTimetable}
+              />
+            )}
 
- {/* ─── Discontinue Medicine Modal ─── */}
+            {/* ── TAB 3: FOOD & LIFESTYLE SAFETY SCANNER ── */}
+            {dashboardTab === 'FOOD_LIFESTYLE' && (
+              <FoodDrugSafetyPanel
+                conflicts={data?.foodInteractions || DEMO_DATA.foodInteractions || []}
+              />
+            )}
+
+            {/* ── TAB 4: EMERGENCY MEDICAL ALERT & DOCTOR DIRECTIVES ── */}
+            {dashboardTab === 'EMERGENCY_DIRECTIVES' && (
+              <div className="space-y-6">
+                {!isDemo && data?.patientId && (
+                  <PhysicianDirectivesBanner patientId={data.patientId} token={token} />
+                )}
+                <div className="p-6 rounded-3xl bg-[var(--surface)] border border-[var(--border)] shadow-xs space-y-4">
+                  <div className="flex items-center justify-between flex-wrap gap-3">
+                    <div className="flex items-center gap-3">
+                      <div className="p-3 bg-rose-500/10 text-rose-600 rounded-2xl">
+                        <HeartPulse className="w-6 h-6 animate-pulse" />
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-extrabold text-[var(--ink)]">
+                          Emergency First Responder Medical Summary
+                        </h3>
+                        <p className="text-xs text-[var(--ink-3)] font-mono">
+                          Instant alert card for EMTs, paramedics, and emergency physicians.
+                        </p>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setShowEmergencyCard(true)}
+                      className="ps-btn ps-btn-primary py-2 px-4 text-xs font-mono font-bold"
+                    >
+                      Open Emergency Card
+                    </button>
+                  </div>
+                  <div className="p-4 rounded-2xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/50 text-xs space-y-2 text-rose-900 dark:text-rose-200">
+                    <p className="font-bold">Active High-Alert Medications: {medicines.filter(m => (m.harmLevel || 1) >= 4).map(m => m.name).join(', ') || 'None'}</p>
+                    <p>Allergies: {(data?.patientAllergies || ['None reported']).join(', ')}</p>
+                    <p>Contraindications: {flags.length} active pharmacological flags</p>
+                  </div>
+                </div>
+              </div>
+            )}
+            </>
+          )}
+
+          {/* ─── Edit Medicine Modal ─── */}
+          <EditMedicineModal
+            med={editingMed}
+            isOpen={!!editingMed}
+            onClose={() => setEditingMed(null)}
+            onSave={(vars) => editMutation.mutate(vars)}
+            isPending={editMutation.isPending}
+          />
+
+          {/* ─── Discontinue Medicine Modal ─── */}
  <DiscontinueMedicineModal
  med={discontinuingMed}
  isOpen={!!discontinuingMed}
@@ -1426,9 +1786,42 @@ export default function HomePage() {
  onConfirm={(id) => deleteMutation.mutate(id)}
  isPending={deleteMutation.isPending}
  />
- </div>
- </div>
- );
+
+      {/* ─── Emergency Paramedic SOS Card Modal ─── */}
+      <EmergencyMedicalCardModal
+        isOpen={showEmergencyCard}
+        onClose={() => setShowEmergencyCard(false)}
+        data={emergencyCardData}
+        isDemo={isDemo}
+      />
+
+      {/* ─── Clinical Consultation Report Modal ─── */}
+      <ClinicalReportModal
+        isOpen={showClinicalReport}
+        onClose={() => setShowClinicalReport(false)}
+        reportData={clinicalReportData}
+        isDemo={isDemo}
+      />
+
+      {/* ─── Safer Drug Alternatives Modal ─── */}
+      <AlternativeSuggestionsModal
+        isOpen={showAlternatives}
+        onClose={() => setShowAlternatives(false)}
+        suggestions={data?.alternativeSuggestions || []}
+      />
+
+      {/* ─── Clinical Score Explainer Modal ─── */}
+      <ClinicalScoreExplainerModal
+        isOpen={showScoreExplainer}
+        onClose={() => setShowScoreExplainer(false)}
+        initialTab={scoreExplainerTab}
+        regimenRisk={data?.regimenRisk}
+        acbScore={acbScoreVal}
+        medicines={medicines}
+        flags={flags}
+      />
+    </div>
+  );
 }
 
 // ─── Sub-Component: Edit Medicine Modal ──────────────────────────────────────
@@ -1497,7 +1890,27 @@ function EditMedicineModal({ med, isOpen, onClose, onSave, isPending }) {
  }
  }, [med]);
 
- if (!isOpen || !med) return null;
+  // Lock body scroll when open
+  useEffect(() => {
+    if (!isOpen || !med) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [isOpen, med]);
+
+  // Escape key listener
+  useEffect(() => {
+    if (!isOpen || !med) return;
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') onClose?.();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, med, onClose]);
+
+  if (!isOpen || !med || typeof document === 'undefined') return null;
 
  const handleSubmit = (e) => {
  e.preventDefault();
@@ -1515,15 +1928,20 @@ function EditMedicineModal({ med, isOpen, onClose, onSave, isPending }) {
  });
  };
 
- return (
- <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
- <motion.div
- initial={{ opacity: 0, scale: 0.95, y: 12 }}
- animate={{ opacity: 1, scale: 1, y: 0 }}
- exit={{ opacity: 0, scale: 0.95, y: 12 }}
- transition={{ duration: 0.22, ease: [0.25, 1, 0.5, 1] }}
- className="w-full max-w-lg bg-[var(--canvas)] rounded-[32px] shadow-[var(--shadow-lg)] border border-[var(--border)] overflow-hidden"
- >
+ return createPortal(
+    <div
+      className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm overflow-y-auto"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose?.();
+      }}
+    >
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95, y: 12 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.95, y: 12 }}
+        transition={{ duration: 0.22, ease: [0.25, 1, 0.5, 1] }}
+        className="w-full max-w-lg bg-[var(--surface)] rounded-[32px] shadow-[var(--shadow-lg)] border border-[var(--border)] overflow-hidden z-[201] my-auto"
+      >
  {/* Header */}
  <div className="flex items-center justify-between px-6 pt-5 pb-4 border-b border-[var(--border)]">
  <div className="flex items-center gap-3">
@@ -1651,7 +2069,6 @@ function EditMedicineModal({ med, isOpen, onClose, onSave, isPending }) {
  value={frequency && !FREQUENCY_OPTIONS.includes(frequency) ? frequency : ''}
  onChange={(e) => setFrequency(e.target.value)}
                 className="ps-input text-sm w-full mt-1.5"
- className="input-field text-sm mt-1.5"
  />
  </div>
 
@@ -1674,7 +2091,7 @@ function EditMedicineModal({ med, isOpen, onClose, onSave, isPending }) {
  {opt.icon}
  </div>
  <p className="font-bold text-[11px]">{opt.label}</p>
- <p className={`text-[10px] mt-0.5 ${foodInstruction === opt.value ? 'text-white/80' : 'text-[#9CA3AF]'}`}>{opt.hint}</p>
+ <p className={`text-[10px] mt-0.5 ${foodInstruction === opt.value ? 'text-white/80' : 'text-[var(--ink-3)]'}`}>{opt.hint}</p>
  </button>
  ))}
  </div>
@@ -1830,37 +2247,65 @@ function EditMedicineModal({ med, isOpen, onClose, onSave, isPending }) {
  )}
  </div>
  </form>
- </motion.div>
- </div>
- );
+      </motion.div>
+    </div>,
+    document.body
+  );
 }
 
 // ─── Sub-Component: Discontinue Medicine Modal ───────────────────────────────
 function DiscontinueMedicineModal({ med, isOpen, onClose, onConfirm, isPending }) {
-  if (!isOpen || !med) return null;
+  const { t } = useT();
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
+  // Lock body scroll when open
+  useEffect(() => {
+    if (!isOpen || !med) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [isOpen, med]);
+
+  // Escape key listener
+  useEffect(() => {
+    if (!isOpen || !med) return;
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') onClose?.();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, med, onClose]);
+
+  if (!isOpen || !med || typeof document === 'undefined') return null;
+
+  return createPortal(
+    <div
+      className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs overflow-y-auto"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose?.();
+      }}
+    >
       <motion.div
         initial={{ opacity: 0, scale: 0.95, y: 12 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 12 }}
         transition={{ type: 'spring', damping: 25, stiffness: 350 }}
-        className="p-6 max-w-md w-full bg-[var(--canvas)] space-y-5 shadow-[var(--shadow-lg)] border border-[var(--border)] rounded-[28px] relative overflow-hidden"
+        className="p-6 max-w-md w-full bg-[var(--surface)] space-y-5 shadow-[var(--shadow-lg)] border border-[var(--border)] rounded-[28px] relative overflow-hidden"
       >
         {/* Top Danger Accent Strip */}
         <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-rose-500 via-rose-600 to-amber-500" />
 
         <div className="flex items-start gap-3.5 pt-1">
-          <div className="p-3 bg-rose-50 border border-rose-200/80 text-rose-600 rounded-2xl flex-shrink-0 shadow-xs">
+          <div className="p-3 bg-rose-50 dark:bg-rose-950/40 border border-rose-200/80 dark:border-rose-900/50 text-rose-600 dark:text-rose-400 rounded-2xl flex-shrink-0 shadow-xs">
             <Trash2 className="w-6 h-6" />
           </div>
           <div className="flex-1 min-w-0">
             <h2 className="text-lg font-extrabold text-[var(--ink)] font-[var(--font-heading)] tracking-tight">
-              Discontinue Medicine?
+              {t('home.discontinue_med_title', 'Discontinue Medicine?')}
             </h2>
             <p className="text-xs text-[var(--ink-3)] mt-1 leading-relaxed">
-              Are you sure you want to stop tracking <strong className="text-[var(--ink)]">{med.name}</strong>?
+              {t('home.discontinue_confirm_question', `Are you sure you want to stop tracking ${med.name}?`, { name: med.name })}
             </p>
           </div>
         </div>
@@ -1869,13 +2314,13 @@ function DiscontinueMedicineModal({ med, isOpen, onClose, onConfirm, isPending }
           <div className="flex items-start gap-2">
             <span className="text-rose-500 font-bold">•</span>
             <p className="leading-relaxed">
-              It will be removed from your <span className="font-bold text-[var(--ink)]">active schedule</span> and live interaction screening.
+              {t('home.discontinue_bullet1', 'It will be removed from your active schedule and live interaction screening.')}
             </p>
           </div>
           <div className="flex items-start gap-2">
             <span className="text-amber-500 font-bold">•</span>
             <p className="leading-relaxed">
-              It will remain preserved in your <span className="font-bold text-[var(--ink)]">Medication Timeline</span> as discontinued for your doctors to review.
+              {t('home.discontinue_bullet2', 'It will remain preserved in your Medication Timeline as discontinued for your doctors to review.')}
             </p>
           </div>
         </div>
@@ -1887,7 +2332,7 @@ function DiscontinueMedicineModal({ med, isOpen, onClose, onConfirm, isPending }
             className="ps-btn ps-btn-secondary flex-1 py-3 text-xs font-mono font-bold cursor-pointer"
             disabled={isPending}
           >
-            Cancel
+            {t('common.cancel', 'Cancel')}
           </button>
           <button
             type="button"
@@ -1898,17 +2343,18 @@ function DiscontinueMedicineModal({ med, isOpen, onClose, onConfirm, isPending }
             {isPending ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin" />
-                <span>Discontinuing…</span>
+                <span>{t('home.discontinuing', 'Discontinuing…')}</span>
               </>
             ) : (
               <>
                 <Trash2 className="w-3.5 h-3.5" />
-                <span>Yes, Discontinue</span>
+                <span>{t('home.yes_discontinue', 'Yes, Discontinue')}</span>
               </>
             )}
           </button>
         </div>
       </motion.div>
-    </div>
+    </div>,
+    document.body
   );
 }

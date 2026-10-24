@@ -1,6 +1,18 @@
 {
   "1fb2f576-9106-4fdc-9e9a-e639a7b5a2f1": [
     {
+      "id": "e318e5d0-4813-4c6d-8a34-a98966e4701b",
+      "patientId": "1fb2f576-9106-4fdc-9e9a-e639a7b5a2f1",
+      "doctorId": "b899ff35-926d-4595-bac9-6dd42f03dbe2",
+      "doctorName": "Meet",
+      "text": "Always drink boiled water",
+      "category": "LIFESTYLE_ORDER",
+      "priority": "NORMAL",
+      "issuedAt": "2026-10-04T11:25:26.710Z",
+      "read": true,
+      "readAt": "2026-10-04T11:25:37.230Z"
+    },
+    {
       "id": "fbcc5bbd-1690-4c2d-8582-e7fcb8162c89",
       "patientId": "1fb2f576-9106-4fdc-9e9a-e639a7b5a2f1",
       "doctorId": "e95e73fc-14c4-4b60-b82f-f642b43451ca",
@@ -8,7 +20,9 @@
       "text": "Test clinical instruction: keep hydrated.",
       "category": "LIFESTYLE_ORDER",
       "priority": "HIGH",
-      "issuedAt": "2026-10-04T11:24:07.390Z"
+      "issuedAt": "2026-10-04T11:24:07.390Z",
+      "read": true,
+      "readAt": "2026-10-04T11:25:38.756Z"
     },
     {
       "id": "d525df58-8fc0-4237-9e09-b33b59817f91",

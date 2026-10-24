@@ -1,0 +1,156 @@
+{
+  "timestamp": "2026-10-20T16:05:44.751Z",
+  "screenshotsCaptured": 77,
+  "projectorMode": {
+    "1080p": {
+      "hasProjectorClass": true,
+      "fontSize": "19px",
+      "allSecondaryHidden": true,
+      "totalButtons": 6,
+      "smallTargetsCount": 0
+    },
+    "768p": {
+      "hasProjectorClass": true,
+      "fontSize": "18px",
+      "allSecondaryHidden": true,
+      "totalButtons": 45,
+      "smallTargetsCount": 0
+    }
+  },
+  "axeResults": {
+    "Home": {
+      "totalViolations": 5,
+      "criticalCount": 2,
+      "violations": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+          "nodes": 41
+        },
+        {
+          "id": "heading-order",
+          "impact": "moderate",
+          "description": "Ensure the order of headings is semantically correct",
+          "nodes": 1
+        },
+        {
+          "id": "label-content-name-mismatch",
+          "impact": "serious",
+          "description": "Ensure that elements labelled through their content must have their visible text as part of their accessible name",
+          "nodes": 1
+        },
+        {
+          "id": "landmark-no-duplicate-banner",
+          "impact": "moderate",
+          "description": "Ensure the document has at most one banner landmark",
+          "nodes": 1
+        },
+        {
+          "id": "landmark-unique",
+          "impact": "moderate",
+          "description": "Ensure landmarks are unique",
+          "nodes": 1
+        }
+      ]
+    },
+    "Add Medicine": {
+      "totalViolations": 6,
+      "criticalCount": 3,
+      "violations": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+          "nodes": 18
+        },
+        {
+          "id": "heading-order",
+          "impact": "moderate",
+          "description": "Ensure the order of headings is semantically correct",
+          "nodes": 1
+        },
+        {
+          "id": "label-content-name-mismatch",
+          "impact": "serious",
+          "description": "Ensure that elements labelled through their content must have their visible text as part of their accessible name",
+          "nodes": 1
+        },
+        {
+          "id": "landmark-no-duplicate-banner",
+          "impact": "moderate",
+          "description": "Ensure the document has at most one banner landmark",
+          "nodes": 1
+        },
+        {
+          "id": "landmark-unique",
+          "impact": "moderate",
+          "description": "Ensure landmarks are unique",
+          "nodes": 1
+        },
+        {
+          "id": "select-name",
+          "impact": "critical",
+          "description": "Ensure select element has an accessible name",
+          "nodes": 3
+        }
+      ]
+    },
+    "Risk Analysis": {
+      "totalViolations": 5,
+      "criticalCount": 2,
+      "violations": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+          "nodes": 6
+        },
+        {
+          "id": "label-content-name-mismatch",
+          "impact": "serious",
+          "description": "Ensure that elements labelled through their content must have their visible text as part of their accessible name",
+          "nodes": 6
+        },
+        {
+          "id": "landmark-no-duplicate-banner",
+          "impact": "moderate",
+          "description": "Ensure the document has at most one banner landmark",
+          "nodes": 1
+        },
+        {
+          "id": "landmark-unique",
+          "impact": "moderate",
+          "description": "Ensure landmarks are unique",
+          "nodes": 1
+        },
+        {
+          "id": "page-has-heading-one",
+          "impact": "moderate",
+          "description": "Ensure that the page, or at least one of its frames contains a level-one heading",
+          "nodes": 1
+        }
+      ]
+    },
+    "Doctor Dashboard": {
+      "totalViolations": 2,
+      "criticalCount": 1,
+      "violations": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+          "nodes": 20
+        },
+        {
+          "id": "heading-order",
+          "impact": "moderate",
+          "description": "Ensure the order of headings is semantically correct",
+          "nodes": 1
+        }
+      ]
+    }
+  },
+  "consoleErrorsCount": 0,
+  "consoleErrors": []
+}

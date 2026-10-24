@@ -1,71 +1,87 @@
 // src/layouts/PatientLayout.jsx
-// "Clinical Calm" shell — clean top nav + mobile tab bar
+// Redesigned Patient Layout with SharedTopBar, Mobile Bottom Tab Bar, and Floating Speed-Dial
 import React, { useState, useEffect } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { io as socketIO } from 'socket.io-client';
 import { useQueryClient } from '@tanstack/react-query';
-import { notify } from '../utils/toast';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
-  ShieldCheck,
   Home,
-  PlusCircle,
   Clock,
   HeartPulse,
+  FileBadge,
+  UserCircle,
+  Plus,
+  Camera,
+  Search,
+  Pill,
+  X,
   Users,
   TrendingUp,
-  UserCircle,
-  LogOut,
-  Menu,
-  X,
-  ChevronRight,
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
-import PageTransition from '../components/PageTransition';
-import { useAuth } from '../context/AuthContext';
-import SignOutConfirmButton from '../components/SignOutConfirmButton';
 import { clsx } from 'clsx';
+import { notify } from '../utils/toast';
+import { useAuth } from '../context/AuthContext';
+import { useT } from '../i18n/useT';
+import PageTransition from '../components/PageTransition';
+import SharedTopBar from '../components/SharedTopBar';
+import CommandPalette from '../components/CommandPalette';
 
-const navItems = [
-  { id: 'home',     label: 'Home',      path: '/home',        icon: Home,
-    match: (p) => p === '/home' || p.startsWith('/risk') },
-  { id: 'add',      label: 'Add Med',   path: '/add-medicine', icon: PlusCircle,
-    match: (p) => p === '/add-medicine' },
-  { id: 'timeline', label: 'Timeline',  path: '/timeline',     icon: Clock,
-    match: (p) => p === '/timeline' },
-  { id: 'symptoms', label: 'Symptoms',  path: '/log-symptom',  icon: HeartPulse,
-    match: (p) => p === '/log-symptom' || p === '/symptom-result' },
-  { id: 'connected',label: 'Connected', path: '/connected',    icon: Users,
-    match: (p) => p === '/connected' || p === '/connected-people' || p === '/share' },
+// ─── 5 Navigation Items for Desktop & Mobile ────────────────────────────────
+const NAV_DEFINITIONS = [
+  {
+    id: 'home', i18nKey: 'nav.home', defaultLabel: 'Home', path: '/home', icon: Home,
+    match: (p) => p === '/home' || p.startsWith('/risk')
+  },
+  {
+    id: 'timeline', i18nKey: 'nav.timeline', defaultLabel: 'Timeline', path: '/timeline', icon: Clock,
+    match: (p) => p === '/timeline'
+  },
+  {
+    id: 'symptoms', i18nKey: 'nav.symptoms', defaultLabel: 'Symptoms', path: '/log-symptom', icon: HeartPulse,
+    match: (p) => p === '/log-symptom' || p === '/symptom-result'
+  },
+  {
+    id: 'passport', i18nKey: 'nav.passport', defaultLabel: 'Passport', path: '/passport', icon: FileBadge,
+    match: (p) => p === '/passport'
+  },
+  {
+    id: 'profile', i18nKey: 'nav.profile', defaultLabel: 'Profile', path: '/profile', icon: UserCircle,
+    match: (p) => p === '/profile'
+  },
 ];
-
-function NavLink({ item, location }) {
-  const Icon = item.icon;
-  const active = item.match(location.pathname);
-  return (
-    <Link
-      to={item.path}
-      className={clsx(
-        'flex items-center gap-2 px-3.5 py-2 rounded-[var(--radius-sm)] text-sm font-semibold',
-        'font-[var(--font-heading)] transition-all duration-150 whitespace-nowrap',
-        active
-          ? 'bg-[var(--brand-50)] text-[var(--brand-700)] border border-[var(--brand-100)]'
-          : 'text-[var(--ink-3)] hover:text-[var(--ink)] hover:bg-[var(--surface-2)] border border-transparent'
-      )}
-      aria-current={active ? 'page' : undefined}
-    >
-      <Icon className="w-4 h-4 flex-shrink-0" aria-hidden />
-      {item.label}
-    </Link>
-  );
-}
 
 export default function PatientLayout() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { user, isGuest, logout } = useAuth() || {};
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { user, isGuest } = useAuth() || {};
+  const { t } = useT();
   const queryClient = useQueryClient();
+
+  const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
+  const [speedDialOpen, setSpeedDialOpen] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  // ── Global shortcut listener (⌘K / Ctrl+K) ──────────────────────────────
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        setCommandPaletteOpen((prev) => !prev);
+      }
+      if (e.key === 'Escape' && speedDialOpen) {
+        setSpeedDialOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [speedDialOpen]);
+
+  const navItems = NAV_DEFINITIONS.map((def) => ({
+    ...def,
+    label: t(def.i18nKey, def.defaultLabel),
+  }));
 
   // ─── Real-Time Socket.IO Synchronization ─────────────────────────────────
   useEffect(() => {
@@ -87,8 +103,8 @@ export default function PatientLayout() {
       }
     });
 
-    // 1. Live physician directive listener (instant auto-update without page refresh)
     socket.on('doctor-directive-received', (directive) => {
+      setUnreadCount((c) => c + 1);
       notify.info(
         'Physician Directive Received',
         `${directive.doctorName || 'Your doctor'} sent an update: "${directive.text}"`
@@ -110,8 +126,8 @@ export default function PatientLayout() {
       queryClient.invalidateQueries({ queryKey: ['patient-timeline'] });
     });
 
-    // 2. Live prescription/deprescribing/substitution listener
     socket.on('patient-regimen-updated', (data) => {
+      setUnreadCount((c) => c + 1);
       notify.info(
         'Medication Regimen Updated',
         data.doctorLabel
@@ -126,23 +142,67 @@ export default function PatientLayout() {
       queryClient.invalidateQueries({ queryKey: ['patient-medicines'] });
     });
 
+    socket.on('dose_logged', () => {
+      queryClient.invalidateQueries({ queryKey: ['patient-doses'] });
+      queryClient.invalidateQueries({ queryKey: ['patient-adherence'] });
+      queryClient.invalidateQueries({ queryKey: ['home-summary'] });
+    });
+
+    socket.on('caregiver_reminder', (payload) => {
+      setUnreadCount((c) => c + 1);
+      import('../utils/doseScheduler').then(({ sendDoseReminder }) => {
+        sendDoseReminder({
+          title: 'Caregiver Dose Reminder',
+          body: payload.message || `${payload.caregiverName || 'Your caregiver'} sent a reminder to take your scheduled medications.`,
+        });
+      });
+      queryClient.invalidateQueries({ queryKey: ['patient-doses'] });
+    });
+
     return () => {
       socket.disconnect();
     };
   }, [user, isGuest, queryClient]);
 
-  const handleSignOut = () => {
-    logout?.();
-    navigate('/login', { replace: true });
-  };
+  // Speed-dial actions
+  const speedDialActions = [
+    {
+      id: 'scan',
+      label: 'Scan Prescription',
+      icon: Camera,
+      action: () => {
+        setSpeedDialOpen(false);
+        navigate('/add-medicine?tab=camera');
+      },
+    },
+    {
+      id: 'search',
+      label: 'Search Medicine',
+      icon: Search,
+      action: () => {
+        setSpeedDialOpen(false);
+        navigate('/add-medicine?tab=search');
+      },
+    },
+    {
+      id: 'pill-id',
+      label: 'Pill Imprint Identifier',
+      icon: Pill,
+      action: () => {
+        setSpeedDialOpen(false);
+        navigate('/add-medicine?tab=pill_id');
+      },
+    },
+  ];
 
   return (
-    <div className="min-h-screen bg-[var(--canvas)] text-[var(--ink)] flex flex-col">
-      {/* ── Guest Banner ── */}
+    <div className="min-h-screen bg-[var(--canvas)] text-[var(--ink)] flex flex-col justify-between selection:bg-[var(--accent-100)] selection:text-[var(--ink)]">
+      {/* ── Guest Mode Banner ── */}
       {isGuest && (
         <div
-          role="banner"
-          className="bg-[var(--caution-bg)] border-b border-[var(--caution-fg)]/30 px-4 py-2.5"
+          role="region"
+          aria-label="Demo mode warning"
+          className="bg-[var(--caution-bg)] border-b border-[var(--caution-fg)]/30 px-4 py-2"
         >
           <div className="max-w-7xl mx-auto flex items-center justify-between gap-3">
             <div className="flex items-center gap-2 min-w-0">
@@ -150,173 +210,135 @@ export default function PatientLayout() {
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--caution-fg)] opacity-60" />
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-[var(--caution-fg)]" />
               </span>
-              <span className="text-sm font-medium text-[var(--caution-fg)] truncate font-[var(--font-heading)]">
-                Guest preview — data is not saved
+              <span className="text-xs sm:text-sm font-semibold text-[var(--caution-fg)] truncate font-[var(--font-heading)]">
+                {t('login.guest_preview_title', 'Sample Patient Sandbox — Data is stored locally for evaluation')}
               </span>
             </div>
-            <button
-              type="button"
-              onClick={handleSignOut}
-              className="text-sm font-semibold text-[var(--caution-fg)] underline underline-offset-2 hover:no-underline whitespace-nowrap"
+            <Link
+              to="/login"
+              className="text-xs sm:text-sm font-bold text-[var(--caution-fg)] underline underline-offset-2 hover:no-underline whitespace-nowrap cursor-pointer"
             >
-              Sign in
-            </button>
+              Sign In to Save
+            </Link>
           </div>
         </div>
       )}
 
-      {/* ── Top Nav Bar ── */}
-      <header className="sticky top-0 z-50 bg-[var(--surface)]/95 backdrop-blur-sm border-b border-[var(--border)]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between gap-4">
-          {/* Brand mark */}
-          <Link to="/home" className="flex items-center gap-2.5 flex-shrink-0 group">
-            <div className="w-8 h-8 bg-[var(--brand-600)] rounded-[var(--radius-sm)] flex items-center justify-center flex-shrink-0 group-hover:bg-[var(--brand-700)] transition-colors">
-              <ShieldCheck className="w-4.5 h-4.5 text-white" aria-hidden />
-            </div>
-            <span className="text-base font-extrabold text-[var(--ink)] font-[var(--font-heading)] tracking-tight">
-              Poly<span className="text-[var(--brand-600)]">Safe</span>
-            </span>
-          </Link>
+      {/* ── Top Bar: 64px Glass over Ivory with Sliding Coral Underline ── */}
+      <SharedTopBar
+        role="PATIENT"
+        navItems={navItems}
+        onOpenSearch={() => setCommandPaletteOpen(true)}
+        notificationCount={unreadCount}
+      />
 
-          {/* Desktop nav */}
-          <nav className="hidden md:flex items-center gap-1 flex-1 justify-center" aria-label="Patient navigation">
-            {navItems.map((item) => (
-              <NavLink key={item.id} item={item} location={location} />
-            ))}
-          </nav>
-
-          {/* Right actions */}
-          <div className="flex items-center gap-2 flex-shrink-0">
-            {/* Analytics — desktop only */}
-            <Link
-              to="/insights"
-              className={clsx(
-                'hidden md:flex items-center gap-1.5 px-3.5 py-2 rounded-[var(--radius-sm)] text-sm font-semibold',
-                'font-[var(--font-heading)] transition-all duration-150',
-                location.pathname === '/insights' || location.pathname === '/trends'
-                  ? 'bg-[var(--brand-50)] text-[var(--brand-700)] border border-[var(--brand-100)]'
-                  : 'text-[var(--ink-3)] hover:text-[var(--ink)] hover:bg-[var(--surface-2)] border border-transparent'
-              )}
-            >
-              <TrendingUp className="w-4 h-4" aria-hidden />
-              Analytics
-            </Link>
-
-            {/* Profile */}
-            <Link
-              to="/profile"
-              className={clsx(
-                'flex items-center justify-center w-9 h-9 rounded-[var(--radius-sm)] transition-colors',
-                location.pathname === '/profile'
-                  ? 'bg-[var(--brand-50)] text-[var(--brand-700)]'
-                  : 'text-[var(--ink-3)] hover:bg-[var(--surface-2)] hover:text-[var(--ink)]'
-              )}
-              aria-label="Profile"
-            >
-              <UserCircle className="w-5 h-5" aria-hidden />
-            </Link>
-
-            {/* Sign out — desktop */}
-            <SignOutConfirmButton />
-
-            {/* Mobile hamburger */}
-            <button
-              className="md:hidden flex items-center justify-center w-9 h-9 rounded-[var(--radius-sm)] text-[var(--ink-3)] hover:bg-[var(--surface-2)] hover:text-[var(--ink)] transition-colors"
-              aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            >
-              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-            </button>
-          </div>
-        </div>
-
-        {/* Mobile menu drawer (drop-down) */}
-        <AnimatePresence>
-          {mobileMenuOpen && (
-            <motion.div
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: 'auto', opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
-              className="md:hidden overflow-hidden border-t border-[var(--border)] bg-[var(--surface)]"
-            >
-              <nav
-                className="p-3 grid grid-cols-2 gap-1.5"
-                aria-label="Mobile patient navigation"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                {[...navItems, {
-                  id: 'analytics', label: 'Analytics', path: '/insights',
-                  icon: TrendingUp, match: (p) => p === '/insights' || p === '/trends',
-                }].map((item) => {
-                  const Icon = item.icon;
-                  const active = item.match(location.pathname);
-                  return (
-                    <Link
-                      key={item.id}
-                      to={item.path}
-                      className={clsx(
-                        'flex items-center gap-2 px-3 py-2.5 rounded-[var(--radius-sm)] text-sm font-semibold',
-                        'font-[var(--font-heading)] transition-colors',
-                        active
-                          ? 'bg-[var(--brand-50)] text-[var(--brand-700)]'
-                          : 'text-[var(--ink-2)] hover:bg-[var(--surface-2)]'
-                      )}
-                      aria-current={active ? 'page' : undefined}
-                    >
-                      <Icon className="w-4 h-4 flex-shrink-0" />
-                      {item.label}
-                      {active && <ChevronRight className="w-3 h-3 ml-auto" />}
-                    </Link>
-                  );
-                })}
-              </nav>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </header>
-
-      {/* ── Page Content ── */}
-      <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 py-6 pb-24 md:pb-8">
+      {/* ── Main Page Content ── */}
+      <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 pb-28 md:pb-12">
         <PageTransition key={location.pathname}>
           <Outlet />
         </PageTransition>
       </main>
 
-      {/* ── Mobile Bottom Tab Bar ── */}
+      {/* ── Floating Coral "+ Add Medicine" Speed-Dial Action ── */}
+      {!(location.pathname === '/add-medicine' || location.pathname === '/add') && (
+        <div className="fixed bottom-20 md:bottom-8 right-5 sm:right-8 z-40 flex flex-col items-end">
+          {/* Speed-dial Popover Items */}
+          <AnimatePresence>
+            {speedDialOpen && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.85 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.85 }}
+                transition={{ duration: 0.18 }}
+                className="mb-3 space-y-2.5 flex flex-col items-end"
+              >
+                {speedDialActions.map((item, index) => {
+                  const Icon = item.icon;
+                  return (
+                    <motion.div
+                      key={item.id}
+                      initial={{ opacity: 0, y: 12 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 12 }}
+                      transition={{ delay: index * 0.04, duration: 0.15 }}
+                      className="flex items-center gap-2.5"
+                    >
+                      <span className="px-3 py-1.5 rounded-xl bg-[var(--surface)] text-[var(--ink)] text-xs font-bold shadow-md border border-[var(--border)] whitespace-nowrap">
+                        {item.label}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={item.action}
+                        className="w-11 h-11 rounded-full bg-[var(--surface)] hover:bg-[var(--surface-2)] text-[var(--ink)] border border-[var(--border)] shadow-md hover:shadow-lg flex items-center justify-center transition-all cursor-pointer hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-600)]"
+                        aria-label={item.label}
+                      >
+                        <Icon className="w-5 h-5 text-[var(--brand-600)]" />
+                      </button>
+                    </motion.div>
+                  );
+                })}
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Master Coral Speed-Dial Button */}
+          <button
+            type="button"
+            onClick={() => setSpeedDialOpen((prev) => !prev)}
+            aria-expanded={speedDialOpen}
+            aria-label={speedDialOpen ? 'Close add medicine options' : 'Add medicine speed dial'}
+            className={clsx(
+              'h-12 px-4 rounded-full bg-[var(--accent-500)] hover:bg-[var(--accent-600)] text-[var(--on-accent)] font-bold text-xs sm:text-sm shadow-lg hover:shadow-xl flex items-center gap-2 transition-all cursor-pointer active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-500)] select-none',
+              speedDialOpen && 'ring-4 ring-[var(--accent-500)]/30'
+            )}
+          >
+            <motion.div
+              animate={{ rotate: speedDialOpen ? 45 : 0 }}
+              transition={{ type: 'spring', stiffness: 350, damping: 20 }}
+            >
+              <Plus className="w-5 h-5 stroke-[2.5]" />
+            </motion.div>
+            <span>{speedDialOpen ? 'Close' : 'Add Medicine'}</span>
+          </button>
+        </div>
+      )}
+
+      {/* ── Mobile Bottom Tab Bar (5 Items with Sliding Pill Highlight) ── */}
       <nav
-        className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-[var(--surface)]/95 backdrop-blur-sm border-t border-[var(--border)]"
-        aria-label="Mobile tab bar"
+        className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-[var(--surface-glass)] backdrop-blur-md border-t border-[var(--border)] shadow-lg"
+        aria-label="Mobile Navigation"
       >
-        <div className="grid grid-cols-5 h-16 max-w-lg mx-auto">
+        <div className="grid grid-cols-5 h-16 max-w-md mx-auto relative px-1">
           {navItems.map((item) => {
             const Icon = item.icon;
-            const active = item.match(location.pathname);
+            const active = item.match
+              ? item.match(location.pathname)
+              : location.pathname === item.path;
+
             return (
               <Link
                 key={item.id}
                 to={item.path}
                 className={clsx(
-                  'flex flex-col items-center justify-center gap-0.5 py-2 px-1 transition-colors',
-                  active
-                    ? 'text-[var(--brand-600)]'
-                    : 'text-[var(--ink-3)] hover:text-[var(--ink-2)]'
+                  'relative flex flex-col items-center justify-center gap-1 py-1.5 transition-colors select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-600)] rounded-xl',
+                  active ? 'text-[var(--brand-600)]' : 'text-[var(--ink-3)] hover:text-[var(--ink-2)]'
                 )}
-                aria-label={item.label}
                 aria-current={active ? 'page' : undefined}
+                aria-label={item.label}
               >
-                <div className="relative">
-                  <Icon className={clsx('w-5 h-5', active && 'stroke-[2.5]')} aria-hidden />
-                  {active && (
-                    <span
-                      className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 rounded-full bg-[var(--brand-600)]"
-                      aria-hidden
-                    />
-                  )}
-                </div>
+                {/* Sliding Pill Highlight for Active Mobile Tab */}
+                {active && (
+                  <motion.div
+                    layoutId="mobile-pill-highlight"
+                    className="absolute inset-1 bg-[var(--brand-50)] dark:bg-[var(--brand-900)]/40 rounded-xl -z-10"
+                    transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                  />
+                )}
+
+                <Icon className={clsx('w-5 h-5', active ? 'stroke-[2.5]' : 'stroke-[1.8]')} />
                 <span className={clsx(
-                  'text-[10px] font-semibold font-[var(--font-heading)] tracking-tight leading-none',
-                  active ? 'text-[var(--brand-600)]' : ''
+                  'text-[10px] font-bold tracking-tight leading-none',
+                  active ? 'font-extrabold text-[var(--brand-600)]' : 'text-[var(--ink-3)]'
                 )}>
                   {item.label}
                 </span>
@@ -324,9 +346,22 @@ export default function PatientLayout() {
             );
           })}
         </div>
-        {/* Safe area padding for notched phones */}
+        {/* Safe-area bottom padding for mobile devices */}
         <div className="h-[env(safe-area-inset-bottom)]" />
       </nav>
+
+      {/* ── Footer: Disclaimer in Small Serif Italic ── */}
+      <footer className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 mb-20 md:mb-0 text-center border-t border-[var(--border)]/60">
+        <p className="text-xs font-[var(--font-heading)] italic text-[var(--ink-3)] max-w-2xl mx-auto leading-relaxed">
+          PolySafe is an intelligent polypharmacy risk detection platform and clinical decision-support tool. It does not replace professional medical judgment or physician diagnosis.
+        </p>
+      </footer>
+
+      {/* ── Universal Command Palette (⌘K) ── */}
+      <CommandPalette
+        isOpen={commandPaletteOpen}
+        onClose={() => setCommandPaletteOpen(false)}
+      />
     </div>
   );
 }

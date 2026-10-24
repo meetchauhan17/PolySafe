@@ -26,18 +26,25 @@ import {
   Utensils,
   ArrowLeftRight,
   CheckCircle2,
+  LayoutGrid,
+  ListFilter,
 } from 'lucide-react';
+const PrescriberSwimlane = React.lazy(() => import('../components/PrescriberSwimlane'));
+import { Drawer } from '../components/Modal';
 import Card from '../components/Card';
 import BackButton from '../components/BackButton';
 import LedIndicator from '../components/LedIndicator';
 import { DrugHarmBadge, KnownSideEffectsPanel } from '../components/DrugHarmLevel';
-import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useReducedMotion } from '../motion/useReducedMotion';
+import { DrawLine } from '../motion/DrawLine';
 import { EmptyTimelineIllustration } from '../components/EmptyIllustrations';
 import { TimelineSkeleton } from '../components/Skeletons';
 import { useAuth } from '../context/AuthContext';
 import { Lock } from 'lucide-react';
 import { notify } from '../utils/toast';
 import { getMedicineIndication } from '../utils/indications';
+import { useT } from '../i18n/useT';
 
 // ─── Helper: Directive Style Helper ──────────────────────────────────────────
 function getDirectiveStyle(category) {
@@ -105,9 +112,9 @@ function getDirectiveStyle(category) {
 // ─── Helper: Medicine Type Badge ──────────────────────────────────────────────
 function MedicineTypeBadge({ type }) {
   const map = {
-    PRESCRIPTION: { icon: <Stethoscope className="w-3 h-3" />, label: 'Rx', cls: 'bg-[var(--doctor-600)]/10 text-[var(--doctor-600)] border-[var(--doctor-600)]/25' },
-    OTC: { icon: <ShoppingBag className="w-3 h-3" />, label: 'OTC', cls: 'bg-[var(--caregiver-600)]/10 text-[var(--caregiver-600)] border-[var(--caregiver-600)]/25' },
-    HERBAL: { icon: <Leaf className="w-3 h-3" />, label: 'Herbal', cls: 'bg-[var(--brand-600)]/10 text-[var(--brand-600)] border-[var(--brand-600)]/25' },
+    PRESCRIPTION: { icon: <Stethoscope className="w-3 h-3" />, label: 'Rx', cls: 'bg-[var(--doctor-600)]/10 text-[var(--doctor-700)] dark:text-blue-300 border-[var(--doctor-600)]/25' },
+    OTC: { icon: <ShoppingBag className="w-3 h-3" />, label: 'OTC', cls: 'bg-[var(--caregiver-600)]/10 text-[var(--caregiver-800)] dark:text-teal-300 border-[var(--caregiver-600)]/25' },
+    HERBAL: { icon: <Leaf className="w-3 h-3" />, label: 'Herbal', cls: 'bg-[var(--brand-600)]/10 text-[var(--brand-800)] dark:text-cyan-300 border-[var(--brand-600)]/25' },
   };
   const t = map[type] ?? map.PRESCRIPTION;
   return (
@@ -268,9 +275,12 @@ function formatDate(dateStr) {
 
 // ─── Main page ────────────────────────────────────────────────────────────────
 export default function TimelinePage() {
+  const { t, lang } = useT();
   const navigate = useNavigate();
   const shouldReduceMotion = useReducedMotion();
   const { isGuest, token, openGuestLockModal } = useAuth();
+  const [viewMode, setViewMode] = useState(() => (typeof window !== 'undefined' && window.innerWidth >= 768 ? 'SWIMLANE' : 'LIST'));
+  const [drawerData, setDrawerData] = useState(null);
   const [timelineFilter, setTimelineFilter] = useState('ALL');
   const [markingDirId, setMarkingDirId] = useState(null);
   const queryClient = useQueryClient();
@@ -331,8 +341,7 @@ export default function TimelinePage() {
   });
 
   return (
-    <div className="min-h-[88vh] pb-16">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 space-y-6">
+    <div className="max-w-5xl mx-auto space-y-6">
 
         {/* ── Modern Hero Header ── */}
         <div className="ps-hero ps-fade-up">
@@ -342,7 +351,7 @@ export default function TimelinePage() {
 
           <div className="relative z-10 space-y-4">
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <BackButton to="/home" label="Back to Home" />
+              <BackButton to="/home" label={t('common.back', 'Back to Home')} />
 
               <div className="flex items-center gap-2">
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-[var(--brand-600)]/10 text-[var(--brand-600)] border border-[var(--brand-600)]/20">
@@ -363,7 +372,7 @@ export default function TimelinePage() {
                   className="ps-btn-shine ps-btn ps-btn-primary py-2 px-4 text-xs font-mono font-bold uppercase tracking-wider flex items-center gap-2"
                 >
                   <Plus className="w-4 h-4" />
-                  <span>Add Medicine</span>
+                  <span>{t('home.add_medicine_btn', 'Add Medicine')}</span>
                   {isGuest && <Lock className="w-3 h-3 text-white/70 ml-0.5" />}
                 </Link>
               </div>
@@ -371,11 +380,10 @@ export default function TimelinePage() {
 
             <div className="space-y-2">
               <h1 className="text-2xl md:text-3xl font-extrabold text-[var(--ink)] tracking-tight font-[var(--font-heading)]">
-                Medication{' '}
-                <span className="ps-glow-text">Timeline</span>
+                {t('timeline.title', 'Medication Timeline')}
               </h1>
               <p className="text-sm text-[var(--ink-2)] max-w-xl leading-relaxed">
-                {isGuest ? 'Sample interactive prescription, OTC, and supplement sequence with cascade detection.' : 'Complete chronological prescription and supplement history with active interaction surveillance.'}
+                {t('timeline.subtitle', 'Complete chronological prescription and supplement history with active interaction surveillance.')}
               </p>
 
               <div className="flex flex-wrap items-center gap-2 pt-1">
@@ -415,8 +423,60 @@ export default function TimelinePage() {
           </div>
         )}
 
+        {/* ── View Mode Switcher: Swimlane vs List (Default Swimlane on Desktop) ── */}
+        {!isLoading && !isError && medicines.length > 0 && (
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 rounded-2xl bg-[var(--surface)] border border-[var(--border)] shadow-xs">
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-bold text-[var(--ink)] font-[var(--font-heading)] uppercase tracking-wider">
+                Timeline Mode:
+              </span>
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-teal-500/10 text-teal-700 dark:text-teal-300 border border-teal-500/20 font-bold">
+                {viewMode === 'SWIMLANE' ? 'Cross-Prescriber Swimlane (Default)' : 'Chronological Activity Log'}
+              </span>
+            </div>
+
+            <div className="inline-flex items-center gap-1 p-1 bg-[var(--surface-2)] border border-[var(--border)] rounded-xl self-start sm:self-auto">
+              <button
+                type="button"
+                onClick={() => setViewMode('SWIMLANE')}
+                className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                  viewMode === 'SWIMLANE'
+                    ? 'bg-[var(--brand-600)] text-white shadow-xs'
+                    : 'text-[var(--ink-3)] hover:text-[var(--ink)]'
+                }`}
+              >
+                <LayoutGrid className="w-3.5 h-3.5" />
+                <span>Swimlane</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setViewMode('LIST')}
+                className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                  viewMode === 'LIST'
+                    ? 'bg-[var(--brand-600)] text-white shadow-xs'
+                    : 'text-[var(--ink-3)] hover:text-[var(--ink)]'
+                }`}
+              >
+                <ListFilter className="w-3.5 h-3.5" />
+                <span>List</span>
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* ── Prescriber Swimlane View (Rendered when in SWIMLANE mode) ── */}
+        {!isLoading && !isError && viewMode === 'SWIMLANE' && medicines.length > 0 && (
+          <React.Suspense fallback={<TimelineSkeleton />}>
+            <PrescriberSwimlane
+              medicines={medicines}
+              onSelectMedicine={(m) => setDrawerData({ type: 'MEDICINE', data: m })}
+              onSelectFlag={(f) => setDrawerData({ type: 'FLAG', data: f })}
+            />
+          </React.Suspense>
+        )}
+
         {/* ── Filter Tabs ── */}
-        {!isLoading && !isError && displayItems.length > 0 && directives.length > 0 && (
+        {!isLoading && !isError && viewMode === 'LIST' && displayItems.length > 0 && directives.length > 0 && (
           <div className="flex items-center gap-2 overflow-x-auto pb-1 pt-1">
             <button
               type="button"
@@ -427,7 +487,7 @@ export default function TimelinePage() {
                   : 'bg-[var(--surface)] text-[var(--ink-2)] hover:bg-[var(--surface-2)] border border-[var(--border)]'
               }`}
             >
-              All Activities ({allTimelineItems.length})
+              {t('timeline.filter_all', 'All Activities')} ({allTimelineItems.length})
             </button>
             <button
               type="button"
@@ -438,7 +498,7 @@ export default function TimelinePage() {
                   : 'bg-[var(--surface)] text-[var(--ink-2)] hover:bg-[var(--surface-2)] border border-[var(--border)]'
               }`}
             >
-              Medications ({medicines.length})
+              {t('timeline.filter_rx', 'Medications')} ({medicines.length})
             </button>
             <button
               type="button"
@@ -450,13 +510,13 @@ export default function TimelinePage() {
               }`}
             >
               <Stethoscope className="w-3.5 h-3.5" />
-              <span>Doctor Directives ({directives.length})</span>
+              <span>{t('timeline.filter_directives', 'Doctor Directives')} ({directives.length})</span>
             </button>
           </div>
         )}
 
         {/* ── Legend ───────────────────────────────────────────────────────── */}
-        {!isLoading && displayItems.length > 0 && (
+        {!isLoading && viewMode === 'LIST' && displayItems.length > 0 && (
           <div className="flex items-center flex-wrap gap-4 sm:gap-6 px-1">
             <span className="flex items-center gap-2 text-xs text-[var(--ink-3)] font-semibold">
               <span className="w-3.5 h-3.5 rounded-full bg-white border-[3px] border-[var(--brand-600)] shadow-xs" />
@@ -494,33 +554,44 @@ export default function TimelinePage() {
  <EmptyTimelineIllustration className="w-36 h-36 mx-auto mb-1" />
  <div>
  <h3 className="text-lg font-bold text-[var(--ink)]" >
- No medicines logged yet
+ {t('timeline.no_events', 'No timeline records found.')}
  </h3>
  <p className="text-sm text-[var(--ink-3)] mt-1 max-w-sm">
- Add your prescriptions, over-the-counter medicines, and herbal supplements to start generating your safety timeline.
+ {t('timeline.add_medicine_cta', 'Add your first medicine to start tracking.')}
  </p>
  </div>
  <Link to="/add-medicine" className="ps-btn ps-btn-primary px-6 py-3 inline-flex items-center gap-2">
  <Plus className="w-4 h-4" />
- <span>Add Your First Medicine</span>
+ <span>{t('home.add_medicine_btn', 'Add Medicine')}</span>
  </Link>
  </Card>
  )}
 
         {/* ── Timeline Display with Vertical Timeline Line ───────────────────── */}
-        {!isLoading && !isError && displayItems.length > 0 && (
+        {!isLoading && !isError && viewMode === 'LIST' && displayItems.length > 0 && (
           <div className="relative pl-2 py-2">
-            <motion.div
-              className="absolute left-[19px] top-4 bottom-6 w-[3px] z-0 rounded-full origin-top"
-              style={{ backgroundColor: 'var(--brand-600)' }}
-              initial={shouldReduceMotion ? { scaleY: 1 } : { scaleY: 0 }}
-              animate={{ scaleY: 1 }}
-              transition={{ duration: shouldReduceMotion ? 0 : 0.45, ease: 'easeOut' }}
-            />
+            <div className="absolute left-[19px] top-4 bottom-6 w-[3px] z-0 overflow-hidden pointer-events-none">
+              <svg className="w-full h-full" preserveAspectRatio="none">
+                <DrawLine
+                  as="line"
+                  x1="1.5"
+                  y1="0"
+                  x2="1.5"
+                  y2="100%"
+                  stroke="var(--brand-600)"
+                  strokeWidth={3}
+                  strokeLinecap="round"
+                  duration={0.7}
+                />
+              </svg>
+            </div>
 
             <div className="space-y-6">
               <AnimatePresence initial={false}>
                 {displayItems.map((item, index) => {
+                  const staggerDelay = shouldReduceMotion ? 0 : Math.min(index, 12) * 0.05;
+                  const allowLayout = !shouldReduceMotion && displayItems.length <= 20;
+
                   if (item.itemType === 'DIRECTIVE') {
                     const dir = item.data;
                     const style = getDirectiveStyle(dir.category);
@@ -529,13 +600,13 @@ export default function TimelinePage() {
                     return (
                       <motion.div
                         key={item.id}
-                        layout={!shouldReduceMotion}
+                        layout={allowLayout}
                         initial={shouldReduceMotion ? false : { opacity: 0, y: 14 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={shouldReduceMotion ? undefined : { opacity: 0, scale: 0.95 }}
                         transition={{
                           duration: shouldReduceMotion ? 0 : 0.28,
-                          delay: shouldReduceMotion ? 0 : index * 0.05,
+                          delay: staggerDelay,
                           ease: [0.25, 1, 0.5, 1],
                         }}
                         className="relative z-10 flex items-start gap-4"
@@ -617,21 +688,20 @@ export default function TimelinePage() {
                   const isDiscontinued = !!med.discontinued || !!med.removedAt;
                   const isFlagged = !isDiscontinued && med.flagged && med.flags?.length > 0;
                   const details = parseDosageDetails(med.dosage);
-
-                  return (
-                    <motion.div
-                      key={item.id}
- layout={!shouldReduceMotion}
- initial={shouldReduceMotion ? false : { opacity: 0, y: 14 }}
- animate={{ opacity: 1, y: 0 }}
- exit={shouldReduceMotion ? undefined : { opacity: 0, scale: 0.95 }}
- transition={{
- duration: shouldReduceMotion ? 0 : 0.28,
- delay: shouldReduceMotion ? 0 : index * 0.065,
- ease: [0.25, 1, 0.5, 1],
- }}
- className="relative z-10 flex items-start gap-4"
- >
+                    return (
+                      <motion.div
+                        key={item.id}
+                        layout={allowLayout}
+                        initial={shouldReduceMotion ? false : { opacity: 0, y: 14 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={shouldReduceMotion ? undefined : { opacity: 0, scale: 0.95 }}
+                        transition={{
+                          duration: shouldReduceMotion ? 0 : 0.28,
+                          delay: staggerDelay,
+                          ease: [0.25, 1, 0.5, 1],
+                        }}
+                        className="relative z-10 flex items-start gap-4"
+                      >
  <div
  className="w-[18px] h-[18px] rounded-full bg-[var(--canvas)] flex-shrink-0 mt-4 shadow-sm"
  style={{
@@ -792,12 +862,112 @@ export default function TimelinePage() {
  <div className="flex items-start space-x-3 p-4 border-2 border-[var(--border)] bg-[var(--canvas)] rounded-2xl">
  <Info className="w-4 h-4 text-[var(--brand-600)] flex-shrink-0 mt-0.5" />
  <p className="text-xs text-[var(--ink-3)] leading-relaxed">
- <strong>Prescription timeline protection:</strong> Prescribing cascades often develop silently over months as new drugs are introduced to treat side effects of previous drugs. This timeline tracks every addition in sequence to assist clinical de-prescribing reviews.
+ <strong>Prescription timeline protection:</strong> Prescribing cascades often develop silently over months as new medicines are introduced to treat side effects of previous medicines. This timeline tracks every addition in sequence to assist clinical de-prescribing reviews.
  </p>
  </div>
  )}
 
- </div>
- </div>
- );
+        {/* ── Detail Drawer (Opens when clicking any Swimlane bar or flag) ── */}
+        <Drawer
+          open={!!drawerData}
+          onClose={() => setDrawerData(null)}
+          title={
+            drawerData?.type === 'FLAG'
+              ? `${drawerData.data.medicineA?.name} + ${drawerData.data.medicineB?.name}`
+              : drawerData?.data?.name || 'Medication Details'
+          }
+          subtitle={
+            drawerData?.type === 'FLAG'
+              ? `${drawerData.data.severity} Risk Cross-Prescriber Conflict`
+              : `${drawerData?.data?.dosage || ''} · ${drawerData?.data?.prescribedBy || 'Self-added'}`
+          }
+        >
+          {drawerData?.type === 'FLAG' && (
+            <div className="space-y-4">
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-bold font-mono px-3 py-1 rounded-full bg-red-600 text-white shadow-xs">
+                  {drawerData.data.severity} Risk
+                </span>
+                <span className="text-xs font-mono text-[var(--ink-3)]">
+                  Cross-Prescriber Telemetry
+                </span>
+              </div>
+              <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/25 space-y-1.5">
+                <h4 className="text-xs font-bold text-amber-800 dark:text-amber-200 uppercase font-[var(--font-heading)]">
+                  Clinical Conflict Summary
+                </h4>
+                <p className="text-xs text-[var(--ink-2)] leading-relaxed font-sans">
+                  {drawerData.data.plainExplanation}
+                </p>
+              </div>
+              {drawerData.data.clinicalExplanation && (
+                <div className="p-4 rounded-2xl bg-[var(--surface-2)] border border-[var(--border)] space-y-1.5">
+                  <h4 className="text-xs font-bold text-[var(--ink)] uppercase font-[var(--font-heading)] flex items-center gap-2">
+                    <Stethoscope className="w-4 h-4 text-teal-600" />
+                    <span>Pharmacological Basis</span>
+                  </h4>
+                  <p className="text-xs text-[var(--ink-2)] leading-relaxed font-sans">
+                    {drawerData.data.clinicalExplanation}
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
+
+          {drawerData?.type === 'MEDICINE' && (
+            <div className="space-y-4">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-xs font-bold font-mono px-3 py-1 rounded-full bg-teal-500/10 text-teal-700 dark:text-teal-300 border border-teal-500/20">
+                  {drawerData.data.type || 'PRESCRIPTION'}
+                </span>
+                <span className="text-xs font-mono text-[var(--ink-3)]">
+                  Prescribed by: {drawerData.data.prescribedBy || 'Self-added'}
+                </span>
+              </div>
+              <div className="p-4 rounded-2xl bg-[var(--canvas)] border border-[var(--border)] space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-[var(--ink)]">Dosage & Regimen</span>
+                  <span className="text-xs font-mono font-bold text-[var(--brand-600)]">
+                    {drawerData.data.dosage || 'Prescribed dose'}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between text-xs text-[var(--ink-3)] pt-1 border-t border-[var(--border)]">
+                  <span>Start Date:</span>
+                  <span className="font-mono">
+                    {drawerData.data.dateAdded ? formatDate(drawerData.data.dateAdded) : 'Long-term'}
+                  </span>
+                </div>
+              </div>
+
+              {drawerData.data.prescribingCascade && (
+                <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/25 space-y-1.5">
+                  <h4 className="text-xs font-bold text-amber-800 dark:text-amber-200 uppercase font-[var(--font-heading)] flex items-center gap-1.5">
+                    <AlertTriangle className="w-4 h-4 text-amber-600" />
+                    <span>Prescribing Cascade Detected</span>
+                  </h4>
+                  <p className="text-xs text-[var(--ink-2)] leading-relaxed">
+                    {drawerData.data.prescribingCascade.message}
+                  </p>
+                  <p className="text-[11px] text-[var(--ink-3)] font-mono">
+                    Treating side effect of: {drawerData.data.prescribingCascade.originalDrug} ({drawerData.data.prescribingCascade.symptom})
+                  </p>
+                </div>
+              )}
+
+              {drawerData.data.flagMessage && (
+                <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/25 space-y-1.5">
+                  <h4 className="text-xs font-bold text-rose-800 dark:text-rose-200 uppercase font-[var(--font-heading)] flex items-center gap-1.5">
+                    <AlertTriangle className="w-4 h-4 text-rose-600" />
+                    <span>Cross-Doctor Warning</span>
+                  </h4>
+                  <p className="text-xs text-[var(--ink-2)] leading-relaxed">
+                    {drawerData.data.flagMessage}
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
+        </Drawer>
+      </div>
+  );
 }
