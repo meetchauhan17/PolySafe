@@ -1,6 +1,9 @@
-# 🛡️ PolySafe — Complete A to Z Project Master Guide & Hackathon Judges Playbook
+# 🎓 POLYSAFE: Clinical & Technical Exam Revision Handbook & Viva Playbook
 
-> **The Ultimate Team Handbook**: Share this file with all team members. Read it once, understand the entire system from top to bottom, and enter your pitch in front of the judges with 100% confidence.
+> **EXAM & HACKATHON REVISION GUIDE**: This handbook is structured into high-yield exam revision units with exact pitch scripts, key statistics, clinical formulas, and judge viva questions.
+>
+> 📄 **Instant PDF Available**: A ready-to-print, publication-grade PDF has been generated at [`POLYSAFE_EXAM_STUDY_GUIDE.pdf`](file:///c:/Meet/xyz/PolySafe/POLYSAFE_EXAM_STUDY_GUIDE.pdf).  
+> 🌐 **Interactive Printable HTML**: Open [`POLYSAFE_EXAM_STUDY_GUIDE.html`](file:///c:/Meet/xyz/PolySafe/POLYSAFE_EXAM_STUDY_GUIDE.html) in any browser and press `Ctrl + P` &rarr; "Save as PDF".
 
 ---
 

@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>PolySafe — Master Project Exam & Hackathon Defense Guide</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&family=Merriweather:ital,wght@0,300;0,700;1,300&display=swap');
+
+    @page {
+      size: A4;
+      margin: 14mm 15mm 16mm 15mm;
+      @bottom-right {
+        content: counter(page);
+        font-family: 'Inter', sans-serif;
+        font-size: 8pt;
+        color: #64748b;
+      }
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: #0f172a;
+      background: #ffffff;
+      line-height: 1.5;
+      font-size: 10pt;
+      padding: 20px;
+    }
+
+    /* Print Optimizations */
+    @media print {
+      body {
+        padding: 0;
+      }
+      .no-print {
+        display: none !important;
+      }
+      .page-break {
+        page-break-before: always;
+      }
+      .avoid-break {
+        page-break-inside: avoid;
+      }
+    }
+
+    /* Header Banner */
+    .exam-header {
+      border-bottom: 3px double #0284c7;
+      padding-bottom: 12px;
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    .exam-badge {
+      display: inline-block;
+      background: #0284c7;
+      color: #ffffff;
+      font-size: 8pt;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 4px;
+      margin-bottom: 6px;
+    }
+
+    .exam-title {
+      font-size: 18pt;
+      font-weight: 800;
+      color: #0f172a;
+      letter-spacing: -0.02em;
+    }
+
+    .exam-subtitle {
+      font-size: 9.5pt;
+      color: #475569;
+      margin-top: 2px;
+    }
+
+    .meta-box {
+      text-align: right;
+      font-size: 8pt;
+      color: #64748b;
+      line-height: 1.35;
+    }
+
+    .meta-box strong {
+      color: #0f172a;
+    }
+
+    /* Section Styling */
+    h2 {
+      font-size: 12pt;
+      font-weight: 700;
+      color: #0369a1;
+      border-left: 4px solid #0284c7;
+      padding-left: 8px;
+      margin: 18px 0 10px 0;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    h3 {
+      font-size: 10.5pt;
+      font-weight: 600;
+      color: #0f172a;
+      margin: 12px 0 6px 0;
+    }
+
+    p {
+      margin-bottom: 8px;
+      color: #1e293b;
+      text-align: justify;
+    }
+
+    /* Callout & Memory Boxes */
+    .callout {
+      border: 1px solid #cbd5e1;
+      border-left: 4px solid #0284c7;
+      background: #f8fafc;
+      padding: 10px 14px;
+      border-radius: 4px;
+      margin: 10px 0;
+      font-size: 9pt;
+    }
+
+    .callout-alert {
+      border-color: #fca5a5;
+      border-left-color: #dc2626;
+      background: #fef2f2;
+    }
+
+    .callout-alert strong {
+      color: #991b1b;
+    }
+
+    .callout-success {
+      border-color: #86efac;
+      border-left-color: #16a34a;
+      background: #f0fdf4;
+    }
+
+    .callout-success strong {
+      color: #166534;
+    }
+
+    /* Data Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 10px 0 14px 0;
+      font-size: 8.5pt;
+    }
+
+    th, td {
+      border: 1px solid #cbd5e1;
+      padding: 6px 8px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: #f1f5f9;
+      color: #0f172a;
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 7.5pt;
+      letter-spacing: 0.04em;
+    }
+
+    tr:nth-child(even) td {
+      background: #f8fafc;
+    }
+
+    /* Role Cards */
+    .role-card {
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      margin-bottom: 12px;
+      overflow: hidden;
+      page-break-inside: avoid;
+    }
+
+    .role-header {
+      background: #0f172a;
+      color: #ffffff;
+      padding: 6px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 700;
+      font-size: 9.5pt;
+    }
+
+    .role-badge {
+      background: #0284c7;
+      color: #ffffff;
+      font-size: 7.5pt;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-weight: 600;
+    }
+
+    .role-body {
+      padding: 10px 12px;
+      background: #ffffff;
+      font-size: 9pt;
+    }
+
+    .script-box {
+      background: #f1f5f9;
+      border-left: 3px solid #64748b;
+      padding: 8px 10px;
+      margin: 8px 0;
+      font-style: italic;
+      color: #334155;
+    }
+
+    /* Q&A Items */
+    .qa-item {
+      margin-bottom: 10px;
+      page-break-inside: avoid;
+    }
+
+    .qa-q {
+      font-weight: 700;
+      color: #0f172a;
+      font-size: 9pt;
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 3px;
+    }
+
+    .qa-q span {
+      background: #0284c7;
+      color: #ffffff;
+      padding: 1px 5px;
+      border-radius: 3px;
+      font-size: 7.5pt;
+      margin-right: 6px;
+      font-weight: 700;
+    }
+
+    .qa-a {
+      font-size: 8.5pt;
+      color: #334155;
+      padding-left: 24px;
+      line-height: 1.45;
+    }
+
+    .code-pill {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 8pt;
+      background: #e2e8f0;
+      padding: 1px 4px;
+      border-radius: 3px;
+      color: #0f172a;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ==================== HEADER BANNER ==================== -->
+  <div class="exam-header">
+    <div>
+      <span class="exam-badge">High-Yield Revision & Viva Playbook</span>
+      <h1 class="exam-title">PolySafe — Clinical & Technical Master Exam Guide</h1>
+      <div class="exam-subtitle">A-to-Z Project Architecture, 5-Person Pitch Script, and Hackathon Judge Defense</div>
+    </div>
+    <div class="meta-box">
+      <div><strong>Deployment:</strong> Production Live</div>
+      <div><strong>App:</strong> https://poly-safe.vercel.app</div>
+      <div><strong>API:</strong> https://polysafe-backend.vercel.app</div>
+      <div><strong>Audit Status:</strong> 18/18 Tests Passed (100%)</div>
+    </div>
+  </div>
+
+  <!-- ==================== UNIT 1: THE CORE PROBLEM ==================== -->
+  <h2>Unit 1: Problem Formulation & Core Medical Urgency</h2>
+  <div class="callout callout-alert">
+    <strong>CRITICAL METRIC TO MEMORIZE:</strong> Over <strong>30% of emergency hospital admissions</strong> in adults aged 65 and older are caused by <strong>Adverse Drug Events (ADEs)</strong> resulting from polypharmacy. More than <strong>50%</strong> of these hospitalizations are <strong>100% clinically preventable</strong> with continuous cross-regimen screening.
+  </div>
+
+  <p><strong>Polypharmacy</strong> is clinically defined as taking <strong>5 or more concurrent medications</strong> (Hyperpolypharmacy = 10+). Conventional drug checkers (such as 1mg, Practo, or WebMD) fail because they evaluate medications <em>two-at-a-time in static isolation</em>. PolySafe addresses the 4 fundamental clinical failure modes:</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 20%;">Clinical Failure Mode</th>
+        <th style="width: 40%;">Why Conventional Systems Fail</th>
+        <th style="width: 40%;">PolySafe Precision Solution</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>1. Specialist Silos</strong></td>
+        <td>Cardiologists, orthopedics, and neurologists prescribe independently with zero mutual regimen visibility.</td>
+        <td><strong>Provider Swimlane Timeline:</strong> Consent-based 6-digit PIN and QR sync unifying all specialists into one view.</td>
+      </tr>
+      <tr>
+        <td><strong>2. Prescribing Cascades</strong></td>
+        <td>A drug side-effect is misdiagnosed as a new condition, triggering a second unnecessary prescription.</td>
+        <td><strong>Cascade Correlator:</strong> Chronologically maps symptom onset against 581 validated adverse drug side-effect profiles.</td>
+      </tr>
+      <tr>
+        <td><strong>3. Indian Brand Masking</strong></td>
+        <td>70%+ of Indian drugs are Fixed-Dose Combinations (FDCs) with brand names hiding multiple chemical salts.</td>
+        <td><strong>5-Layer Salt Resolver:</strong> Decomposes trade brands (e.g., <em>Combiflam</em>) into constituent salts (Ibuprofen + Paracetamol).</td>
+      </tr>
+      <tr>
+        <td><strong>4. Herbal Blind Spots</strong></td>
+        <td>Patients omit supplements thinking "herbal means safe", triggering fatal bleeding or enzyme inhibition.</td>
+        <td><strong>Botanical Matrix:</strong> 526 clinical monographs cross-referencing herb-drug interactions (e.g., Warfarin + Ginkgo).</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ==================== UNIT 2: THE 5 SAFETY SUBSYSTEMS ==================== -->
+  <h2>Unit 2: The 5 Deterministic Safety Subsystems</h2>
+  <div class="callout">
+    <strong>EXAM KEY POINT:</strong> PolySafe’s risk calculations are <strong>100% deterministic, not generative</strong>. The AI LLM (Groq LLaMA 3.3 70B) is strictly used as an explanation translator, never to fabricate medical severity tiers or clinical rules.
+  </div>
+
+  <div class="grid-2">
+    <div>
+      <h3>1. 5-Layer Indian Formulation Resolver</h3>
+      <p>Converts trade names into active molecules:</p>
+      <ul style="padding-left: 16px; font-size: 8.5pt;">
+        <li><strong>L1:</strong> Curated Indian Brand Salt Knowledge Base (Augmentin 625, Zerodol SP, Pan-D).</li>
+        <li><strong>L2:</strong> Direct NLM RxNorm API lookup.</li>
+        <li><strong>L3:</strong> RxNorm Approximate String Matcher (catches typos like "Metforrmin").</li>
+        <li><strong>L4:</strong> Botanical Supplement Matrix (Ashwagandha, Ginkgo, Turmeric).</li>
+        <li><strong>L5:</strong> AI Extraction Fallback via Groq LLaMA with chemistry validation.</li>
+      </ul>
+
+      <h3>2. WHO 5-Tier Cumulative Regimen Engine</h3>
+      <p>Calculates cumulative risk over 222,383 verified DDInter records:</p>
+      <ul style="padding-left: 16px; font-size: 8.5pt;">
+        <li><span class="code-pill">L1 Minimal</span>: Standard monitoring.</li>
+        <li><span class="code-pill">L2 Low</span>: Food/spacing guidance.</li>
+        <li><span class="code-pill">L3 Moderate</span>: Dosage adjustment suggested.</li>
+        <li><span class="code-pill">L4 High</span>: Significant risk; physician consult needed.</li>
+        <li><span class="code-pill">L5 Critical</span>: Severe contraindication (e.g. Warfarin + Aspirin).</li>
+      </ul>
+    </div>
+
+    <div>
+      <h3>3. Prescribing Cascade Correlator</h3>
+      <p>Evaluates chronological drug additions against <strong>581 documented cascade rules</strong>. Example: If a patient logs <em>"swollen ankles"</em> within 30 days of starting <em>Amlodipine</em>, it flags that this is an adverse effect—warning doctors against wrongly prescribing <em>Furosemide</em>.</p>
+
+      <h3>4. Anticholinergic Cognitive Burden (ACB)</h3>
+      <p>Uses the validated <strong>Boustani Scale</strong> (567 calibrated drug scores). In geriatric patients, an <strong>ACB Score &ge; 3</strong> triples the risk of memory impairment, confusion, delirium, falls, and early dementia.</p>
+
+      <h3>5. Multi-Modal Intelligent Intake</h3>
+      <p>Dual vision pipeline: <strong>Google Gemini 2.5 Flash Lite</strong> handles complex handwriting + <strong>Tesseract OCR</strong> provides offline fallback. Loose pills are identified via FDA/NLM stamp code search (e.g. imprint <span class="code-pill">L484</span> = Acetaminophen 500mg).</p>
+    </div>
+  </div>
+
+  <div class="page-break"></div>
+
+  <!-- ==================== UNIT 3: 5-PERSON TEAM PRESENTATION BREAKDOWN ==================== -->
+  <h2>Unit 3: 5-Person Team Presentation & Pitch Roles</h2>
+  <p>To deliver a professional presentation, each team member owns one dedicated domain. Follow this exact speaking and demo structure:</p>
+
+  <!-- ROLE 1 -->
+  <div class="role-card">
+    <div class="role-header">
+      <span>PERSON 1: TEAM LEAD</span>
+      <span class="role-badge">Pitch & Clinical Urgency (0:00 - 0:45)</span>
+    </div>
+    <div class="role-body">
+      <div><strong>Core Responsibility:</strong> Hook the judges, present the clinical problem with statistics, and introduce the team.</div>
+      <div class="script-box">
+        "Respected judges, imagine a 70-year-old grandfather visiting a cardiologist, an orthopedic, and drinking an herbal supplement. Each doctor prescribes safe medicines, yet weeks later he suffers severe internal bleeding. Why? Because specialists prescribe in silos, and conventional drug checkers only evaluate two drugs at a time. Over 30% of emergency hospitalizations in seniors stem from adverse polypharmacy interactions—and more than 50% are 100% preventable. We built PolySafe: the world’s first continuous, whole-regimen clinical intelligence platform that protects seniors, unifies specialists, and empowers caregivers."
+      </div>
+      <div><strong>Key Facts to Remember:</strong> 30% hospitalization rate, 50%+ preventable, polypharmacy is 5+ drugs, 222k+ DDInter records.</div>
+    </div>
+  </div>
+
+  <!-- ROLE 2 -->
+  <div class="role-card">
+    <div class="role-header">
+      <span>PERSON 2: FRONTEND & ACCESSIBILITY LEAD</span>
+      <span class="role-badge">Patient Portal & UX (0:45 - 1:45)</span>
+    </div>
+    <div class="role-body">
+      <div><strong>Core Responsibility:</strong> Live screen demo of the Patient Portal; demonstrates design simplicity, multi-language, and PWA offline capability.</div>
+      <div class="script-box">
+        "Seniors need radical simplicity. The PolySafe patient dashboard answers one question: 'Am I safe today?' via our prominent WHO 5-Tier status ring. Our smart timetable organizes medicines into morning, afternoon, evening, and bedtime slots with one-touch dose tracking. To overcome regional language barriers, PolySafe natively supports English, Hindi, and Gujarati with medical terminology localization. It also operates as an installable Progressive Web App (PWA) with service workers, ensuring the patient's schedule and one-click Emergency Medical Passport remain accessible even inside a hospital basement with zero connectivity."
+      </div>
+      <div><strong>Live Demo Actions:</strong> Show homepage status ring, click language toggle (Hindi/Gujarati), toggle Projector Mode, open Emergency Passport modal.</div>
+    </div>
+  </div>
+
+  <!-- ROLE 3 -->
+  <div class="role-card">
+    <div class="role-header">
+      <span>PERSON 3: PHARMACOLOGICAL ENGINE ARCHITECT</span>
+      <span class="role-badge">Multi-Salt & Cascade Core (1:45 - 2:45)</span>
+    </div>
+    <div class="role-body">
+      <div><strong>Core Responsibility:</strong> Explains how Indian branded medicines, prescribing cascades, and the ACB score work behind the scenes.</div>
+      <div class="script-box">
+        "Generic checkers fail in India because 70% of drugs are Fixed-Dose Combinations. If a patient takes Combiflam and Calpol, our 5-Layer Formulation Resolver breaks Combiflam down into Ibuprofen 400mg and Paracetamol 325mg—detecting toxic cumulative paracetamol overdosing that would otherwise be missed. Furthermore, our Prescribing Cascade Correlator correlates reported symptoms with drug start dates against 581 clinical rules, preventing doctors from prescribing water pills for drug-induced ankle edema. Finally, our Boustani scale gauge calculates cumulative Anticholinergic Cognitive Burden to prevent elderly delirium and fall fractures."
+      </div>
+      <div><strong>Live Demo Actions:</strong> Add Combiflam or Ginkgo Biloba, show active salt decomposition, point to the live ACB meter.</div>
+    </div>
+  </div>
+
+  <!-- ROLE 4 -->
+  <div class="role-card">
+    <div class="role-header">
+      <span>PERSON 4: AI & COMPUTER VISION LEAD</span>
+      <span class="role-badge">OCR & Explanations (2:45 - 3:45)</span>
+    </div>
+    <div class="role-body">
+      <div><strong>Core Responsibility:</strong> Demonstrates multimodal intake (Prescription Vision + Pill Imprints) and AI explanation synthesis.</div>
+      <div class="script-box">
+        "Elderly patients often cannot type complex chemical names. Our multimodal intake allows patients to take a photo of any prescription. Our dual-vision engine leverages Google Gemini 2.5 Flash Lite for nuanced handwriting extraction and Tesseract OCR as an offline fallback, extracting dosages and frequencies with human-in-the-loop confirmation. When patients find an unknown loose pill, our Pill Imprint Identifier queries FDA databases for stamp codes like 'L484' to identify Acetaminophen 500mg. To ensure comprehension, Groq LLaMA 3.3 70B produces dual explanations: a rigorous clinical monograph for physicians and a clear 6th-grade level guide for patients."
+      </div>
+      <div><strong>Live Demo Actions:</strong> Show prescription upload area, type imprint 'L484' in pill finder, toggle clinical vs plain explanation.</div>
+    </div>
+  </div>
+
+  <!-- ROLE 5 -->
+  <div class="role-card">
+    <div class="role-header">
+      <span>PERSON 5: DOCTOR PORTAL & DEVOPS LEAD</span>
+      <span class="role-badge">Doctor Sync & Infrastructure (3:45 - 4:45)</span>
+    </div>
+    <div class="role-body">
+      <div><strong>Core Responsibility:</strong> Demonstrates Doctor Share PIN sync, Pre-Prescription Simulator, and cloud infrastructure.</div>
+      <div class="script-box">
+        "PolySafe bridges specialist silos effortlessly. Patients generate a secure 6-digit PIN or QR code. The doctor enters it into their dashboard and instantly views the unified prescriber swimlane. Crucially, before prescribing a new medicine, the doctor uses our Pre-Prescription 'What-If' Simulator. Typing 'Ibuprofen' instantly models the addition against the patient's existing Warfarin regimen, catching the bleeding contraindication before the script is signed. Our platform runs on Node 22 Express serverless on Vercel, paired with Neon Serverless Postgres, protected by rate limiters, and validated by our 18-step automated clinical audit suite with 100% test pass rate."
+      </div>
+      <div><strong>Live Demo Actions:</strong> Open Doctor Dashboard, run 'What-If' check with Ibuprofen on patient Meet Chauhan, show health endpoint.</div>
+    </div>
+  </div>
+
+  <div class="page-break"></div>
+
+  <!-- ==================== UNIT 4: SYSTEM ARCHITECTURE & DEMO DATA ==================== -->
+  <h2>Unit 4: Architecture, Datasets & Demo Credentials</h2>
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 25%;">Layer / Component</th>
+        <th style="width: 35%;">Technology Stack</th>
+        <th style="width: 40%;">Key Production Capability</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Frontend Client</strong></td>
+        <td>React 19, Vite 8, TailwindCSS</td>
+        <td>PWA offline caching, multi-lingual (EN, HI, GU), Projector Mode, 25s resilient timeouts.</td>
+      </tr>
+      <tr>
+        <td><strong>Backend API</strong></td>
+        <td>Node.js 22, Express 5, Prisma ORM</td>
+        <td>Modular routes, global Prisma connection pooling, IP & email rate-limiting.</td>
+      </tr>
+      <tr>
+        <td><strong>Database</strong></td>
+        <td>Neon Serverless Postgres</td>
+        <td>Multi-region branching, zero-idle scale-to-zero compute, instantaneous schema migrations.</td>
+      </tr>
+      <tr>
+        <td><strong>AI & Vision</strong></td>
+        <td>Groq LLaMA 3.3 70B + Gemini 2.5 Flash Lite</td>
+        <td>Near-zero latency LLM inference + deep handwriting and prescription vision parsing.</td>
+      </tr>
+      <tr>
+        <td><strong>Pharmacological Bases</strong></td>
+        <td>DDInter, Boustani Scale, NLM RxNorm</td>
+        <td>222k+ interaction pairs, 581 cascade rules, 567 ACB drug scores, 526 herbal monographs.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout callout-success">
+    <strong>VERIFIED LIVE DEMO CREDENTIALS (NEON POSTGRES):</strong><br/>
+    &bull; <strong>Patient Account:</strong> <span class="code-pill">meetc8030@gmail.com</span> / Password: <span class="code-pill">Meet@123</span> (Age 68, HTN, AFib; Warfarin + Aspirin + Ginkgo)<br/>
+    &bull; <strong>Doctor Account:</strong> <span class="code-pill">cse.230840131016@gmail.com</span> / Password: <span class="code-pill">Meet@123</span> (Dr. Sarah Wilson, Cardiologist)<br/>
+    &bull; <strong>Health Check:</strong> <span class="code-pill">https://polysafe-backend.vercel.app/health</span> &rarr; <span class="code-pill">{"status":"ok","db":true}</span>
+  </div>
+
+  <!-- ==================== UNIT 5: JUDGE DEFENSE BIBLE (TOP 15 Q&A) ==================== -->
+  <h2>Unit 5: Judge Viva Voce Defense Bible (Top 15 Q&A)</h2>
+  
+  <div class="qa-item">
+    <div class="qa-q"><span>Q1</span> How is this different from 1mg, Practo, or WebMD drug interaction tools?</div>
+    <div class="qa-a"><strong>Answer:</strong> Existing tools only test pairwise (A + B) in isolation, giving patients 15 confusing alerts with zero prioritization. They completely miss <em>cumulative multi-drug toxicity</em> (e.g., three mild sedatives combining into respiratory depression), they lack <em>Anticholinergic Cognitive Burden</em> calculations for geriatric dementia risks, they don't detect <em>Prescribing Cascades</em>, and they have no <em>Doctor Pre-Prescription Simulator</em> uniting multiple specialists.</div>
+  </div>
+
+  <div class="qa-item">
+    <div class="qa-q"><span>Q2</span> What if the prescription OCR misreads handwriting and adds the wrong drug?</div>
+    <div class="qa-a"><strong>Answer:</strong> We enforce a <strong>Human-in-the-Loop review pipeline</strong>. Extracted medicines from Gemini and Tesseract are staged on an interactive confirmation card showing confidence scores. The patient, doctor, or pharmacist must explicitly verify and approve the drug name and dosage before it is committed to the database.</div>
+  </div>
+
+  <div class="qa-item">
+    <div class="qa-q"><span>Q3</span> How can doctors trust the AI? Aren't LLMs prone to medical hallucinations?</div>
+    <div class="qa-a"><strong>Answer:</strong> Our safety checks are <strong>100% deterministic and rule-based</strong>, powered by verified clinical databases (DDInter, NLM RxNorm, and Boustani scales). The LLM is restricted to synthesizing human-readable explanations from pre-computed clinical facts; it is never allowed to invent severity levels or interaction pairs.</div>
+  </div>
+
+  <div class="qa-item">
+    <div class="qa-q"><span>Q4</span> How does PolySafe handle Indian Fixed-Dose Combinations (FDCs)?</div>
+    <div class="qa-a"><strong>Answer:</strong> Via our <strong>5-Layer Indian Formulation Resolver</strong>. Trade names like <em>Combiflam</em>, <em>Augmentin 625</em>, or <em>Zerodol-SP</em> are mapped to their constituent chemical salts (e.g. Aceclofenac + Paracetamol). Interactions are evaluated at the molecular constituent level rather than the trade name level.</div>
+  </div>
+
+  <div class="qa-item">
+    <div class="qa-q"><span>Q5</span> How do you protect patient privacy between doctors and caregivers?</div>
+    <div class="qa-a"><strong>Answer:</strong> We enforce strict <strong>Role-Based Access Control (RBAC)</strong>. Caregivers only see adherence tracking (taken vs. missed doses) and reminders; they cannot view private clinical diagnoses. Doctor access is ephemeral and strictly consent-based through a time-limited 6-digit PIN and QR code generated by the patient.</div>
+  </div>
+
+  <div class="qa-item">
+    <div class="qa-q"><span>Q6</span> Can PolySafe work in rural clinics with spotty or no internet?</div>
+    <div class="qa-a"><strong>Answer:</strong> Yes. PolySafe is built as an installable <strong>Progressive Web App (PWA)</strong> with service worker caching. The core medicine schedule, local emergency medical card, and offline fallback databases remain accessible even when the device is completely disconnected.</div>
+  </div>
+
+  <div class="qa-item">
+    <div class="qa-q"><span>Q7</span> Why do you include herbal supplements like Ashwagandha or Ginkgo Biloba?</div>
+    <div class="qa-a"><strong>Answer:</strong> Over 60% of patients do not disclose herbal supplements to their doctors. Supplements are biologically active: Ginkgo Biloba and high-dose Turmeric potently inhibit platelets, causing fatal hemorrhages when combined with anticoagulants like Warfarin. Our 526-monograph botanical matrix closes this dangerous blind spot.</div>
+  </div>
+
+  <div class="qa-item">
+    <div class="qa-q"><span>Q8</span> What is an Anticholinergic Cognitive Burden (ACB) and why is it dangerous?</div>
+    <div class="qa-a"><strong>Answer:</strong> Many common medications (allergy, bladder, sleep, nerve pain) block acetylcholine in the central nervous system. When multiple low-scoring drugs combine to reach an <strong>ACB score &ge; 3</strong>, elderly patients experience confusion, hallucinations, sedation, and a 3x higher incidence of catastrophic fall fractures.</div>
+  </div>
+
+  <div class="qa-item">
+    <div class="qa-q"><span>Q9</span> What is a 'Prescribing Cascade' and how does your engine detect it?</div>
+    <div class="qa-a"><strong>Answer:</strong> A prescribing cascade happens when an adverse drug reaction is misinterpreted as a new disease, leading to unnecessary additional prescriptions (e.g., Amlodipine causes ankle edema &rarr; doctor prescribes Furosemide). PolySafe tracks drug start dates chronologically and correlates newly logged symptoms against 581 clinical side-effect profiles.</div>
+  </div>
+
+  <div class="qa-item">
+    <div class="qa-q"><span>Q10</span> What database and hosting infrastructure does PolySafe utilize?</div>
+    <div class="qa-a"><strong>Answer:</strong> We use <strong>Neon Serverless Postgres</strong> connected through <strong>Prisma ORM</strong> with connection pooling, hosted on <strong>Node 22 / Express 5 on Vercel Serverless</strong>. This provides auto-scaling compute, instant branch replication, zero-idle cost, and enterprise security.</div>
+  </div>
+
+  <div class="qa-item">
+    <div class="qa-q"><span>Q11</span> How do you prevent brute force attacks on authentication?</div>
+    <div class="qa-a"><strong>Answer:</strong> Three layers of defense: IP rate-limiting (50 attempts per 15 min), email-specific OTP rate limits (5 per hour), and automatic per-account lockouts after 5 consecutive failed logins, evaluated with timing-attack-safe bcrypt verification.</div>
+  </div>
+
+  <div class="qa-item">
+    <div class="qa-q"><span>Q12</span> How do you prove this system is technically verified?</div>
+    <div class="qa-a"><strong>Answer:</strong> We maintain an automated <strong>18-Step System & API Audit Suite</strong> (<span class="code-pill">npm test</span>) that runs through end-to-end user lifecycles, drug additions, DDInter flags, cascade matches, doctor QR pairing, and simulator runs. All 18 steps pass with 100% success.</div>
+  </div>
+
+  <div class="qa-item">
+    <div class="qa-q"><span>Q13</span> What is the Emergency Medical Passport?</div>
+    <div class="qa-a"><strong>Answer:</strong> A one-click, printable and scannable summary containing the patient's active drug list, severe allergies, blood group, emergency contacts, and an EMT-scannable QR code formatted for instantaneous triage during ambulance or ER emergencies.</div>
+  </div>
+
+  <div class="qa-item">
+    <div class="qa-q"><span>Q14</span> Can a doctor override a PolySafe warning?</div>
+    <div class="qa-a"><strong>Answer:</strong> Yes. PolySafe is a <strong>Clinical Decision Support System (CDSS)</strong>, not a prescriptive blocker. If an oncologist or cardiologist intentionally combines two interacting drugs under close inpatient observation, they can acknowledge the alert and document clinical rationale.</div>
+  </div>
+
+  <div class="qa-item">
+    <div class="qa-q"><span>Q15</span> What is your future commercialization and technical roadmap?</div>
+    <div class="qa-a"><strong>Answer:</strong> (1) Integration with hospital Electronic Health Records (EHR) via <strong>FHIR / HL7 APIs</strong>; (2) Wearable integration with Apple Health and Google Fit to monitor vitals during drug onboarding; and (3) <strong>Pharmacogenomic (PGx)</strong> profile integration to account for genetic metabolic variations.</div>
+  </div>
+
+</body>
+</html>
