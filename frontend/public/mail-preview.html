@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PolySafe - Email Verification Layout Preview</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 40px 16px;
+      background-color: #e2e8f0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      box-sizing: border-box;
+    }
+    .preview-bar {
+      margin-bottom: 24px;
+      background: #0f172a;
+      color: #f8fafc;
+      padding: 10px 20px;
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
+    }
+    .preview-bar span.pill {
+      background: #0284c7;
+      color: white;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 10px;
+      text-transform: uppercase;
+    }
+  </style>
+</head>
+<body style="margin: 0; padding: 40px 16px; background-color: #f1f5f9; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; box-sizing: border-box;">
+
+  <!-- EMAIL CARD CONTAINER -->
+  <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="max-width: 520px; margin: 0 auto; background-color: #ffffff; border-radius: 24px; border: 1px solid #cbd5e1; box-shadow: 0 20px 40px -15px rgba(15, 23, 42, 0.12); overflow: hidden;">
+    
+    <!-- Top Gradient Accent Bar (PolySafe Sapphire to Warm Coral) -->
+    <tr>
+      <td style="height: 5px; background: linear-gradient(90deg, #0284c7 0%, #0ea5e9 45%, #ff5c35 100%);"></td>
+    </tr>
+
+    <!-- Header Section -->
+    <tr>
+      <td style="padding: 36px 32px 24px 32px; text-align: center; background-color: #ffffff;">
+        <table role="presentation" border="0" cellspacing="0" cellpadding="0" align="center" style="margin: 0 auto;">
+          <tr>
+            <!-- Duo-Pill Brand Icon -->
+            <td style="vertical-align: middle; padding-right: 12px;">
+              <table role="presentation" border="0" cellspacing="0" cellpadding="0">
+                <tr>
+                  <td style="width: 42px; height: 42px; background: #0284c7; border-radius: 12px; text-align: center; vertical-align: middle; box-shadow: 0 4px 10px rgba(2, 132, 199, 0.25);">
+                    <span style="color: #ffffff; font-size: 26px; font-weight: 900; line-height: 42px; display: block; font-family: sans-serif;">+</span>
+                  </td>
+                </tr>
+              </table>
+            </td>
+            <!-- Brand Wordmark -->
+            <td style="vertical-align: middle; text-align: left;">
+              <div style="font-size: 24px; font-weight: 900; letter-spacing: -0.6px; color: #0f172a; line-height: 1.1; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+                Poly<span style="color: #0284c7;">Safe</span><span style="display: inline-block; width: 6px; height: 6px; background-color: #ff5c35; border-radius: 50%; margin-left: 2px;"></span>
+              </div>
+              <div style="font-size: 10px; font-weight: 800; color: #64748b; letter-spacing: 1.5px; text-transform: uppercase; margin-top: 3px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+                AI Polypharmacy Interaction &amp; Safety Engine
+              </div>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+
+    <!-- Card Divider -->
+    <tr>
+      <td style="padding: 0 32px;">
+        <div style="height: 1px; background-color: #f1f5f9;"></div>
+      </td>
+    </tr>
+
+    <!-- Body Section -->
+    <tr>
+      <td style="padding: 28px 32px 24px 32px;">
+        <h2 style="font-size: 20px; font-weight: 800; color: #0f172a; margin: 0 0 10px 0; letter-spacing: -0.4px;">
+          Hello Meet,
+        </h2>
+        <p style="font-size: 14px; line-height: 1.6; color: #475569; margin: 0 0 24px 0;">
+          Please enter the following 6-digit verification code to authenticate your PolySafe clinical account:
+        </p>
+
+        <!-- Modern High-Contrast OTP Digit Tiles Box -->
+        <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="margin: 0 0 20px 0; background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 18px; padding: 24px 16px;">
+          <tr>
+            <td align="center">
+              
+              <!-- 6 Digit Individual Tiles with 3-3 Split Dot -->
+              <table role="presentation" border="0" cellspacing="0" cellpadding="0" align="center" style="margin: 0 auto;">
+                <tr>
+                  <!-- Digit 1 -->
+                  <td align="center" valign="middle" style="width: 44px; height: 54px; background-color: #ffffff; border: 2px solid #0284c7; border-radius: 10px; font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace; font-size: 28px; font-weight: 900; color: #0f172a; box-shadow: 0 2px 4px rgba(2, 132, 199, 0.08);">
+                    8
+                  </td>
+                  <td style="width: 8px;"></td>
+                  <!-- Digit 2 -->
+                  <td align="center" valign="middle" style="width: 44px; height: 54px; background-color: #ffffff; border: 2px solid #0284c7; border-radius: 10px; font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace; font-size: 28px; font-weight: 900; color: #0f172a; box-shadow: 0 2px 4px rgba(2, 132, 199, 0.08);">
+                    8
+                  </td>
+                  <td style="width: 8px;"></td>
+                  <!-- Digit 3 -->
+                  <td align="center" valign="middle" style="width: 44px; height: 54px; background-color: #ffffff; border: 2px solid #0284c7; border-radius: 10px; font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace; font-size: 28px; font-weight: 900; color: #0f172a; box-shadow: 0 2px 4px rgba(2, 132, 199, 0.08);">
+                    0
+                  </td>
+                  <!-- Center Separator Dot -->
+                  <td align="center" valign="middle" style="width: 18px; color: #94a3b8; font-size: 22px; font-weight: 900;">
+                    &middot;
+                  </td>
+                  <!-- Digit 4 -->
+                  <td align="center" valign="middle" style="width: 44px; height: 54px; background-color: #ffffff; border: 2px solid #0284c7; border-radius: 10px; font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace; font-size: 28px; font-weight: 900; color: #0f172a; box-shadow: 0 2px 4px rgba(2, 132, 199, 0.08);">
+                    4
+                  </td>
+                  <td style="width: 8px;"></td>
+                  <!-- Digit 5 -->
+                  <td align="center" valign="middle" style="width: 44px; height: 54px; background-color: #ffffff; border: 2px solid #0284c7; border-radius: 10px; font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace; font-size: 28px; font-weight: 900; color: #0f172a; box-shadow: 0 2px 4px rgba(2, 132, 199, 0.08);">
+                    6
+                  </td>
+                  <td style="width: 8px;"></td>
+                  <!-- Digit 6 -->
+                  <td align="center" valign="middle" style="width: 44px; height: 54px; background-color: #ffffff; border: 2px solid #0284c7; border-radius: 10px; font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace; font-size: 28px; font-weight: 900; color: #0f172a; box-shadow: 0 2px 4px rgba(2, 132, 199, 0.08);">
+                    8
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Copy-Friendly Text String & Expiration Badge -->
+              <div style="margin-top: 16px;">
+                <span style="display: inline-block; background-color: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 700; letter-spacing: 0.3px;">
+                  Single-Use Passcode &bull; Valid for 10 minutes
+                </span>
+              </div>
+            </td>
+          </tr>
+        </table>
+
+        <!-- Security Reminder Box -->
+        <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #fff7ed; border-left: 4px solid #ff5c35; border-radius: 0 10px 10px 0; padding: 12px 16px; margin: 0 0 20px 0;">
+          <tr>
+            <td style="font-size: 12px; line-height: 1.5; color: #9a3412;">
+              <strong style="color: #7c2d12;">Security Notice:</strong> Never share this verification code with anyone. PolySafe personnel will never ask for your verification code via call, SMS, or email.
+            </td>
+          </tr>
+        </table>
+
+        <p style="font-size: 12px; line-height: 1.5; color: #64748b; margin: 0;">
+          If you did not initiate this authentication request, no further action is required and you may safely disregard this email.
+        </p>
+      </td>
+    </tr>
+
+    <!-- Footer Section -->
+    <tr>
+      <td style="padding: 24px 32px; background-color: #f8fafc; border-top: 1px solid #f1f5f9; text-align: center;">
+        <p style="font-size: 11px; line-height: 1.6; color: #94a3b8; margin: 0 0 6px 0; font-weight: 500;">
+          PolySafe is an informational clinical decision support platform.<br/>
+          WHO 5-Tier Interaction Sentinel &bull; Protected by 256-Bit TLS Security
+        </p>
+        <p style="font-size: 10px; color: #cbd5e1; margin: 0;">
+          Automated security dispatch. Please do not reply directly to this email.
+        </p>
+      </td>
+    </tr>
+
+  </table>
+
+</body>
+</html>

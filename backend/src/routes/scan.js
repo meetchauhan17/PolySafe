@@ -21,6 +21,7 @@ const { GoogleGenerativeAI } = require('@google/generative-ai');
 const { auth } = require('../middleware/auth');
 const { isDemoMode, getMockOcrResult } = require('../lib/demo');
 const prisma = require('../lib/prisma');
+const { getGeminiApiKeys, getGroqApiKeys, executeWithGroqFallback, executeWithGeminiFallback } = require('../lib/aiKeys');
 
 const router = express.Router();
 
@@ -143,25 +144,13 @@ Return ONLY valid JSON (no markdown formatting, no code block fences):
 
 If this text is clearly not from a pharmaceutical product or prescription, return: { "error": "not_a_medicine_text" }`;
 
-// ─── Helper: Get all configured Gemini API keys ──────────────────────────────
-function getGeminiApiKeys() {
-  const raw = process.env.GEMINI_API_KEYS || process.env.GEMINI_API_KEY || '';
-  const keys = raw
-    .split(/[,;\s]+/)
-    .map(k => k.trim())
-    .filter(k => k.length > 10 && k !== 'your_gemini_api_key_here');
-  return keys.length > 0 ? keys : [];
-}
-
 const ACTIVE_GEMINI_MODELS = [
+  'gemini-flash-latest',
+  'gemini-3.5-flash',
   'gemini-flash-lite-latest',
-  'gemini-3.5-flash-lite',
   'gemini-3.1-flash-lite',
-  'gemini-3.1-flash-lite-preview',
-  'gemini-3-flash-preview',
   'gemini-3.6-flash',
   'gemini-3.7-flash',
-  'gemini-3.5-flash',
 ];
 
 // ─── Helper: Call Gemini Text Parser (Ultra low-token mode: ~100-150 tokens) ──
@@ -757,85 +746,81 @@ async function identifyPillWithAI(imprintCode) {
   if (!imprintCode || !String(imprintCode).trim()) return [];
   const cleanCode = String(imprintCode).trim();
 
-  // 1. Try Groq LLM (llama-3.3-70b-versatile)
-  const groqKey = process.env.GROQ_API_KEY;
-  if (groqKey && !groqKey.startsWith('gsk_demo') && groqKey.length > 10) {
-    try {
-      const groqRes = await axios.post(
-        'https://api.groq.com/openai/v1/chat/completions',
-        {
-          model: 'llama-3.3-70b-versatile',
-          messages: [
-            {
-              role: 'system',
-              content: `You are an expert clinical pharmacist and pharmaceutical chemist.
+  // 1. Try Groq LLM with multi-key failover
+  const groqResult = await executeWithGroqFallback(async (apiKey) => {
+    const groqRes = await axios.post(
+      'https://api.groq.com/openai/v1/chat/completions',
+      {
+        model: 'llama-3.3-70b-versatile',
+        messages: [
+          {
+            role: 'system',
+            content: `You are an expert clinical pharmacist and pharmaceutical chemist.
 Given a stamped tablet/capsule imprint code, identify the real FDA, EMA, or CDSCO approved medication.
 Return ONLY a valid JSON object matching: { "matches": [ { "imprintCode": "${cleanCode}", "drugName": "Exact Brand / Generic Drug Name", "genericName": "Generic Salt Name", "strength": "e.g. 500mg", "shape": "e.g. Round/Oval", "color": "e.g. White", "class": "Class", "manufacturer": "Manufacturer" } ] }`
-            },
-            {
-              role: 'user',
-              content: `Identify the pill with stamped imprint code: "${cleanCode}". If multiple strengths or manufacturers share this imprint, list the most common ones.`
-            }
-          ],
-          temperature: 0.1,
-          response_format: { type: 'json_object' }
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${groqKey}`,
-            'Content-Type': 'application/json'
           },
-          timeout: 6000
-        }
-      );
-
-      const raw = groqRes.data?.choices?.[0]?.message?.content;
-      if (raw) {
-        const parsed = JSON.parse(raw);
-        let list = parsed.matches || parsed.pills || parsed.candidates || (Array.isArray(parsed) ? parsed : Object.values(parsed)[0]);
-        if (Array.isArray(list) && list.length > 0) {
-          const results = [];
-          for (const item of list) {
-            if (item && item.drugName) {
-              const pillRecord = {
-                id: `ai_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
-                imprintCode: item.imprintCode || cleanCode,
-                drugName: item.drugName,
-                strength: item.strength || 'Standard dose',
-                shape: item.shape || 'Tablet',
-                color: item.color || 'White',
-                genericName: item.genericName || item.drugName,
-                isAiResolved: true,
-              };
-              results.push(pillRecord);
-              try {
-                await prisma.pillImprint.create({
-                  data: {
-                    imprintCode: pillRecord.imprintCode,
-                    drugName: pillRecord.drugName,
-                    strength: pillRecord.strength,
-                    shape: pillRecord.shape,
-                    color: pillRecord.color,
-                  }
-                }).catch(() => {});
-              } catch (_) {}
-            }
+          {
+            role: 'user',
+            content: `Identify the pill with stamped imprint code: "${cleanCode}". If multiple strengths or manufacturers share this imprint, list the most common ones.`
           }
-          if (results.length > 0) return results;
-        }
+        ],
+        temperature: 0.1,
+        response_format: { type: 'json_object' }
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          'Content-Type': 'application/json'
+        },
+        timeout: 6000
       }
-    } catch (groqErr) {
-      console.warn('[identifyPillWithAI] Groq lookup failed:', groqErr.message);
-    }
-  }
+    );
 
-  // 2. Try Gemini Flash API
-  const geminiKey = process.env.GEMINI_API_KEY || (process.env.GEMINI_API_KEYS ? process.env.GEMINI_API_KEYS.split(',')[0].trim() : null);
-  if (geminiKey && geminiKey.length > 10 && geminiKey !== 'your_gemini_api_key_here') {
-    try {
-      const genAI = new GoogleGenerativeAI(geminiKey);
-      const model = genAI.getGenerativeModel({ model: 'gemini-flash-lite-latest' });
-      const prompt = `Identify the medication with pill imprint code "${cleanCode}". Return ONLY valid JSON array (no markdown code fences):
+    const raw = groqRes.data?.choices?.[0]?.message?.content;
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      let list = parsed.matches || parsed.pills || parsed.candidates || (Array.isArray(parsed) ? parsed : Object.values(parsed)[0]);
+      if (Array.isArray(list) && list.length > 0) {
+        const results = [];
+        for (const item of list) {
+          if (item && item.drugName) {
+            const pillRecord = {
+              id: `ai_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
+              imprintCode: item.imprintCode || cleanCode,
+              drugName: item.drugName,
+              strength: item.strength || 'Standard dose',
+              shape: item.shape || 'Tablet',
+              color: item.color || 'White',
+              genericName: item.genericName || item.drugName,
+              isAiResolved: true,
+            };
+            results.push(pillRecord);
+            try {
+              await prisma.pillImprint.create({
+                data: {
+                  imprintCode: pillRecord.imprintCode,
+                  drugName: pillRecord.drugName,
+                  strength: pillRecord.strength,
+                  shape: pillRecord.shape,
+                  color: pillRecord.color,
+                }
+              }).catch(() => {});
+            } catch (_) {}
+          }
+        }
+        if (results.length > 0) return results;
+      }
+    }
+    return null;
+  }, 'identifyPillWithAI:Groq');
+
+  if (groqResult && groqResult.length > 0) return groqResult;
+
+  // 2. Try Gemini Flash API with multi-key failover
+  const geminiResult = await executeWithGeminiFallback(async (apiKey) => {
+    const genAI = new GoogleGenerativeAI(apiKey);
+    const model = genAI.getGenerativeModel({ model: 'gemini-flash-latest' });
+    const prompt = `Identify the medication with pill imprint code "${cleanCode}". Return ONLY valid JSON array (no markdown code fences):
 [
   {
     "imprintCode": "${cleanCode}",
@@ -880,12 +865,12 @@ Return ONLY a valid JSON object matching: { "matches": [ { "imprintCode": "${cle
             } catch (_) {}
           }
         }
-        if (results.length > 0) return results;
-      }
-    } catch (geminiErr) {
-      console.warn('[identifyPillWithAI] Gemini lookup failed:', geminiErr.message);
+      if (results.length > 0) return results;
     }
-  }
+    return null;
+  }, 'identifyPillWithAI:Gemini');
+
+  if (geminiResult && geminiResult.length > 0) return geminiResult;
 
   // 3. Try NLM RxNav approximate term search (Free NIH Government API)
   try {

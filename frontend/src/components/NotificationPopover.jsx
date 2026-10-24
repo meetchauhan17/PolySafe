@@ -148,7 +148,7 @@ export default function NotificationPopover({
           transition={{ type: 'spring', stiffness: 380, damping: 28 }}
           role="dialog"
           aria-label="Notification center"
-          className="absolute right-0 mt-2 w-88 sm:w-96 rounded-[var(--radius-2xl)] bg-[var(--paper)] border border-[var(--border)] shadow-[0_20px_50px_rgba(22,33,44,0.22),0_4px_16px_rgba(22,33,44,0.08)] p-0 overflow-hidden z-50 text-left text-[var(--ink)]"
+          className="fixed inset-x-3 sm:inset-x-auto sm:absolute sm:right-0 top-16 sm:top-auto sm:mt-2 w-auto sm:w-96 max-w-[calc(100vw-24px)] rounded-[var(--radius-2xl)] bg-[var(--paper)] border border-[var(--border)] shadow-[0_20px_50px_rgba(22,33,44,0.22),0_4px_16px_rgba(22,33,44,0.08)] p-0 overflow-hidden z-50 text-left text-[var(--ink)]"
         >
           {/* Header */}
           <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--border)] bg-[var(--canvas)]/40">

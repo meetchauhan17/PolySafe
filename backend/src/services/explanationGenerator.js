@@ -27,19 +27,17 @@
 const axios = require('axios');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const { isDemoMode, getMockGroqExplanation } = require('../lib/demo');
+const { executeWithGroqFallback, executeWithGeminiFallback, getGroqApiKeys } = require('../lib/aiKeys');
 
 // Cache keyed by `${flagId || `${drugA}-${drugB}`}:${lang}`
 const explanationCache = new Map();
 
 /**
- * Secondary LLM explanation engine via Google Gemini Flash
+ * Secondary LLM explanation engine via Google Gemini Flash (with multi-key backup rotation)
  */
 async function tryGeminiExplanation({ drugA, drugB, severity, burdenScore, burdenLevel, patientAge, patientConditions, lang = 'en' }) {
-  const geminiKey = process.env.GEMINI_API_KEY || (process.env.GEMINI_API_KEYS ? process.env.GEMINI_API_KEYS.split(/[,;\s]+/)[0] : '');
-  if (!geminiKey || geminiKey === 'your_gemini_api_key_here') return null;
-
-  try {
-    const genAI = new GoogleGenerativeAI(geminiKey);
+  return await executeWithGeminiFallback(async (apiKey) => {
+    const genAI = new GoogleGenerativeAI(apiKey);
     const model = genAI.getGenerativeModel({ model: 'gemini-3.5-flash' });
     const conditionsText = Array.isArray(patientConditions) && patientConditions.length > 0 ? patientConditions.join(', ') : 'None';
 
@@ -90,10 +88,8 @@ Return ONLY valid JSON matching this schema:
         lang,
       };
     }
-  } catch (err) {
-    console.warn('[explanationGenerator] Gemini fallback failed:', err.message);
-  }
-  return null;
+    return null;
+  }, 'ExplanationGenerator:Gemini');
 }
 
 /**
@@ -186,10 +182,10 @@ async function generateExplanation({
     return mock;
   }
 
-  const apiKey = process.env.GROQ_API_KEY;
+  const groqKeys = getGroqApiKeys();
 
-  // If no API key or mock/demo key, attempt Gemini Flash before static fallback
-  if (!apiKey || apiKey === 'gsk_demo_key' || apiKey.startsWith('gsk_demo')) {
+  // If no API keys configured or demo mode, attempt Gemini Flash before static fallback
+  if (groqKeys.length === 0 || isDemoMode()) {
     const geminiExp = await tryGeminiExplanation({ drugA, drugB, severity, burdenScore, burdenLevel, patientAge, patientConditions, lang: normalizedLang });
     if (geminiExp) {
       explanationCache.set(cacheKey, geminiExp);
@@ -242,7 +238,7 @@ Respond ONLY with a valid JSON object matching this schema:
 - Patient Conditions: ${conditionsText}
 - Language: ${normalizedLang.toUpperCase()}`;
 
-  try {
+  const groqResult = await executeWithGroqFallback(async (apiKey) => {
     const response = await axios.post(
       'https://api.groq.com/openai/v1/chat/completions',
       {
@@ -260,56 +256,46 @@ Respond ONLY with a valid JSON object matching this schema:
           Authorization: `Bearer ${apiKey}`,
           'Content-Type': 'application/json',
         },
-        timeout: 8000, // 8 seconds strict timeout
+        timeout: 8000,
       }
     );
 
     const content = response.data?.choices?.[0]?.message?.content;
-    if (!content) {
-      const fb = buildFallbackExplanation({ drugA, drugB, severity, burdenScore, burdenLevel, lang: normalizedLang });
-      explanationCache.set(cacheKey, fb);
-      return fb;
-    }
+    if (!content) return null;
 
     const parsed = JSON.parse(content);
-    if (!parsed.clinical || !parsed.plain) {
-      const fb = buildFallbackExplanation({ drugA, drugB, severity, burdenScore, burdenLevel, lang: normalizedLang });
-      explanationCache.set(cacheKey, fb);
-      return fb;
-    }
+    if (!parsed.clinical || !parsed.plain) return null;
 
-    const result = {
+    return {
       clinical: parsed.clinical.trim(),
       plain: parsed.plain.trim(),
       generatedBy: 'groq',
       isTranslated: normalizedLang !== 'en',
       lang: normalizedLang,
     };
-    explanationCache.set(cacheKey, result);
-    return result;
-  } catch (err) {
-    const isTimeout = err.code === 'ECONNABORTED' || err.message?.includes('timeout');
-    console.warn(
-      `[explanationGenerator] Groq API ${isTimeout ? 'timed out after 8s' : 'error'} (${err.message}) — using structured fallback`
-    );
+  }, 'ExplanationGenerator:Groq');
 
-    // Try Gemini Flash before static fallback
-    const geminiExp = await tryGeminiExplanation({ drugA, drugB, severity, burdenScore, burdenLevel, patientAge, patientConditions, lang: normalizedLang });
-    if (geminiExp) {
-      explanationCache.set(cacheKey, geminiExp);
-      return geminiExp;
-    }
-
-    const fallback = buildFallbackExplanation({ drugA, drugB, severity, burdenScore, burdenLevel, lang: normalizedLang });
-    const result = {
-      ...fallback,
-      generatedBy: isTimeout ? 'timeout' : 'fallback',
-      isTranslated: normalizedLang !== 'en',
-      lang: normalizedLang,
-    };
-    explanationCache.set(cacheKey, result);
-    return result;
+  if (groqResult) {
+    explanationCache.set(cacheKey, groqResult);
+    return groqResult;
   }
+
+  // If Groq fails across all primary + backup keys, try Gemini Flash before static fallback
+  const geminiExp = await tryGeminiExplanation({ drugA, drugB, severity, burdenScore, burdenLevel, patientAge, patientConditions, lang: normalizedLang });
+  if (geminiExp) {
+    explanationCache.set(cacheKey, geminiExp);
+    return geminiExp;
+  }
+
+  const fallback = buildFallbackExplanation({ drugA, drugB, severity, burdenScore, burdenLevel, lang: normalizedLang });
+  const result = {
+    ...fallback,
+    generatedBy: 'fallback',
+    isTranslated: normalizedLang !== 'en',
+    lang: normalizedLang,
+  };
+  explanationCache.set(cacheKey, result);
+  return result;
 }
 
 module.exports = {

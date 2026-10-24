@@ -825,7 +825,7 @@ export default function MedicationCard({
       <div className="px-4 py-4 sm:px-5 sm:py-4.5 space-y-3">
 
         {/* Top Header Row: ACB Ring, Titles, Badges & Action Buttons */}
-        <div className="flex items-start justify-between gap-3 sm:gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 sm:gap-4">
           <div className="flex items-start gap-3 min-w-0 flex-1">
             {/* ACB Mini-Ring with score */}
             <ACBRing score={activeAcbScore} medicine={medicine} />
@@ -905,8 +905,8 @@ export default function MedicationCard({
             </div>
           </div>
 
-          {/* Right Header Column: Safety Drawer Button & Edit/Delete Actions */}
-          <div className="flex flex-col items-end gap-2 flex-shrink-0">
+          {/* Right Header Column (Desktop) / Bottom Action Row (Mobile): Safety Drawer Button & Edit/Delete Actions */}
+          <div className="flex items-center sm:flex-col sm:items-end justify-between sm:justify-start gap-2 flex-shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-[var(--border)]/60">
             {/* Safety Signals Button with Count */}
             {hasSafetyData && (
               <button

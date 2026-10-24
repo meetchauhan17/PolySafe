@@ -176,14 +176,14 @@ export default function SharedTopBar({
         </nav>
 
         {/* ── Right Column: Control Tools (flex-1) ── */}
-        <div className="flex items-center gap-1.5 sm:gap-2 flex-1 min-w-0 justify-end">
+        <div className="flex items-center gap-1 sm:gap-2 flex-1 min-w-0 justify-end">
           
-          {/* Search button — matching square icon button with Bell & Theme */}
+          {/* Search button — matching square icon button with Bell & Theme (hidden on mobile to preserve layout) */}
           <button
             type="button"
             onClick={onOpenSearch}
             className={clsx(
-              'flex items-center justify-center h-9 w-9 rounded-xl border transition-all cursor-pointer shadow-2xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-600)] flex-shrink-0',
+              'hidden sm:flex items-center justify-center h-9 w-9 rounded-xl border transition-all cursor-pointer shadow-2xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-600)] flex-shrink-0',
               darkVariant
                 ? 'bg-[var(--doctor-800)] text-white border-[var(--doctor-600)] hover:bg-[var(--doctor-700)]'
                 : 'bg-[var(--surface-2)] text-[var(--ink-2)] border-[var(--border)] hover:bg-[var(--surface)] hover:text-[var(--ink)]'
@@ -294,7 +294,7 @@ export default function SharedTopBar({
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: 8, scale: 0.95 }}
                   transition={{ duration: 0.15 }}
-                  className="absolute right-0 mt-2 w-64 rounded-2xl bg-[var(--surface)] border border-[var(--border)] shadow-[var(--shadow-lg)] p-2 space-y-1.5 z-50 text-left text-[var(--ink)]"
+                  className="absolute right-0 mt-2 w-64 max-w-[calc(100vw-24px)] rounded-2xl bg-[var(--surface)] border border-[var(--border)] shadow-[var(--shadow-lg)] p-2 space-y-1.5 z-50 text-left text-[var(--ink)]"
                 >
                   {/* User details header */}
                   <div className="p-3 bg-[var(--canvas)] rounded-xl border border-[var(--border)]">

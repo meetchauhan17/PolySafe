@@ -264,14 +264,14 @@ export default function PatientLayout() {
             )}
           </AnimatePresence>
 
-          {/* Master Coral Speed-Dial Button */}
+          {/* Master Coral Speed-Dial Button — Compact 48px circle on mobile to avoid card overlap, pill on desktop */}
           <button
             type="button"
             onClick={() => setSpeedDialOpen((prev) => !prev)}
             aria-expanded={speedDialOpen}
             aria-label={speedDialOpen ? 'Close add medicine options' : 'Add medicine speed dial'}
             className={clsx(
-              'h-12 px-4 rounded-full bg-[var(--accent-500)] hover:bg-[var(--accent-600)] text-[var(--on-accent)] font-bold text-xs sm:text-sm shadow-lg hover:shadow-xl flex items-center gap-2 transition-all cursor-pointer active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-500)] select-none',
+              'h-12 w-12 sm:w-auto p-0 sm:px-4 justify-center rounded-full bg-[var(--accent-500)] hover:bg-[var(--accent-600)] text-[var(--on-accent)] font-bold text-xs sm:text-sm shadow-lg hover:shadow-xl flex items-center gap-2 transition-all cursor-pointer active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-500)] select-none shrink-0',
               speedDialOpen && 'ring-4 ring-[var(--accent-500)]/30'
             )}
           >
@@ -281,7 +281,7 @@ export default function PatientLayout() {
             >
               <Plus className="w-5 h-5 stroke-[2.5]" />
             </motion.div>
-            <span>{speedDialOpen ? 'Close' : 'Add Medicine'}</span>
+            <span className="hidden sm:inline">{speedDialOpen ? 'Close' : 'Add Medicine'}</span>
           </button>
         </div>
       )}
@@ -320,7 +320,7 @@ export default function PatientLayout() {
 
                 <Icon className={clsx('w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0', active ? 'stroke-[2.5]' : 'stroke-[1.8]')} />
                 <span className={clsx(
-                  'text-[9px] sm:text-[10px] font-bold tracking-tight leading-tight truncate max-w-full text-center',
+                  'text-[8.5px] sm:text-[10px] font-bold tracking-tight leading-tight truncate max-w-full text-center px-0.5',
                   active ? 'font-extrabold text-[var(--brand-600)]' : 'text-[var(--ink-3)]'
                 )}>
                   {item.shortLabel || item.label}

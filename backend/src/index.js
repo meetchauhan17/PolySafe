@@ -99,6 +99,11 @@ app.get('/health', async (_req, res) => {
     demoMode: process.env.DEMO_MODE === 'true',
     groqKey: !!process.env.GROQ_API_KEY,
     geminiKey: !!process.env.GEMINI_API_KEY,
+    geminiKeyCount: [
+      process.env.GEMINI_API_KEY,
+      process.env.GEMINI_API_KEY_2,
+      process.env.GEMINI_API_KEY_3,
+    ].filter(k => k && k.length > 10).length,
     timestamp: new Date().toISOString(),
   });
 });

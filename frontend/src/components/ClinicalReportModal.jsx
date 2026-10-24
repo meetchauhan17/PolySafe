@@ -197,34 +197,34 @@ export default function ClinicalReportModal({
             className="relative w-full max-w-4xl bg-white text-slate-900 rounded-3xl shadow-2xl border border-slate-200 overflow-hidden my-auto clinical-print-sheet"
           >
             {/* ── Top Modal Action Bar (Screen Only) ── */}
-            <div className="bg-slate-900 text-white px-5 sm:px-6 py-3.5 flex items-center justify-between no-print">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-xl bg-teal-500/20 text-teal-300 flex items-center justify-center">
+            <div className="bg-slate-900 text-white px-3 sm:px-6 py-3.5 flex items-center justify-between no-print gap-2">
+              <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+                <div className="w-8 h-8 rounded-xl bg-teal-500/20 text-teal-300 flex items-center justify-center shrink-0">
                   <FileText className="w-4 h-4" />
                 </div>
-                <div>
-                  <h3 className="text-sm sm:text-base font-extrabold tracking-tight">
+                <div className="min-w-0">
+                  <h3 className="text-xs sm:text-base font-extrabold tracking-tight truncate max-w-[160px] xs:max-w-[220px] sm:max-w-none">
                     Clinical Consultation & Pharmacovigilance Dossier
                   </h3>
-                  <p className="text-[11px] text-slate-400 font-mono">
+                  <p className="text-[10px] sm:text-[11px] text-slate-400 font-mono truncate">
                     Official Hospital-Grade PDF / Print Export Document
                   </p>
                 </div>
               </div>
 
-              <div className="flex items-center gap-2 sm:gap-3">
+              <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
                 <button
                   type="button"
                   onClick={handlePrint}
-                  className="ps-btn ps-btn-primary py-2 px-3.5 text-xs font-bold flex items-center gap-1.5 cursor-pointer shadow-xs"
+                  className="ps-btn ps-btn-primary py-1.5 sm:py-2 px-2.5 sm:px-3.5 text-xs font-bold flex items-center gap-1.5 cursor-pointer shadow-xs shrink-0"
                 >
                   <Printer className="w-3.5 h-3.5" />
-                  <span>Print Dossier</span>
+                  <span className="hidden xs:inline">Print Dossier</span>
                 </button>
                 <button
                   type="button"
                   onClick={onClose}
-                  className="p-1.5 text-slate-400 hover:text-white rounded-xl transition-colors cursor-pointer"
+                  className="p-1.5 text-slate-400 hover:text-white rounded-xl transition-colors cursor-pointer shrink-0"
                   aria-label="Close clinical report"
                 >
                   <X className="w-5 h-5" />

@@ -21,6 +21,7 @@ const path = require('path');
 const axios = require('axios');
 const { INDIAN_DRUGS } = require('../../data/indianDrugs');
 const { getDrugHarmLevel } = require('./regimenRisk');
+const { getGeminiApiKeys, getGroqApiKeys, executeWithGroqFallback } = require('../lib/aiKeys');
 
 // ─── Layer 2: Persistent Self-Learning Disk Cache ─────────────────────────────
 const CACHE_FILE = path.join(__dirname, '../../data/ai-resolved-drugs.json');
@@ -99,24 +100,13 @@ const { GoogleGenerativeAI } = require('@google/generative-ai');
 
 // ─── Layer 5a: Gemini Flash LLM Clinical Decomposer ──────────────────────────
 const ACTIVE_GEMINI_MODELS = [
+  'gemini-flash-latest',
+  'gemini-3.5-flash',
   'gemini-flash-lite-latest',
-  'gemini-3.5-flash-lite',
   'gemini-3.1-flash-lite',
-  'gemini-3.1-flash-lite-preview',
-  'gemini-3-flash-preview',
   'gemini-3.6-flash',
   'gemini-3.7-flash',
-  'gemini-3.5-flash',
 ];
-
-function getGeminiApiKeys() {
-  const raw = process.env.GEMINI_API_KEYS || process.env.GEMINI_API_KEY || '';
-  const keys = raw
-    .split(/[,;\s]+/)
-    .map(k => k.trim())
-    .filter(k => k.length > 10 && k !== 'your_gemini_api_key_here');
-  return keys.length > 0 ? keys : [];
-}
 
 async function queryGeminiDecomposer(rawName) {
   const apiKeys = getGeminiApiKeys();

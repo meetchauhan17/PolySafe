@@ -35,9 +35,9 @@ export default function SegmentedControl({
   });
 
   const sizeClasses = {
-    sm: 'text-xs min-h-[38px] sm:min-h-[44px] px-3 py-1.5',
-    md: 'text-sm min-h-[44px] px-4 py-2',
-    lg: 'text-base min-h-[50px] px-5 py-2.5',
+    sm: 'text-xs min-h-[36px] sm:min-h-[44px] px-2 sm:px-3 py-1 sm:py-1.5',
+    md: 'text-xs sm:text-sm min-h-[38px] sm:min-h-[44px] px-2 sm:px-4 py-1.5 sm:py-2',
+    lg: 'text-sm sm:text-base min-h-[44px] sm:min-h-[50px] px-3 sm:px-5 py-2 sm:py-2.5',
   };
 
   return (
@@ -67,7 +67,7 @@ export default function SegmentedControl({
             disabled={isOptionDisabled}
             onClick={() => !isOptionDisabled && onChange?.(opt.value)}
             className={clsx(
-              'relative inline-flex items-center justify-center gap-1.5 rounded-full font-[var(--font-heading)] font-semibold',
+              'relative inline-flex items-center justify-center gap-1 sm:gap-1.5 rounded-full font-[var(--font-heading)] font-semibold min-w-0',
               'transition-all duration-[120ms] ease-out cursor-pointer z-10 focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]',
               'active:scale-[0.98]',
               sizeClasses[size] || sizeClasses.md,

@@ -104,19 +104,19 @@ export default function AlternativeSuggestionsModal({
           className="relative w-full max-w-3xl bg-[var(--surface)] border border-[var(--border)] rounded-3xl shadow-2xl overflow-hidden my-auto"
         >
           {/* Header */}
-          <div className="bg-gradient-to-r from-blue-600 via-cyan-600 to-teal-600 px-6 py-4 text-white flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-white/20 rounded-2xl backdrop-blur-md">
+          <div className="bg-gradient-to-r from-blue-600 via-cyan-600 to-teal-600 px-4 sm:px-6 py-3.5 sm:py-4 text-white flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+              <div className="p-2 bg-white/20 rounded-2xl backdrop-blur-md shrink-0">
                 <Lightbulb className="w-5 h-5 text-white" />
               </div>
-              <div>
-                <div className="flex items-center gap-2">
-                  <span className="text-[10px] font-mono font-bold tracking-widest uppercase bg-black/20 px-2 py-0.5 rounded-full">
+              <div className="min-w-0">
+                <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+                  <span className="text-[9.5px] sm:text-[10px] font-mono font-bold tracking-widest uppercase bg-black/20 px-2 py-0.5 rounded-full">
                     CLINICAL STEWARDSHIP
                   </span>
-                  <span className="text-xs font-mono opacity-80">BEERS CRITERIA 2023</span>
+                  <span className="text-[11px] sm:text-xs font-mono opacity-80">BEERS CRITERIA 2023</span>
                 </div>
-                <h3 className="text-lg font-extrabold tracking-tight font-[var(--font-heading)]">
+                <h3 className="text-sm sm:text-lg font-extrabold tracking-tight font-[var(--font-heading)] leading-snug">
                   Safer Drug Alternatives & De-prescribing Explorer
                 </h3>
               </div>
@@ -124,13 +124,14 @@ export default function AlternativeSuggestionsModal({
 
             <button
               onClick={onClose}
-              className="p-2 text-white/80 hover:text-white hover:bg-white/10 rounded-xl transition-all cursor-pointer"
+              className="p-1.5 sm:p-2 text-white/80 hover:text-white hover:bg-white/10 rounded-xl transition-all cursor-pointer shrink-0"
+              aria-label="Close modal"
             >
               <X className="w-5 h-5" />
             </button>
           </div>
 
-          <div className="p-6 space-y-6 max-h-[75vh] overflow-y-auto">
+          <div className="p-4 sm:p-6 space-y-4 sm:space-y-6 max-h-[80vh] sm:max-h-[75vh] overflow-y-auto">
             {/* Explanatory Box */}
             <div className="p-4 rounded-2xl bg-blue-500/10 border border-blue-500/20 text-xs text-blue-900 dark:text-blue-200 flex items-start gap-3">
               <Info className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />

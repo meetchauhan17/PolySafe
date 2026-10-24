@@ -409,6 +409,21 @@ export default function LoginPage() {
     }
   };
 
+  const handleOtpPaste = (e) => {
+    e.preventDefault();
+    const pasted = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6);
+    if (pasted) {
+      const newOtp = [...otp];
+      pasted.split('').forEach((d, i) => {
+        if (i < 6) newOtp[i] = d;
+      });
+      setOtp(newOtp);
+      const focusIndex = Math.min(pasted.length, 5);
+      otpInputRefs.current[focusIndex]?.focus();
+      if (errorMsg) setErrorMsg(null);
+    }
+  };
+
   const handleVerifyOtp = (e) => {
     e.preventDefault();
     setErrorMsg(null);
@@ -507,15 +522,6 @@ export default function LoginPage() {
               <Moon className="w-4 h-4 text-[var(--brand-600)] stroke-[2.2]" />
             )}
           </button>
-
-          {/* Live System Indicator */}
-          <div className="hidden sm:inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[var(--surface)] border border-[var(--border)] text-[11px] font-semibold text-[var(--ink-2)] shadow-xs">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--safe-600)] opacity-75" />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-[var(--safe-600)]" />
-            </span>
-            <span className="font-mono">Engine v2.4 Active</span>
-          </div>
         </div>
       </header>
 
@@ -1055,24 +1061,51 @@ export default function LoginPage() {
               ══════════════════════════════════════════════════════════════ */}
               {authMode === 'otp' && (
                 <form onSubmit={handleVerifyOtp} className="space-y-5">
-                  <div className="space-y-1.5">
-                    <div className="flex items-center gap-2">
-                      <div className="p-2 rounded-xl bg-[var(--brand-50)] text-[var(--brand-600)] border border-[var(--brand-200)] shadow-2xs">
-                        <KeyRound className="w-4 h-4" />
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-2.5">
+                      <div className="p-2.5 rounded-2xl bg-[var(--brand-50)] text-[var(--brand-600)] border border-[var(--brand-200)] shadow-2xs">
+                        <KeyRound className="w-5 h-5" />
                       </div>
-                      <h2 className="text-xl text-[var(--ink)] font-bold font-[var(--font-heading)]">
-                        Verify Your Email
-                      </h2>
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[var(--brand-600)] bg-[var(--brand-50)] dark:bg-[var(--brand-950)]/40 border border-[var(--brand-200)] dark:border-[var(--brand-800)] px-2.5 py-0.5 rounded-full">
+                            Security Verification
+                          </span>
+                        </div>
+                        <h2 className="text-xl sm:text-2xl text-[var(--ink)] font-extrabold font-[var(--font-heading)] tracking-tight mt-0.5">
+                          Enter Verification Code
+                        </h2>
+                      </div>
                     </div>
-                    <p className="text-xs text-[var(--ink-2)]">
-                      Enter the 6-digit verification code sent to <strong className="text-[var(--ink)]">{email}</strong>.
+
+                    {/* Email Recipient Badge with 1-Click Change */}
+                    <div className="flex items-center justify-between gap-2 p-3 rounded-2xl bg-[var(--surface-2)] border border-[var(--border)] text-xs text-[var(--ink-2)]">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <Mail className="w-4 h-4 text-[var(--brand-600)] shrink-0" />
+                        <span className="truncate font-mono font-bold text-[var(--ink)]">
+                          {email}
+                        </span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => { setAuthMode('signup'); setOtp(['', '', '', '', '', '']); setErrorMsg(null); }}
+                        className="text-xs font-bold text-[var(--brand-600)] hover:underline shrink-0 cursor-pointer"
+                      >
+                        Change
+                      </button>
+                    </div>
+
+                    <p className="text-xs text-[var(--ink-3)] leading-relaxed">
+                      Enter the 6-digit verification code sent to your inbox. The code expires in 10 minutes.
                     </p>
                   </div>
 
                   {/* Dev OTP Helper */}
                   {devOtpHint && (
-                    <div className="p-3 bg-[var(--canvas)] border border-[var(--brand-300)] rounded-xl flex items-center justify-between text-xs">
-                      <span className="text-[var(--ink-2)]">Dev OTP Hint: <strong className="text-[var(--brand-600)] font-mono font-bold">{devOtpHint}</strong></span>
+                    <div className="p-3 bg-[var(--surface)] border border-[var(--brand-300)] rounded-xl flex items-center justify-between text-xs shadow-2xs">
+                      <span className="text-[var(--ink-2)]">
+                        Dev OTP Hint: <strong className="text-[var(--brand-600)] font-mono font-bold">{devOtpHint}</strong>
+                      </span>
                       <button
                         type="button"
                         onClick={() => {
@@ -1080,46 +1113,94 @@ export default function LoginPage() {
                           setOtp(digits);
                           otpInputRefs.current[5]?.focus();
                         }}
-                        className="px-2.5 py-1 bg-[var(--brand-600)] hover:bg-[var(--brand-700)] text-white font-bold rounded-lg cursor-pointer transition-colors shadow-2xs"
+                        className="px-2.5 py-1 bg-[var(--brand-600)] hover:bg-[var(--brand-700)] text-white font-bold rounded-lg cursor-pointer transition-colors shadow-2xs text-xs"
                       >
                         Auto-Fill
                       </button>
                     </div>
                   )}
 
-                  {/* 6 Large OTP Boxes with Caret Animation */}
-                  <div className="flex justify-center items-center gap-2 sm:gap-3 my-4">
-                    {otp.map((digit, index) => {
-                      const isFocused = focusedOtpIndex === index;
-                      return (
-                        <div key={index} className="relative">
-                          <input
-                            ref={(el) => (otpInputRefs.current[index] = el)}
-                            type="text"
-                            inputMode="numeric"
-                            maxLength={1}
-                            value={digit}
-                            onFocus={() => setFocusedOtpIndex(index)}
-                            onBlur={() => setFocusedOtpIndex(null)}
-                            onChange={(e) => { handleOtpChange(index, e.target.value); if (errorMsg) setErrorMsg(null); }}
-                            onKeyDown={(e) => handleOtpKeyDown(index, e)}
-                            className={`w-11 h-14 sm:w-13 sm:h-16 text-center font-mono text-2xl font-bold rounded-2xl border ${
-                              errorMsg
-                                ? 'border-rose-400 bg-rose-50/50 text-rose-700 dark:bg-rose-950/30 dark:text-rose-300'
-                                : isFocused
-                                ? 'border-[var(--brand-600)] bg-[var(--surface)] text-[var(--ink)] ring-3 ring-[var(--brand-600)]/20 shadow-xs'
-                                : 'border-[var(--border)] bg-[var(--surface)] text-[var(--ink)] shadow-2xs'
-                            } outline-none transition-all`}
-                            autoFocus={index === 0}
-                          />
+                  {/* 6 Large OTP Boxes with 3-3 Split, Caret Animation and Paste Support */}
+                  <div
+                    className="flex justify-center items-center gap-1.5 xs:gap-2 sm:gap-2.5 my-5 select-none"
+                    onPaste={handleOtpPaste}
+                  >
+                    {/* First 3 digits */}
+                    <div className="flex items-center gap-1.5 xs:gap-2 sm:gap-2.5">
+                      {otp.slice(0, 3).map((digit, index) => {
+                        const isFocused = focusedOtpIndex === index;
+                        return (
+                          <div key={index} className="relative">
+                            <input
+                              ref={(el) => (otpInputRefs.current[index] = el)}
+                              type="text"
+                              inputMode="numeric"
+                              pattern="[0-9]*"
+                              maxLength={1}
+                              value={digit}
+                              onFocus={() => setFocusedOtpIndex(index)}
+                              onBlur={() => setFocusedOtpIndex(null)}
+                              onChange={(e) => { handleOtpChange(index, e.target.value); if (errorMsg) setErrorMsg(null); }}
+                              onKeyDown={(e) => handleOtpKeyDown(index, e)}
+                              className={`w-10 h-13 xs:w-11 xs:h-14 sm:w-12 sm:h-16 text-center font-mono text-xl sm:text-2xl font-black rounded-xl sm:rounded-2xl border transition-all ${
+                                errorMsg
+                                  ? 'border-rose-400 bg-rose-50/50 text-rose-700 dark:bg-rose-950/30 dark:text-rose-300'
+                                  : isFocused
+                                  ? 'border-[var(--brand-600)] bg-[var(--surface)] text-[var(--ink)] ring-4 ring-[var(--brand-600)]/20 shadow-md scale-105'
+                                  : digit
+                                  ? 'border-[var(--brand-500)]/60 bg-[var(--surface-2)] text-[var(--ink)] shadow-2xs'
+                                  : 'border-[var(--border)] bg-[var(--surface)] text-[var(--ink)] shadow-2xs'
+                              } outline-none`}
+                              autoFocus={index === 0}
+                            />
+                            {isFocused && !digit && (
+                              <span className="absolute inset-x-0 bottom-3 mx-auto w-4 h-0.5 bg-[var(--brand-600)] animate-pulse rounded-full pointer-events-none" />
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
 
-                          {/* Animated Caret indicator when focused and empty */}
-                          {isFocused && !digit && (
-                            <span className="absolute inset-x-0 bottom-3 mx-auto w-4 h-0.5 bg-[var(--brand-600)] animate-pulse rounded-full pointer-events-none" />
-                          )}
-                        </div>
-                      );
-                    })}
+                    {/* Middle Separator Dot */}
+                    <div className="flex items-center justify-center px-0.5 sm:px-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[var(--border)] border border-[var(--ink-3)]/30" />
+                    </div>
+
+                    {/* Next 3 digits */}
+                    <div className="flex items-center gap-1.5 xs:gap-2 sm:gap-2.5">
+                      {otp.slice(3, 6).map((digit, offsetIdx) => {
+                        const index = offsetIdx + 3;
+                        const isFocused = focusedOtpIndex === index;
+                        return (
+                          <div key={index} className="relative">
+                            <input
+                              ref={(el) => (otpInputRefs.current[index] = el)}
+                              type="text"
+                              inputMode="numeric"
+                              pattern="[0-9]*"
+                              maxLength={1}
+                              value={digit}
+                              onFocus={() => setFocusedOtpIndex(index)}
+                              onBlur={() => setFocusedOtpIndex(null)}
+                              onChange={(e) => { handleOtpChange(index, e.target.value); if (errorMsg) setErrorMsg(null); }}
+                              onKeyDown={(e) => handleOtpKeyDown(index, e)}
+                              className={`w-10 h-13 xs:w-11 xs:h-14 sm:w-12 sm:h-16 text-center font-mono text-xl sm:text-2xl font-black rounded-xl sm:rounded-2xl border transition-all ${
+                                errorMsg
+                                  ? 'border-rose-400 bg-rose-50/50 text-rose-700 dark:bg-rose-950/30 dark:text-rose-300'
+                                  : isFocused
+                                  ? 'border-[var(--brand-600)] bg-[var(--surface)] text-[var(--ink)] ring-4 ring-[var(--brand-600)]/20 shadow-md scale-105'
+                                  : digit
+                                  ? 'border-[var(--brand-500)]/60 bg-[var(--surface-2)] text-[var(--ink)] shadow-2xs'
+                                  : 'border-[var(--border)] bg-[var(--surface)] text-[var(--ink)] shadow-2xs'
+                              } outline-none`}
+                            />
+                            {isFocused && !digit && (
+                              <span className="absolute inset-x-0 bottom-3 mx-auto w-4 h-0.5 bg-[var(--brand-600)] animate-pulse rounded-full pointer-events-none" />
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
 
                   {/* Action Buttons */}
@@ -1146,8 +1227,9 @@ export default function LoginPage() {
                       </button>
 
                       {countdown > 0 ? (
-                        <span className="text-[var(--ink-3)] font-medium">
-                          Resend code in <strong className="text-[var(--ink)] font-mono">0:{countdown < 10 ? `0${countdown}` : countdown}</strong>
+                        <span className="inline-flex items-center gap-1.5 text-[var(--ink-3)] font-medium">
+                          <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+                          <span>Resend code in <strong className="text-[var(--ink)] font-mono">0:{countdown < 10 ? `0${countdown}` : countdown}</strong></span>
                         </span>
                       ) : (
                         <button
@@ -1159,6 +1241,12 @@ export default function LoginPage() {
                           <RefreshCw className="w-3.5 h-3.5" /><span>Resend Code</span>
                         </button>
                       )}
+                    </div>
+
+                    {/* Security Notice */}
+                    <div className="pt-2 flex items-center justify-center gap-1.5 text-[11px] text-[var(--ink-3)] font-mono">
+                      <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                      <span>Protected by 256-Bit TLS Encryption · Single-Use Token</span>
                     </div>
                   </div>
                 </form>
@@ -1222,6 +1310,26 @@ export default function LoginPage() {
                     </form>
                   ) : (
                     <form onSubmit={handleResetPasswordSubmit} className="space-y-4">
+                      {/* Recipient summary card */}
+                      <div className="flex items-center justify-between p-3 rounded-xl bg-[var(--canvas)] border border-[var(--border-subtle)]">
+                        <div className="flex items-center gap-2 min-w-0">
+                          <div className="w-7 h-7 rounded-lg bg-[var(--brand-50)] text-[var(--brand-600)] flex items-center justify-center shrink-0">
+                            <Mail className="w-3.5 h-3.5" />
+                          </div>
+                          <div className="min-w-0">
+                            <div className="text-[10px] uppercase font-bold text-[var(--ink-3)] tracking-wider">Reset Code Sent To</div>
+                            <div className="text-xs font-semibold text-[var(--ink-1)] truncate">{resetEmail || email}</div>
+                          </div>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => { setForgotStep(1); setErrorMsg(null); }}
+                          className="text-xs font-bold text-[var(--brand-600)] hover:text-[var(--brand-700)] shrink-0 px-2 py-1 rounded hover:bg-[var(--brand-50)] transition-colors cursor-pointer"
+                        >
+                          Change
+                        </button>
+                      </div>
+
                       {resetDevOtpHint && (
                         <div className="p-3 bg-[var(--canvas)] border border-[var(--brand-300)] rounded-xl flex items-center justify-between text-xs">
                           <span className="text-[var(--ink-2)]">Dev OTP: <strong className="text-[var(--brand-600)] font-mono font-bold">{resetDevOtpHint}</strong></span>
@@ -1236,9 +1344,12 @@ export default function LoginPage() {
                       )}
 
                       <div className="space-y-1">
-                        <label className="block text-xs font-bold text-[var(--ink-2)] uppercase tracking-wider">
-                          6-Digit Code
-                        </label>
+                        <div className="flex items-center justify-between">
+                          <label className="block text-xs font-bold text-[var(--ink-2)] uppercase tracking-wider">
+                            6-Digit Verification Code
+                          </label>
+                          <span className="text-[11px] font-medium text-[var(--ink-3)]">Valid for 10 min</span>
+                        </div>
                         <PolySafeInput
                           type="text"
                           required
@@ -1247,7 +1358,7 @@ export default function LoginPage() {
                           onChange={(e) => setResetCode(e.target.value.replace(/\D/g, ''))}
                           placeholder="123456"
                           leftIcon={<KeyRound className="w-4 h-4" />}
-                          className="font-mono text-center tracking-widest text-lg"
+                          className="font-mono text-center tracking-[0.35em] text-xl font-bold text-[var(--brand-700)]"
                         />
                       </div>
 

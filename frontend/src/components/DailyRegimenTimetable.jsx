@@ -349,7 +349,7 @@ export default function DailyRegimenTimetable({
       </div>
 
       {/* Filter Tabs */}
-      <div className="flex items-center gap-1.5 overflow-x-auto pb-1">
+      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none select-none">
         <button
           onClick={() => setActiveSlotFilter('ALL')}
           className={`px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold transition-all cursor-pointer ${
@@ -493,18 +493,18 @@ export default function DailyRegimenTimetable({
                           </div>
 
                           {/* Action Buttons: Taken / Skip with Optimistic Updates */}
-                          <div className="flex items-center justify-between pt-2 border-t border-[var(--border)] gap-2">
+                          <div className="flex flex-wrap items-center justify-between pt-2 border-t border-[var(--border)] gap-2">
                             <AudioListenButton
                               text={`${dose.name}. ${dose.dosage ? `Dose: ${dose.dosage}.` : ''} ${dose.foodInstruction || ''}`}
                               lang={lang}
                             />
 
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
                               {/* Skip Button */}
                               <button
                                 type="button"
                                 onClick={() => handleSetDoseStatus(dose, isSkipped ? 'SCHEDULED' : 'SKIPPED')}
-                                className={`px-2.5 py-1.5 rounded-xl text-xs font-mono font-bold transition-all flex items-center gap-1 cursor-pointer ${
+                                className={`px-2 sm:px-2.5 py-1.5 rounded-xl text-xs font-mono font-bold transition-all flex items-center gap-1 cursor-pointer ${
                                   isSkipped
                                     ? 'bg-amber-600 text-white shadow-xs'
                                     : 'bg-[var(--surface-2)] text-[var(--ink-2)] hover:bg-amber-500/10 hover:text-amber-700 border border-[var(--border)]'
@@ -519,7 +519,7 @@ export default function DailyRegimenTimetable({
                               <button
                                 type="button"
                                 onClick={() => handleSetDoseStatus(dose, isTaken ? 'SCHEDULED' : 'TAKEN')}
-                                className={`px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-xs ${
+                                className={`px-2.5 sm:px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-xs ${
                                   isTaken
                                     ? 'bg-emerald-600 text-white hover:bg-emerald-700 ring-2 ring-emerald-500/30'
                                     : 'bg-[var(--brand-600)] hover:bg-[var(--brand-700)] text-white'
@@ -527,7 +527,7 @@ export default function DailyRegimenTimetable({
                                 title={isTaken ? 'Dose Taken (Click to unmark)' : 'Mark as Taken'}
                               >
                                 <CheckCircle2 className="w-3.5 h-3.5" />
-                                <span>{isTaken ? `${t('timetable.taken_status', 'Taken')} ✓` : t('timetable.mark_taken', 'Taken')}</span>
+                                <span>{isTaken ? t('timetable.taken_status', 'Taken') : t('timetable.mark_taken', 'Taken')}</span>
                               </button>
                             </div>
                           </div>
