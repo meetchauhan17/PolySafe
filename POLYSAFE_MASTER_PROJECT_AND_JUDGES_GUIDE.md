@@ -10,13 +10,14 @@
 ## 📑 Table of Contents
 1. [What is PolySafe in 30 Seconds?](#1-what-is-polysafe-in-30-seconds)
 2. [The Real Medical Problem (Why PolySafe Exists)](#2-the-real-medical-problem-why-polysafe-exists)
-3. [How PolySafe Solves It (The 5 Safety Subsystems)](#3-how-polysafe-solves-it-the-5-safety-subsystems)
-4. [The 3 User Portals & User Journeys](#4-the-3-user-portals--user-journeys)
-5. [End-to-End Technical Architecture](#5-end-to-end-technical-architecture)
-6. [Live Deployment & Demo Credentials](#6-live-deployment--demo-credentials)
-7. [5-Person Team Role Division & Pitch Scripts](#7-5-person-team-role-division--pitch-scripts)
-8. [The 5-Minute Flawless Live Demo Walkthrough](#8-the-5-minute-flawless-live-demo-walkthrough)
-9. [Judge Q&A Defense Bible (Top 15 Tough Questions & Answers)](#9-judge-qa-defense-bible-top-15-tough-questions--answers)
+3. [Mathematical Formulations, Formulas & Scoring Logic (Maths First)](#3-mathematical-formulations-formulas--scoring-logic-maths-first)
+4. [How PolySafe Solves It (The 5 Safety Subsystems)](#4-how-polysafe-solves-it-the-5-safety-subsystems)
+5. [The 3 User Portals & User Journeys](#5-the-3-user-portals--user-journeys)
+6. [End-to-End Technical Architecture](#6-end-to-end-technical-architecture)
+7. [Live Deployment & Demo Credentials](#7-live-deployment--demo-credentials)
+8. [5-Person Team Role Division & Pitch Scripts](#8-5-person-team-role-division--pitch-scripts)
+9. [The 5-Minute Flawless Live Demo Walkthrough](#9-the-5-minute-flawless-live-demo-walkthrough)
+10. [Judge Q&A Defense Bible (Top 15 Tough Questions & Answers)](#10-judge-qa-defense-bible-top-15-tough-questions--answers)
 
 ---
 
@@ -55,7 +56,88 @@ PolySafe evaluates the **entire cumulative regimen** at once. It detects:
 
 ---
 
-## 3. How PolySafe Solves It (The 5 Safety Subsystems)
+## 3. Mathematical Formulations, Formulas & Scoring Logic (Maths First)
+
+> **CORE PRINCIPLE**: In clinical pharmacology, **deterministic mathematics must always supersede generative heuristics**. Every numerical risk score, visual gauge, and alert banner across PolySafe is derived from validated pharmacokinetic/pharmacodynamic (PK/PD) equations and clinical consensus criteria.
+
+```
+[Patient Active Medication List (M₁ ... M_N)]
+       │
+       ├───► [WHO/NCI 5-Tier Drug Harm Lookup] ────► Mean Risk Formula μ_risk & Max Harm h_max
+       ├───► [Anticholinergic Cognitive Burden] ───► TotalACB = ∑ Score(m_i) ∈ {0, 1, 2, 3+}
+       ├───► [Bidirectional DDInter Matrix] ───────► (N × (N-1)) / 2 Pairs with Severity Weights W_k
+       ├───► [Duplicate Salt Ceiling Engine] ──────► Cumulative Daily Dose > Toxic Threshold
+       ├───► [Prescribing Cascade Graph Matching] ─► Directed Loop: Drug_A → Symptom → Drug_B
+       └───► [Organ Toxicity Burden Vector] ───────► O_regimen = [Renal, Hepatic, Cardio, CNS]
+```
+
+### 3.1 Regimen Cumulative Risk Index Formula (WHO 5-Tier Model)
+Let $\mathcal{M} = \{m_1, m_2, \dots, m_N\}$ be the set of $N$ active medications. Each drug $m_i$ has an intrinsic harm level $h_i = \text{HarmLevel}(m_i) \in \{1, 2, 3, 4, 5\}$:
+* **Level 1 (Low)**: Vitamins, minerals, probiotics (System default: Green)
+* **Level 2 (Mild)**: Metformin, Omeprazole, Atorvastatin (System default: Lime)
+* **Level 3 (Moderate)**: Beta-blockers, ACEi, ARBs, SSRIs (System default: Amber)
+* **Level 4 (High)**: High-dose NSAIDs, Corticosteroids, Antipsychotics (System default: Orange)
+* **Level 5 (Critical)**: Warfarin, Digoxin, Lithium, Methotrexate (System default: Red)
+
+$$\mu_{\text{risk}} = \frac{1}{N} \sum_{i=1}^{N} h_i \quad \text{(Arithmetic Regimen Average)}$$
+$$h_{\max} = \max_{1 \le i \le N} (h_i) \quad \text{(Worst-Case Inherent Toxicity)}$$
+$$F_{\text{major}} = \big|\{f \in \mathcal{F} \mid \text{Severity}(f) \in \{\text{MAJOR}, \text{CONTRAINDICATED}\}\}\big|$$
+
+#### The Decision Tree Equation:
+$$\mathcal{L}_{\text{regimen}} = 
+\begin{cases} 
+5 \text{ (CRITICAL)}, & \text{if } h_{\max} = 5 \;\lor\; F_{\text{active}} \ge 3 \\
+4 \text{ (HIGH)},     & \text{else if } \mu_{\text{risk}} \ge 3.5 \;\lor\; F_{\text{major}} \ge 1 \\
+3 \text{ (MODERATE)}, & \text{else if } \mu_{\text{risk}} \ge 2.5 \\
+2 \text{ (MILD)},     & \text{else if } \mu_{\text{risk}} \ge 1.5 \\
+1 \text{ (LOW)},      & \text{otherwise } (\mu_{\text{risk}} < 1.5)
+\end{cases}$$
+
+*Clinical Insight*: If a patient takes even a single Level 5 critical medication (e.g. Warfarin), $h_{\max} = 5$ forces the regimen into **Critical Level 5**, because low-risk vitamins cannot dilute lethal narrow-therapeutic liabilities.
+
+---
+
+### 3.2 Anticholinergic Cognitive Burden (ACB) Summation & Risk Scale
+In older adults, exogenous anticholinergic blockade causes acute delirium, memory loss, and a **3x higher risk of falls and fractures**:
+$$\text{TotalACB} = \sum_{i=1}^{N} \text{Score}(m_i) \quad \text{where } \text{Score}(m_i) \in \{0, 1, 2, 3\}$$
+
+| Total ACB Score | Risk Level | Clinical Action Required |
+|:---:|:---:|:---|
+| **0** | **None (Safe)** | Baseline cognitive integrity preserved; no central muscarinic blockade. |
+| **1 &ndash; 2** | **Moderate Burden** | Mild sedation; monitor ambulation and daytime drowsiness. |
+| **&ge; 3** | **CRITICAL BURDEN** | **Triples risk of delirium, acute confusion, dementia acceleration, and fall fractures.** |
+
+---
+
+### 3.3 DDInter Pairwise Severity Weighting
+Given $N$ active medications, the system evaluates all combination pairs:
+$$\text{Total Pairs} = \binom{N}{2} = \frac{N(N-1)}{2}$$
+Across 222,383 verified clinical pairs in our database, each pair is assigned a deterministic severity weight:
+$$W_{\text{Contraindicated}} = 4 \quad > \quad W_{\text{Major}} = 3 \quad > \quad W_{\text{Moderate}} = 2 \quad > \quad W_{\text{Minor}} = 1$$
+
+---
+
+### 3.4 Duplicate Salt Toxicity & Toxic Ceiling Limit
+$$\text{Dose}_{\text{cumulative}}(S_k) = \sum_{i \in \text{Products}} \text{Dose}(m_i, S_k) \times \text{DailyFrequency}(m_i)$$
+$$\text{Alert Triggered if: } \text{Dose}_{\text{cumulative}}(S_k) > \text{CeilingLimit}(S_k)$$
+*Example*: Paracetamol maximum safe adult daily ceiling is **4,000 mg/day** (2,000 mg in cirrhosis/elderly). Taking *Combiflam* (325mg Paracetamol &times; 3/day) + *Calpol 650* (650mg &times; 4/day) = **3,575 mg**, triggering an impending hepatic saturation warning.
+
+---
+
+### 3.5 Prescribing Cascade Directed Graph Traversal
+Modeled as a directed temporal graph $G = (V, E)$, where $V = \text{Drugs} \cup \text{Symptoms}$:
+$$\text{Cascade Condition: } (m_A \rightarrow s) \in E \;\land\; (s \rightarrow m_B) \in E \;\land\; t(m_A) < t(s) \le t(m_B)$$
+*Example*: Amlodipine ($m_A$) prescribed on Day 1 &rarr; Ankle Edema ($s$) logged on Day 20 &rarr; Furosemide ($m_B$) prescribed on Day 25. The correlator detects that $s$ is an adverse reaction of $m_A$, advising the clinician to de-prescribe Amlodipine rather than adding Furosemide.
+
+---
+
+### 3.6 4-System Organ Toxicity Burden Vector
+Each medication maps pharmacokinetic clearance strain to a 4-dimensional normalized organ vector:
+$$\vec{O}_{\text{regimen}} = \big[ O_{\text{Renal}}, \; O_{\text{Hepatic}}, \; O_{\text{Cardiovascular}}, \; O_{\text{CNS/Cognitive}} \big] \in [0.0, 1.0]^4$$
+
+---
+
+## 4. How PolySafe Solves It (The 5 Safety Subsystems)
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
