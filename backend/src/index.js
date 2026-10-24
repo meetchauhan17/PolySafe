@@ -143,8 +143,9 @@ io.on('connection', (socket) => {
   });
 });
 
-// ─── Overdue Dose Sweeper Job (MISSED Status) ─────────────────────────────────
-// Only run interval jobs in long-running server mode, not in serverless
+// ─── Long-running Server & Overdue Dose Sweeper Job ───────────────────────────
+// Only active in persistent server mode (e.g. local dev, VM/Docker), not in serverless
+const PORT = process.env.PORT || 5000;
 if (require.main === module) {
   const { checkOverdueDoses } = require('./services/doseService');
   const isFastDoseTiming = process.env.DEMO_DOSE_TIMING === 'fast';
@@ -154,14 +155,10 @@ if (require.main === module) {
     checkOverdueDoses(io);
   }, DOSE_CHECK_INTERVAL);
 
-  // Run initial check after 5 seconds on startup
   setTimeout(() => {
     checkOverdueDoses(io);
   }, 5000);
-}
 
-const PORT = process.env.PORT || 5000;
-if (require.main === module) {
   server.listen(PORT, '0.0.0.0', () => {
     console.log(`PolySafe Backend → http://0.0.0.0:${PORT}`);
     console.log(`Email OTP: ${process.env.SMTP_USER ? `SMTP Live (${process.env.SMTP_USER})` : (process.env.RESEND_API_KEY ? 'Resend Live' : 'Console Stub')}`);
