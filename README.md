@@ -4,85 +4,132 @@
 
 ### Continuous Clinical Polypharmacy Risk, Prescribing Cascade & Drug Interaction Platform
 
-Preventing adverse drug events across fragmented care silos through continuous, multi-agent pharmacological intelligence.
-
-[![React 19](https://img.shields.io/badge/Frontend-React_19_·_Vite_8-0ea5e9?style=flat-square&logo=react&logoColor=white)](https://react.dev/)
-[![Node.js](https://img.shields.io/badge/Backend-Node.js_22_·_Express_5-16a34a?style=flat-square&logo=nodedotjs&logoColor=white)](https://nodejs.org/)
-[![Prisma ORM](https://img.shields.io/badge/Database-Prisma_ORM_·_PostgreSQL-334155?style=flat-square&logo=prisma&logoColor=white)](https://www.prisma.io/)
-[![Socket.IO](https://img.shields.io/badge/Realtime-Socket.IO_4.8-1e293b?style=flat-square&logo=socketdotio&logoColor=white)](https://socket.io/)
-[![Groq LLaMA](https://img.shields.io/badge/LLM-Groq_LLaMA--3.3--70B-dc2626?style=flat-square)](https://groq.com/)
-[![Gemini Vision](https://img.shields.io/badge/Vision_OCR-Gemini_2.5_Flash_Lite-2563eb?style=flat-square&logo=google&logoColor=white)](https://ai.google.dev/)
-[![RxNorm Standards](https://img.shields.io/badge/Standards-NLM_RxNorm-0284c7?style=flat-square)](https://rxnav.nlm.nih.gov/)
-[![Master Audit](https://img.shields.io/badge/Audit_Suite-18/18_Passed_(100%25)-0d9488?style=flat-square)](#master-verification-audit)
-[![License](https://img.shields.io/badge/License-MIT-64748b?style=flat-square)](https://opensource.org/licenses/MIT)
+**Preventing preventable adverse drug events across fragmented care silos through continuous, multi-agent pharmacological intelligence.**
 
 <br/>
 
-[Overview](#overview) • [Clinical Problem Statement](#clinical-problem-statement) • [Core Differentiators](#core-differentiators) • [Clinical Safety Subsystems](#clinical-safety-subsystems) • [Deterministic 5-Dimension Engine](#deterministic-5-dimension-safety-engine) • [Multi-Salt Formulation Resolver](#indian-formulary-5-layer-multi-salt-resolver) • [System Architecture](#system-architecture) • [Role-Based Access Control](#role-based-access-control-matrix) • [API Endpoint Reference](#api-endpoint-reference) • [Database Architecture](#database-architecture) • [Installation & Setup](#installation--quickstart) • [Offline Resilience](#offline-resilience--demo-mode) • [Verification Audit](#master-verification-audit) • [Evidence Base](#clinical-evidence-base)
+[![Production Web App](https://img.shields.io/badge/Production_App-poly--safe.vercel.app-0284c7?style=for-the-badge&logo=vercel&logoColor=white)](https://poly-safe.vercel.app)
+[![Production REST API](https://img.shields.io/badge/Production_API-polysafe--backend.vercel.app-16a34a?style=for-the-badge&logo=vercel&logoColor=white)](https://polysafe-backend.vercel.app/health)
+[![Master Verification Audit](https://img.shields.io/badge/Master_Audit-18/18_Passed_(100%25)-0d9488?style=for-the-badge&logo=checkmarx&logoColor=white)](#master-verification-audit-1818-passed)
+
+<br/>
+
+[![React 19](https://img.shields.io/badge/Frontend-React_19_·_Vite_8-0284c7?style=flat-square&logo=react&logoColor=white)](https://react.dev/)
+[![Node.js 22](https://img.shields.io/badge/Backend-Node.js_22_·_Express_5-16a34a?style=flat-square&logo=nodedotjs&logoColor=white)](https://nodejs.org/)
+[![Neon Postgres](https://img.shields.io/badge/Database-Neon_Serverless_PostgreSQL-00e599?style=flat-square&logo=postgresql&logoColor=black)](https://neon.tech/)
+[![Prisma ORM](https://img.shields.io/badge/ORM-Prisma_5.22-334155?style=flat-square&logo=prisma&logoColor=white)](https://www.prisma.io/)
+[![Groq LLaMA](https://img.shields.io/badge/Clinical_LLM-Groq_LLaMA--3.3--70B-dc2626?style=flat-square)](https://groq.com/)
+[![Gemini Vision](https://img.shields.io/badge/Vision_OCR-Gemini_2.5_Flash_Lite-2563eb?style=flat-square&logo=google&logoColor=white)](https://ai.google.dev/)
+[![RxNorm Standards](https://img.shields.io/badge/Terminology-NLM_RxNorm-0284c7?style=flat-square)](https://rxnav.nlm.nih.gov/)
+[![License MIT](https://img.shields.io/badge/License-MIT-64748b?style=flat-square)](https://opensource.org/licenses/MIT)
+
+<br/>
+
+[Live Deployments](#live-deployments--demo-credentials) | [Clinical Problem](#the-clinical-problem-statement) | [Core Safety Subsystems](#the-5-core-safety-subsystems) | [Mathematical Scoring Models](#deterministic-mathematical-scoring-models) | [Role Portals](#role-based-clinical-portals) | [Team Presentation Guide](#5-person-team-presentation-division) | [API Reference](#api-endpoint-reference-76-endpoints) | [Database Architecture](#database-architecture) | [Quickstart](#local-installation--quickstart) | [Verification Audit](#master-verification-audit-1818-passed)
 
 ---
 
 </div>
 
-## Overview
+## Live Deployments & Demo Credentials
 
-In multi-condition and geriatric patients taking 5 or more concurrent medications, conventional drug interaction checkers routinely fail because they evaluate medications **two-at-a-time in static isolation**. 
+PolySafe is fully deployed in production on Vercel Serverless paired with Neon Serverless PostgreSQL.
 
-PolySafe is a production-grade clinical pharmacovigilance platform built for patients, attending physicians, and caregivers. It evaluates whole-regimen cumulative toxicity in real time across fragmented clinical silos, detecting drug-drug interactions, prescribing cascades, duplicate chemical salts, anticholinergic cognitive burdens, food-drug spacing conflicts, and botanical supplement risks.
+| Environment | Endpoint URL | Status | Specification |
+|:---|:---|:---:|:---|
+| **Frontend Web App** | [`https://poly-safe.vercel.app`](https://poly-safe.vercel.app) | ACTIVE | Single Page Application with offline PWA caching & multi-lingual support |
+| **Backend REST API** | [`https://polysafe-backend.vercel.app`](https://polysafe-backend.vercel.app) | ACTIVE | Serverless Node 22 API with rate-limiting & Prisma connection pooling |
+| **Diagnostic Heartbeat** | [`https://polysafe-backend.vercel.app/health`](https://polysafe-backend.vercel.app/health) | 200 OK | `{"status":"ok","api":true,"db":true,"demoMode":false}` |
 
-```
-+---------------------------------------------------------------------------------------------------------+
-|                                    FIVE PILLARS OF POLYPHARMACY RISK                                    |
-+------------------------------------+------------------------------------+-------------------------------+
-| RISK FACTOR                        | CLINICAL FAILURE MODE              | POLYSAFE INTERVENTION         |
-+------------------------------------+------------------------------------+-------------------------------+
-| 1. Care Fragmentation              | Specialists prescribe in silos     | Provider swimlane timeline    |
-|                                    | without full regimen visibility.   | with consent-based sharing.   |
-|                                    |                                    |                               |
-| 2. Prescribing Cascades            | Drug side effects are misdiagnosed | Correlates symptom onset with |
-|                                    | as new conditions, adding drugs.   | offending drug start dates.   |
-|                                    |                                    |                               |
-| 3. Hidden Multi-Salt Formulations  | Branded Indian medicines hide 2-3  | 5-layer resolution into pure  |
-|                                    | chemical salts, causing overdoses. | active chemical constituents. |
-|                                    |                                    |                               |
-| 4. Herbal & OTC Blind Spots        | Patients omit supplements during   | Curated botanical-drug cross  |
-|                                    | visits, risking bleeding events.   | reference safety engine.      |
-|                                    |                                    |                               |
-| 5. Cumulative Anticholinergic Load | Multiple mild drugs compound into  | Real-time ACB cognitive score |
-|                                    | delirium, falls, and fractures.    | and sedation load meter.      |
-+------------------------------------+------------------------------------+-------------------------------+
+### Verified Demo Credentials
+
+Pre-seeded accounts in the production Neon database with complete clinical timelines:
+
+```text
++-----------------------------------------------------------------------------+
+| PATIENT DEMO ACCOUNT                                                        |
+| Email:    meetc8030@gmail.com                                               |
+| Password: Meet@123                                                          |
+| Context:  Age 68, Hypertension & Atrial Fibrillation.                       |
+| Regimen:  Warfarin + Aspirin + Ginkgo Biloba (Triggers Level 5 Alert)       |
++-----------------------------------------------------------------------------+
+| DOCTOR DEMO ACCOUNT                                                         |
+| Email:    cse.230840131016@gmail.com                                        |
+| Password: Meet@123                                                          |
+| Context:  Dr. Sarah Wilson, Senior Cardiologist (License: MED-89412)        |
++-----------------------------------------------------------------------------+
 ```
 
 ---
 
-## Clinical Problem Statement
+## Executive System Overview
 
-Polypharmacy (concurrent use of 5 or more medications) and hyperpolypharmacy (10 or more medications) account for over **30% of emergency hospital admissions** in adults aged 65 and older. 
+PolySafe transforms drug interaction detection from disconnected, isolated pair-checks into an all-regimen safety engine. It continuously evaluates cumulative drug-drug interactions, prescribing cascades, duplicate salt toxicity, anticholinergic cognitive burden, and organ clearance burdens across distributed care providers.
 
-The clinical breakdown originates from four fundamental bottlenecks:
-
-1. **Static Pairwise Blindness:** Standard clinical checkers flag isolated pairs (e.g. A + B), completely missing multi-drug interactions (e.g. A + B + C + D) that compound renal strain, QT prolongation, or central nervous system depression.
-2. **The Prescribing Cascade Trap:** When a drug induces a subtle adverse reaction (e.g. amlodipine causing peripheral leg edema), clinicians frequently misdiagnose the symptom as heart failure or venous insufficiency and prescribe a second medication (e.g. furosemide), triggering dehydration, hypokalemia, and further prescription additions.
-3. **Combination Brand Obfuscation:** In regional markets such as India, multi-ingredient fixed-dose combinations (e.g. *Combiflam*, *Zerodol SP*, *Pan-D*, *Augmentin 625*) conceal active ingredients under trade names, leading patients to unknowingly ingest toxic daily cumulative doses of Paracetamol, Aceclofenac, or Domperidone.
-4. **Caregiver Information Asymmetry:** Non-clinical family members manage complicated medication schedules with zero visibility into high-alert drugs or missed-dose risks, while strict privacy standards prohibit exposing sensitive clinical diagnostic records to third parties.
+```text
++-----------------------------------------------------------------------------+
+|                         SYSTEM CAPABILITY MATRIX                            |
++--------------------------+--------------------------------------------------+
+| Regimen Processing       | Whole-Regimen Cumulative Analysis (not pairs)    |
+| Multi-Salt Resolution    | 5-Layer Indian & Global Brand-to-Salt Mapper     |
+| Prescribing Cascades     | Directed Temporal Graph Traversal (581 Rules)    |
+| Cognitive Risk Metric    | Validated Boustani ACB Scale (567 Drugs)         |
+| Herb-Drug Surveillance   | 526 Botanical Monographs Cross-Referenced        |
+| Prescriber Collaboration | Consent-Based Ephemeral 6-Digit PIN Sync         |
+| Doctor Simulation        | "What-If" Pre-Prescribing Safety Simulator       |
+| Multimodal Intake        | Gemini 2.5 Flash Lite + Imprint Lookup (560)     |
+| Verification Audit       | 18/18 Automated Integration Test Steps (100%)    |
++--------------------------+--------------------------------------------------+
+```
 
 ---
 
-## Core Differentiators
+## The Clinical Problem Statement
+
+In geriatric and multi-morbidity patients taking 5 or more concurrent medications (Polypharmacy), traditional pharmacy systems fail because they evaluate medications in static pairs.
+
+### Primary Clinical Statistics
+* **30%+ of Emergency Hospital Admissions** in senior citizens (age 65+) are directly caused by Adverse Drug Events (ADEs).
+* **Over 50% of these hospitalizations are entirely preventable** with continuous, multi-drug pharmacological surveillance.
+
+```text
++-------------------------------------------------------------------------------------------------------------+
+|                                    FOUR FATAL TRAPS IN HEALTHCARE TODAY                                     |
++--------------------+-------------------------------------------+--------------------------------------------+
+| TRAP               | CLINICAL ROOT CAUSE                       | POLYSAFE PRECISION SOLUTION                |
++--------------------+-------------------------------------------+--------------------------------------------+
+| 1. Care            | Specialists prescribe in functional silos | Prescriber swimlane timeline with          |
+|    Fragmentation   | without visibility into outside regimens. | consent-based 6-digit sync PIN.            |
+|                    |                                           |                                            |
+| 2. Prescribing     | Adverse drug reactions are misdiagnosed   | Directed chronological graph correlating   |
+|    Cascades        | as new medical diseases, adding drugs.    | symptom onset dates with drug start dates. |
+|                    |                                           |                                            |
+| 3. Hidden Multi-   | Branded medications contain 2-3 active    | 5-Layer molecular resolver decomposing     |
+|    Salt Compounds  | salts, leading to accidental overdoses.   | commercial brands into pure active salts.  |
+|                    |                                           |                                            |
+| 4. Herb & OTC      | Patients omit supplements during clinic   | 526-monograph botanical clinical cross-    |
+|    Blind Spots     | visits, precipitating severe hemorrhages. | reference matrix.                          |
++--------------------+-------------------------------------------+--------------------------------------------+
+```
+
+---
+
+## The 5 Core Safety Subsystems
+
+PolySafe executes across five deterministic layers:
 
 ```mermaid
 graph TD
-    subgraph Data Sources & Reference Bases
-        DD[DDInter Verified Database<br/>222,383 Records / 160,235 Pairs]
+    subgraph Data Sources & Clinical Reference Bases
+        DD[DDInter Database<br/>222,383 Records / 160,235 Pairs]
         ACB[Boustani Anticholinergic Scale<br/>567 Calibrated Burden Scores]
         CAS[Prescribing Cascade Rules<br/>581 Documented Drug-Symptom Pairs]
         HERB[Herb-Drug Interaction Matrix<br/>526 Botanical Clinical Monographs]
-        OFF[FDA OFFSIDES Dataset<br/>1,225,552 Pharmacovigilance Signals]
         PIM[FDA/NLM Pill Imprints<br/>560 Authenticated Markings]
     end
 
-    subgraph Core Processing Engines
-        D5[5-Dimension Deterministic Engine]
+    subgraph Core Deterministic Processing Engines
+        D5[Deterministic Safety Engine]
         RES[5-Layer Multi-Salt Resolver]
         RAD[Organ Clearance Modeler]
     end
@@ -91,250 +138,191 @@ graph TD
     ACB --> D5
     CAS --> D5
     HERB --> D5
-    OFF --> D5
     PIM --> RES
     RES --> D5
     D5 --> RAD
 
-    subgraph Clinical Outputs
+    subgraph Clinical Output Interfaces
         OUT1[WHO 5-Tier Regimen Risk]
-        OUT2[Interactive Force-Directed Web]
-        OUT3[Physician Workstation & Clinic Board]
-        OUT4[Caregiver Privacy Shield Telemetry]
-        OUT5[ISO 7810 Wallet Card & Clinical Report]
+        OUT2[Interactive Timetable & Passport]
+        OUT3[Physician Pre-Prescription Simulator]
+        OUT4[Caregiver Adherence Telemetry]
     end
 
     RAD --> OUT1
     RAD --> OUT2
     RAD --> OUT3
     RAD --> OUT4
-    RAD --> OUT5
 ```
 
-- **DDInter Verified Reference Base:** Evaluates active regimens against **222,383 database records** representing **160,235 distinct unique unordered drug pairs** categorized into `Major`, `Moderate`, and `Minor` severity tiers.
-- **5-Dimension Deterministic Safety Engine:** Runs beyond pairwise lookups to catch duplicate chemical salts, therapeutic class duplication, patient drug allergies, AGS Beers 2023 disease-drug contraindications, and food/chelation interval spacing.
-- **Indian Formulary 5-Layer Multi-Salt Resolver:** Decomposes combination trade names (e.g. *Pan-D*, *Combiflam*, *Augmentin 625*, *Zerodol SP*, *Naxdom 500*, *Telma H*, *Stamlo Beta*) into exact chemical constituents across dictionary, disk cache, RxNorm, Groq Llama-3.3-70b, and Gemini 2.5 Flash Lite fallback layers.
-- **Cumulative Anticholinergic Cognitive Burden (ACB):** Quantifies total anticholinergic/sedative load across **567 scored medications** calibrated against the Boustani ACB Scale and AGS Beers Criteria to prevent cognitive decline and fall hazards.
-- **Prescribing Cascade Correlator:** **581 clinical cascade rules** (spanning 30 drug classes and 480 symptom keywords) linking patient symptom onset to prior prescriptions to intercept misdiagnosed drug-induced adverse events.
-- **Herb-Drug Cross-Reactivity Engine:** **526 clinical interaction pairs** mapping botanical and Ayurvedic supplements (e.g. Ginkgo Biloba, Turmeric/Curcumin, Ashwagandha, St. John's Wort) against pharmaceuticals to prevent hemorrhage and metabolic failure.
-- **Post-Market Pharmacovigilance (OFFSIDES):** **1,225,552 adverse drug event signals** in database derived from FDA AERS post-market reporting with Proportional Reporting Ratios ($\text{PRR} \ge 2.0$).
-- **Pill Imprint Identifier:** **560 authentic FDA/NLM pill imprints** indexed with shape, color, scoring, and debossed code matching.
-- **Clinical Indications Formulary:** **691 curated indications** explaining therapeutic purpose in patient-friendly and professional medical terminology.
-- **PolySafe Harm Level (L1 to L5):** Deterministic 5-level risk stratification (L1: Minimal to L5: Critical Risk) evaluating narrow therapeutic index (NTI), organ clearance pathways, and Beers criteria.
-- **Interactive Force-Directed Interaction Web:** Dynamic HTML5 Canvas graph rendering multidimensional drug clusters, color-coded severity links, and drag-and-drop node physics.
-- **Caregiver Privacy Shield:** Real-time dose logging telemetry and live reminder nudges via Socket.IO with zero leak of confidential drug names.
-- **Accessible Visual Controls:** Dynamic text size adjustment, light/dark clinical themes, and reduced-motion ergonomics for all clinical workflows.
+### 1. 5-Layer Indian Formulation Resolver
+Decomposes complex branded fixed-dose combinations into standardized active chemical salts:
+* **Layer 1: Indian Formulary Cache** - Instant matching for combinations like *Combiflam*, *Augmentin 625*, *Zerodol SP*, and *Pan-D*.
+* **Layer 2: NLM RxNorm & RxNav** - Standardized clinical concept resolution for global pharmaceutical entities.
+* **Layer 3: Approximate String Matcher** - Handles phonetic misspellings such as *"Metforrmin"* or *"Amlodipine"*.
+* **Layer 4: Botanical Registry** - Standardizes alternative preparations including *Ashwagandha*, *Ginkgo Biloba*, and *Turmeric*.
+* **Layer 5: LLM Chemical Fallback** - Structured fallback via Groq LLaMA-3.3-70B with deterministic chemistry verification.
+
+### 2. Deterministic Cumulative Regimen Engine
+Evaluates all active medications simultaneously against 222,383 verified DDInter interaction records, AGS Beers Criteria 2023, and STOPP/START v3 guidelines to determine a unified WHO 5-Tier risk index.
+
+### 3. Prescribing Cascade Correlator
+Continuously evaluates newly logged patient symptoms against 581 clinical cascade rules. If a patient develops peripheral ankle edema after starting Amlodipine, PolySafe warns clinicians against prescribing a secondary loop diuretic.
+
+### 4. Anticholinergic Cognitive Burden (ACB) Meter
+Calculates cumulative muscarinic receptor blockade using the validated Boustani Scale across 567 scored medications. Scores equal to or exceeding 3 trigger immediate clinician alerts for acute delirium, memory impairment, and fall risks.
+
+### 5. Multimodal Intelligent Intake
+* **Prescription Vision OCR**: Dual-pipeline optical character recognition utilizing Google Gemini 2.5 Flash Lite for handwritten doctor slips, with offline Tesseract fallback.
+* **Pill Imprint Identifier**: Identifies loose, unboxed pills by stamped code, shape, and color (e.g., `L484` maps to *Acetaminophen 500mg*).
+* **Multi-Lingual Voice Intake**: Voice search supported in English, Hindi, and Gujarati.
 
 ---
 
-## Clinical Safety Subsystems
+## Deterministic Mathematical Scoring Models
 
-| Clinical Subsystem | Underlying Dataset / Model | Mechanism & Verified Scope |
-| :--- | :--- | :--- |
-| **Drug-Drug Interactions** | **DDInter Database** | **222,383 records** (**160,235 unique unordered pairs**); categorizes severity as `Major`, `Moderate`, or `Minor`. |
-| **Anticholinergic Burden** | **ACB Scale (Boustani et al.)** | **567 scored drugs** in DB; computes cumulative score into `Normal`, `Moderate`, or `Critical` cognitive load. |
-| **Cascade Detection** | **CaDeN & Rochon Protocols** | **581 clinical rules** in DB linking symptom keywords with offending pharmacological classes. |
-| **Herbal Cross-Reactivity** | **Phytotherapy Research Data** | **526 clinical monographs** covering bleeding risks and CYP450 metabolic interference across botanical supplements. |
-| **Pill Imprint Identifier** | **FDA DailyMed & NLM** | **560 physical imprint records** matching tablet/capsule debossed alphanumeric codes, shape, and hue. |
-| **Clinical Indications** | **CDSCO & Global Formularies**| **691 curated drug indications** resolving therapeutic purpose across Indian and international brands. |
-| **Post-Market Adverse Events**| **FDA OFFSIDES (Tatonetti Lab)** | **1,225,552 pharmacovigilance ADE signals** with Proportional Reporting Ratios ($\text{PRR} \ge 2.0$). |
-| **Brand-to-Salt Resolution**| **Indian Formulary + RxNorm + AI** | **5-layer cascading pipeline** resolving trade brands to pure active chemical salts with 296 cached mappings. |
-| **Regimen Risk Stratification**| **PolySafe Harm Level (L1 to L5)**| Scores medications L1 to L5; synthesizes active count, ACB score, and DDInter flags into overall regimen status. |
-| **Organ Toxicity Radar** | **Pharmacokinetic Modeler** | Maps metabolic clearance pathways to compute Recharts radar telemetry across Renal, Hepatic, Cardio, and CNS systems. |
+> **Clinical Principle**: In safety-critical healthcare software, deterministic mathematics must always govern decision outputs. Generative AI is strictly restricted to plain-language explanation synthesis.
 
----
+### 1. Regimen Risk Index Formula (WHO 5-Tier Scale)
+Let $\mathcal{M} = \{m_1, \dots, m_N\}$ be the set of active medications. Each drug has an inherent toxicity score $h_i \in \{1, 2, 3, 4, 5\}$:
 
-## Deterministic 5-Dimension Safety Engine
+$$\mu_{\text{risk}} = \frac{1}{N} \sum_{i=1}^N h_i \quad \text{(Mean Toxicity)}$$
 
-Beyond traditional two-drug lookups, PolySafe executes a multi-dimensional clinical safety audit across 5 deterministic vectors:
+$$h_{\max} = \max_{1 \le i \le N} (h_i) \quad \text{(Peak Toxicity)}$$
 
-```
-[Regimen & Patient Profile Input]
-              |
-              +--> 1. DUPLICATE INGREDIENT DETECTION
-              |      Decomposes multi-salt brands into chemical active substances.
-              |      Flags when two different trade drugs contain identical chemical salts
-              |      (e.g., Dolo 650 + Combiflam = toxic cumulative Paracetamol dose).
-              |
-              +--> 2. THERAPEUTIC CLASS REDUNDANCY
-              |      Maps each agent to anatomical-therapeutic chemical classes.
-              |      Flags duplicative mechanisms of action without additive benefit
-              |      (e.g., Ibuprofen + Naproxen = double NSAID gastrointestinal bleed risk).
-              |
-              +--> 3. ALLERGEN CROSS-REACTIVITY MAPPING
-              |      Cross-references documented patient allergies against drug classes.
-              |      Catches beta-lactam, sulfonamide, and salicylate sensitivities
-              |      (e.g., Documented Penicillin allergy vs. Augmentin / Amoxicillin prescription).
-              |
-              +--> 4. DISEASE-DRUG CONTRAINDICATIONS
-              |      Applies AGS Beers 2023 and STOPP/START criteria against chronic diagnoses.
-              |      Identifies organ vulnerabilities and disease-exacerbating prescriptions
-              |      (e.g., NSAID prescribed to patient with Chronic Kidney Disease or Heart Failure).
-              |
-              +--> 5. FOOD & CHELATION SPACING PROTOCOLS
-                     Calculates clinical spacing intervals between drugs and meals.
-                     Prevents chelation, malabsorption, and acute metabolic antagonism
-                     (e.g., Levothyroxine 4 hours apart from Calcium; Warfarin consistent Vitamin K).
-```
+$$F_{\text{major}} = \big|\{f \in \mathcal{F} \mid \text{Severity}(f) \in \{\text{MAJOR}, \text{CONTRAINDICATED}\}\}\big|$$
 
----
+#### Clinical Decision Tree:
+$$\mathcal{L}_{\text{regimen}} = 
+\begin{cases} 
+5 \text{ (CRITICAL)}, & \text{if } h_{\max} = 5 \;\lor\; F_{\text{active}} \ge 3 \\
+4 \text{ (HIGH)},     & \text{else if } \mu_{\text{risk}} \ge 3.5 \;\lor\; F_{\text{major}} \ge 1 \\
+3 \text{ (MODERATE)}, & \text{else if } \mu_{\text{risk}} \ge 2.5 \\
+2 \text{ (MILD)},     & \text{else if } \mu_{\text{risk}} \ge 1.5 \\
+1 \text{ (LOW)},      & \text{otherwise } (\mu_{\text{risk}} < 1.5)
+\end{cases}$$
 
-## Indian Formulary 5-Layer Multi-Salt Resolver
+### 2. Anticholinergic Cognitive Burden (ACB) Equation
+$$\text{TotalACB} = \sum_{i=1}^N \text{Score}(m_i) \quad \text{where } \text{Score}(m_i) \in \{0, 1, 2, 3\}$$
 
-Branded medicines in India frequently bundle two or three active pharmaceutical ingredients under a proprietary trade name. PolySafe resolves trade names to pure active salts using a 5-layer deterministic pipeline:
+* **Score 0 (Normal)**: Baseline cholinergic cognitive function intact.
+* **Score 1 - 2 (Moderate Burden)**: Mild drowsiness; potential memory complaints.
+* **Score >= 3 (Critical Burden)**: Triples 12-month delirium, cognitive decline, and hip fracture incidence.
 
-```mermaid
-flowchart TD
-    A[Input: Trade Brand Name e.g. Pan-D, Combiflam] --> B{Layer 1: Exact Local Dictionary}
-    B -- Match Found --> Z[Return Canonical Generic Salts]
-    B -- Not Found --> C{Layer 2: Local AI Resolution Cache}
-    C -- Match Found --> Z
-    C -- Not Found --> D{Layer 3: NLM RxNorm / RxNav Concept}
-    D -- Match Found --> Z
-    D -- Not Found --> E{Layer 4: Groq LLaMA-3.3-70B Structured JSON}
-    E -- Match Found --> F[Cache to ai-resolved-drugs.json]
-    F --> Z
-    E -- Failure / Timeout --> G{Layer 5: Gemini 2.5 Flash Lite Vision/Text}
-    G -- Match Found --> F
-    G -- Fallback --> H[Heuristic Extraction / Manual Prompt]
-    H --> Z
-```
+### 3. Duplicate Salt Toxicity & Safe Ceiling Limits
+$$\text{Dose}_{\text{cumulative}}(S_k) = \sum_{i \in \text{Products}} \text{Dose}(m_i, S_k) \times \text{DailyFrequency}(m_i)$$
+
+$$\text{Alert Triggered if: } \text{Dose}_{\text{cumulative}}(S_k) > \text{CeilingLimit}(S_k)$$
+
+*(Example: Paracetamol daily ceiling is 4,000 mg/day in healthy adults, reduced to 2,000 mg/day in hepatic or elderly patients).*
+
+### 4. Prescribing Cascade Directed Graph Traversal
+Modeled as a directed temporal graph $G = (V, E)$ where $V = \text{Drugs} \cup \text{Symptoms}$:
+
+$$\text{Cascade Match: } (m_A \rightarrow s) \in E \;\land\; (s \rightarrow m_B) \in E \;\land\; t(m_A) < t(s) \le t(m_B)$$
+
+### 5. 4-System Organ Clearance Toxicity Vector
+$$\vec{O}_{\text{regimen}} = \big[ O_{\text{Renal}}, \; O_{\text{Hepatic}}, \; O_{\text{Cardiovascular}}, \; O_{\text{CNS}} \big] \in [0.0, 1.0]^4$$
+
+$$O_{\text{organ}} = \min\left(1.0, \; \frac{1}{2.5} \sum_{i=1}^N c_{\text{organ}}(m_i)\right)$$
+
+### 6. Longitudinal 7-Day Adherence Metric
+$$\text{Adherence \%} = \left( \frac{\text{Logged Doses with Status = 'TAKEN'}}{\text{Total Scheduled Dose Slots in last 7 days}} \right) \times 100$$
 
 ---
 
-## System Architecture
+## Role-Based Clinical Portals
 
-```
-+-----------------------------------------------------------------------------------------+
-|                                CLIENT LAYER (React 19 + Vite 8)                         |
-|  * Industrial Design System (WCAG AA)        * TanStack React Query v5 Data Layer       |
-|  * Recharts 4-Organ Toxicity Radar Chart     * Framer Motion Animations & A11y Controls |
-|  * Interactive Canvas Interaction Web Graph  * Trilingual Localization (EN, HI, GU)     |
-|  * Real-Time Socket.IO Client Telemetry      * Dynamic Text Scaling & Theme Controls    |
-+--------------------------------------------+--------------------------------------------+
-                                             | HTTP REST / WebSocket JSON
-+--------------------------------------------v--------------------------------------------+
-|                              SERVER API LAYER (Node.js 22 + Express 5)                  |
-|  * JWT Auth & Brute-Force Rate Limiting     * 76 API Route Handlers across 9 Routers   |
-|  * DDInter 222K Pairwise Interaction Engine * Cumulative ACB Cognitive Calculator (567) |
-|  * Prescribing Cascade Correlator (581)     * Deterministic 5-Dimension Safety Engine  |
-|  * 5-Layer Indian Multi-Salt Resolver Core  * Dual-Persona Clinical Explanation Service|
-+--------------------------------------------+--------------------------------------------+
-                                             | Prisma ORM Client
-+--------------------------------------------v--------------------------------------------+
-|                             PERSISTENCE & DATASETS (PostgreSQL)                        |
-|  * 15 Prisma ORM Models                     * Active & Soft-Deleted Medication Regimens |
-|  * DrugInteractionReference (222,383 rows)  * BurdenScore (567 ACB-scored drugs)       |
-|  * CascadeReference (581 rules in DB)       * HerbDrugReference (526 pairs in DB)      |
-|  * DrugSideEffect (1,225,552 OFFSIDES rows) * PillImprint (560 imprints in DB)         |
-+-----------------------------------------------------------------------------------------+
+```text
++-----------------------------------------------------------------------------+
+| PATIENT PORTAL (/home, /timeline, /medication-passport)                     |
+| * Dynamic WHO 5-Tier Safety Status Ring                                     |
+| * Morning, Noon, Evening, and Bedtime Daily Regimen Timetable               |
+| * Trilingual Interface: English, Hindi, and Gujarati                        |
+| * Projector Mode for high-contrast viewing on outpatient clinic monitors    |
+| * Emergency Medical Passport with QR code verification                      |
++-----------------------------------------------------------------------------+
+| DOCTOR PORTAL (/doctor-dashboard)                                           |
+| * Ephemeral 6-digit PIN and QR code synchronization                         |
+| * Prescriber Swimlane timeline categorizing Cardiology, Ortho, and OTC      |
+| * Pre-Prescribing "What-If" Safety Simulator for candidate medications     |
+| * Directives Dispatcher transmitting binding instructions to patient app    |
++-----------------------------------------------------------------------------+
+| CAREGIVER PORTAL (/caregiver)                                               |
+| * Privacy Shield: Adherence telemetry with ZERO drug name leakage           |
+| * Dose status logs tracking taken versus missed administration times        |
+| * Real-time reminder dispatching for overdue dose intervals                 |
++-----------------------------------------------------------------------------+
 ```
 
 ---
 
-## Role-Based Access Control Matrix
+## 5-Person Team Presentation Division
 
-PolySafe enforces patient-consented, role-based boundaries:
+Optimized for academic defenses and hackathon evaluations. Each member presents a focused 45-60 second domain:
 
-| Data & Functional Capabilities | Patient | Doctor (Connected) | Caregiver (Connected) |
-| :--- | :---: | :---: | :---: |
-| **Active Medication Timeline & Swimlanes** | Full Read / Write | Full Read-Only | Restricted (Form & Color Only, No Drug Names) |
-| **Risk Explanations & Mechanisms** | Plain Patient Language | Clinical + Pharmacological Rationale | Hidden |
-| **Safety Status (Normal / Caution / Critical)**| Accessible | Accessible | Accessible |
-| **Dose Logging & 7-Day Adherence Streak** | Full Logging | Telemetry Review | Adherence % & Missed Dose Notifications |
-| **Symptom Logging & Cascade History** | Full Access | Full Access | Hidden |
-| **Pre-Prescribing Safety Simulator** | N/A | Full Simulation Access | N/A |
-| **Physician Deprescribing Suggestions** | N/A | Full Access | N/A |
-| **Clinical Directive Issuance** | Receives Directives | Authorized Write | Notification of Update |
-| **Live Patient Dose Reminder Nudge** | Receives Reminders | N/A | Live One-Tap Ping |
-| **Emergency Medical Card & Passport (QR)** | Full Access | Full Access | Emergency View |
-| **Access Revocation** | Instant 1-Click | Cannot Manage Permissions | Cannot Manage Permissions |
+| Member | Role & Focus | Core Speaking Points | Live Demo Screen Action |
+|:---:|:---|:---|:---|
+| **Member 1** | **Team Lead**<br/>*Problem & Urgency* | "Over 30% of elderly hospitalizations stem from adverse drug reactions. Specialists prescribe in silos, and conventional checkers test only pairs. PolySafe evaluates whole-regimen cumulative safety." | Introduce team, state clinical thesis, maintain presentation pacing. |
+| **Member 2** | **Frontend Architect**<br/>*Patient Experience* | "Seniors require radical simplicity. The patient portal provides immediate safety clarity via our WHO status ring. We provide native Hindi, Gujarati, and English with offline PWA caching." | Toggle language (Hindi/Gujarati), toggle Projector Mode, present Medication Passport. |
+| **Member 3** | **Pharmacology Lead**<br/>*Multi-Salt & Math* | "70% of Indian prescriptions are multi-salt combinations. Our 5-Layer Resolver deconstructs Combiflam into Ibuprofen and Paracetamol, preventing fatal overdoses. Our cascade engine stops misdiagnosis chains." | Add Combiflam to demonstrate salt deconstruction; point out ACB cognitive meter and cascade alerts. |
+| **Member 4** | **AI & Vision Specialist**<br/>*OCR & Plain Explanations* | "Seniors struggle typing complex drug names. Our dual-vision Gemini OCR reads physical prescription slips, our pill finder identifies loose stamps like L484, and Groq LLaMA provides dual clinical and plain-text summaries." | Trigger prescription upload, match pill imprint `L484`, toggle between clinical and plain-text explanations. |
+| **Member 5** | **Cloud & Doctor Portal**<br/>*Sync & Infrastructure* | "Physicians sync securely via 6-digit PIN. Before writing a prescription, our 'What-If' simulator checks candidate drugs against active regimens. Deployed serverless on Vercel and Neon Postgres with an 18/18 passed test audit." | Open Doctor Portal, run "What-If" simulation on Ibuprofen 400mg, show live `/health` endpoint response. |
 
 ---
 
-## API Endpoint Reference
+## API Endpoint Reference (76 Endpoints)
 
-The backend provides **76 production-tested route handlers** structured across 9 domain modules:
+PolySafe provides 76 production-tested REST endpoints across 9 functional routers:
 
 ### 1. Authentication & Identity (`/auth`)
-- `POST /auth/check-email`: Verifies account existence and registration state.
-- `POST /auth/patient/signup-send-otp`: Dispatches 6-digit cryptographic verification code to email.
-- `POST /auth/patient/verify-signup-otp`: Validates code, registers user, and issues signed Bearer JWT.
-- `POST /auth/patient/login`: Authenticates patient via password or verified email credential.
-- `POST /auth/doctor/signup`: Registers licensed physician with medical license number.
-- `POST /auth/doctor/login`: Physician credential authentication.
-- `POST /auth/caregiver/signup-send-otp`: Initiates caregiver registration via OTP.
-- `POST /auth/caregiver/verify-signup-otp`: Verifies caregiver identity.
-- `POST /auth/caregiver/login`: Authenticates caregiver.
-- `POST /auth/forgot-password`: Generates secure password reset token.
-- `POST /auth/reset-password`: Resets credentials with cryptographic token.
-- `POST /auth/logout`: Clears authorization session.
-- `GET /auth/me`: Retrieves current authenticated user context and role.
-- `DELETE /auth/delete-account`: Purges account data per privacy standards.
+* `POST /auth/check-email` - Check registration state for login vs signup routing.
+* `POST /auth/patient/signup-send-otp` - Dispatch 6-digit email OTP for patient registration.
+* `POST /auth/patient/verify-signup-otp` - Validate OTP and issue signed Bearer JWT.
+* `POST /auth/patient/login` - Authenticate patient credentials with lockout protection.
+* `POST /auth/doctor/signup` / `POST /auth/doctor/login` - Physician registration with medical license validation.
+* `POST /auth/caregiver/signup-send-otp` / `POST /auth/caregiver/login` - Caregiver onboarding and authentication.
+* `GET /auth/me` - Validate active session and return user role.
 
-### 2. Medication Management (`/medicine`)
-- `GET /medicine`: Lists all active medications for authenticated patient.
-- `POST /medicine`: Adds medication, resolves salts, assigns harm level, runs 5D safety checks.
-- `POST /medicine/batch`: Atomically validates and commits multi-drug prescription intake.
-- `GET /medicine/search?q=:query`: Formulary autocomplete with generic resolution.
-- `GET /medicine/:id/resolve`: Decomposes specific medication into active chemical salts.
-- `GET /medicine/:id/sideeffects`: Retrieves FDA OFFSIDES post-market adverse event signals.
-- `DELETE /medicine/:id`: Soft-deletes medication (`removedAt`) preserving clinical timeline history.
-- `POST /medicine/identify-pill`: Matches physical pill imprint code, color, and shape.
-- `GET /medicine/barcode/:code`: Resolves EAN/UPC barcode against local pharmaceutical registry.
+### 2. Medication Management & Resolution (`/medicine`)
+* `GET /medicine` - Fetch all active medications for authenticated patient.
+* `POST /medicine` - Add medication, resolve active salts, and trigger 5-dimension safety checks.
+* `POST /medicine/batch` - Atomically validate and commit multi-drug prescription regimens.
+* `GET /medicine/search?q=:query` - Search formulary with generic active chemical cross-referencing.
+* `GET /medicine/:id/resolve` - Deconstruct specific product into active chemical salts.
+* `DELETE /medicine/:id` - Soft-delete medication (`removedAt`) preserving clinical timeline records.
+* `POST /medicine/identify-pill` - Identify loose physical pills by stamped code, shape, and color.
 
-### 3. Prescription OCR & Vision Extraction (`/medicine/scan`)
-- `POST /medicine/scan`: Extracts medications, dosage strengths, frequency, instructions, and clinical indications from camera photos or file uploads via Gemini Vision / OCR.space.
+### 3. Prescription Vision OCR (`/medicine/scan`)
+* `POST /medicine/scan` - Multipart image upload processed via Gemini 2.5 Flash Lite + Tesseract OCR.
 
-### 4. Patient Analytics & Doses (`/patient`)
-- `GET /patient/home-summary`: Returns WHO harm score, ACB score, interaction count, and top alerts.
-- `GET /patient/timeline`: Chronological prescriber swimlane timeline with discontinued history.
-- `POST /patient/profile`: Updates chronic diagnoses, age, gender, and documented drug allergies.
-- `POST /patient/dose`: Records dose event (`TAKEN`, `SKIPPED`, `MISSED`) with timestamp.
-- `GET /patient/doses?date=YYYY-MM-DD`: Returns full regimen schedule for target date.
-- `GET /patient/adherence?days=7`: Calculates longitudinal adherence percentage and streak.
+### 4. Patient Diagnostics & Schedule (`/patient`)
+* `GET /patient/home-summary` - Unified clinical dashboard payload (WHO tier, ACB score, interaction count, schedule).
+* `GET /patient/timeline` - Chronological prescriber swimlane timeline with discontinued therapy history.
+* `POST /patient/profile` - Update patient baseline metrics (age, conditions, allergies).
+* `POST /patient/dose` - Record dose administration event (`TAKEN`, `SKIPPED`, `MISSED`).
+* `GET /patient/adherence?days=7` - Calculate longitudinal 7-day adherence percentage and streak.
 
-### 5. Clinical Connections & Physician Collaboration (`/connection`)
-- `POST /connection/generate-code`: Generates 24-hour single-use 6-digit sharing PIN.
-- `POST /connection/claim-code`: Physician claims patient connection via PIN.
-- `GET /connection/pending`: Lists pending doctor connection requests awaiting patient approval.
-- `GET /connection/mine`: Lists all approved patients linked to the authenticated physician.
-- `POST /connection/:id/approve`: Patient grants read-only clinical access to doctor.
-- `POST /connection/:id/revoke`: Patient immediately revokes doctor access.
-- `GET /connection/doctor-patients`: Returns triage priority list with ACB and interaction tallies.
-- `GET /connection/doctor-patient/:id/clinical-summary`: Full patient regimen summary for doctor review.
-- `GET /connection/doctor-patient/:id/timeline`: Prescriber swimlane history for selected patient.
-- `POST /connection/doctor-safety-check`: Pre-prescribing simulator evaluating hypothetical candidate drugs against patient's active regimen.
-- `POST /connection/doctor-substitute`: Atomically substitutes an interacting drug with safer alternative.
-- `POST /connection/doctor-deprescribe`: Issues structured deprescribing recommendation.
-- `POST /connection/directive`: Pushes high-priority physician directive to patient timeline.
-- `GET /connection/doctor-patient/:id/directives`: Lists historical directives for patient.
+### 5. Physician Collaboration & Simulation (`/connection`)
+* `POST /connection/generate-code` - Generate ephemeral single-use 6-digit linking PIN.
+* `POST /connection/claim-code` - Doctor claims patient connection code.
+* `POST /connection/doctor-safety-check` - Pre-prescribing "What-If" simulation testing hypothetical candidate drugs.
+* `POST /connection/doctor-substitute` - Atomically replace an interacting medication with a safer alternative.
+* `POST /connection/directive` - Transmit physician clinical directive to patient dashboard.
 
 ### 6. Caregiver Privacy-Protected Portal (`/caregiver`)
-- `GET /caregiver/my-patients`: Returns list of linked patients with safe/caution/critical badges.
-- `GET /caregiver/patient-summary/:patientId`: Zero-leak daily schedule (dose times, colors, form, NO drug names).
-- `POST /caregiver/remind-patient/:patientId`: Triggers real-time dose reminder notification via Socket.IO.
+* `GET /caregiver/my-patients` - Retrieve linked patients with high-level risk badges.
+* `GET /caregiver/patient-summary/:patientId` - Schedule telemetry with zero drug-name disclosure.
+* `POST /caregiver/remind-patient/:patientId` - Dispatch immediate dose reminder notification.
 
-### 7. Longitudinal Analytics & Radar (`/analytics`)
-- `GET /analytics/regimen-score`: Composite 0-100 Regimen Health Index.
-- `GET /analytics/polypharmacy-trend`: 30-day longitudinal risk trajectory.
-- `GET /analytics/drug-classes`: Pharmacological category distribution.
-- `GET /analytics/acb-timeline`: 8-week retrospective anticholinergic burden trend.
-- `GET /analytics/top-interactions`: Ranked active drug interaction pairs.
-- `GET /analytics/cascade-risk-map`: Topological prescribing cascade risk analysis.
-
-### 8. Symptoms & Cascade Interception (`/symptom`)
-- `POST /symptom`: Logs patient symptom, cross-checks start dates of active drugs, flags cascades.
-- `GET /symptom/history`: Returns chronological symptom logs with correlated offending drugs.
-
-### 9. System Diagnostics (`/health`)
-- `GET /health`: Returns service heartbeat, database connectivity, demo mode status, and uptime.
+### 7. Diagnostics (`/health`)
+* `GET /health` - Return service heartbeat, database connection status, and runtime environment.
 
 ---
 
 ## Database Architecture
 
-PolySafe uses **Prisma ORM** with **PostgreSQL**. The database schema is organized into user accounts, clinical records, and reference datasets:
+PolySafe utilizes Prisma ORM mapped to a Neon Serverless PostgreSQL instance:
 
 ```mermaid
 erDiagram
@@ -349,7 +337,6 @@ erDiagram
     Medicine ||--o{ InteractionFlag : "medicineA"
     Medicine ||--o{ InteractionFlag : "medicineB"
     Medicine ||--o{ DoseLog : "scheduled for"
-    Medicine ||--o{ Symptom : "possible cause"
 
     DrugInteractionReference {
         int id PK
@@ -388,26 +375,16 @@ erDiagram
         string shape
         string color
     }
-
-    DrugSideEffect {
-        int id PK
-        string rxcui
-        string drugName
-        string sideEffect
-        float prr
-        string severity
-    }
 ```
 
 ---
 
-## Installation & Quickstart
+## Local Installation & Quickstart
 
 ### Prerequisites
-- **Node.js:** v18.0.0+ (v22+ LTS recommended)
-- **npm:** v9.0.0+
-- **PostgreSQL:** v14+ (Local instance or cloud hosted e.g. Neon, Supabase, Railway)
-- **Git**
+* **Node.js**: v18+ (Node.js 22 LTS recommended)
+* **PostgreSQL**: v14+ (Local instance or Neon Serverless connection)
+* **npm**: v9+
 
 ### 1. Clone the Repository
 ```bash
@@ -415,147 +392,108 @@ git clone https://github.com/meetchauhan17/PolySafe.git
 cd PolySafe
 ```
 
-### 2. Backend Configuration & Setup
+### 2. Backend Setup
 ```bash
 cd backend
 npm install
-
-# Copy environment template
 cp .env.example .env
 ```
 
-Configure your `.env` file:
+Configure `backend/.env`:
 ```env
-DATABASE_URL="postgresql://postgres:password@localhost:5432/polysafe?schema=public"
-JWT_SECRET="your-secure-random-jwt-key"
+DATABASE_URL="postgresql://user:password@localhost:5432/polysafe?schema=public"
+JWT_SECRET="your-secure-jwt-secret-key"
 PORT=5000
 NODE_ENV="development"
 DEMO_MODE="false"
 
-# AI Credentials (Optional for local dev, fallback works automatically)
-GROQ_API_KEY="gsk_your_groq_api_key_here"
-GEMINI_API_KEY="your_gemini_api_key_here"
-
-# Email Verification (Optional for local dev, console outputs OTP)
-RESEND_API_KEY="re_your_resend_api_key_here"
+# Optional AI Credentials (built-in fallbacks available)
+GROQ_API_KEY="your_groq_api_key"
+GEMINI_API_KEY="your_gemini_api_key"
 ```
 
-Initialize database and seed clinical datasets:
+Initialize database and run seeders:
 ```bash
-# Push Prisma schema to PostgreSQL
 npx prisma db push
-
-# Seed DDInter (222k), ACB (567), Cascades (581), Herb-Drug (526), Pill Imprints (560), OFFSIDES (1.2M)
 npm run seed
-
-# Launch Backend API Server on http://localhost:5000
 npm run dev
 ```
+*Backend server initializes on `http://localhost:5000`.*
 
 ### 3. Frontend Setup
 ```bash
-# In a separate terminal window
+# In a separate terminal session
 cd ../frontend
 npm install
-
-# Launch Vite Client Server on http://localhost:3000
 npm run dev
 ```
-
-Visit **http://localhost:3000** in your browser.
-
----
-
-## Offline Resilience & Demo Mode
-
-PolySafe is engineered for mission-critical reliability on stage, during live medical demonstrations, and in environments with zero internet connectivity:
-
-### 1. Offline Client-Side Guest Demo Mode
-Click **"Try the sample patient"** on the login page:
-- **Zero Backend Calls:** Renders the complete patient dashboard, risk analysis, timeline swimlanes, 3D pill inspection, and interaction matrix using authenticated clinical mock fixtures in browser memory.
-- **Offline Formulary Resolver:** Includes full offline local dictionary and instant symptom auto-fill.
-
-### 2. Backend DEMO_MODE Flag
-Set `DEMO_MODE="true"` in `backend/.env`:
-- Intercepts all external API calls (OCR, RxNorm, Groq, Gemini) and responds with pre-validated deterministic clinical payloads in `< 10ms`.
-- Fully documented in `backend/src/lib/demo.js` with zero silent failures.
-
-### 3. Service Worker & Progressive Web App
-- Core application bundles and fonts are precached via Service Worker.
-- Complies with W3C Web App Manifest standards for home screen and desktop installation.
+*Frontend application initializes on `http://localhost:3000`.*
 
 ---
 
-## Master Verification Audit
+## Master Verification Audit (18/18 Passed)
 
-Run the automated test suite to verify end-to-end clinical logic and API endpoints:
+PolySafe includes an automated 18-step end-to-end integration test suite verifying clinical algorithms and API endpoints:
 
 ```bash
 cd backend
 npm test
 ```
 
-```
+```text
 ================================================================
       PolySafe Automated 18-Step Master System & API Audit      
 ================================================================
-[x] [HEALTH CHECK] GET /health OK (API: true, DB: true, DEMO: false)
-[x] [STEP 1/18] PASS: POST /auth/patient/signup-send-otp (OTP Dispatched)
-[x] [STEP 2/18] PASS: POST /auth/patient/verify-signup-otp (User Created)
-[x] [STEP 3/18] PASS: POST /auth/doctor/signup (Doctor Registered)
-[x] [STEP 4/18] PASS: POST /auth/patient/login (Password Auth Verified)
-[x] [STEP 5/18] PASS: POST /auth/doctor/login (Doctor Auth Verified)
-[x] [STEP 6/18] PASS: GET /auth/me (RBAC Roles Enforced)
-[x] [STEP 7/18] PASS: POST /patient/profile (Baseline Clinical Profile Saved)
-[x] [STEP 8/18] PASS: POST /medicine (Warfarin 5mg - Harm Level L5 Assigned)
-[x] [STEP 9/18] PASS: POST /medicine (Aspirin 81mg - Pairwise DDInter Flagged)
-[x] [STEP 10/18] PASS: POST /medicine (Ginkgo Biloba - Herb-Drug Interaction Flagged)
-[x] [STEP 11/18] PASS: GET /patient/home-summary (Harm Gauge Calculated)
-[x] [STEP 12/18] PASS: GET /patient/timeline (Chronological Provenance Verified)
-[x] [STEP 13/18] PASS: POST /medicine/identify-pill (Loose Pill Imprint Resolved)
-[x] [STEP 14/18] PASS: POST /symptom (Symptom Logged & Prescribing Cascade Checked)
-[x] [STEP 15/18] PASS: POST /connection/generate-code (6-Digit Share PIN Generated)
-[x] [STEP 16/18] PASS: POST /connection/claim-code + approve (Doctor Paired & Approved)
-[x] [STEP 17/18] PASS: GET /connection/mine + POST /connection/doctor-safety-check (Simulation OK)
-[x] [STEP 18/18] PASS: DELETE /medicine/:id (Soft-Delete Provenance Preserved)
+[HEALTH CHECK] GET /health OK (API: true, DB: true, DEMO: false)
+[STEP 1/18] PASS: POST /auth/patient/signup-send-otp (Verification code sent)
+[STEP 2/18] PASS: POST /auth/patient/verify-signup-otp (User Created)
+[STEP 3/18] PASS: POST /auth/doctor/signup (Doctor Registered)
+[STEP 4/18] PASS: POST /auth/patient/login (JWT Issued)
+[STEP 5/18] PASS: POST /auth/doctor/login (Doctor JWT Issued)
+[STEP 6/18] PASS: GET /auth/me (Authenticated role: PATIENT)
+[STEP 7/18] PASS: POST /patient/profile (Age: 68, Conditions: HTN, AFib)
+[STEP 8/18] PASS: POST /medicine (Warfarin 5mg - Harm Level L5 Assigned)
+[STEP 9/18] PASS: POST /medicine (Aspirin 81mg - DDInter Flag Triggered)
+[STEP 10/18] PASS: POST /medicine (Ginkgo Biloba - Herb-Drug Flag Triggered)
+[STEP 11/18] PASS: GET /patient/home-summary (Status: CRITICAL, Level: L5)
+[STEP 12/18] PASS: GET /patient/timeline (Chronological Provenance Verified)
+[STEP 13/18] PASS: POST /medicine/identify-pill (Imprint "L484" Matched)
+[STEP 14/18] PASS: POST /symptom (Log "swollen ankles" - Cascade Evaluated)
+[STEP 15/18] PASS: POST /connection/generate-code (6-Digit Share PIN Created)
+[STEP 16/18] PASS: POST /connection/claim-code + approve (Doctor Paired)
+[STEP 17/18] PASS: GET /connection/mine + POST /connection/doctor-safety-check (Simulation OK)
+[STEP 18/18] PASS: DELETE /medicine/:id (Soft-Delete Provenance Preserved)
 ================================================================
                  18/18 tests passed (100% OK)                   
 ================================================================
+ALL 18 CLINICAL ENDPOINTS & SYSTEM WORKFLOWS VERIFIED (100% OK)
 ```
 
-### Specialized Verification Suites
-- `node backend/scripts/verify-full-autofill.cjs`: Headless Puppeteer verification of Section 2 clinical auto-fill, symptom chip selection, and recommendation drawers (**3/3 passed**).
-- `npm run test:resolver`: Validates the Indian 5-Layer Brand-to-Salt Resolver (**12/12 passed**).
-- `node tests/test-safety-checks.js`: Validates the 5-Dimension Safety Engine (**8/8 passed**).
-- `node tests/test-dose-tracking.js`: Validates dose scheduling, adherence streaks, and caregiver privacy (**6/6 passed**).
-- `node tests/test-doctor-safety-check.js`: Validates pre-prescribing simulation checks (**3/3 passed**).
-- `node tests/test-production-features.js`: Validates password resets, account deletion, and session revocation (**4/4 passed**).
+---
+
+## Clinical Evidence Base & Standards
+
+1. **DDInter Consortium**: Xiong et al., *DDInter: an online drug-drug interaction database with pharmacological mechanisms and safety levels*, Nucleic Acids Research, 2022. (222,383 records, 160,235 unique pairs).
+2. **Anticholinergic Cognitive Burden (ACB) Scale**: Boustani M. et al., *Impact of anticholinergics on the aging brain*, Aging & Mental Health, 2008. (567 scored drugs).
+3. **AGS Beers Criteria 2023**: The 2023 American Geriatrics Society Beers Criteria Update Expert Panel, Journal of the American Geriatrics Society, 2023.
+4. **STOPP/START Criteria Version 3**: O'Mahony D. et al., *European Geriatric Medicine*, 2023.
+5. **Prescribing Cascade Framework**: Rochon PA, Gurwitz JH. *The prescribing cascade revisited*, The Lancet, 2017. (581 clinical cascade rules).
+6. **FDA OFFSIDES Post-Market Database**: Tatonetti NP. et al., *Data-driven prediction of drug effects and interactions*, Science Translational Medicine, 2012. (1.2M+ signals).
+7. **NLM RxNorm Standards**: US National Library of Medicine standardized clinical drug nomenclature and RxCUI identifiers.
+8. **Indian Pharmacopoeia Commission (IPC)**: National drug formulary standards for Fixed-Dose Combinations (FDCs).
 
 ---
 
-## Clinical Evidence Base
+## Documentation & Presentation Handbooks
 
-1. **DDInter Reference Base:** Xiong et al., *DDInter: an online drug-drug interaction database with pharmacological mechanisms and safety levels*, Nucleic Acids Research, 2022. (222,383 records, 160,235 unique pairs).
-2. **Anticholinergic Cognitive Burden (ACB) Scale:** Boustani M, Campbell N, Munger S, Maidment I, Fox C. *Impact of anticholinergics on the aging brain*, Aging & Mental Health, 2008. (567 scored drugs).
-3. **Beers Criteria for Potentially Inappropriate Medication Use:** The 2023 American Geriatrics Society (AGS) Beers Criteria Update Expert Panel, Journal of the American Geriatrics Society, 2023.
-4. **STOPP/START Criteria Version 3:** O'Mahony D, Cherubini A, Guiteras AR, et al., *European Geriatric Medicine*, 2023.
-5. **Prescribing Cascade Identification Framework:** Rochon PA, Gurwitz JH. *The prescribing cascade revisited*, The Lancet, 2017.
-6. **FDA OFFSIDES Post-Market Signal Database:** Tatonetti NP, Ye PP, Daneshjou R, Altman RB. *Data-driven prediction of drug effects and interactions*, Science Translational Medicine, 2012. (1.2M+ records).
-7. **NLM RxNorm & RxNav:** US National Library of Medicine concept standardizer and RxCUI clinical formulation terminology.
-8. **Indian Pharmacopoeia Commission & CDSCO:** National drug formulary references for Indian combination brands and fixed-dose formulations.
+* Complete A-to-Z Master Guide: [`POLYSAFE_MASTER_PROJECT_AND_JUDGES_GUIDE.md`](./POLYSAFE_MASTER_PROJECT_AND_JUDGES_GUIDE.md)
+* Exam Revision & Pitch PDF: [`POLYSAFE_EXAM_STUDY_GUIDE.pdf`](./POLYSAFE_EXAM_STUDY_GUIDE.pdf) *(Ready to print or share)*
+* Interactive Printable HTML: [`POLYSAFE_EXAM_STUDY_GUIDE.html`](./POLYSAFE_EXAM_STUDY_GUIDE.html)
 
 ---
 
-## Security, Privacy & Ethics
+## License & Clinical Ethical Boundaries
 
-- **Decision-Support Boundary:** PolySafe operates as an informational decision-support and risk-alert layer. It does not replace independent clinical judgment, diagnosis, or prescription orders by licensed practitioners.
-- **Zero-Leak Caregiver Privacy Shield:** Caregivers receive dose adherence telemetry and reminder nudges without disclosing confidential prescription names or diagnostic details.
-- **Immediate Data Minimization:** Prescription label images uploaded for OCR/Vision extraction are processed in temporary memory and unlinked immediately after text parsing.
-- **Cryptographic Access Control:** Role boundaries are enforced via signed JWTs, bcrypt password hashing, and route-level authorization guards.
-- **Clinical Provenance:** Discontinued medications are soft-deleted (`removedAt`) rather than erased, preserving complete chronological medical provenance.
-
----
-
-## License
-
-This project is licensed under the [MIT License](https://opensource.org/licenses/MIT).
+* **Informational Decision-Support Only**: PolySafe is a Clinical Decision Support System (CDSS) designed to assist licensed clinicians, patients, and caregivers. It does not replace independent professional medical judgment or diagnosis.
+* **Privacy by Design**: Strict RBAC guarantees that caregivers never receive confidential medical diagnoses or raw drug names, and doctor connections require explicit patient PIN authorization.
+* **License**: Licensed under the [MIT License](https://opensource.org/licenses/MIT).
