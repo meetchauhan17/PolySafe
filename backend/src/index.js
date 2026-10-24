@@ -65,6 +65,22 @@ app.use('/caregiver', caregiverRoutes);
 app.use('/analytics', analyticsRoutes);
 app.use('/api/analytics', analyticsRoutes);
 
+// Root endpoint
+app.get('/', (_req, res) => {
+  res.status(200).json({
+    status: 'ok',
+    name: 'PolySafe Backend API',
+    version: '1.0.0',
+    endpoints: {
+      health: '/health',
+      auth: '/auth',
+      patient: '/patient',
+      medicine: '/medicine',
+      analytics: '/analytics'
+    }
+  });
+});
+
 // Health check
 app.get('/health', async (_req, res) => {
   let dbOk = false;
