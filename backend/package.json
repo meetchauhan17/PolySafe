@@ -7,10 +7,12 @@
     "start": "node src/index.js",
     "dev": "nodemon src/index.js",
     "build": "prisma generate",
+    "postinstall": "prisma generate",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:push": "prisma db push",
     "seed": "node prisma/seed.js",
+    "demo:reset": "node scripts/reset-demo-data.js",
     "test": "node tests/test-all-endpoints.js",
     "test:auth": "node tests/test-unified-3roles-auth.js",
     "test:accounts": "node tests/test-user-specified-accounts.js",
@@ -38,6 +40,7 @@
     "multer": "^2.2.0",
     "node-tesseract-ocr": "^2.2.1",
     "nodemailer": "^9.0.5",
+    "prisma": "^5.22.0",
     "qrcode": "^1.5.4",
     "resend": "^6.20.0",
     "socket.io": "^4.8.3",
@@ -46,7 +49,6 @@
   "devDependencies": {
     "axe-core": "^4.14.0",
     "nodemon": "^3.1.14",
-    "prisma": "^5.22.0",
     "puppeteer": "^25.15.0"
   }
 }

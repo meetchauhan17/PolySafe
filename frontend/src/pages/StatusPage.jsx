@@ -9,6 +9,7 @@ import { performHealthCheck } from '../lib/healthCheck';
 import Card from '../components/Card';
 import StatusPill from '../components/StatusPill';
 import { useAuth } from '../context/AuthContext';
+import Logo, { LogoMark } from '../components/Logo';
 
 export default function StatusPage() {
   const { enterGuestMode } = useAuth();
@@ -48,13 +49,17 @@ export default function StatusPage() {
       <div className="max-w-3xl mx-auto space-y-6">
         {/* Navigation & Header */}
         <div className="flex items-center justify-between gap-4">
-          <Link
-            to="/home"
-            className="inline-flex items-center gap-2 text-xs font-bold text-[var(--ink-2)] hover:text-[var(--brand-600)] transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            <span>Return to App</span>
-          </Link>
+          <div className="flex items-center gap-3">
+            <Link
+              to="/home"
+              className="inline-flex items-center gap-2 text-xs font-bold text-[var(--ink-2)] hover:text-[var(--brand-600)] transition-colors"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>Return to App</span>
+            </Link>
+            <span className="text-[var(--border)]">|</span>
+            <Logo to="/home" size="sm" concept="cross" />
+          </div>
 
           <button
             onClick={runCheck}
@@ -89,7 +94,7 @@ export default function StatusPage() {
             <div className={`w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 ${
               allGood ? 'bg-emerald-500/15 text-emerald-700' : 'bg-amber-500/15 text-amber-700'
             }`}>
-              {allGood ? <ShieldCheck className="w-6 h-6" /> : <AlertTriangle className="w-6 h-6" />}
+              {allGood ? <LogoMark size={32} concept="cross" /> : <AlertTriangle className="w-6 h-6" />}
             </div>
             <div>
               <div className="flex items-center gap-2 flex-wrap">

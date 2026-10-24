@@ -40,6 +40,7 @@ import {
   HeartPulse,
   Stethoscope,
 } from 'lucide-react';
+import Logo, { LogoMark } from './Logo';
 
 export default function ClinicalReportModal({
   isOpen,
@@ -239,8 +240,8 @@ export default function ClinicalReportModal({
               <div className="border-b-2 border-slate-900 pb-4 flex flex-col sm:flex-row sm:items-start justify-between gap-4">
                 <div>
                   <div className="flex items-center gap-2.5">
-                    <div className="w-9 h-9 rounded-xl bg-teal-800 text-white flex items-center justify-center flex-shrink-0 shadow-xs">
-                      <ShieldCheck className="w-5 h-5 text-white" />
+                    <div className="flex items-center justify-center flex-shrink-0">
+                      <LogoMark size={36} concept="cross" />
                     </div>
                     <div>
                       <div className="flex items-center gap-2">
@@ -293,9 +294,10 @@ export default function ClinicalReportModal({
                     {(patient.allergies || ['None recorded']).map((alg, idx) => (
                       <span
                         key={idx}
-                        className="text-[10px] font-bold px-2 py-0.5 rounded border border-rose-300 text-rose-800 bg-rose-50"
+                        className="text-[10px] font-bold px-2 py-0.5 rounded border border-rose-300 text-rose-800 bg-rose-50 inline-flex items-center gap-1"
                       >
-                        ⚠️ {alg}
+                        <AlertTriangle className="w-2.5 h-2.5 text-rose-600 shrink-0" />
+                        <span>{alg}</span>
                       </span>
                     ))}
                   </div>

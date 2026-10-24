@@ -37,7 +37,7 @@ export default function InteractionMatrix({
         style: {
           backgroundImage: 'repeating-linear-gradient(45deg, rgba(220, 38, 38, 0.3), rgba(220, 38, 38, 0.3) 3px, transparent 3px, transparent 6px), repeating-linear-gradient(-45deg, rgba(220, 38, 38, 0.3), rgba(220, 38, 38, 0.3) 3px, transparent 3px, transparent 6px)',
         },
-        icon: '🛑',
+        icon: <AlertOctagon className="w-3 h-3 text-rose-600 shrink-0" />,
       };
     }
     if (s.includes('MAJOR')) {
@@ -46,14 +46,14 @@ export default function InteractionMatrix({
         style: {
           backgroundImage: 'repeating-linear-gradient(45deg, rgba(225, 29, 72, 0.25), rgba(225, 29, 72, 0.25) 3px, transparent 3px, transparent 6px), repeating-linear-gradient(-45deg, rgba(225, 29, 72, 0.25), rgba(225, 29, 72, 0.25) 3px, transparent 3px, transparent 6px)',
         },
-        icon: '⚠️',
+        icon: <ShieldAlert className="w-3 h-3 text-rose-500 shrink-0" />,
       };
     }
     if (s.includes('MODERATE')) {
       return {
         className: 'bg-amber-500/20 text-amber-800 dark:text-amber-200 border-amber-500/40 font-bold',
         style: {}, // Solid tint (none) for Moderate
-        icon: '⚡',
+        icon: <AlertTriangle className="w-3 h-3 text-amber-600 shrink-0" />,
       };
     }
     if (s.includes('MINOR')) {
@@ -65,7 +65,7 @@ export default function InteractionMatrix({
           backgroundImage: 'radial-gradient(circle, rgba(20, 184, 166, 0.6) 1.5px, transparent 1.5px)',
           backgroundSize: '6px 6px',
         },
-        icon: 'ℹ️',
+        icon: <Info className="w-3 h-3 text-teal-600 shrink-0" />,
       };
     }
     // Unknown: Diagonal hatch pattern
@@ -75,7 +75,7 @@ export default function InteractionMatrix({
         backgroundColor: 'rgba(148, 163, 184, 0.12)',
         backgroundImage: 'repeating-linear-gradient(45deg, rgba(148, 163, 184, 0.3), rgba(148, 163, 184, 0.3) 3px, transparent 3px, transparent 6px)',
       },
-      icon: '?',
+      icon: <span className="text-[10px] font-bold">?</span>,
     };
   };
 
@@ -184,7 +184,7 @@ export default function InteractionMatrix({
                             className="inline-flex items-center justify-center w-6 h-6 rounded-full text-emerald-600 bg-emerald-500/10 text-xs font-bold"
                             title={`${rowMed.name} + ${colMed.name}: No documented interaction`}
                           >
-                            ✓
+                            <Check className="w-3.5 h-3.5" />
                           </span>
                         )}
                       </td>

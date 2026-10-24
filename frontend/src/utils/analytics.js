@@ -33,7 +33,7 @@ export function trackEvent(category, action, metadata = {}) {
     };
 
     if (process.env.NODE_ENV !== 'production') {
-      console.log(`[Analytics] 📊 [${category}] ${action}`, metadata);
+      console.log(`[Analytics] [${category}] ${action}`, metadata);
     }
 
     // Persist to local session cache for diagnostic inspection
@@ -61,7 +61,7 @@ export function trackError(error, context = 'client') {
       url: window.location.pathname,
     };
 
-    console.error(`[ErrorTracker] 🚨 Error in ${context}:`, errorPayload.message);
+    console.error(`[ErrorTracker] Error in ${context}:`, errorPayload.message);
 
     // Save error snapshot
     const errorLog = JSON.parse(window.sessionStorage.getItem('polysafe_error_log') || '[]');

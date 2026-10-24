@@ -63,6 +63,7 @@ import {
   Pill,
   Plus,
   RotateCw,
+  Scissors,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useT } from '../i18n/useT';
@@ -71,6 +72,7 @@ import { MRS_SHARMA_PASSPORT } from '../data/mockPassportData';
 import { LOCALIZED_HARM_TIERS } from '../utils/localizedAlerts';
 import { TiltCard } from '../three-d/TiltCard';
 import { FlipCard } from '../three-d/FlipCard';
+import Logo, { LogoMark } from '../components/Logo';
 
 // Emergency contact localStorage key
 const EMERGENCY_CONTACT_KEY = 'polysafe_emergency_contact';
@@ -546,8 +548,8 @@ Visit https://polysafe.health/doctor with PIN: ${shareCode || '849210'}
               {/* ── 1. Editorial Header (Fraunces Serif Masthead) ── */}
               <div className="flex flex-col sm:flex-row sm:items-start justify-between border-b-2 border-slate-900 dark:border-slate-300 pb-4 gap-3">
                 <div className="flex items-start gap-3.5">
-                  <div className="w-12 h-12 rounded-2xl bg-teal-800 text-white flex items-center justify-center flex-shrink-0 shadow-sm print:bg-teal-800 mt-0.5">
-                    <ShieldCheck className="w-7 h-7 text-white" />
+                  <div className="flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <LogoMark size={44} concept="cross" />
                   </div>
                   <div>
                     <div className="flex flex-wrap items-center gap-2">
@@ -612,9 +614,10 @@ Visit https://polysafe.health/doctor with PIN: ${shareCode || '849210'}
                     {(passport.patient.allergies || []).map((alg, idx) => (
                       <span
                         key={idx}
-                        className="font-bold text-rose-700 dark:text-rose-300 bg-rose-50 dark:bg-rose-950/60 border border-rose-300 dark:border-rose-700 px-2 py-0.5 rounded text-[10.5px] block leading-tight"
+                        className="font-bold text-rose-700 dark:text-rose-300 bg-rose-50 dark:bg-rose-950/60 border border-rose-300 dark:border-rose-700 px-2 py-0.5 rounded text-[10.5px] inline-flex items-center gap-1 leading-tight"
                       >
-                        ⚠️ {alg}
+                        <AlertTriangle className="w-2.5 h-2.5 text-rose-600 shrink-0" />
+                        <span>{alg}</span>
                       </span>
                     ))}
                   </div>
@@ -849,7 +852,8 @@ Visit https://polysafe.health/doctor with PIN: ${shareCode || '849210'}
 
             {/* Print instruction header for paper cut-out */}
             <div className="hidden print:block text-[10px] font-mono text-slate-700 mb-3 border-b border-slate-300 pb-2">
-              ✂ <strong>PolySafe Emergency Medical Wallet Card</strong> · Standard ISO/IEC 7810 ID-1: 85.6 mm × 54 mm · Cut along dashed perimeter and fold back-to-back.
+              <Scissors className="w-3.5 h-3.5 inline mr-1 text-slate-600" />
+              <strong>PolySafe Emergency Medical Wallet Card</strong> · Standard ISO/IEC 7810 ID-1: 85.6 mm × 54 mm · Cut along dashed perimeter and fold back-to-back.
             </div>
 
             {/* ── SCREEN VIEW: Interactive 3D FlipCard (85.6 x 54 mm Aspect Ratio ~ 1.585) ── */}
@@ -903,9 +907,10 @@ Visit https://polysafe.health/doctor with PIN: ${shareCode || '849210'}
                         {(passport.patient.allergies || ['None reported']).map((alg, idx) => (
                           <span
                             key={idx}
-                            className="bg-red-50 border border-red-300 text-red-800 font-bold px-1.5 py-0.5 rounded text-[9px] leading-tight"
+                            className="bg-red-50 border border-red-300 text-red-800 font-bold px-1.5 py-0.5 rounded text-[9px] inline-flex items-center gap-1 leading-tight"
                           >
-                            ⚠️ {alg}
+                            <AlertTriangle className="w-2.5 h-2.5 text-red-600 shrink-0" />
+                            <span>{alg}</span>
                           </span>
                         ))}
                       </div>
@@ -943,7 +948,7 @@ Visit https://polysafe.health/doctor with PIN: ${shareCode || '849210'}
 
                     {/* Bottom Strip */}
                     <div className="border-t border-slate-200 pt-1 flex items-center justify-between text-[8px] text-slate-400 font-mono">
-                      <span>PolySafe Continuous Safety</span>
+                      <span className="flex items-center gap-1"><LogoMark size={14} concept="cross" /> PolySafe Continuous Safety</span>
                       <span className="text-teal-800 font-bold">FLIP FOR FIRST RESPONDER QR</span>
                     </div>
                   </div>

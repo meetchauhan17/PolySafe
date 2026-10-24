@@ -67,11 +67,11 @@ export const DEMO_DOCTOR_CLINICAL_SUMMARIES = {
     },
     status: 'CRITICAL',
     cumulativeBurden: {
-      totalScore: 4,
+      totalScore: 5,
       level: 'Critical',
       description: 'Severe multi-agent pharmacological and botanical synergy risk with heightened bleeding and sedation load.',
     },
-    acbScore: 4,
+    acbScore: 5,
     activeMedicines: [
       {
         id: 'd1',
@@ -144,10 +144,10 @@ export const DEMO_DOCTOR_CLINICAL_SUMMARIES = {
         id: 'flag-3',
         medicineA: { name: 'Amitriptyline', type: 'PRESCRIPTION' },
         medicineB: { name: 'Escitalopram', type: 'PRESCRIPTION' },
-        severity: 'Moderate',
+        severity: 'Critical',
         source: 'Anticholinergic Cognitive Burden Surveillance Matrix',
-        plainExplanation: 'Synergistic central nervous system depression, daytime sedation, and increased risk of QT prolongation.',
-        clinicalExplanation: 'Additive serotonergic and anticholinergic load. May aggravate cognitive fog and orthostatic fall danger.',
+        plainExplanation: 'Taking Amitriptyline with Escitalopram significantly increases your risk of irregular heart rhythms (QT prolongation) and extreme drowsiness or confusion.',
+        clinicalExplanation: 'Pharmacodynamic synergism: concurrent use of tricyclic antidepressant (Amitriptyline) and selective serotonin reuptake inhibitor (Escitalopram) prolongs the QTc interval and elevates serotonin syndrome and anticholinergic burden risks.',
         actionPlan: 'Consider tapering Amitriptyline to 10mg or substituting with a non-anticholinergic neuropathic agent.',
       },
     ],

@@ -165,6 +165,8 @@ export function ACBMeter({
   className = '',
   label = 'Anticholinergic Cognitive Burden (ACB)',
   sublabel = 'Beers 2023 · Risk of delirium, memory impairment & falls',
+  action = null,
+  hideHeader = false,
 }) {
   const shouldReduce = useReducedMotion();
   const clamped = Math.min(Math.max(value, 0), 3);
@@ -180,41 +182,51 @@ export function ACBMeter({
       aria-valuemax={3}
     >
       {/* Header */}
-      <div className="flex items-center justify-between gap-3">
-        <div>
-          <h4 className="text-xs font-bold text-[var(--ink)] font-[var(--font-heading)] flex items-center gap-2">
-            <span>{label}</span>
-            {value >= 3 && (
-              <span className="inline-flex items-center px-1.5 py-0.2 rounded text-[10px] font-mono font-bold bg-rose-500/15 text-rose-700 dark:text-rose-300 border border-rose-500/30">
-                CRITICAL
-              </span>
+      {!hideHeader && (
+        <div className="flex items-center justify-between gap-3 flex-wrap sm:flex-nowrap pb-1">
+          <div className="min-w-0 flex-1 space-y-1">
+            <div className="flex items-center gap-2 flex-wrap">
+              <h4 className="text-xs font-bold text-[var(--ink)] font-[var(--font-heading)]">
+                {label}
+              </h4>
+              {action && (
+                <div className="flex-shrink-0">
+                  {action}
+                </div>
+              )}
+            </div>
+            {sublabel && (
+              <p className="text-[11px] text-[var(--ink-3)] leading-relaxed font-mono">
+                {sublabel}
+              </p>
             )}
-          </h4>
-          {sublabel && (
-            <p className="text-[11px] text-[var(--ink-3)] leading-relaxed mt-0.5">
-              {sublabel}
-            </p>
-          )}
-        </div>
+          </div>
 
-        <div className="text-right flex-shrink-0">
-          <span
-            className="text-lg font-black font-mono leading-none tracking-tight"
-            style={{ color: activeTier.color }}
-          >
-            <CountUp value={value} decimals={0} duration={0.65} />
-            <span className="text-xs font-bold text-[var(--ink-3)] font-mono ml-0.5">/ 3+</span>
-          </span>
-          <span
-            className={clsx(
-              'block text-[10px] font-mono font-bold uppercase tracking-wider',
-              activeTier.text
-            )}
-          >
-            {activeTier.status} Risk
-          </span>
+          <div className="flex flex-col items-end justify-center text-right flex-shrink-0 pl-2">
+            <div className="flex items-baseline gap-1 font-mono">
+              <span
+                className="text-2xl font-black leading-none tracking-tight"
+                style={{ color: activeTier.color }}
+              >
+                <CountUp value={value} decimals={0} duration={0.65} />
+              </span>
+              <span className="text-xs font-bold text-[var(--ink-3)] font-mono">
+                {value >= 3 ? 'pts (≥3 Threshold)' : '/ 3 max'}
+              </span>
+            </div>
+            <span
+              className={clsx(
+                'inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-mono font-bold uppercase tracking-wider mt-1 border',
+                activeTier.bg,
+                activeTier.text,
+                'border-current/25'
+              )}
+            >
+              {activeTier.status} Risk
+            </span>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Segmented Bar with Sliding Indicator Bead */}
       <div className="relative pt-2 pb-1">

@@ -19,6 +19,7 @@ import {
   Info,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { getAcbClinicalReason } from '../utils/acbClinicalReasons';
 
 export default function ClinicalScoreExplainerModal({
   isOpen,
@@ -178,7 +179,7 @@ export default function ClinicalScoreExplainerModal({
                       Overall Harm Score: {riskLevel === 5 ? 'Critical Pharmacological Risk' : 'Elevated Vigilance'}
                     </h3>
                     <p className="text-xs text-rose-700 dark:text-rose-300">
-                      Standard: WHO / NCI Common Terminology Criteria for Adverse Events (CTCAE 5-Tier)
+                      Standard: PolySafe Harm Level (L1 to L5) &amp; Clinical Pharmacological Criteria
                     </p>
                   </div>
                 </div>
@@ -201,7 +202,7 @@ export default function ClinicalScoreExplainerModal({
                     <strong>Narrow Therapeutic Index (NTI) Drug:</strong> Your regimen contains <strong>{highestDrug}</strong> (harm level {riskLevel}), which requires extremely strict blood and dosage surveillance.
                   </li>
                   <li>
-                    <strong>Active Interaction Flags:</strong> There are <strong>{flags.length || 4} active interaction alerts</strong> in your regimen (e.g. anticoagulant combined with antiplatelet/herbal agents).
+                    <strong>Active Interaction Flags:</strong> There are <strong>{flags.length || 2} active interaction alerts</strong> in your regimen (e.g. anticoagulant combined with antiplatelet/herbal agents).
                   </li>
                   <li>
                     <strong>Classification Rule:</strong> Under international clinical safety standards, whenever any single medicine has toxicity level 5 OR the regimen has 3+ active interaction flags, the overall score is elevated to <strong>5.0 (Critical Risk)</strong> to ensure physician review.
@@ -278,14 +279,44 @@ export default function ClinicalScoreExplainerModal({
                 <p className="text-xs sm:text-sm text-[var(--ink-2)] leading-relaxed">
                   Many common medicines unintentionally block <em>acetylcholine</em>, a vital brain chemical responsible for memory, alertness, heart rhythm, and muscle control.
                 </p>
-                <div className="p-3 bg-[var(--surface)] rounded-xl border border-[var(--border)] text-xs font-mono space-y-1">
-                  <p className="font-bold text-[var(--ink)] mb-1">Additive Breakdown across your medications:</p>
-                  <p>• Warfarin / Anticoagulant: +2 points (moderate cholinergic affinity)</p>
-                  <p>• Aspirin / NSAID: +2 points (mild/moderate anticholinergic load)</p>
-                  <p>• Herbal / Botanical (Turmeric/Ashwagandha): +1 point</p>
-                  <p className="border-t border-[var(--border)] pt-1 font-bold text-amber-600 dark:text-amber-400">
-                    Total Cumulative Score = {acbScore} points
+                <div className="p-3 bg-[var(--surface)] rounded-xl border border-[var(--border)] text-xs font-mono space-y-2">
+                  <p className="font-bold text-[var(--ink)] mb-1">
+                    Cumulative Regimen Calculation ({medicines.length} medications):
                   </p>
+                  {medicines.length > 0 ? (
+                    <div className="space-y-1.5 divide-y divide-[var(--border)]/50">
+                      {medicines.map((m, idx) => {
+                        const score = Number(m.acbScore ?? 0);
+                        const acb = getAcbClinicalReason(m, score);
+                        const badgeColor = score >= 3 ? 'text-red-600 font-bold' : score === 2 ? 'text-orange-600 font-bold' : score === 1 ? 'text-amber-600 font-bold' : 'text-emerald-600 font-medium';
+                        return (
+                          <div key={idx} className="pt-1.5 first:pt-0">
+                            <div className="flex items-center justify-between text-xs font-semibold">
+                              <span className="text-[var(--ink)] font-sans">{m.name}</span>
+                              <span className={badgeColor}>
+                                {score > 0 ? `+${score} pt${score > 1 ? 's' : ''}` : '0 pts (Safe)'}
+                              </span>
+                            </div>
+                            <p className="text-[11px] font-sans text-[var(--ink-3)] leading-relaxed mt-0.5">
+                              {acb.clinicalReason}
+                            </p>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <div className="space-y-1 text-xs">
+                      <p>• Amitriptyline / Tricyclic Antidepressant: +3 points (potent central M1-M5 blockade)</p>
+                      <p>• Escitalopram / SSRI: +1 point (mild muscarinic receptor affinity)</p>
+                      <p>• Aspirin / NSAID: 0 points (zero muscarinic receptor affinity)</p>
+                    </div>
+                  )}
+                  <div className="border-t border-[var(--border)] pt-2 flex items-center justify-between font-bold text-xs">
+                    <span className="text-[var(--ink)] font-sans">Total Cumulative ACB Score:</span>
+                    <span className="text-amber-600 dark:text-amber-400 font-mono text-sm">
+                      {acbScore} points
+                    </span>
+                  </div>
                 </div>
                 <p className="text-xs text-[var(--ink-3)]">
                   Clinical Rule: Any cumulative score of <strong>3 or higher</strong> is clinically considered high risk because anticholinergic side effects multiply exponentially rather than add linearly.

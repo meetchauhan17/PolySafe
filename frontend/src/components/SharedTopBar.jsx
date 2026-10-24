@@ -46,7 +46,6 @@ import TextSizeControl from './TextSizeControl';
 import RoleBadge from './RoleBadge';
 import NotificationPopover from './NotificationPopover';
 import Logo from './Logo';
-import ProjectorToggle from './ProjectorToggle';
 
 export default function SharedTopBar({
   role = 'PATIENT',
@@ -110,10 +109,10 @@ export default function SharedTopBar({
           : 'bg-[var(--surface-glass)] text-[var(--ink)] backdrop-blur-md border-b border-[var(--border)] shadow-xs'
       )}
     >
-      <div className="max-w-7xl w-full mx-auto h-full px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-3">
+      <div className="max-w-7xl w-full mx-auto h-full px-4 sm:px-6 lg:px-8 flex items-center justify-between">
         
-        {/* ── Left: Logo Mark + Wordmark in Fraunces ── */}
-        <div className="flex items-center gap-3 flex-shrink-0">
+        {/* ── Left Column: Logo Mark + Wordmark (flex-1) ── */}
+        <div className="flex items-center gap-3 flex-1 min-w-0 justify-start">
           <Logo
             to={role === 'DOCTOR' ? '/doctor-dashboard' : role === 'CAREGIVER' ? '/caregiver-view' : '/home'}
             size="md"
@@ -124,18 +123,18 @@ export default function SharedTopBar({
 
           {/* Active Patient Pill in Doctor Layout (Coral Accent) */}
           {darkVariant && activePatient && (
-            <div className="hidden xl:flex items-center gap-2 pl-3 ml-2 border-l border-[var(--doctor-700)]">
+            <div className="hidden 2xl:flex items-center gap-2 pl-3 ml-2 border-l border-[var(--doctor-700)]">
               <span className="w-2 h-2 rounded-full bg-[var(--accent-500)] animate-pulse" />
-              <span className="text-xs font-mono font-semibold text-[var(--paper)]">
+              <span className="text-xs font-mono font-semibold text-[var(--paper)] truncate max-w-[200px]">
                 Active: <strong className="text-[var(--accent-500)]">{activePatient.name || 'Selected Patient'}</strong>
               </span>
             </div>
           )}
         </div>
 
-        {/* ── Center: Centered Nav with Sliding Coral Underline Indicator ── */}
+        {/* ── Center Column: Dead-Center Nav (flex-shrink-0) ── */}
         <nav
-          className="hidden md:flex items-center gap-0.5 lg:gap-1.5 flex-1 justify-center h-full px-1 max-w-xl mx-auto"
+          className="hidden md:flex items-center justify-center gap-0.5 lg:gap-1 xl:gap-1.5 flex-shrink-0 h-full"
           aria-label="Main Navigation"
         >
           {navItems.map((item) => {
@@ -149,7 +148,7 @@ export default function SharedTopBar({
                 key={item.id || item.path}
                 to={item.path}
                 className={clsx(
-                  'relative h-16 flex items-center gap-1.5 px-2 lg:px-3 text-xs lg:text-sm font-bold tracking-tight transition-colors duration-150 select-none whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-500)]',
+                  'relative h-16 flex items-center gap-1 xl:gap-1.5 px-2 xl:px-2.5 text-xs xl:text-[13px] font-bold tracking-tight transition-colors duration-150 select-none whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-500)]',
                   darkVariant
                     ? isActive
                       ? 'text-white'
@@ -160,14 +159,14 @@ export default function SharedTopBar({
                 )}
                 aria-current={isActive ? 'page' : undefined}
               >
-                {Icon && <Icon className="w-4 h-4 flex-shrink-0 opacity-85" aria-hidden="true" />}
-                <span>{item.label}</span>
+                {Icon && <Icon className="w-3.5 h-3.5 flex-shrink-0 opacity-80" aria-hidden="true" />}
+                <span>{item.shortLabel || item.label}</span>
 
                 {/* Sliding Coral Underline Indicator (Framer Motion layoutId) */}
                 {isActive && (
                   <motion.div
                     layoutId="nav-coral-underline"
-                    className="absolute bottom-0 inset-x-2 h-[3px] bg-[var(--accent-500)] rounded-t-full shadow-sm z-10"
+                    className="absolute bottom-0 inset-x-1 xl:inset-x-2 h-[3px] bg-[var(--accent-500)] rounded-t-full shadow-sm z-10"
                     transition={{ type: 'spring', stiffness: 380, damping: 30 }}
                   />
                 )}
@@ -176,15 +175,15 @@ export default function SharedTopBar({
           })}
         </nav>
 
-        {/* ── Right Cluster: Search Chip, Bell, Text Size, Language, Theme, Role + Avatar ── */}
-        <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
+        {/* ── Right Column: Control Tools (flex-1) ── */}
+        <div className="flex items-center gap-1.5 sm:gap-2 flex-1 min-w-0 justify-end">
           
-          {/* Search chip with Cmd/Ctrl+K hint */}
+          {/* Search button — matching square icon button with Bell & Theme */}
           <button
             type="button"
             onClick={onOpenSearch}
             className={clsx(
-              'flex items-center justify-center gap-1.5 h-9 px-2 sm:px-2.5 rounded-xl text-xs font-semibold border transition-all cursor-pointer shadow-2xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-600)]',
+              'flex items-center justify-center h-9 w-9 rounded-xl border transition-all cursor-pointer shadow-2xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-600)] flex-shrink-0',
               darkVariant
                 ? 'bg-[var(--doctor-800)] text-white border-[var(--doctor-600)] hover:bg-[var(--doctor-700)]'
                 : 'bg-[var(--surface-2)] text-[var(--ink-2)] border-[var(--border)] hover:bg-[var(--surface)] hover:text-[var(--ink)]'
@@ -192,16 +191,7 @@ export default function SharedTopBar({
             title="Search clinical database (Cmd+K / Ctrl+K)"
             aria-label="Search clinical database (Cmd+K)"
           >
-            <Search className="w-3.5 h-3.5 text-[var(--accent-500)]" aria-hidden="true" />
-            <span className="hidden xl:inline font-sans text-xs">Search</span>
-            <kbd className={clsx(
-              'hidden xl:inline-block px-1.5 py-0.5 text-[10px] font-mono font-bold rounded border shadow-2xs',
-              darkVariant
-                ? 'bg-[var(--doctor-900)] text-white border-[var(--doctor-600)]'
-                : 'bg-[var(--surface)] text-[var(--ink-2)] border-[var(--border)]'
-            )}>
-              ⌘K
-            </kbd>
+            <Search className="w-4 h-4 text-[var(--accent-500)]" aria-hidden="true" />
           </button>
 
           {/* Notification Bell */}
@@ -352,14 +342,10 @@ export default function SharedTopBar({
                   </div>
 
                   {/* Display & Accessibility Controls */}
-                  <div className="py-2 px-3 border-t border-[var(--border)] space-y-2">
+                  <div className="py-2 px-3 border-t border-[var(--border)]">
                     <div className="flex items-center justify-between text-xs font-semibold text-[var(--ink-2)]">
                       <span>Text Size</span>
                       <TextSizeControl />
-                    </div>
-                    <div className="flex items-center justify-between text-xs font-semibold text-[var(--ink-2)]">
-                      <span>Projector Mode</span>
-                      <ProjectorToggle compact={true} />
                     </div>
                   </div>
 

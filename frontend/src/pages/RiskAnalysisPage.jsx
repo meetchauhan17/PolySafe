@@ -50,8 +50,14 @@ import { Drawer } from '../components/Modal';
 import RiskRing from '../components/RiskRing';
 import { ACBMeter } from '../components/Meter';
 import PullQuote from '../components/PullQuote';
-import { patientApi } from '../api/auth';
 import ClinicalScoreExplainerModal from '../components/ClinicalScoreExplainerModal';
+import {
+  computeUnifiedScores,
+  DEMO_CLINICAL_MEDICINES,
+  DEMO_CLINICAL_FLAGS,
+  DEMO_CLINICAL_REGIMEN_RISK,
+  DEMO_CLINICAL_ACB_SCORE,
+} from '../data/mockClinicalData';
 
 const InteractionWeb = React.lazy(() => import('../components/InteractionWeb'));
 const InteractionMatrix = React.lazy(() => import('../components/InteractionMatrix'));
@@ -556,11 +562,11 @@ export default function RiskAnalysisPage() {
 
   const allMedicines = (homeSummary?.medicines && homeSummary.medicines.length > 0)
     ? homeSummary.medicines
-    : ALL_DEMO_MEDICINES;
+    : DEMO_CLINICAL_MEDICINES;
 
   const allFlags = (homeSummary?.flags && homeSummary.flags.length > 0)
     ? homeSummary.flags
-    : ALL_DEMO_FLAGS;
+    : DEMO_CLINICAL_FLAGS;
 
   const { data: safetyAlertsData } = useQuery({
     queryKey: ['patient-safety-alerts'],
@@ -634,32 +640,18 @@ export default function RiskAnalysisPage() {
     );
   }
 
-  // Harmonized overall risk score (1-5) matching home summary regimen risk level
-  const homeRegimenRisk = homeSummary?.regimenRisk;
-  const rawRiskLevel = homeRegimenRisk?.level ?? homeRegimenRisk?.score ?? homeSummary?.regimenHarmLevel;
-  const severityScoreMap = { Contraindicated: 5.0, Major: 4.5, Moderate: 3.1, Minor: 2.0, Unknown: 1.5 };
+  // Unified score calculation matching HomePage exactly
+  const unifiedScores = computeUnifiedScores({
+    regimenRisk: homeSummary?.regimenRisk || (isGuest ? DEMO_CLINICAL_REGIMEN_RISK : null),
+    medicines: allMedicines,
+    flags: allFlags,
+    status: homeSummary?.status || (isGuest ? 'CRITICAL' : 'SAFE'),
+    acbScore: homeSummary?.acbScore ?? (isGuest ? DEMO_CLINICAL_ACB_SCORE : null),
+  });
 
-  const overallRiskScore = typeof rawRiskLevel === 'number'
-    ? rawRiskLevel
-    : (allFlags.some((f) => (f.severity || '').toUpperCase() === 'MAJOR' || (f.severity || '').toUpperCase() === 'CONTRAINDICATED')
-      ? 5.0
-      : allFlags.reduce((max, f) => Math.max(max, severityScoreMap[f.severity] || 1), 1.0));
-
-  const highestFlagSeverity = (overallRiskScore >= 4.8 || homeSummary?.status === 'CRITICAL')
-    ? 'Critical Risk'
-    : allFlags.find((f) => (f.severity || '').toUpperCase() === 'CONTRAINDICATED')
-    ? 'Contraindicated'
-    : allFlags.find((f) => (f.severity || '').toUpperCase() === 'MAJOR')
-    ? 'Major'
-    : allFlags.find((f) => (f.severity || '').toUpperCase() === 'MODERATE')
-    ? 'Moderate'
-    : 'Minor';
-
-  // ACB Burden calculation unified with patient active regimen
-  const totalRegimenAcb = homeSummary?.acbScore ?? homeSummary?.medicines?.reduce((sum, m) => sum + (m.acbScore || 0), 0);
-  const burdenScore = (typeof totalRegimenAcb === 'number' && totalRegimenAcb > 0)
-    ? totalRegimenAcb
-    : (cumulativeBurden?.totalScore ?? (allFlags.some((f) => (f.severity || '').toUpperCase() === 'MAJOR') ? 5 : 2));
+  const overallRiskScore = unifiedScores.score;
+  const highestFlagSeverity = unifiedScores.label;
+  const burdenScore = unifiedScores.acbScore;
   const burdenLevelName = burdenScore >= 3 ? 'Critical' : burdenScore >= 1 ? 'Moderate' : 'Normal';
   const burdenCfg = BURDEN_LEVEL[burdenLevelName] ?? BURDEN_LEVEL.Normal;
   const burdenPct = burdenBarPct(burdenScore);
@@ -717,27 +709,25 @@ export default function RiskAnalysisPage() {
             </div>
 
             {/* ACB Meter */}
-            <div className="md:col-span-8 space-y-2">
-              <div className="flex items-center justify-between flex-wrap gap-2">
-                <span className="text-xs font-mono font-bold text-[var(--ink-3)] uppercase tracking-wider">
-                  Cumulative Anticholinergic Surveillance
-                </span>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setScoreExplainerInitialTab('acb');
-                    setShowScoreExplainer(true);
-                  }}
-                  className="inline-flex items-center gap-1 text-[11px] font-bold text-amber-700 dark:text-amber-400 hover:underline cursor-pointer"
-                  title="Click to see what this score means for memory and fall risk"
-                >
-                  <HelpCircle className="w-3.5 h-3.5" />
-                  <span>Why is ACB score {burdenScore}?</span>
-                </button>
-              </div>
+            <div className="md:col-span-8">
               <ACBMeter
                 value={burdenScore}
+                label="Cumulative Anticholinergic Surveillance"
                 sublabel={cumulativeBurden?.description || burdenCfg.text}
+                action={
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setScoreExplainerInitialTab('acb');
+                      setShowScoreExplainer(true);
+                    }}
+                    className="inline-flex items-center gap-1 text-[11px] font-bold text-amber-700 dark:text-amber-400 hover:underline cursor-pointer bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/20"
+                    title="Click to see what this score means for memory and fall risk"
+                  >
+                    <HelpCircle className="w-3.5 h-3.5" />
+                    <span>Why is ACB score {burdenScore}?</span>
+                  </button>
+                }
               />
             </div>
           </div>
@@ -1107,7 +1097,12 @@ export default function RiskAnalysisPage() {
           isOpen={showScoreExplainer}
           onClose={() => setShowScoreExplainer(false)}
           initialTab={scoreExplainerInitialTab}
-          regimenRisk={homeSummary?.regimenRisk}
+          regimenRisk={homeSummary?.regimenRisk || {
+            level: unifiedScores.level,
+            score: unifiedScores.score,
+            averageRisk: unifiedScores.averageRisk,
+            highestRiskDrug: unifiedScores.highestRiskDrug,
+          }}
           acbScore={burdenScore}
           medicines={allMedicines}
           flags={allFlags}

@@ -112,10 +112,33 @@ function ToastCard({ id, type = 'info', title, description, duration }) {
   );
 }
 
+const recentToasts = new Map();
+const DEDUPE_WINDOW_MS = 600;
+
 function showToast(type, title, description, options = {}) {
   const cfg = TOAST_CONFIG[type] || TOAST_CONFIG.info;
   const duration = options.duration || cfg.defaultDuration;
-  const toastId = options.id || `toast-${type}-${title}-${Math.random().toString(36).substring(2, 7)}`;
+
+  // Deduplication check: ignore identical notifications fired within 600ms
+  const dedupeKey = `${type}:::${title}:::${description || ''}`;
+  const now = Date.now();
+  const lastFired = recentToasts.get(dedupeKey);
+  if (lastFired && now - lastFired.timestamp < DEDUPE_WINDOW_MS) {
+    return lastFired.id;
+  }
+
+  // Deterministic clean toast ID to avoid duplicates across fast triggers
+  const cleanTitle = String(title || '').replace(/\s+/g, '-').toLowerCase();
+  const toastId = options.id || `toast-${type}-${cleanTitle}`;
+
+  recentToasts.set(dedupeKey, { id: toastId, timestamp: now });
+
+  // Periodic cleanup of stale cache entries
+  if (recentToasts.size > 50) {
+    for (const [k, v] of recentToasts.entries()) {
+      if (now - v.timestamp > 5000) recentToasts.delete(k);
+    }
+  }
 
   return toast.custom(
     (t) => (

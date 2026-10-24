@@ -2,8 +2,7 @@
 // Redesigned Patient Layout with SharedTopBar, Mobile Bottom Tab Bar, and Floating Speed-Dial
 import React, { useState, useEffect } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { io as socketIO } from 'socket.io-client';
+import { useSocketEvent } from '../context/SocketContext';
 import { useQueryClient } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -28,26 +27,34 @@ import PageTransition from '../components/PageTransition';
 import SharedTopBar from '../components/SharedTopBar';
 import CommandPalette from '../components/CommandPalette';
 
-// ─── 5 Navigation Items for Desktop & Mobile ────────────────────────────────
+// ─── 7 Navigation Items for Desktop & Mobile ────────────────────────────────
 const NAV_DEFINITIONS = [
   {
-    id: 'home', i18nKey: 'nav.home', defaultLabel: 'Home', path: '/home', icon: Home,
+    id: 'home', i18nKey: 'nav.home', defaultLabel: 'Home', shortLabel: 'Home', path: '/home', icon: Home,
     match: (p) => p === '/home' || p.startsWith('/risk')
   },
   {
-    id: 'timeline', i18nKey: 'nav.timeline', defaultLabel: 'Timeline', path: '/timeline', icon: Clock,
+    id: 'add-med', i18nKey: 'nav.add_med', defaultLabel: 'Add Med', shortLabel: 'Add Med', path: '/add-medicine', icon: Plus,
+    match: (p) => p === '/add-medicine' || p === '/add'
+  },
+  {
+    id: 'timeline', i18nKey: 'nav.timeline', defaultLabel: 'Timeline', shortLabel: 'Timeline', path: '/timeline', icon: Clock,
     match: (p) => p === '/timeline'
   },
   {
-    id: 'symptoms', i18nKey: 'nav.symptoms', defaultLabel: 'Symptoms', path: '/log-symptom', icon: HeartPulse,
+    id: 'symptoms', i18nKey: 'nav.symptoms', defaultLabel: 'Symptoms', shortLabel: 'Symptoms', path: '/log-symptom', icon: HeartPulse,
     match: (p) => p === '/log-symptom' || p === '/symptom-result'
   },
   {
-    id: 'passport', i18nKey: 'nav.passport', defaultLabel: 'Passport', path: '/passport', icon: FileBadge,
+    id: 'connected', i18nKey: 'nav.connected', defaultLabel: 'Connections', shortLabel: 'Connect', path: '/connected', icon: Users,
+    match: (p) => p === '/connected' || p === '/connected-people'
+  },
+  {
+    id: 'passport', i18nKey: 'nav.passport', defaultLabel: 'Passport', shortLabel: 'Passport', path: '/passport', icon: FileBadge,
     match: (p) => p === '/passport'
   },
   {
-    id: 'profile', i18nKey: 'nav.profile', defaultLabel: 'Profile', path: '/profile', icon: UserCircle,
+    id: 'profile', i18nKey: 'nav.profile', defaultLabel: 'Profile', shortLabel: 'Profile', path: '/profile', icon: UserCircle,
     match: (p) => p === '/profile'
   },
 ];
@@ -83,86 +90,62 @@ export default function PatientLayout() {
     label: t(def.i18nKey, def.defaultLabel),
   }));
 
-  // ─── Real-Time Socket.IO Synchronization ─────────────────────────────────
-  useEffect(() => {
-    if (!user || isGuest) return;
+  // ─── Real-Time Socket.IO Synchronization (Shared Instance) ─────────────
+  useSocketEvent('doctor-directive-received', (directive) => {
+    setUnreadCount((c) => c + 1);
+    notify.info(
+      'Physician Directive Received',
+      `${directive.doctorName || 'Your doctor'} sent an update: "${directive.text}"`
+    );
+    window.dispatchEvent(new CustomEvent('polysafe:doctor-event', { detail: directive }));
+    queryClient.invalidateQueries({ queryKey: ['patient-directives'] });
+    queryClient.invalidateQueries({ queryKey: ['patient-timeline'] });
+    queryClient.invalidateQueries({ queryKey: ['patient-home'] });
+    queryClient.invalidateQueries({ queryKey: ['home-summary'] });
+  });
 
-    const socketUrl = axios.defaults.baseURL
-      ? axios.defaults.baseURL.replace(/\/api$/, '')
-      : (window.location.hostname === 'localhost' ? 'http://localhost:5000' : window.location.origin);
+  useSocketEvent('doctor-directive-updated', () => {
+    queryClient.invalidateQueries({ queryKey: ['patient-directives'] });
+    queryClient.invalidateQueries({ queryKey: ['patient-timeline'] });
+  });
 
-    const socket = socketIO(socketUrl, {
-      transports: ['websocket', 'polling'],
-      reconnectionAttempts: 5,
-    });
+  useSocketEvent('doctor-directives-cleared', () => {
+    queryClient.invalidateQueries({ queryKey: ['patient-directives'] });
+    queryClient.invalidateQueries({ queryKey: ['patient-timeline'] });
+  });
 
-    socket.on('connect', () => {
-      const patientId = user.patientId || user.userId || user.id;
-      if (patientId) {
-        socket.emit('join-patient-room', { patientId, userId: user.userId || user.id });
-      }
-    });
+  useSocketEvent('patient-regimen-updated', (data) => {
+    setUnreadCount((c) => c + 1);
+    notify.info(
+      'Medication Regimen Updated',
+      data.doctorLabel
+        ? `${data.doctorLabel} modified your regimen: ${String(data.action || '').replace('DOCTOR_', '').toLowerCase()}.`
+        : 'Your doctor modified your medication regimen.'
+    );
+    window.dispatchEvent(new CustomEvent('polysafe:doctor-event', { detail: data }));
+    queryClient.invalidateQueries({ queryKey: ['patient-directives'] });
+    queryClient.invalidateQueries({ queryKey: ['patient-timeline'] });
+    queryClient.invalidateQueries({ queryKey: ['patient-home'] });
+    queryClient.invalidateQueries({ queryKey: ['home-summary'] });
+    queryClient.invalidateQueries({ queryKey: ['patient-medicines'] });
+  });
 
-    socket.on('doctor-directive-received', (directive) => {
-      setUnreadCount((c) => c + 1);
-      notify.info(
-        'Physician Directive Received',
-        `${directive.doctorName || 'Your doctor'} sent an update: "${directive.text}"`
-      );
-      window.dispatchEvent(new CustomEvent('polysafe:doctor-event', { detail: directive }));
-      queryClient.invalidateQueries({ queryKey: ['patient-directives'] });
-      queryClient.invalidateQueries({ queryKey: ['patient-timeline'] });
-      queryClient.invalidateQueries({ queryKey: ['patient-home'] });
-      queryClient.invalidateQueries({ queryKey: ['home-summary'] });
-    });
+  useSocketEvent('dose_logged', () => {
+    queryClient.invalidateQueries({ queryKey: ['patient-doses'] });
+    queryClient.invalidateQueries({ queryKey: ['patient-adherence'] });
+    queryClient.invalidateQueries({ queryKey: ['home-summary'] });
+  });
 
-    socket.on('doctor-directive-updated', () => {
-      queryClient.invalidateQueries({ queryKey: ['patient-directives'] });
-      queryClient.invalidateQueries({ queryKey: ['patient-timeline'] });
-    });
-
-    socket.on('doctor-directives-cleared', () => {
-      queryClient.invalidateQueries({ queryKey: ['patient-directives'] });
-      queryClient.invalidateQueries({ queryKey: ['patient-timeline'] });
-    });
-
-    socket.on('patient-regimen-updated', (data) => {
-      setUnreadCount((c) => c + 1);
-      notify.info(
-        'Medication Regimen Updated',
-        data.doctorLabel
-          ? `${data.doctorLabel} modified your regimen: ${String(data.action || '').replace('DOCTOR_', '').toLowerCase()}.`
-          : 'Your doctor modified your medication regimen.'
-      );
-      window.dispatchEvent(new CustomEvent('polysafe:doctor-event', { detail: data }));
-      queryClient.invalidateQueries({ queryKey: ['patient-directives'] });
-      queryClient.invalidateQueries({ queryKey: ['patient-timeline'] });
-      queryClient.invalidateQueries({ queryKey: ['patient-home'] });
-      queryClient.invalidateQueries({ queryKey: ['home-summary'] });
-      queryClient.invalidateQueries({ queryKey: ['patient-medicines'] });
-    });
-
-    socket.on('dose_logged', () => {
-      queryClient.invalidateQueries({ queryKey: ['patient-doses'] });
-      queryClient.invalidateQueries({ queryKey: ['patient-adherence'] });
-      queryClient.invalidateQueries({ queryKey: ['home-summary'] });
-    });
-
-    socket.on('caregiver_reminder', (payload) => {
-      setUnreadCount((c) => c + 1);
-      import('../utils/doseScheduler').then(({ sendDoseReminder }) => {
-        sendDoseReminder({
-          title: 'Caregiver Dose Reminder',
-          body: payload.message || `${payload.caregiverName || 'Your caregiver'} sent a reminder to take your scheduled medications.`,
-        });
+  useSocketEvent('caregiver_reminder', (payload) => {
+    setUnreadCount((c) => c + 1);
+    import('../utils/doseScheduler').then(({ sendDoseReminder }) => {
+      sendDoseReminder({
+        title: 'Caregiver Dose Reminder',
+        body: payload.message || `${payload.caregiverName || 'Your caregiver'} sent a reminder to take your scheduled medications.`,
       });
-      queryClient.invalidateQueries({ queryKey: ['patient-doses'] });
     });
-
-    return () => {
-      socket.disconnect();
-    };
-  }, [user, isGuest, queryClient]);
+    queryClient.invalidateQueries({ queryKey: ['patient-doses'] });
+  });
 
   // Speed-dial actions
   const speedDialActions = [
@@ -303,12 +286,12 @@ export default function PatientLayout() {
         </div>
       )}
 
-      {/* ── Mobile Bottom Tab Bar (5 Items with Sliding Pill Highlight) ── */}
+      {/* ── Mobile Bottom Tab Bar (7 Items with Sliding Pill Highlight) ── */}
       <nav
         className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-[var(--surface-glass)] backdrop-blur-md border-t border-[var(--border)] shadow-lg"
         aria-label="Mobile Navigation"
       >
-        <div className="grid grid-cols-5 h-16 max-w-md mx-auto relative px-1">
+        <div className="grid grid-cols-7 h-16 max-w-lg mx-auto relative px-0.5">
           {navItems.map((item) => {
             const Icon = item.icon;
             const active = item.match
@@ -320,7 +303,7 @@ export default function PatientLayout() {
                 key={item.id}
                 to={item.path}
                 className={clsx(
-                  'relative flex flex-col items-center justify-center gap-1 py-1.5 transition-colors select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-600)] rounded-xl',
+                  'relative flex flex-col items-center justify-center gap-0.5 py-1 px-0.5 transition-colors select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-600)] rounded-xl min-w-0',
                   active ? 'text-[var(--brand-600)]' : 'text-[var(--ink-3)] hover:text-[var(--ink-2)]'
                 )}
                 aria-current={active ? 'page' : undefined}
@@ -330,17 +313,17 @@ export default function PatientLayout() {
                 {active && (
                   <motion.div
                     layoutId="mobile-pill-highlight"
-                    className="absolute inset-1 bg-[var(--brand-50)] dark:bg-[var(--brand-900)]/40 rounded-xl -z-10"
+                    className="absolute inset-0.5 bg-[var(--brand-50)] dark:bg-[var(--brand-900)]/40 rounded-xl -z-10"
                     transition={{ type: 'spring', stiffness: 400, damping: 30 }}
                   />
                 )}
 
-                <Icon className={clsx('w-5 h-5', active ? 'stroke-[2.5]' : 'stroke-[1.8]')} />
+                <Icon className={clsx('w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0', active ? 'stroke-[2.5]' : 'stroke-[1.8]')} />
                 <span className={clsx(
-                  'text-[10px] font-bold tracking-tight leading-none',
+                  'text-[9px] sm:text-[10px] font-bold tracking-tight leading-tight truncate max-w-full text-center',
                   active ? 'font-extrabold text-[var(--brand-600)]' : 'text-[var(--ink-3)]'
                 )}>
-                  {item.label}
+                  {item.shortLabel || item.label}
                 </span>
               </Link>
             );

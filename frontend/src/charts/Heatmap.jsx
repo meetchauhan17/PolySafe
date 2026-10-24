@@ -192,7 +192,7 @@ export default function Heatmap({
         },
         code: 'MAJ',
         label: 'Major Interaction',
-        icon: '⚠',
+        icon: '!',
       };
     }
 

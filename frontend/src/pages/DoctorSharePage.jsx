@@ -15,7 +15,7 @@ import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
-import { io as socketIO } from 'socket.io-client';
+import { useSocketEvent } from '../context/SocketContext';
 import {
   QrCode,
   Copy,
@@ -264,42 +264,17 @@ export default function DoctorSharePage() {
 
   const pending = pendingData?.pending || [];
 
-  useEffect(() => {
-    if (!user || isGuest) return;
-    const socketUrl = axios.defaults.baseURL
-      ? axios.defaults.baseURL.replace(/\/api$/, '')
-      : window.location.hostname === 'localhost'
-      ? 'http://localhost:5000'
-      : window.location.origin;
+  useSocketEvent('connection_claimed', (payload) => {
+    console.log('[DoctorShare] Doctor claimed code:', payload);
+    queryClient.invalidateQueries({ queryKey: ['pending-connections'] });
+    notify.info('Doctor Connected', `${payload?.doctorName || 'A physician'} claimed your access code.`);
+  });
 
-    const socket = socketIO(socketUrl, {
-      transports: ['websocket', 'polling'],
-      reconnectionAttempts: 5,
-    });
-
-    socket.on('connect', () => {
-      socket.emit('join-patient-room', {
-        userId: user.userId || user.id,
-        patientId: user.patientId || user.id,
-      });
-    });
-
-    socket.on('connection_claimed', (payload) => {
-      console.log('[DoctorShare] Doctor claimed code:', payload);
-      queryClient.invalidateQueries({ queryKey: ['pending-connections'] });
-      notify.info('Doctor Connected', `${payload?.doctorName || 'A physician'} claimed your access code.`);
-    });
-
-    socket.on('connection_approved', (payload) => {
-      console.log('[DoctorShare] Connection approved:', payload);
-      setApprovedSuccess(true);
-      queryClient.invalidateQueries({ queryKey: ['pending-connections'] });
-    });
-
-    return () => {
-      socket.disconnect();
-    };
-  }, [user, isGuest, queryClient]);
+  useSocketEvent('connection_approved', (payload) => {
+    console.log('[DoctorShare] Connection approved:', payload);
+    setApprovedSuccess(true);
+    queryClient.invalidateQueries({ queryKey: ['pending-connections'] });
+  });
 
   // ── 3. Step Computation ──
   const activeClaim = pending[0] || null;

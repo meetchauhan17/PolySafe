@@ -42,7 +42,7 @@ export default function DoctorLayout() {
   ];
 
   return (
-    <div className="min-h-screen bg-[var(--canvas)] text-[var(--ink)] flex flex-col justify-between selection:bg-[var(--accent-100)] selection:text-[var(--ink)]">
+    <div className="h-screen overflow-hidden bg-[var(--canvas)] text-[var(--ink)] flex flex-col selection:bg-[var(--accent-100)] selection:text-[var(--ink)]">
       {/* ── Darker Ink-Blue Top Bar with Coral Active Patient Accent ── */}
       <SharedTopBar
         role="DOCTOR"
@@ -54,7 +54,7 @@ export default function DoctorLayout() {
       />
 
       {/* ── Clinical Workspace Container ── */}
-      <div className="flex-1 min-w-0 flex flex-col">
+      <div className="flex-1 min-w-0 min-h-0 flex flex-col overflow-hidden">
         <Outlet />
       </div>
 

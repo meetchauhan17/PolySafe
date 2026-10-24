@@ -1,40 +1,21 @@
 /**
- * DisplaySettingsContext.jsx — Stage Projector Mode & Theme Controller
+ * DisplaySettingsContext.jsx — Theme & 3D Visual Controller
  * ─────────────────────────────────────────────────────────────────────────────
  * Controls:
- *  1. Projector Mode: High contrast, larger base font size, larger click targets,
- *     and suppression of secondary UI chrome (notification badges, hints).
- *     Supports query param ?projector=1 and localStorage persistence.
- *  2. Theme: Light & Dark clinical modes, persisted in localStorage.
+ *  1. Theme: Light & Dark clinical modes, persisted in localStorage.
+ *  2. 3D Enablement: Accessible perspective transforms synced with system hardware.
  */
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { sync3DAttributes, checkSystem3DSupport } from '../three-d/use3DEnabled';
 
-const PROJECTOR_STORAGE_KEY = 'polysafe_projector_mode';
 const THEME_STORAGE_KEY = 'polysafe-theme';
 const THREE_D_STORAGE_KEY = 'polysafe_3d_enabled';
 
 const DisplaySettingsContext = createContext(null);
 
 export function DisplaySettingsProvider({ children }) {
-  // ─── 1. Projector Mode Initialization ─────────────────────────────────────
-  const [isProjectorMode, setIsProjectorModeState] = useState(() => {
-    try {
-      if (typeof window !== 'undefined') {
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get('projector') === '1' || urlParams.get('projector') === 'true') {
-          return true;
-        }
-        return localStorage.getItem(PROJECTOR_STORAGE_KEY) === 'true';
-      }
-    } catch {
-      // Fallback
-    }
-    return false;
-  });
-
-  // ─── 2. Theme Initialization (Light vs Dark) ──────────────────────────────
+  // ─── 1. Theme Initialization (Light vs Dark) ──────────────────────────────
   const [theme, setThemeState] = useState(() => {
     try {
       if (typeof window !== 'undefined') {
@@ -50,7 +31,7 @@ export function DisplaySettingsProvider({ children }) {
     return 'light';
   });
 
-  // ─── 3. 3D Enablement Initialization ──────────────────────────────────────
+  // ─── 2. 3D Enablement Initialization ──────────────────────────────────────
   const [is3DEnabled, setIs3DEnabledState] = useState(() => {
     try {
       if (typeof window !== 'undefined') {
@@ -63,20 +44,15 @@ export function DisplaySettingsProvider({ children }) {
     return true;
   });
 
-  // Apply projector mode class and sync 3D enablement
+  // Purge any legacy projector mode class and sync 3D enablement
   useEffect(() => {
     if (typeof document === 'undefined') return;
-    if (isProjectorMode) {
-      document.documentElement.classList.add('projector-mode');
-      sync3DAttributes(false);
-    } else {
-      document.documentElement.classList.remove('projector-mode');
-      sync3DAttributes(is3DEnabled && checkSystem3DSupport());
-    }
+    document.documentElement.classList.remove('projector-mode');
     try {
-      localStorage.setItem(PROJECTOR_STORAGE_KEY, isProjectorMode ? 'true' : 'false');
+      localStorage.removeItem('polysafe_projector_mode');
     } catch {}
-  }, [isProjectorMode, is3DEnabled]);
+    sync3DAttributes(is3DEnabled && checkSystem3DSupport());
+  }, [is3DEnabled]);
 
   // Apply data-theme attribute, .dark class, and meta theme-color to documentElement
   useEffect(() => {
@@ -112,15 +88,6 @@ export function DisplaySettingsProvider({ children }) {
     return () => mediaQuery.removeEventListener?.('change', handleSystemThemeChange);
   }, []);
 
-  // Toggle handlers
-  const toggleProjectorMode = useCallback(() => {
-    setIsProjectorModeState((prev) => !prev);
-  }, []);
-
-  const setProjectorMode = useCallback((val) => {
-    setIsProjectorModeState(Boolean(val));
-  }, []);
-
   const toggleTheme = useCallback(() => {
     setThemeState((prev) => (prev === 'light' ? 'dark' : 'light'));
   }, []);
@@ -134,7 +101,7 @@ export function DisplaySettingsProvider({ children }) {
   const toggle3DEnabled = useCallback(() => {
     setIs3DEnabledState((prev) => {
       const next = !prev;
-      if (next && (!checkSystem3DSupport() || isProjectorMode)) {
+      if (next && !checkSystem3DSupport()) {
         sync3DAttributes(false);
         return false;
       }
@@ -144,11 +111,11 @@ export function DisplaySettingsProvider({ children }) {
       sync3DAttributes(next);
       return next;
     });
-  }, [isProjectorMode]);
+  }, []);
 
   const set3DEnabled = useCallback((val) => {
     const next = Boolean(val);
-    if (next && (!checkSystem3DSupport() || isProjectorMode)) {
+    if (next && !checkSystem3DSupport()) {
       sync3DAttributes(false);
       setIs3DEnabledState(false);
       return;
@@ -158,12 +125,12 @@ export function DisplaySettingsProvider({ children }) {
     } catch {}
     setIs3DEnabledState(next);
     sync3DAttributes(next);
-  }, [isProjectorMode]);
+  }, []);
 
   const value = {
-    isProjectorMode,
-    toggleProjectorMode,
-    setProjectorMode,
+    isProjectorMode: false,
+    toggleProjectorMode: () => {},
+    setProjectorMode: () => {},
     theme,
     toggleTheme,
     setTheme,

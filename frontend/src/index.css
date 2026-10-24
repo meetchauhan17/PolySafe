@@ -293,17 +293,11 @@
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
 }
 
-/* Turn off grain in reduced-motion and projector mode */
+/* Turn off grain in reduced-motion */
 @media (prefers-reduced-motion: reduce) {
   .grain::before {
     display: none !important;
   }
-}
-.projector-mode .grain::before,
-[data-projector="true"] .grain::before,
-body.projector-mode .grain::before,
-body.projector-mode::before {
-  display: none !important;
 }
 
 /* ── SKELETON SHIMMER ─────────────────────────────────────────────── */
@@ -749,7 +743,7 @@ body.projector-mode::before {
   animation: shieldShadow 6s ease-in-out infinite;
 }
 
-/* Global 3D Suppression for reduced motion, projector mode, and 3d-enabled="false" */
+/* Global 3D Suppression for reduced motion and 3d-enabled="false" */
 html[3d-enabled="false"] .capsule-float-anim,
 html[data-3d-enabled="false"] .capsule-float-anim,
 html[3d-enabled="false"] .capsule-shadow-anim,
@@ -758,10 +752,6 @@ html[3d-enabled="false"] .shield-float-anim,
 html[data-3d-enabled="false"] .shield-float-anim,
 html[3d-enabled="false"] .shield-shadow-anim,
 html[data-3d-enabled="false"] .shield-shadow-anim,
-html.projector-mode .capsule-float-anim,
-html.projector-mode .capsule-shadow-anim,
-html.projector-mode .shield-float-anim,
-html.projector-mode .shield-shadow-anim,
 @media (prefers-reduced-motion: reduce) {
   .capsule-float-anim,
   .capsule-shadow-anim,
@@ -1769,125 +1759,4 @@ details.ps-accordion > summary::-webkit-details-marker { display: none; }
 .animate-critical-pulse {
   animation: criticalPulse 2.2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
-
-/* ═══════════════════════════════════════════════════════════════
-   STAGE PROJECTOR MODE  —  html.projector-mode
-   +15% base size, high contrast (darker ink, stronger borders),
-   grain & spotlight off, 3D off, secondary chrome hidden, 48px targets
-   ═══════════════════════════════════════════════════════════════ */
-html.projector-mode {
-  font-size: 18.4px !important; /* +15% base size (16px * 1.15) */
-  --radius-md: 14px;
-  --radius-lg: 18px;
-  --radius-xl: 22px;
-}
-
-@media (min-width: 1440px) {
-  html.projector-mode {
-    font-size: 19.5px !important;
-  }
-}
-
-/* Light Theme High-Contrast for Projectors */
-html.projector-mode[data-theme="light"],
-html.projector-mode:not([data-theme="dark"]) {
-  --canvas: #FFFFFF;
-  --surface: #FFFFFF;
-  --surface-2: #F8FAFC;
-  --surface-3: #EDF2F7;
-  --border: #334155;
-  --border-strong: #0F172A;
-  --ink: #000000;
-  --ink-2: #0A0F1D;
-  --ink-3: #1E293B;
-  --brand-600: #0284C7;
-  --brand-700: #0369A1;
-  --safe-fg: #15803D;
-  --safe-bg: #DCFCE7;
-  --caution-fg: #B45309;
-  --caution-bg: #FEF3C7;
-  --critical-fg: #B91C1C;
-  --critical-bg: #FEE2E2;
-}
-
-/* Dark Theme High-Contrast for Projectors */
-html.projector-mode[data-theme="dark"] {
-  --canvas: #000000;
-  --surface: #0B0F19;
-  --surface-2: #131A29;
-  --surface-3: #1E293B;
-  --border: #94A3B8;
-  --border-strong: #CBD5E1;
-  --ink: #FFFFFF;
-  --ink-2: #F8FAFC;
-  --ink-3: #E2E8F0;
-  --brand-600: #38BDF8;
-  --brand-700: #0284C7;
-  --safe-fg: #4ADE80;
-  --caution-fg: #FBBF24;
-  --critical-fg: #F87171;
-}
-
-/* Grain, Spotlight, and Ambient Glows completely suppressed in Projector Mode */
-html.projector-mode .grain::before,
-html.projector-mode body::before,
-html.projector-mode .spotlight,
-html.projector-mode [data-spotlight="true"],
-html.projector-mode .ambient-glow,
-html.projector-mode .pointer-events-none.absolute.rounded-full.blur-3xl {
-  display: none !important;
-  opacity: 0 !important;
-}
-
-/* 3D transforms completely flattened in Projector Mode */
-html.projector-mode [data-3d="true"],
-html.projector-mode .preserve-3d,
-html.projector-mode .perspective-1000,
-html.projector-mode .capsule-float-anim,
-html.projector-mode .capsule-shadow-anim,
-html.projector-mode .shield-float-anim,
-html.projector-mode .shield-shadow-anim {
-  transform: none !important;
-  animation: none !important;
-  perspective: none !important;
-}
-
-/* Hide secondary chrome and distractions on stage */
-html.projector-mode .projector-hide,
-html.projector-mode kbd,
-html.projector-mode .shortcut-hint,
-html.projector-mode .ps-orb,
-html.projector-mode .secondary-chrome,
-html.projector-mode [data-projector-hide="true"] {
-  display: none !important;
-}
-
-/* Larger, effortless 48px hit targets for stage presenter remotes */
-html.projector-mode button:not(.projector-allow-small),
-html.projector-mode a.ps-btn,
-html.projector-mode input:not([type="checkbox"]):not([type="radio"]),
-html.projector-mode select {
-  min-height: 48px;
-}
-
-html.projector-mode .ps-btn {
-  font-weight: 700 !important;
-  letter-spacing: 0.02em;
-}
-
-/* Ultra-crisp cards and borders */
-html.projector-mode .ps-card,
-html.projector-mode [class*="rounded-xl"],
-html.projector-mode [class*="rounded-2xl"],
-html.projector-mode [class*="rounded-lg"] {
-  border-width: 1.5px !important;
-}
-
-/* Accessible focus ring for presentation clickers */
-html.projector-mode :focus-visible {
-  outline: 3px solid var(--brand-600) !important;
-  outline-offset: 3px !important;
-}
-
-
 

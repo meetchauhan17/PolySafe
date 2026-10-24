@@ -62,11 +62,13 @@ export default function Gauge({
     return () => { if (raf.current) cancelAnimationFrame(raf.current); };
   }, [clamped, animate, reduce]);
 
-  // Dimensions for 180 degree semi-circle
+  // Effective stroke width and dimensions for 180 degree semi-circle
+  const effStrokeWidth = size < 140 && strokeWidth >= 10 ? 8 : strokeWidth;
   const cx = size / 2;
-  const cy = size / 2 + 10;
-  const r = (size - strokeWidth * 2) / 2;
+  const cy = size < 140 ? size * 0.56 : size / 2 + 10;
+  const r = (size - effStrokeWidth * 2) / 2;
   const semiCirc = Math.PI * r; // half circumference
+  const gaugeHeight = size < 140 ? size * 0.68 : size * 0.65;
 
   // Tier color mapping
   const isCritical = clamped >= criticalThreshold;
@@ -84,6 +86,13 @@ export default function Gauge({
     ? 'Moderate Clearance'
     : 'Optimal Clearance';
 
+  // Compact badge text for smaller gauges (< 140px)
+  const compactBadgeText = isCritical
+    ? 'Critical'
+    : isWarn
+    ? 'Moderate'
+    : 'Optimal';
+
   // Current angle for end-cap dot (from -180 deg to 0 deg)
   const currentRatio = reduce || !animate ? ratio : (displayed - min) / (max - min || 1);
   const angleRad = Math.PI * (1 - currentRatio);
@@ -99,11 +108,11 @@ export default function Gauge({
       aria-valuemin={min}
       aria-valuemax={max}
     >
-      <div className="relative" style={{ width: size, height: size * 0.65 }}>
+      <div className="relative" style={{ width: size, height: gaugeHeight }}>
         <svg
           width={size}
-          height={size * 0.65}
-          viewBox={`0 0 ${size} ${size * 0.65}`}
+          height={gaugeHeight}
+          viewBox={`0 0 ${size} ${gaugeHeight}`}
           className="overflow-visible"
         >
           <defs>
@@ -118,7 +127,7 @@ export default function Gauge({
             d={`M ${cx - r} ${cy} A ${r} ${r} 0 0 1 ${cx + r} ${cy}`}
             fill="none"
             stroke="var(--surface-2, #E2E8F0)"
-            strokeWidth={strokeWidth}
+            strokeWidth={effStrokeWidth}
             strokeLinecap="round"
             filter={`url(#${filterId})`}
           />
@@ -126,10 +135,10 @@ export default function Gauge({
           {/* Threshold Zone Marker Line for Critical (at 70%) */}
           {criticalThreshold && (
             <line
-              x1={cx - (r + strokeWidth * 0.5) * Math.cos(Math.PI * (1 - criticalThreshold / 100))}
-              y1={cy - (r + strokeWidth * 0.5) * Math.sin(Math.PI * (1 - criticalThreshold / 100))}
-              x2={cx - (r - strokeWidth * 0.5) * Math.cos(Math.PI * (1 - criticalThreshold / 100))}
-              y2={cy - (r - strokeWidth * 0.5) * Math.sin(Math.PI * (1 - criticalThreshold / 100))}
+              x1={cx - (r + effStrokeWidth * 0.5) * Math.cos(Math.PI * (1 - criticalThreshold / 100))}
+              y1={cy - (r + effStrokeWidth * 0.5) * Math.sin(Math.PI * (1 - criticalThreshold / 100))}
+              x2={cx - (r - effStrokeWidth * 0.5) * Math.cos(Math.PI * (1 - criticalThreshold / 100))}
+              y2={cy - (r - effStrokeWidth * 0.5) * Math.sin(Math.PI * (1 - criticalThreshold / 100))}
               stroke="var(--paper, #FFFFFF)"
               strokeWidth="2.5"
             />
@@ -140,7 +149,7 @@ export default function Gauge({
             d={`M ${cx - r} ${cy} A ${r} ${r} 0 0 1 ${cx + r} ${cy}`}
             fill="none"
             stroke={color}
-            strokeWidth={strokeWidth}
+            strokeWidth={effStrokeWidth}
             strokeLinecap="round"
             strokeDasharray={semiCirc}
             strokeDashoffset={semiCirc * (1 - currentRatio)}
@@ -153,10 +162,10 @@ export default function Gauge({
           {currentRatio > 0.02 && (
             <g transform={`translate(${dotX}, ${dotY})`}>
               {isCritical && !reduce && (
-                <circle r={strokeWidth * 0.6} fill={color} opacity={0.35} className="animate-ping" />
+                <circle r={effStrokeWidth * 0.6} fill={color} opacity={0.35} className="animate-ping" />
               )}
               <circle
-                r={strokeWidth * 0.38}
+                r={effStrokeWidth * 0.38}
                 fill="var(--paper, #FFFFFF)"
                 stroke={color}
                 strokeWidth="2"
@@ -165,31 +174,39 @@ export default function Gauge({
           )}
 
           {/* Threshold tick labels */}
-          <text x={cx - r} y={cy + 16} fontSize="10" fill="var(--ink-4)" textAnchor="middle" fontFamily="var(--font-mono)">
+          <text x={cx - r} y={cy + (size < 140 ? 13 : 16)} fontSize={size < 140 ? '9' : '10'} fill="var(--ink-4)" textAnchor="middle" fontFamily="var(--font-mono)">
             0
           </text>
-          <text x={cx} y={cy - r - 6} fontSize="9" fill="var(--ink-4)" textAnchor="middle" fontFamily="var(--font-mono)">
+          <text x={cx} y={cy - r - (size < 140 ? 4 : 6)} fontSize={size < 140 ? '8.5' : '9'} fill="var(--ink-4)" textAnchor="middle" fontFamily="var(--font-mono)">
             50
           </text>
-          <text x={cx + r} y={cy + 16} fontSize="10" fill="var(--ink-4)" textAnchor="middle" fontFamily="var(--font-mono)">
+          <text x={cx + r} y={cy + (size < 140 ? 13 : 16)} fontSize={size < 140 ? '9' : '10'} fill="var(--ink-4)" textAnchor="middle" fontFamily="var(--font-mono)">
             100
           </text>
         </svg>
 
         {/* Center Score & CountUp */}
-        <div className="absolute inset-x-0 bottom-1 flex flex-col items-center justify-center pointer-events-none">
-          <div className="flex items-baseline gap-0.5">
+        <div className="absolute inset-x-0 bottom-0 flex flex-col items-center justify-center pointer-events-none">
+          <div className="flex items-baseline gap-0.5 leading-none">
             <span
-              className="text-2xl sm:text-3xl font-black font-mono leading-none tracking-tight"
+              className={clsx(
+                'font-black font-mono leading-none tracking-tight',
+                size < 140 ? 'text-lg sm:text-xl' : 'text-2xl sm:text-3xl'
+              )}
               style={{ color }}
             >
               <CountUp value={clamped} decimals={0} duration={0.75} />
             </span>
-            <span className="text-[11px] font-bold text-[var(--ink-3)] font-mono">/100</span>
+            <span className={clsx('font-bold text-[var(--ink-3)] font-mono leading-none', size < 140 ? 'text-[9px]' : 'text-[11px]')}>
+              /100
+            </span>
           </div>
           <span
             className={clsx(
-              'text-[10px] font-bold uppercase tracking-wider font-mono mt-0.5 px-2 py-0.2 rounded-full border',
+              'font-mono font-bold uppercase tracking-wider rounded-full border leading-none',
+              size < 140
+                ? 'text-[8.5px] px-1.5 py-0.5 mt-0.5'
+                : 'text-[10px] px-2 py-0.5 mt-1',
               isCritical
                 ? 'bg-rose-500/10 text-rose-700 dark:text-rose-300 border-rose-300 dark:border-rose-800'
                 : isWarn
@@ -197,7 +214,7 @@ export default function Gauge({
                 : 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-300 dark:border-emerald-800'
             )}
           >
-            {tierText}
+            {size < 140 ? compactBadgeText : tierText}
           </span>
         </div>
       </div>

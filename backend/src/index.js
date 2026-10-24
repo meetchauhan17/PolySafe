@@ -10,6 +10,10 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: { origin: '*', methods: ['GET', 'POST', 'PUT', 'DELETE'] },
+  pingTimeout: 30000,
+  pingInterval: 25000,
+  connectTimeout: 20000,
+  allowEIO3: true,
 });
 
 // ─── Core Middleware ───────────────────────────────────────────────────────────
@@ -92,13 +96,20 @@ app.use((err, _req, res, _next) => {
 
 // ─── Socket.IO ────────────────────────────────────────────────────────────────
 io.on('connection', (socket) => {
-  console.log('Socket connected:', socket.id);
+  console.log(`[socket] Connected: ${socket.id}`);
 
   socket.on('join-patient-room', (data) => {
-    const id = typeof data === 'object' ? (data?.patientId || data?.userId) : data;
-    if (id) {
-      socket.join(`patient-${id}`);
-      console.log(`[socket] Socket ${socket.id} joined room: patient-${id}`);
+    if (typeof data === 'object') {
+      const rooms = new Set();
+      if (data?.patientId) rooms.add(`patient-${data.patientId}`);
+      if (data?.userId) rooms.add(`patient-${data.userId}`);
+      rooms.forEach((r) => {
+        socket.join(r);
+        console.log(`[socket] Socket ${socket.id} joined room: ${r}`);
+      });
+    } else if (data) {
+      socket.join(`patient-${data}`);
+      console.log(`[socket] Socket ${socket.id} joined room: patient-${data}`);
     }
   });
 
@@ -111,8 +122,8 @@ io.on('connection', (socket) => {
     }
   });
 
-  socket.on('disconnect', () => {
-    console.log('Socket disconnected:', socket.id);
+  socket.on('disconnect', (reason) => {
+    console.log(`[socket] Disconnected: ${socket.id} (${reason})`);
   });
 });
 
@@ -131,8 +142,8 @@ setTimeout(() => {
 }, 5000);
 
 const PORT = process.env.PORT || 5000;
-server.listen(PORT, () => {
-  console.log(`PolySafe Backend → http://localhost:${PORT}`);
+server.listen(PORT, '0.0.0.0', () => {
+  console.log(`PolySafe Backend → http://0.0.0.0:${PORT}`);
   console.log(`Email OTP: ${process.env.SMTP_USER ? `SMTP Live (${process.env.SMTP_USER})` : (process.env.RESEND_API_KEY ? 'Resend Live' : 'Console Stub')}`);
   console.log(`Dose Sweeper Active (Timing: ${isFastDoseTiming ? 'FAST (10s interval, 1m overdue)' : 'Standard (5m interval, 60m overdue)'})`);
 });

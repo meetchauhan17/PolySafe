@@ -4,9 +4,8 @@
  *
  * Requirements:
  * - A 3d-enabled data attribute on <html> that is false in:
- *   1. Projector mode (.projector-mode, ?projector=1)
- *   2. Reduced-motion (prefers-reduced-motion: reduce)
- *   3. Low-power devices (navigator.hardwareConcurrency <= 2)
+ *   1. Reduced-motion (prefers-reduced-motion: reduce)
+ *   2. Low-power devices (navigator.hardwareConcurrency <= 2)
  * - Allows manual toggle while respecting accessibility hard requirements.
  */
 
@@ -24,14 +23,7 @@ export function checkSystem3DSupport() {
   const prefersReduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
   if (prefersReduced) return false;
 
-  // 2. Projector mode check
-  const isProjector =
-    document.documentElement.classList.contains('projector-mode') ||
-    document.documentElement.getAttribute('data-projector') === 'true' ||
-    new URLSearchParams(window.location.search).get('projector') === '1';
-  if (isProjector) return false;
-
-  // 3. Low-power hardware check (hardwareConcurrency <= 2)
+  // 2. Low-power hardware check (hardwareConcurrency <= 2)
   if (typeof navigator !== 'undefined' && navigator.hardwareConcurrency) {
     if (navigator.hardwareConcurrency <= 2) return false;
   }
@@ -68,7 +60,7 @@ export function use3DEnabled() {
   });
 
   useEffect(() => {
-    // Re-check system condition on mount & listen to media query / projector changes
+    // Re-check system condition on mount & listen to media query changes
     const supported = checkSystem3DSupport();
     if (!supported && is3DEnabled) {
       setIs3DEnabledState(false);

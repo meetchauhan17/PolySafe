@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 import axios from 'axios';
 import GuestLockModal from '../components/GuestLockModal';
 
@@ -215,20 +215,35 @@ export function AuthProvider({ children }) {
 
   const isGuest = Boolean(user?.isGuest);
 
-  const value = {
-    user,
-    token,
-    isLoading,
-    isGuest,
-    isAuthenticated: !!user && !user.isGuest && !!token,
-    login,
-    logout,
-    enterGuestMode,
-    openGuestLockModal,
-    closeGuestLockModal,
-    requireAuth,
-    checkSession: validateSession,
-  };
+  const value = useMemo(
+    () => ({
+      user,
+      token,
+      isLoading,
+      isGuest,
+      isAuthenticated: !!user && !user.isGuest && !!token,
+      login,
+      logout,
+      enterGuestMode,
+      openGuestLockModal,
+      closeGuestLockModal,
+      requireAuth,
+      checkSession: validateSession,
+    }),
+    [
+      user,
+      token,
+      isLoading,
+      isGuest,
+      login,
+      logout,
+      enterGuestMode,
+      openGuestLockModal,
+      closeGuestLockModal,
+      requireAuth,
+      validateSession,
+    ]
+  );
 
   return (
     <AuthContext.Provider value={value}>

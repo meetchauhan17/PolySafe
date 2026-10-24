@@ -251,6 +251,13 @@ router.get('/mine', auth, requireRole(['DOCTOR']), async (req, res) => {
               take: 5,
               select: { id: true, name: true, type: true, dateAdded: true },
             },
+            interactionFlags: {
+              where: {
+                medicineA: { removedAt: null },
+                medicineB: { removedAt: null },
+              },
+              select: { id: true, severity: true },
+            },
           },
         },
       },
@@ -271,6 +278,13 @@ router.get('/mine', auth, requireRole(['DOCTOR']), async (req, res) => {
         }
       }
 
+      const flags = c.patient?.interactionFlags || [];
+      const hasCritical = flags.some((f) =>
+        ['CRITICAL', 'CONTRAINDICATED', 'MAJOR'].includes((f.severity || '').toUpperCase())
+      );
+      const hasCaution = flags.length > 0;
+      const computedStatus = hasCritical ? 'CRITICAL' : hasCaution ? 'CAUTION' : 'SAFE';
+
       return {
         connectionId: c.id,
         patientId:    c.patient.id,
@@ -279,6 +293,8 @@ router.get('/mine', auth, requireRole(['DOCTOR']), async (req, res) => {
         patientPhone: patientUser?.phone || null,
         patientAge:   c.patient.age,
         conditions:   c.patient.conditions,
+        status:       computedStatus,
+        flagCount:    flags.length,
         recentMeds:   c.patient.medicines,
         connectedAt:  c.createdAt,
       };

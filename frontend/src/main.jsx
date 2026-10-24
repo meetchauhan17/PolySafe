@@ -9,9 +9,8 @@ import { notify } from './utils/toast';
 try {
   const savedTheme = localStorage.getItem('polysafe-theme') || 'light';
   document.documentElement.setAttribute('data-theme', savedTheme);
-  const isProj = new URLSearchParams(window.location.search).get('projector') === '1' ||
-                 localStorage.getItem('polysafe_projector_mode') === 'true';
-  if (isProj) document.documentElement.classList.add('projector-mode');
+  document.documentElement.classList.remove('projector-mode');
+  localStorage.removeItem('polysafe_projector_mode');
 } catch (e) {}
 
 // Configure global API base URL from VITE_API_URL for production deployment

@@ -425,8 +425,9 @@ export default function DoctorClinicBoard({ connections = [], onSelectPatient })
                         </span>
                       )}
                     </div>
-                    <p className="text-xs text-rose-800 font-medium leading-relaxed">
-                      ⚠️ <span className="font-semibold">{item.reason}</span>
+                    <p className="text-xs text-rose-800 font-medium leading-relaxed flex items-center gap-1.5">
+                      <AlertTriangle className="w-3.5 h-3.5 text-rose-600 shrink-0" />
+                      <span className="font-semibold">{item.reason}</span>
                     </p>
                     <div className="flex items-center gap-3 text-[11px] text-[var(--ink-3)]">
                       <span>Conditions: {item.conditions.join(', ')}</span>

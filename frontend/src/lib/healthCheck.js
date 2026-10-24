@@ -7,6 +7,7 @@
 
 import axios from 'axios';
 import { io as socketIO } from 'socket.io-client';
+import { getSocketUrl } from '../context/SocketContext';
 
 /**
  * Runs end-to-end connectivity & telemetry audit
@@ -55,7 +56,7 @@ export async function performHealthCheck() {
   // 2. Check Socket.IO reachability
   try {
     socketConnected = await new Promise((resolve) => {
-      const socketUrl = import.meta.env.VITE_API_URL || window.location.origin;
+      const socketUrl = getSocketUrl();
       const socket = socketIO(socketUrl, {
         timeout: 3000,
         transports: ['websocket', 'polling'],

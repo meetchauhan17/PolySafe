@@ -102,6 +102,7 @@ import {
   DEMO_DOCTOR_CONNECTIONS,
   DEMO_DOCTOR_CLINICAL_SUMMARIES,
 } from '../data/mockDoctorCaregiver';
+import { computeUnifiedScores } from '../data/mockClinicalData';
 
 // ─── API Helpers ─────────────────────────────────────────────────────────────
 async function fetchMyConnections() {
@@ -187,15 +188,26 @@ export default function DoctorDashboardPage() {
       const pid = c.patientId || c.id;
       if (pid && !seen.has(pid)) {
         seen.add(pid);
+        const demoSum = DEMO_DOCTOR_CLINICAL_SUMMARIES[pid];
+        const allFlags = c.flags || demoSum?.flags || [];
+        const hasMajorFlag = allFlags.some((f) =>
+          ['CRITICAL', 'MAJOR', 'CONTRAINDICATED'].includes((f.severity || '').toUpperCase())
+        );
+        const resolvedStatus = (
+          c.status ||
+          demoSum?.status ||
+          (hasMajorFlag ? 'CRITICAL' : allFlags.length > 0 ? 'CAUTION' : 'SAFE')
+        ).toUpperCase();
+
         list.push({
           ...c,
           patientId: pid,
           patientName: c.patientName || c.name || 'Patient',
           age: c.patientAge || c.age || 65,
           gender: c.gender || 'MALE',
-          status: (c.status || 'SAFE').toUpperCase(),
-          activeMedsCount: c.activeMedsCount || c.recentMeds?.length || 3,
-          flagCount: c.flagCount || 0,
+          status: resolvedStatus,
+          activeMedsCount: c.activeMedsCount || c.recentMeds?.length || demoSum?.activeMedicines?.length || 3,
+          flagCount: c.flagCount ?? allFlags.length,
           lastActivity: c.connectedSince ? fmt(c.connectedSince) : 'Today',
         });
       }
@@ -316,16 +328,26 @@ export default function DoctorDashboardPage() {
     return (patientData.medicines || []).filter((m) => m.discontinued);
   }, [patientData.medicines]);
 
-  // Overall WHO Risk & ACB Score
-  const patientRiskScore = useMemo(() => {
-    if (patientData.flags?.some((f) => (f.severity || '').toUpperCase() === 'CRITICAL')) return 4.5;
-    if (patientData.flags?.length > 0) return 3.4;
-    return 1.8;
-  }, [patientData.flags]);
+  // Unified clinical risk & ACB scoring engine (aligned with Patient Risk Analysis & Home)
+  const unifiedScores = useMemo(() => {
+    return computeUnifiedScores({
+      regimenRisk: demoSummary?.cumulativeBurden
+        ? {
+            level: activePatientConn?.status === 'CRITICAL' || demoSummary?.status === 'CRITICAL' ? 5 : 3,
+            score: activePatientConn?.status === 'CRITICAL' || demoSummary?.status === 'CRITICAL' ? 5.0 : 3.4,
+          }
+        : null,
+      medicines: patientData.medicines,
+      flags: patientData.flags,
+      status: activePatientConn?.status || demoSummary?.status || 'SAFE',
+      acbScore: demoSummary?.acbScore,
+    });
+  }, [patientData.medicines, patientData.flags, activePatientConn, demoSummary]);
 
-  const patientAcbScore = useMemo(() => {
-    return demoSummary.acbScore || (activePatientConn?.status === 'CRITICAL' ? 4 : 1);
-  }, [demoSummary, activePatientConn]);
+  const patientRiskScore = unifiedScores.score;
+  const patientRiskLevel = unifiedScores.level;
+  const patientRiskLabel = unifiedScores.label;
+  const patientAcbScore = unifiedScores.acbScore;
 
   // Organ toxicity radar data
   const organRadarData = useMemo(() => {
@@ -423,13 +445,13 @@ export default function DoctorDashboardPage() {
   }, [filteredPatients, selectedPatientId]);
 
   return (
-    <div className="flex-1 w-full flex overflow-hidden bg-[var(--canvas)] text-[var(--ink)]">
+    <div className="flex-1 w-full flex h-full min-h-0 overflow-hidden bg-[var(--canvas)] text-[var(--ink)]">
       <h1 className="sr-only">Doctor Clinical Decision Support Dashboard</h1>
       {/* ═══════════════════════════════════════════════════════════════════════
           PANE 1: LEFT PANE — PATIENT REGISTRY (Interactive Cards, Search & Filters)
           ═══════════════════════════════════════════════════════════════════════ */}
       <aside
-        className="w-80 flex-shrink-0 bg-[var(--surface)] border-r border-[var(--border)] h-[calc(100vh-4rem)] sticky top-16 hidden lg:flex flex-col z-20"
+        className="w-72 2xl:w-80 flex-shrink-0 bg-[var(--surface)] border-r border-[var(--border)] h-full min-h-0 hidden lg:flex flex-col justify-between z-20"
         aria-label="Patient roster sidebar"
       >
         {/* Header & Controls */}
@@ -503,7 +525,7 @@ export default function DoctorDashboardPage() {
         </div>
 
         {/* Patient Rows List */}
-        <div className="flex-1 overflow-y-auto p-2.5 space-y-1.5">
+        <div className="flex-1 min-h-0 overflow-y-auto p-2.5 space-y-1.5">
           {filteredPatients.length === 0 ? (
             <div className="p-6 text-center text-xs text-[var(--ink-3)] space-y-2">
               <Users className="w-8 h-8 text-[var(--ink-3)] mx-auto opacity-50" />
@@ -538,10 +560,10 @@ export default function DoctorDashboardPage() {
                           : 'border-l-4 border-l-transparent border-[var(--border)] hover:bg-[var(--surface-2)] bg-[var(--surface)] text-[var(--ink-2)]'
                       }`}
                     >
-                      <div className="flex items-center gap-3 min-w-0">
+                      <div className="flex items-center gap-2.5 min-w-0 flex-1">
                         {/* Avatar Initials Badge */}
                         <div
-                          className={`w-9 h-9 rounded-xl flex items-center justify-center text-xs font-bold flex-shrink-0 font-mono transition-colors ${
+                          className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold flex-shrink-0 font-mono transition-colors ${
                             isSelected
                               ? 'bg-[var(--accent-500)] text-white shadow-xs'
                               : 'bg-[var(--doctor-500)]/15 text-[var(--doctor-600)]'
@@ -550,24 +572,22 @@ export default function DoctorDashboardPage() {
                           {initials}
                         </div>
 
-                        <div className="min-w-0 pr-1">
+                        <div className="min-w-0 pr-1 flex-1">
                           <p
-                            className={`text-xs truncate font-[var(--font-heading)] ${
-                              isSelected
-                                ? 'text-[var(--ink)] font-extrabold'
-                                : 'text-[var(--ink)] font-bold'
+                            className={`text-xs truncate font-bold leading-tight ${
+                              isSelected ? 'text-[var(--ink)] font-extrabold' : 'text-[var(--ink)]'
                             }`}
                           >
                             {patient.patientName}
                           </p>
-                          <p className="text-[10.5px] text-[var(--ink-3)] font-mono mt-0.5">
+                          <p className="text-[10px] text-[var(--ink-3)] font-mono mt-0.5 truncate">
                             {patient.age}y · {patient.activeMedsCount} meds · {patient.lastActivity}
                           </p>
                         </div>
                       </div>
 
                       {/* Risk Trend Sparkline & StatusDot */}
-                      <div className="flex items-center gap-2 flex-shrink-0">
+                      <div className="flex items-center gap-1.5 flex-shrink-0">
                         <Sparkline
                           data={
                             patient.status === 'CRITICAL'
@@ -576,8 +596,8 @@ export default function DoctorDashboardPage() {
                               ? [10, 11, 13, 12, 14]
                               : [8, 7, 7, 6, 5]
                           }
-                          width={44}
-                          height={18}
+                          width={34}
+                          height={16}
                           status={
                             patient.status === 'CRITICAL'
                               ? 'critical'
@@ -596,7 +616,7 @@ export default function DoctorDashboardPage() {
                               ? 'caution'
                               : 'safe'
                           }
-                          size="md"
+                          size="sm"
                         />
                         <ChevronRight
                           className={`w-3.5 h-3.5 transition-transform ${
@@ -615,7 +635,7 @@ export default function DoctorDashboardPage() {
         </div>
 
         {/* Roster Footer with Shortcut Helper */}
-        <div className="p-3 border-t border-[var(--border)] text-[10.5px] text-[var(--ink-3)] font-mono flex items-center justify-between bg-[var(--surface-2)]">
+        <div className="p-3 border-t border-[var(--border)] text-[10.5px] text-[var(--ink-3)] font-mono flex items-center justify-between bg-[var(--surface-2)] flex-shrink-0">
           <div className="flex items-center gap-1.5">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
             <span>FHIR v4 Telemetry</span>
@@ -634,11 +654,11 @@ export default function DoctorDashboardPage() {
       {/* ═══════════════════════════════════════════════════════════════════════
           PANE 2: CENTER PANE — PATIENT WORKSPACE & CLINICAL TABS
           ═══════════════════════════════════════════════════════════════════════ */}
-      <main className="flex-1 min-w-0 p-4 sm:p-6 lg:p-7 overflow-y-auto space-y-6">
-        {/* ── Sticky Patient Header with Coral Primary CTA ── */}
-        <div className="sticky top-0 z-10 -mx-4 -mt-4 sm:-mx-6 sm:-mt-6 lg:-mx-7 lg:-mt-7 p-4 sm:p-5 bg-[var(--surface)]/95 backdrop-blur-md border-b border-[var(--border)] shadow-xs transition-colors">
+      <main className="flex-1 min-w-0 min-h-0 h-full p-4 sm:p-5 lg:p-6 overflow-y-auto space-y-5">
+        {/* ── Patient Record Header Card ── */}
+        <div className="rounded-2xl bg-[var(--surface)] border border-[var(--border)] p-4 sm:p-5 lg:p-6 shadow-xs transition-colors">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div className="flex items-center gap-3.5 min-w-0">
+            <div className="flex items-center gap-4 min-w-0">
               <div className="w-12 h-12 rounded-2xl bg-[var(--doctor-500)]/15 text-[var(--doctor-600)] border border-[var(--doctor-500)]/30 flex items-center justify-center text-base font-extrabold font-mono flex-shrink-0 shadow-xs">
                 {getInitials(activePatientConn?.patientName)}
               </div>
@@ -653,44 +673,54 @@ export default function DoctorDashboardPage() {
                   </span>
                   <span
                     className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-full uppercase ${
-                      activePatientConn?.status === 'CRITICAL'
+                      activePatientConn?.status === 'CRITICAL' || patientRiskScore >= 4.5
                         ? 'bg-rose-500/15 text-rose-700 dark:text-rose-300 border border-rose-500/30'
-                        : activePatientConn?.status === 'CAUTION'
+                        : activePatientConn?.status === 'CAUTION' || patientRiskScore >= 3.0
                         ? 'bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/30'
                         : 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30'
                     }`}
                   >
-                    {activePatientConn?.status || 'SAFE'} REGIMEN
+                    {activePatientConn?.status === 'CRITICAL' || patientRiskScore >= 4.5
+                      ? 'CRITICAL REGIMEN'
+                      : activePatientConn?.status === 'CAUTION' || patientRiskScore >= 3.0
+                      ? 'CAUTION REGIMEN'
+                      : 'SAFE REGIMEN'}
                   </span>
                 </div>
 
-                {/* Demographics & Vermilion Allergies Chips */}
+                {/* Demographics row */}
                 <div className="flex items-center gap-2 flex-wrap mt-1 text-xs text-[var(--ink-2)]">
                   <span>
-                    Age: <strong>{activePatientConn?.age || 68}y</strong>
+                    Age: <strong className="text-[var(--ink)]">{activePatientConn?.age || 68}y</strong>
                   </span>
-                  <span>·</span>
+                  <span className="text-[var(--ink-3)]">·</span>
                   <span>
-                    Sex: <strong>{activePatientConn?.gender || 'Female'}</strong>
+                    Sex: <strong className="text-[var(--ink)]">{activePatientConn?.gender || 'Female'}</strong>
                   </span>
-                  <span>·</span>
+                  <span className="text-[var(--ink-3)]">·</span>
                   <span>
                     Conditions:{' '}
-                    <strong>
+                    <strong className="text-[var(--ink)]">
                       {(activePatientConn?.conditions || ['Hypertension', 'T2 Diabetes']).join(', ')}
                     </strong>
                   </span>
+                </div>
 
-                  {/* Documented Allergies as Vermilion Chips */}
+                {/* Documented Allergies dedicated row */}
+                <div className="flex items-center gap-2 flex-wrap mt-1.5">
+                  <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-rose-600 dark:text-rose-400 flex items-center gap-1">
+                    <AlertTriangle className="w-3 h-3 text-rose-600 shrink-0" />
+                    Allergies:
+                  </span>
                   {(activePatientConn?.allergies?.length > 0
                     ? activePatientConn.allergies
                     : ['Penicillin (Moderate rash)']
                   ).map((alg, idx) => (
                     <span
                       key={idx}
-                      className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full border-2 border-[#EF4444] text-[#B91C1C] dark:text-rose-300 bg-rose-500/10 font-bold text-[10.5px] shadow-2xs"
+                      className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full border border-rose-500/30 text-rose-700 dark:text-rose-300 bg-rose-500/10 font-mono font-bold text-[10.5px] shadow-2xs"
                     >
-                      ⚠️ {alg}
+                      <span>{alg}</span>
                     </span>
                   ))}
                 </div>
@@ -773,13 +803,13 @@ export default function DoctorDashboardPage() {
         </div>
 
         {/* ── 7 Clinical Tabs Navigation ── */}
-        <div className="flex items-center gap-1.5 p-1 bg-[var(--surface-2)] border border-[var(--border)] rounded-2xl overflow-x-auto shadow-2xs">
+        <div className="flex items-center gap-1 p-1 bg-[var(--surface-2)] border border-[var(--border)] rounded-2xl overflow-x-auto shadow-2xs scrollbar-none">
           {[
             { id: 'overview', label: 'Overview', icon: HeartPulse },
             { id: 'regimen', label: `Regimen (${activeMeds.length})`, icon: Pill },
-            { id: 'deprescribing', label: 'Deprescribing', icon: Sparkles },
+            { id: 'deprescribing', label: 'Deprescribe', icon: Sparkles },
             { id: 'symptoms', label: 'Symptoms', icon: Activity },
-            { id: 'toxicity', label: 'Organ toxicity', icon: Brain },
+            { id: 'toxicity', label: 'Organ load', icon: Brain },
             { id: 'directives', label: 'Directives', icon: MessageSquare },
             { id: 'clinic_board', label: 'Clinic board', icon: Layers },
           ].map((tab) => {
@@ -790,7 +820,7 @@ export default function DoctorDashboardPage() {
                 key={tab.id}
                 type="button"
                 onClick={() => setActiveTab(tab.id)}
-                className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap flex items-center gap-2 ${
+                className={`px-2 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 shrink-0 ${
                   isSelected
                     ? 'bg-[var(--surface)] text-[var(--doctor-600)] shadow-xs border border-[var(--border)]'
                     : 'text-[var(--ink-2)] hover:text-[var(--ink)]'
@@ -810,58 +840,116 @@ export default function DoctorDashboardPage() {
           <div className="space-y-6">
             {/* Top Stat Tiles Row */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-              <div className="p-4 rounded-2xl bg-[var(--surface)] border border-[var(--border)] shadow-xs space-y-1">
-                <span className="text-[10px] font-mono uppercase font-bold text-[var(--ink-3)]">
-                  Active Formularies
-                </span>
-                <p className="text-2xl font-black text-[var(--ink)] font-[var(--font-heading)]">
-                  {activeMeds.length} Prescriptions
-                </p>
-                <p className="text-[11px] text-[var(--ink-3)] font-mono">
+              {/* Card 1: Medications */}
+              <div className="p-3.5 rounded-2xl bg-[var(--surface)] border border-[var(--border)] shadow-xs flex flex-col justify-between min-h-[104px] transition-all hover:border-[var(--doctor-500)]/40">
+                <div className="flex items-center justify-between gap-1">
+                  <span className="text-[10px] font-mono uppercase font-bold text-[var(--ink-3)] tracking-wider truncate">
+                    Medications
+                  </span>
+                  <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-[var(--surface-2)] text-[var(--ink-2)] border border-[var(--border)] shrink-0">
+                    RX
+                  </span>
+                </div>
+                <div className="my-1 flex items-baseline gap-1.5 whitespace-nowrap">
+                  <span className="text-2xl sm:text-3xl font-black font-mono text-[var(--ink)] leading-none shrink-0">
+                    {activeMeds.length}
+                  </span>
+                  <span className="text-xs font-bold text-[var(--ink-3)] font-mono uppercase shrink-0">
+                    Active
+                  </span>
+                </div>
+                <div className="text-[11px] text-[var(--ink-3)] font-mono truncate">
                   {discontinuedMeds.length} safely deprescribed
-                </p>
+                </div>
               </div>
 
-              <div className="p-4 rounded-2xl bg-[var(--surface)] border border-[var(--border)] shadow-xs space-y-1">
-                <span className="text-[10px] font-mono uppercase font-bold text-[var(--ink-3)]">
-                  Cumulative Risk
-                </span>
-                <p className="text-2xl font-black text-rose-700 dark:text-rose-400 font-[var(--font-heading)]">
-                  WHO Tier {patientRiskScore >= 4 ? '5 (Critical)' : '3 (Moderate)'}
-                </p>
-                <p className="text-[11px] text-[var(--ink-3)] font-mono">
-                  Cross-prescribing sentinel vigilance
-                </p>
+              {/* Card 2: Cumulative Risk */}
+              <div className="p-3.5 rounded-2xl bg-[var(--surface)] border border-[var(--border)] shadow-xs flex flex-col justify-between min-h-[104px] transition-all hover:border-rose-500/40">
+                <div className="flex items-center justify-between gap-1">
+                  <span className="text-[10px] font-mono uppercase font-bold text-[var(--ink-3)] tracking-wider whitespace-nowrap">
+                    WHO Risk
+                  </span>
+                  <span className={`text-[10px] font-mono font-bold px-1.5 py-0.5 rounded shrink-0 ${
+                    patientRiskScore >= 4.5
+                      ? 'bg-rose-500/15 text-rose-700 dark:text-rose-300 border border-rose-500/25'
+                      : patientRiskScore >= 3.0
+                      ? 'bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/25'
+                      : 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/25'
+                  }`}>
+                    {patientRiskScore >= 4.5 ? 'Critical' : patientRiskScore >= 3.0 ? 'High' : 'Moderate'}
+                  </span>
+                </div>
+                <div className="my-1 flex items-baseline gap-1.5 whitespace-nowrap">
+                  <span className={`text-2xl sm:text-3xl font-black font-mono leading-none whitespace-nowrap shrink-0 ${
+                    patientRiskScore >= 4.5 ? 'text-rose-600 dark:text-rose-400' : 'text-amber-600 dark:text-amber-400'
+                  }`}>
+                    Tier&nbsp;{patientRiskLevel || (patientRiskScore >= 4.5 ? 5 : patientRiskScore >= 3.5 ? 4 : 3)}
+                  </span>
+                  <span className="text-xs font-bold text-[var(--ink-3)] font-mono uppercase shrink-0">
+                    Scale
+                  </span>
+                </div>
+                <div className="text-[10px] text-[var(--ink-3)] font-mono truncate">
+                  Cross-prescribing vigilance
+                </div>
               </div>
 
-              <div className="p-4 rounded-2xl bg-[var(--surface)] border border-[var(--border)] shadow-xs space-y-1">
-                <span className="text-[10px] font-mono uppercase font-bold text-[var(--ink-3)]">
-                  Cognitive ACB Burden
-                </span>
-                <p className="text-2xl font-black text-amber-700 dark:text-amber-400 font-[var(--font-heading)]">
-                  Score {patientAcbScore} (High)
-                </p>
-                <p className="text-[11px] text-[var(--ink-3)] font-mono">
+              {/* Card 3: Cognitive ACB Burden */}
+              <div className="p-3.5 rounded-2xl bg-[var(--surface)] border border-[var(--border)] shadow-xs flex flex-col justify-between min-h-[104px] transition-all hover:border-purple-500/40">
+                <div className="flex items-center justify-between gap-1">
+                  <span className="text-[9.5px] font-mono uppercase font-bold text-[var(--ink-3)] tracking-wider whitespace-nowrap">
+                    Cognitive ACB
+                  </span>
+                  <span className={`text-[10px] font-mono font-bold px-1.5 py-0.5 rounded border shrink-0 ${
+                    patientAcbScore >= 3
+                      ? 'bg-rose-500/15 text-rose-700 dark:text-rose-300 border-rose-500/25'
+                      : 'bg-purple-500/15 text-purple-700 dark:text-purple-300 border-purple-500/25'
+                  }`}>
+                    {patientAcbScore >= 3 ? 'Delirium Alert' : 'Normal'}
+                  </span>
+                </div>
+                <div className="my-1 flex items-baseline gap-1.5 whitespace-nowrap">
+                  <span className="text-2xl sm:text-3xl font-black font-mono text-purple-600 dark:text-purple-400 leading-none whitespace-nowrap shrink-0">
+                    {patientAcbScore}<span className="text-base text-purple-600/60 dark:text-purple-400/60 font-bold"> pts</span>
+                  </span>
+                  <span className={`text-xs font-bold font-mono uppercase shrink-0 ${
+                    patientAcbScore >= 3 ? 'text-rose-600 dark:text-rose-400' : 'text-purple-700/80 dark:text-purple-300/80'
+                  }`}>
+                    {patientAcbScore >= 3 ? 'Critical ACB' : 'Moderate'}
+                  </span>
+                </div>
+                <div className="text-[10px] text-[var(--ink-3)] font-mono truncate">
                   Beers 2023 delirium caution
-                </p>
+                </div>
               </div>
 
-              <div className="p-4 rounded-2xl bg-[var(--surface)] border border-[var(--border)] shadow-xs space-y-1">
-                <span className="text-[10px] font-mono uppercase font-bold text-[var(--ink-3)]">
-                  Drug Allergies
-                </span>
-                <p className="text-2xl font-black text-rose-600 font-[var(--font-heading)]">
-                  {(activePatientConn?.allergies || ['Penicillin']).length} Documented
-                </p>
-                <p className="text-[11px] text-rose-700 dark:text-rose-300 font-mono font-bold">
-                  {(activePatientConn?.allergies || ['Penicillin'])[0]}
-                </p>
+              {/* Card 4: Drug Allergies */}
+              <div className="p-3.5 rounded-2xl bg-[var(--surface)] border border-[var(--border)] shadow-xs flex flex-col justify-between min-h-[104px] transition-all hover:border-rose-500/40">
+                <div className="flex items-center justify-between gap-1">
+                  <span className="text-[10px] font-mono uppercase font-bold text-[var(--ink-3)] tracking-wider truncate">
+                    Allergies
+                  </span>
+                  <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-rose-500/15 text-rose-700 dark:text-rose-300 border border-rose-500/25 shrink-0">
+                    Alert
+                  </span>
+                </div>
+                <div className="my-1 flex items-baseline gap-1.5 whitespace-nowrap">
+                  <span className="text-2xl sm:text-3xl font-black font-mono text-rose-600 dark:text-rose-400 leading-none whitespace-nowrap shrink-0">
+                    {(activePatientConn?.allergies || ['Penicillin']).length}
+                  </span>
+                  <span className="text-xs font-bold text-rose-700/80 dark:text-rose-300/80 font-mono uppercase shrink-0">
+                    Documented
+                  </span>
+                </div>
+                <div className="text-[11px] text-rose-700 dark:text-rose-300 font-mono font-bold truncate" title={(activePatientConn?.allergies || ['Penicillin']).join(', ')}>
+                  {(activePatientConn?.allergies || ['Penicillin']).join(', ')}
+                </div>
               </div>
             </div>
 
             {/* Row: RiskRing & ACB Meter */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Card className="p-5 flex flex-col justify-between space-y-4">
+              <Card className="p-4.5 sm:p-5 flex flex-col justify-between space-y-3.5">
                 <div className="flex items-center justify-between border-b border-[var(--border)] pb-2.5">
                   <div className="flex items-center gap-2">
                     <HeartPulse className="w-4 h-4 text-rose-600" />
@@ -874,12 +962,12 @@ export default function DoctorDashboardPage() {
                   </span>
                 </div>
 
-                <div className="flex items-center justify-center py-2">
+                <div className="flex items-center justify-center py-1.5">
                   <RiskRing
                     score={patientRiskScore}
                     maxScore={5}
-                    size={150}
-                    label={patientRiskScore >= 4 ? 'Critical Risk' : 'Moderate Burden'}
+                    size={140}
+                    label={patientRiskLabel || (patientRiskScore >= 4.5 ? 'Critical Risk' : 'Moderate Burden')}
                   />
                 </div>
 
@@ -888,7 +976,7 @@ export default function DoctorDashboardPage() {
                 </p>
               </Card>
 
-              <Card className="p-5 flex flex-col justify-between space-y-4">
+              <Card className="p-4.5 sm:p-5 flex flex-col justify-between space-y-3.5">
                 <div className="flex items-center justify-between border-b border-[var(--border)] pb-2.5">
                   <div className="flex items-center gap-2">
                     <Brain className="w-4 h-4 text-purple-600" />
@@ -901,17 +989,17 @@ export default function DoctorDashboardPage() {
                   </span>
                 </div>
 
-                <div className="py-4 space-y-3">
+                <div className="py-2 space-y-2">
                   <Meter
                     value={patientAcbScore}
-                    max={4}
+                    max={5}
                     label="Cumulative Central Burden"
                     sublabel="Delirium, sedation and fall vulnerability"
                     critical={3}
                   />
                 </div>
 
-                <div className="p-3 rounded-xl bg-purple-500/10 border border-purple-500/20 text-xs text-purple-900 dark:text-purple-200">
+                <div className="p-2.5 rounded-xl bg-purple-500/10 border border-purple-500/20 text-xs text-purple-900 dark:text-purple-200">
                   <strong className="block font-bold">Beers 2023 Clinical Advisory:</strong>
                   ACB score ≥ 3 is strongly correlated with increased hospitalizations and impaired balance in older adults.
                 </div>
@@ -977,40 +1065,40 @@ export default function DoctorDashboardPage() {
 
                 {/* Organ Toxicity Semi-Circle Gauges */}
                 <div className="lg:col-span-5 grid grid-cols-2 gap-3 text-xs">
-                  <div className="p-3.5 rounded-2xl bg-[var(--surface)] border border-[var(--border)] shadow-2xs flex flex-col items-center text-center">
+                  <div className="p-3 rounded-2xl bg-[var(--surface)] border border-[var(--border)] shadow-2xs flex flex-col items-center text-center">
                     <Gauge
                       size={120}
-                      strokeWidth={10}
+                      strokeWidth={8}
                       value={84}
                       label="Cardiovascular"
                       sublabel="Severe Arrhythmia & Bleed Risk"
                     />
                   </div>
 
-                  <div className="p-3.5 rounded-2xl bg-[var(--surface)] border border-[var(--border)] shadow-2xs flex flex-col items-center text-center">
+                  <div className="p-3 rounded-2xl bg-[var(--surface)] border border-[var(--border)] shadow-2xs flex flex-col items-center text-center">
                     <Gauge
                       size={120}
-                      strokeWidth={10}
+                      strokeWidth={8}
                       value={76}
                       label="Renal Clearance"
                       sublabel="Moderate GFR Filtration Load"
                     />
                   </div>
 
-                  <div className="p-3.5 rounded-2xl bg-[var(--surface)] border border-[var(--border)] shadow-2xs flex flex-col items-center text-center">
+                  <div className="p-3 rounded-2xl bg-[var(--surface)] border border-[var(--border)] shadow-2xs flex flex-col items-center text-center">
                     <Gauge
                       size={120}
-                      strokeWidth={10}
+                      strokeWidth={8}
                       value={70}
                       label="CNS Sedation"
                       sublabel="ACB Delirium Vulnerability"
                     />
                   </div>
 
-                  <div className="p-3.5 rounded-2xl bg-[var(--surface)] border border-[var(--border)] shadow-2xs flex flex-col items-center text-center">
+                  <div className="p-3 rounded-2xl bg-[var(--surface)] border border-[var(--border)] shadow-2xs flex flex-col items-center text-center">
                     <Gauge
                       size={120}
-                      strokeWidth={10}
+                      strokeWidth={8}
                       value={62}
                       label="Hepatic CYP"
                       sublabel="CYP2C9 Metabolic Congestion"
@@ -1495,7 +1583,7 @@ export default function DoctorDashboardPage() {
           PANE 3: RIGHT RAIL — ACTION TILES (Substitute, Directive, Clinical Report)
           ═══════════════════════════════════════════════════════════════════════ */}
       <aside
-        className="w-80 flex-shrink-0 bg-[var(--surface)] border-l border-[var(--border)] p-4 sm:p-5 overflow-y-auto hidden xl:flex flex-col justify-between h-[calc(100vh-4rem)] sticky top-16 z-20 space-y-6"
+        className="w-72 2xl:w-80 flex-shrink-0 bg-[var(--surface)] border-l border-[var(--border)] p-4 sm:p-5 overflow-y-auto hidden xl:flex flex-col justify-between h-full min-h-0 z-20 space-y-5"
         aria-label="Clinical action rail and export dossiers"
       >
         <div className="space-y-5">
@@ -1603,7 +1691,7 @@ export default function DoctorDashboardPage() {
         </div>
 
         {/* Quick Reference Engine Standards */}
-        <div className="p-3 rounded-2xl bg-[var(--canvas)] border border-[var(--border)] space-y-1.5 text-[10.5px] text-[var(--ink-3)] font-mono">
+        <div className="p-3 rounded-2xl bg-[var(--canvas)] border border-[var(--border)] space-y-1.5 text-[10.5px] text-[var(--ink-3)] font-mono flex-shrink-0">
           <span className="font-bold text-[var(--ink)] block font-[var(--font-heading)]">
             Reference Clinical Engines:
           </span>

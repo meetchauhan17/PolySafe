@@ -5,6 +5,7 @@ import { Toaster } from 'sonner';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { LanguageProvider } from './context/LanguageContext';
 import { DisplaySettingsProvider } from './context/DisplaySettingsContext';
+import { SocketProvider } from './context/SocketContext';
 
 // Layouts (loaded eagerly for shell stability)
 import PatientLayout from './layouts/PatientLayout';
@@ -106,7 +107,8 @@ export default function App() {
         <AuthProvider>
           <LanguageProvider>
             <DisplaySettingsProvider>
-              <Toaster
+              <SocketProvider>
+                <Toaster
             position="top-right"
             expand={false}
             duration={4000}
@@ -192,9 +194,10 @@ export default function App() {
               </Routes>
             </Suspense>
           </ErrorBoundary>
-        </DisplaySettingsProvider>
-      </LanguageProvider>
-      </AuthProvider>
+              </SocketProvider>
+            </DisplaySettingsProvider>
+          </LanguageProvider>
+        </AuthProvider>
       </Router>
     </QueryClientProvider>
   );

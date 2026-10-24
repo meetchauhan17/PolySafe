@@ -96,6 +96,7 @@ Return ONLY valid JSON (no markdown formatting, no code block fences):
       "timing": "morning",
       "foodInstruction": "after_food",
       "manufacturer": "Pharma manufacturer if visible (e.g. 'Healing Pharma'), else null",
+      "purpose": "Primary medical indication / condition this treats (e.g. 'Fever, Headache & Body Pain', 'High Blood Pressure', 'Acidity & Acid Reflux', 'Type 2 Diabetes')",
       "suggestedType": "PRESCRIPTION",
       "safetyTip": "Brief clinical guidance for this drug class"
     }
@@ -131,6 +132,7 @@ Return ONLY valid JSON (no markdown formatting, no code block fences):
       "timing": "morning",
       "foodInstruction": "after_food",
       "manufacturer": "Pharma manufacturer if visible, else null",
+      "purpose": "Primary medical indication / condition this treats (e.g. 'Fever, Headache & Body Pain', 'High Blood Pressure', 'Acidity & Acid Reflux', 'Type 2 Diabetes')",
       "suggestedType": "PRESCRIPTION",
       "safetyTip": "Brief clinical guidance for this drug class"
     }
@@ -520,6 +522,8 @@ router.post(
                 manufacturer: med.manufacturer || null,
                 safetyTip: finalSafety,
                 suggestedType: finalType,
+                purpose: med.purpose || med.indication || null,
+                indication: med.purpose || med.indication || null,
                 rxNormVerified: rxNormRes.verified,
                 rxcui: rxNormRes.rxcui || aiResolved?.standardizedCode || null,
                 dosageOptions: aiResolved?.dosageOptions?.length > 0 ? aiResolved.dosageOptions : (med.strength ? [med.strength] : ['Standard dose']),
@@ -561,6 +565,8 @@ router.post(
             rxcui: primaryMed.rxcui,
             safetyTip: primaryMed.safetyTip,
             suggestedType: primaryMed.suggestedType,
+            purpose: primaryMed.purpose || null,
+            indication: primaryMed.purpose || null,
             dosageOptions: primaryMed.dosageOptions,
             raw_extraction: aiExtraction.raw,
 

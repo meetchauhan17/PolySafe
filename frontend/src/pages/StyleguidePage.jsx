@@ -113,7 +113,6 @@ export default function StyleguidePage() {
   const {
     theme,
     toggleTheme,
-    isProjectorMode,
     is3DEnabled,
     toggle3DEnabled,
   } = useDisplaySettings();
@@ -976,8 +975,8 @@ export default function StyleguidePage() {
                 <Toggle
                   checked={toggle2}
                   onChange={setToggle2}
-                  label="Projector / High-Contrast Mode"
-                  description="Optimizes shadows and lines for medical seminar displays"
+                  label="High-Contrast Visual Assist"
+                  description="Boosts stroke weights and boundaries for high-visibility clinical viewing"
                 />
 
                 <Toggle
@@ -1269,7 +1268,7 @@ export default function StyleguidePage() {
               number="09 /"
               kicker="CSS 3D & Physical Depth"
               title="3D Layer: Tilt, Flip, Floating Objects & Depth Stack"
-              description="Pure CSS perspective, preserve-3d, and layered vector objects. Centrally controlled via html 3d-enabled attribute, auto-disabled in projector mode, reduced-motion, and low-power devices."
+              description="Pure CSS perspective, preserve-3d, and layered vector objects. Centrally controlled via html 3d-enabled attribute, auto-disabled in reduced-motion and low-power devices."
             />
             {/* Master 3D Enablement Switch */}
             <div className="flex items-center gap-3 p-2.5 rounded-[var(--radius-lg)] bg-[var(--surface)] border border-[var(--border)] shadow-xs self-start sm:self-auto flex-shrink-0">
@@ -1290,7 +1289,7 @@ export default function StyleguidePage() {
           </div>
 
           {/* Diagnostic System Telemetry Bar */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
             <div className="p-3 rounded-[var(--radius-md)] bg-[var(--surface)] border border-[var(--border)] flex items-center justify-between">
               <span className="text-[var(--ink-3)] font-medium">Hardware Concurrency:</span>
               <span className="font-mono font-bold text-[var(--ink)]">
@@ -1304,19 +1303,13 @@ export default function StyleguidePage() {
               </span>
             </div>
             <div className="p-3 rounded-[var(--radius-md)] bg-[var(--surface)] border border-[var(--border)] flex items-center justify-between">
-              <span className="text-[var(--ink-3)] font-medium">Projector Mode:</span>
-              <span className={`font-mono font-bold ${isProjectorMode ? 'text-[var(--caution-ink)]' : 'text-[var(--ink-2)]'}`}>
-                {isProjectorMode ? 'ACTIVE (3D Off)' : 'OFF'}
-              </span>
-            </div>
-            <div className="p-3 rounded-[var(--radius-md)] bg-[var(--surface)] border border-[var(--border)] flex items-center justify-between">
               <span className="text-[var(--ink-3)] font-medium">HTML [3d-enabled]:</span>
               <span className={`font-mono font-bold px-1.5 py-0.5 rounded text-[11px] ${
-                is3DEnabled && !prefersReduced && !isProjectorMode
+                is3DEnabled && !prefersReduced
                   ? 'bg-[var(--safe-bg)] text-[var(--safe-ink)]'
                   : 'bg-[var(--caution-bg)] text-[var(--caution-ink)]'
               }`}>
-                {is3DEnabled && !prefersReduced && !isProjectorMode ? 'true' : 'false'}
+                {is3DEnabled && !prefersReduced ? 'true' : 'false'}
               </span>
             </div>
           </div>

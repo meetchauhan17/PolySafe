@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
-import { io as socketIO } from 'socket.io-client';
+import { useSocketEvent } from '../context/SocketContext';
 import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -29,16 +29,17 @@ import { searchLocalResolver, LOCAL_RESOLVER_DRUGS } from '../data/localResolver
 import { StatusPill, mapSeverityToPillStatus } from '../components/SafetyAlertsSection';
 import { useT } from '../i18n/useT';
 import VoiceInputButton from '../components/VoiceInputButton';
+import { getMedicineIndication } from '../utils/indications';
 
 // ─── Dosage Form Options ──────────────────────────────────────────────────────
 const DOSAGE_FORMS = [
-  { value: 'tablet', label: 'Tablet', icon: '💊' },
-  { value: 'capsule', label: 'Capsule', icon: '💊' },
-  { value: 'syrup', label: 'Syrup / Liquid', icon: '🧪' },
-  { value: 'injection', label: 'Injection', icon: '💉' },
-  { value: 'cream', label: 'Cream / Gel / Ointment', icon: '🧴' },
-  { value: 'drops', label: 'Eye / Ear Drops', icon: '💧' },
-  { value: 'inhaler', label: 'Inhaler / Respules', icon: '🫁' },
+  { value: 'tablet', label: 'Tablet' },
+  { value: 'capsule', label: 'Capsule' },
+  { value: 'syrup', label: 'Syrup / Liquid' },
+  { value: 'injection', label: 'Injection' },
+  { value: 'cream', label: 'Cream / Gel / Ointment' },
+  { value: 'drops', label: 'Eye / Ear Drops' },
+  { value: 'inhaler', label: 'Inhaler / Respules' },
 ];
 
 // ─── Common Drug Indications / Purposes ──────────────────────────────────────
@@ -218,6 +219,547 @@ function getPurposeGuidance(purposeStr) {
   return 'Take as directed by your physician or pharmacist. Keep consistent daily dosing.';
 }
 
+// ─── Indication & Condition Mapping Helpers ────────────────────────────────────
+function mapIndicationToCondition(purposeStr = '', drugName = '', genericName = '') {
+  const text = `${purposeStr} ${drugName} ${genericName}`.toLowerCase();
+  if (!text.trim()) return null;
+
+  // 1. Acidity / Gas / GERD / GI Reflux
+  if (
+    text.includes('acid') ||
+    text.includes('gerd') ||
+    text.includes('heartburn') ||
+    text.includes('reflux') ||
+    text.includes('gas') ||
+    text.includes('ulcer') ||
+    text.includes('gastric') ||
+    text.includes('peptic') ||
+    text.includes('nausea') ||
+    text.includes('vomit') ||
+    text.includes('antacid') ||
+    text.includes('ppi') ||
+    text.includes('pantoprazole') ||
+    text.includes('omeprazole') ||
+    text.includes('rabeprazole') ||
+    text.includes('pan-d') ||
+    text.includes('digene') ||
+    text.includes('gelusil')
+  ) {
+    return 'Acidity / Gas';
+  }
+
+  // 2. Diarrhea / Loose motions / Dehydration
+  if (
+    text.includes('diarrh') ||
+    text.includes('loose motion') ||
+    text.includes('stomach infection') ||
+    text.includes('ors') ||
+    text.includes('electral') ||
+    text.includes('loperamide') ||
+    text.includes('norflox')
+  ) {
+    return 'Diarrhea';
+  }
+
+  // 3. Headache / Migraine
+  if (
+    text.includes('headache') ||
+    text.includes('migraine') ||
+    text.includes('cephalalgia') ||
+    text.includes('naxdom')
+  ) {
+    return 'Headache';
+  }
+
+  // 4. Fever / Pyrexia
+  if (
+    text.includes('fever') ||
+    text.includes('pyrexia') ||
+    text.includes('paracetamol') ||
+    text.includes('dolo') ||
+    text.includes('calpol') ||
+    text.includes('crocin')
+  ) {
+    return 'Fever';
+  }
+
+  // 5. Body Pain / Joint / Arthritis / Muscle
+  if (
+    text.includes('body pain') ||
+    text.includes('joint') ||
+    text.includes('arthritis') ||
+    text.includes('muscle') ||
+    text.includes('sprain') ||
+    text.includes('inflammation') ||
+    text.includes('analgesic') ||
+    text.includes('nsaid') ||
+    text.includes('diclofenac') ||
+    text.includes('ibuprofen') ||
+    text.includes('voveran') ||
+    text.includes('brufen') ||
+    text.includes('combiflam') ||
+    text.includes('pain')
+  ) {
+    return 'Body Pain';
+  }
+
+  // 6. Diabetes / Blood Sugar / Glucose
+  if (
+    text.includes('diabet') ||
+    text.includes('blood sugar') ||
+    text.includes('glucose') ||
+    text.includes('glycemic') ||
+    text.includes('insulin') ||
+    text.includes('metformin') ||
+    text.includes('glycomet') ||
+    text.includes('glimepiride') ||
+    text.includes('januvia') ||
+    text.includes('vildagliptin') ||
+    text.includes('dapagliflozin') ||
+    text.includes('empagliflozin')
+  ) {
+    return 'Diabetes';
+  }
+
+  // 7. Blood Pressure / Hypertension / Cardiovascular
+  if (
+    text.includes('blood pressure') ||
+    text.includes('hypertension') ||
+    text.includes('cardio') ||
+    text.includes('heart') ||
+    text.includes('angina') ||
+    text.includes('antihypertensive') ||
+    text.includes('telma') ||
+    text.includes('telmisartan') ||
+    text.includes('amlodipine') ||
+    text.includes('losartan') ||
+    text.includes('atenolol') ||
+    text.includes('statin') ||
+    text.includes('cholesterol') ||
+    text.includes('atorvastatin') ||
+    text.includes('rosuvastatin') ||
+    text.includes('anticoagulant') ||
+    text.includes('blood thinner') ||
+    text.includes('warfarin') ||
+    text.includes('ecosprin') ||
+    text.includes('aspirin') ||
+    text.includes('clopidogrel')
+  ) {
+    return 'Blood Pressure';
+  }
+
+  // 8. Cough / Cold / Respiratory / Sinus / Asthma
+  if (
+    text.includes('cough') ||
+    text.includes('cold') ||
+    text.includes('sinus') ||
+    text.includes('nasal') ||
+    text.includes('phlegm') ||
+    text.includes('congestion') ||
+    text.includes('bronch') ||
+    text.includes('asthma') ||
+    text.includes('copd') ||
+    text.includes('wheez') ||
+    text.includes('cheston') ||
+    text.includes('sinarest') ||
+    text.includes('ascoril') ||
+    text.includes('alex') ||
+    text.includes('benadryl') ||
+    text.includes('inhaler') ||
+    text.includes('salbutamol') ||
+    text.includes('asthalin') ||
+    text.includes('foracort') ||
+    text.includes('budecort') ||
+    text.includes('duolin')
+  ) {
+    return 'Cough / Cold';
+  }
+
+  // 9. Allergy / Rhinitis / Hives / Urticaria
+  if (
+    text.includes('allerg') ||
+    text.includes('rhinitis') ||
+    text.includes('sneez') ||
+    text.includes('hives') ||
+    text.includes('urticaria') ||
+    text.includes('antihistamine') ||
+    text.includes('itching') ||
+    text.includes('watery eyes') ||
+    text.includes('cetirizine') ||
+    text.includes('allegra') ||
+    text.includes('fexofenadine') ||
+    text.includes('levocetirizine') ||
+    text.includes('loratadine') ||
+    text.includes('zyrtec') ||
+    text.includes('montair') ||
+    text.includes('montek')
+  ) {
+    return 'Allergy';
+  }
+
+  // 10. Vitamins / Immunity / Nutrition / Minerals
+  if (
+    text.includes('vitamin') ||
+    text.includes('calcium') ||
+    text.includes('mineral') ||
+    text.includes('immunity') ||
+    text.includes('supplement') ||
+    text.includes('multivitamin') ||
+    text.includes('iron') ||
+    text.includes('folic') ||
+    text.includes('b12') ||
+    text.includes('d3') ||
+    text.includes('zinc') ||
+    text.includes('shelcal') ||
+    text.includes('becosules') ||
+    text.includes('neurobion') ||
+    text.includes('supradyn') ||
+    text.includes('evion') ||
+    text.includes('ashwagandha') ||
+    text.includes('liv52') ||
+    text.includes('bone') ||
+    text.includes('nerve')
+  ) {
+    return 'Vitamins / Immunity';
+  }
+
+  return null;
+}
+
+function resolveAndAutoFillIndication(drugName = '', genericName = '', category = '', overridePurpose = '') {
+  let resolvedPurpose = (overridePurpose || '').trim();
+
+  if (!resolvedPurpose && drugName) {
+    const lowerName = drugName.toLowerCase().trim();
+    if (COMMON_DRUG_PURPOSES[lowerName]) {
+      resolvedPurpose = COMMON_DRUG_PURPOSES[lowerName];
+    } else {
+      const ind = getMedicineIndication({
+        name: drugName,
+        generic: genericName,
+        category: category,
+      });
+      if (ind && ind !== 'Prescribed Medical Treatment') {
+        resolvedPurpose = ind;
+      } else {
+        for (const [key, val] of Object.entries(COMMON_DRUG_PURPOSES)) {
+          if (lowerName.includes(key) || key.includes(lowerName)) {
+            resolvedPurpose = val;
+            break;
+          }
+        }
+      }
+    }
+  }
+
+  const matchedCondition = mapIndicationToCondition(resolvedPurpose, drugName, genericName);
+
+  return {
+    purpose: resolvedPurpose || (matchedCondition ? CONDITION_MED_RECOMMENDATIONS[matchedCondition]?.[0]?.purpose || matchedCondition : ''),
+    condition: matchedCondition,
+  };
+}
+
+function extractDosageFromName(name = '') {
+  const match = name.match(/\b(\d+(\.\d+)?\s*(mg|mcg|g|ml|iu|sachet|tablet|puff))\b/i);
+  if (match) return match[1].toLowerCase().replace(/\s+/g, '');
+  const numMatch = name.match(/\b(\d{2,4})\b/);
+  if (numMatch) {
+    const num = parseInt(numMatch[1], 10);
+    if (num >= 5 && num <= 2000) return `${num}mg`;
+  }
+  return '';
+}
+
+function resolveMealInstruction(drugName = '', genericName = '', category = '') {
+  const text = `${drugName} ${genericName} ${category}`.toLowerCase();
+
+  if (
+    text.includes('pan') ||
+    text.includes('pantoprazole') ||
+    text.includes('omeprazole') ||
+    text.includes('rabeprazole') ||
+    text.includes('esomeprazole') ||
+    text.includes('omez') ||
+    text.includes('digene') ||
+    text.includes('gelusil') ||
+    text.includes('antacid') ||
+    text.includes('ppi')
+  ) {
+    return 'before_food';
+  }
+
+  if (text.includes('metformin') || text.includes('glycomet')) {
+    return 'with_food';
+  }
+
+  if (text.includes('thyronorm') || text.includes('eltroxin') || text.includes('levothyroxine')) {
+    return 'empty_stomach';
+  }
+
+  return 'after_food';
+}
+
+function resolveClinicalDetails(drugName = '', genericName = '', rawCategory = '', existingData = {}) {
+  const extractedName = (drugName || '').trim();
+  const lowerName = extractedName.toLowerCase();
+
+  const localMatch = searchLocalResolver(extractedName);
+  const bestLocal = localMatch?.length > 0 ? localMatch[0] : null;
+
+  // 1. Resolve Generic Name & Composition Salts
+  let resolvedGeneric = (genericName || existingData.genericName || existingData.generic_name || bestLocal?.generic || '').trim();
+  let resolvedSalts = Array.isArray(existingData.composition) && existingData.composition.length > 0
+    ? existingData.composition
+    : (Array.isArray(existingData.genericSalts) && existingData.genericSalts.length > 0
+        ? existingData.genericSalts
+        : (bestLocal?.genericSalts || []));
+
+  if (!resolvedGeneric) {
+    if (lowerName.includes('dolo') || lowerName.includes('calpol') || lowerName.includes('crocin')) resolvedGeneric = 'Paracetamol';
+    else if (lowerName.includes('pan-d') || lowerName.includes('pantocid-d')) resolvedGeneric = 'Pantoprazole + Domperidone';
+    else if (lowerName.includes('combiflam')) resolvedGeneric = 'Ibuprofen + Paracetamol';
+    else if (lowerName.includes('augmentin')) resolvedGeneric = 'Amoxicillin + Clavulanic Acid';
+    else if (lowerName.includes('naxdom')) resolvedGeneric = 'Naproxen + Domperidone';
+    else if (lowerName.includes('zerodol sp')) resolvedGeneric = 'Aceclofenac + Paracetamol + Serratiopeptidase';
+    else if (lowerName.includes('telma')) resolvedGeneric = 'Telmisartan';
+    else if (lowerName.includes('glycomet') || lowerName.includes('metformin')) resolvedGeneric = 'Metformin';
+    else if (lowerName.includes('atorva')) resolvedGeneric = 'Atorvastatin';
+    else if (lowerName.includes('allegra')) resolvedGeneric = 'Fexofenadine';
+    else if (lowerName.includes('cheston')) resolvedGeneric = 'Cetirizine + Paracetamol + Phenylephrine';
+    else if (lowerName.includes('sinarest')) resolvedGeneric = 'Paracetamol + Phenylephrine + Chlorpheniramine';
+    else if (lowerName.includes('shelcal')) resolvedGeneric = 'Calcium + Vitamin D3';
+    else if (lowerName.includes('becosules')) resolvedGeneric = 'Vitamin B-Complex + Vitamin C';
+    else if (lowerName.includes('neurobion')) resolvedGeneric = 'Vitamin B12 + B-Complex';
+    else if (lowerName.includes('electral') || lowerName.includes('ors')) resolvedGeneric = 'Oral Rehydration Salts';
+    else if (lowerName.includes('digene')) resolvedGeneric = 'Magnesium Hydroxide + Aluminum Hydroxide + Simethicone';
+    else if (lowerName.includes('gelusil')) resolvedGeneric = 'Magnesium Hydroxide + Aluminum Hydroxide + Dimethicone';
+  }
+
+  if (resolvedSalts.length === 0 && resolvedGeneric) {
+    if (resolvedGeneric.includes('+')) {
+      resolvedSalts = resolvedGeneric.split('+').map(s => s.trim()).filter(Boolean);
+    } else if (resolvedGeneric.includes(',')) {
+      resolvedSalts = resolvedGeneric.split(',').map(s => s.trim()).filter(Boolean);
+    } else {
+      resolvedSalts = [resolvedGeneric];
+    }
+  }
+
+  // 2. Resolve Strength / Dosage
+  let resolvedDosage = (existingData.strength || existingData.suggestedDosage || existingData.dosage || '').trim();
+  if (!resolvedDosage) {
+    resolvedDosage = extractDosageFromName(extractedName) || bestLocal?.dosage || '';
+  }
+  if (!resolvedDosage) {
+    if (lowerName.includes('dolo 650') || lowerName.includes('dolo')) resolvedDosage = '650mg';
+    else if (lowerName.includes('pan-d') || lowerName.includes('pantocid-d')) resolvedDosage = '40mg + 30mg SR';
+    else if (lowerName.includes('combiflam')) resolvedDosage = '400mg + 325mg';
+    else if (lowerName.includes('augmentin 625') || lowerName.includes('augmentin')) resolvedDosage = '625mg';
+    else if (lowerName.includes('naxdom 500') || lowerName.includes('naxdom')) resolvedDosage = '500mg + 10mg';
+    else if (lowerName.includes('zerodol sp')) resolvedDosage = '100mg + 325mg + 15mg';
+    else if (lowerName.includes('calpol 500') || lowerName.includes('calpol')) resolvedDosage = '500mg';
+    else if (lowerName.includes('crocin 650')) resolvedDosage = '650mg';
+    else if (lowerName.includes('crocin')) resolvedDosage = '500mg';
+    else if (lowerName.includes('telma 40') || lowerName.includes('telma')) resolvedDosage = '40mg';
+    else if (lowerName.includes('glycomet 500') || lowerName.includes('glycomet') || lowerName.includes('metformin')) resolvedDosage = '500mg';
+    else if (lowerName.includes('cheston cold') || lowerName.includes('sinarest')) resolvedDosage = '1 tablet';
+    else if (lowerName.includes('allegra 120') || lowerName.includes('allegra')) resolvedDosage = '120mg';
+    else if (lowerName.includes('cetirizine 10') || lowerName.includes('cetirizine')) resolvedDosage = '10mg';
+    else if (lowerName.includes('shelcal 500') || lowerName.includes('shelcal')) resolvedDosage = '500mg';
+    else if (lowerName.includes('becosules')) resolvedDosage = '1 capsule';
+    else if (lowerName.includes('neurobion')) resolvedDosage = '1 tablet';
+    else if (lowerName.includes('electral') || lowerName.includes('ors')) resolvedDosage = '1 sachet (21.8g)';
+    else if (lowerName.includes('digene')) resolvedDosage = '2 tablets';
+    else if (lowerName.includes('voveran 50') || lowerName.includes('voveran')) resolvedDosage = '50mg';
+    else if (lowerName.includes('azithral 500') || lowerName.includes('azithral')) resolvedDosage = '500mg';
+  }
+
+  // 3. Clinical Indication & Condition
+  let { purpose: resolvedPurpose, condition: resolvedCondition } = resolveAndAutoFillIndication(
+    extractedName,
+    resolvedGeneric,
+    rawCategory,
+    existingData.purpose || existingData.indication || bestLocal?.purpose
+  );
+  if (!resolvedPurpose && bestLocal?.purpose) {
+    resolvedPurpose = bestLocal.purpose;
+    resolvedCondition = mapIndicationToCondition(resolvedPurpose, extractedName, resolvedGeneric);
+  }
+
+  // 4. Meal Instruction
+  let mealInstruction = existingData.foodInstruction || (bestLocal?.foodInstruction !== 'any' ? bestLocal?.foodInstruction : '') || '';
+  if (!mealInstruction || mealInstruction === 'any') {
+    mealInstruction = resolveMealInstruction(extractedName, resolvedGeneric, rawCategory);
+  }
+
+  // 5. Recommended Frequency & Timings
+  let resolvedFreq = existingData.frequency || existingData.commonFrequency || bestLocal?.commonFrequency || '';
+  let resolvedTimings = existingData.extractedTimings || (existingData.timing ? [existingData.timing] : (bestLocal?.extractedTimings || []));
+
+  if (!resolvedFreq) {
+    if (
+      lowerName.includes('pan') ||
+      lowerName.includes('telma') ||
+      lowerName.includes('amlodipine') ||
+      lowerName.includes('atorva') ||
+      lowerName.includes('shelcal') ||
+      lowerName.includes('allegra') ||
+      lowerName.includes('cetirizine') ||
+      lowerName.includes('warfarin') ||
+      lowerName.includes('losartan')
+    ) {
+      resolvedFreq = 'once';
+      resolvedTimings = lowerName.includes('warfarin') || lowerName.includes('atorva') ? ['evening'] : lowerName.includes('cetirizine') ? ['bedtime'] : ['morning'];
+    } else if (
+      lowerName.includes('augmentin') ||
+      lowerName.includes('combiflam') ||
+      lowerName.includes('voveran') ||
+      lowerName.includes('norflox') ||
+      lowerName.includes('naxdom') ||
+      lowerName.includes('amoxicillin') ||
+      lowerName.includes('metformin') ||
+      lowerName.includes('glycomet')
+    ) {
+      resolvedFreq = 'twice';
+      resolvedTimings = ['morning', 'evening'];
+    } else if (lowerName.includes('dolo') || lowerName.includes('crocin') || lowerName.includes('calpol')) {
+      resolvedFreq = 'thrice';
+      resolvedTimings = ['morning', 'afternoon', 'evening'];
+    } else {
+      resolvedFreq = 'once';
+      resolvedTimings = ['morning'];
+    }
+  } else {
+    const f = resolvedFreq.toLowerCase();
+    if (f.includes('thrice') || f.includes('tid')) {
+      resolvedFreq = 'thrice';
+      resolvedTimings = ['morning', 'afternoon', 'evening'];
+    } else if (f.includes('twice') || f.includes('bid')) {
+      resolvedFreq = 'twice';
+      resolvedTimings = ['morning', 'evening'];
+    } else if (f.includes('four') || f.includes('qid')) {
+      resolvedFreq = 'four';
+      resolvedTimings = ['morning', 'afternoon', 'evening', 'bedtime'];
+    } else {
+      resolvedFreq = 'once';
+      resolvedTimings = lowerName.includes('warfarin') || lowerName.includes('atorva') ? ['evening'] : lowerName.includes('cetirizine') ? ['bedtime'] : ['morning'];
+    }
+  }
+
+  // 6. Dosage Form
+  let resolvedForm = (existingData.form || '').toLowerCase();
+  if (!resolvedForm) {
+    if (
+      lowerName.includes('pan-d') ||
+      lowerName.includes('pantocid-d') ||
+      lowerName.includes('omez-d') ||
+      lowerName.includes('rabekind-d') ||
+      lowerName.includes('omez') ||
+      lowerName.includes('becosules') ||
+      lowerName.includes('evion') ||
+      lowerName.includes('capsule') ||
+      lowerName.includes('cap')
+    ) {
+      resolvedForm = 'capsule';
+    } else if (
+      lowerName.includes('syrup') ||
+      lowerName.includes('suspension') ||
+      lowerName.includes('liquid') ||
+      lowerName.includes('ascoril') ||
+      lowerName.includes('alex') ||
+      lowerName.includes('benadryl') ||
+      lowerName.includes('corex') ||
+      lowerName.includes('grilinctus')
+    ) {
+      resolvedForm = 'syrup';
+    } else if (lowerName.includes('drop') || lowerName.includes('otrivin') || lowerName.includes('nasivion')) {
+      resolvedForm = 'drops';
+    } else if (
+      lowerName.includes('inhaler') ||
+      lowerName.includes('respule') ||
+      lowerName.includes('asthalin') ||
+      lowerName.includes('foracort') ||
+      lowerName.includes('seroflo') ||
+      lowerName.includes('budecort') ||
+      lowerName.includes('duolin')
+    ) {
+      resolvedForm = 'inhaler';
+    } else if (
+      lowerName.includes('cream') ||
+      lowerName.includes('gel') ||
+      lowerName.includes('ointment') ||
+      lowerName.includes('volini') ||
+      lowerName.includes('omnigel') ||
+      lowerName.includes('moov')
+    ) {
+      resolvedForm = 'cream';
+    } else if (lowerName.includes('injection') || lowerName.includes('inj') || lowerName.includes('insulin')) {
+      resolvedForm = 'injection';
+    } else {
+      resolvedForm = 'tablet';
+    }
+  } else {
+    if (resolvedForm.includes('capsule')) resolvedForm = 'capsule';
+    else if (resolvedForm.includes('syrup') || resolvedForm.includes('liquid') || resolvedForm.includes('suspension')) resolvedForm = 'syrup';
+    else if (resolvedForm.includes('drop')) resolvedForm = 'drops';
+    else if (resolvedForm.includes('inhaler') || resolvedForm.includes('respule')) resolvedForm = 'inhaler';
+    else if (resolvedForm.includes('cream') || resolvedForm.includes('gel') || resolvedForm.includes('ointment')) resolvedForm = 'cream';
+    else if (resolvedForm.includes('injection')) resolvedForm = 'injection';
+    else resolvedForm = 'tablet';
+  }
+
+  // 7. Regulatory Type
+  let resolvedType = existingData.suggestedType;
+  if (!resolvedType) {
+    if (
+      rawCategory.toLowerCase().includes('herb') ||
+      rawCategory.toLowerCase().includes('ayurved') ||
+      lowerName.includes('turmeric') ||
+      lowerName.includes('ashwagandha') ||
+      lowerName.includes('liv52') ||
+      lowerName.includes('triphala') ||
+      lowerName.includes('tulsi') ||
+      lowerName.includes('neem') ||
+      bestLocal?.source === 'herbal'
+    ) {
+      resolvedType = 'HERBAL';
+    } else if (
+      rawCategory.toLowerCase().includes('otc') ||
+      lowerName.includes('paracetamol') ||
+      lowerName.includes('dolo') ||
+      lowerName.includes('calpol') ||
+      lowerName.includes('crocin') ||
+      lowerName.includes('digene') ||
+      lowerName.includes('gelusil') ||
+      lowerName.includes('ors') ||
+      lowerName.includes('electral') ||
+      lowerName.includes('shelcal') ||
+      lowerName.includes('becosules') ||
+      lowerName.includes('strepsils') ||
+      lowerName.includes('vicks') ||
+      bestLocal?.source === 'otc'
+    ) {
+      resolvedType = 'OTC';
+    } else {
+      resolvedType = 'PRESCRIPTION';
+    }
+  }
+
+  return {
+    genericName: resolvedGeneric,
+    salts: resolvedSalts,
+    dosage: resolvedDosage,
+    purpose: resolvedPurpose,
+    condition: resolvedCondition,
+    mealInstruction,
+    frequency: resolvedFreq,
+    timings: resolvedTimings,
+    form: resolvedForm,
+    type: resolvedType,
+  };
+}
+
 // ─── Medicine type options ────────────────────────────────────────────────────
 const MEDICINE_TYPES = [
   {
@@ -342,8 +884,8 @@ async function scanPrescription(payload) {
   return resp.data;
 }
 
-async function addMedicine({ name, type, dosage }) {
-  const resp = await axios.post('/medicine', { name, type, dosage });
+async function addMedicine({ name, type, dosage, purpose, notes }) {
+  const resp = await axios.post('/medicine', { name, type, dosage, purpose, notes });
   return resp.data;
 }
 
@@ -713,7 +1255,20 @@ function MultiMedBatchReviewCard({ scanResult, onBatchAdd, onDismiss }) {
   };
 
   const handleAddAll = async () => {
-    const medsToAdd = selectedMeds.map((idx) => medications[idx]);
+    const medsToAdd = selectedMeds.map((idx) => {
+      const med = medications[idx];
+      const name = med.drug_name || med.name;
+      const clinical = resolveClinicalDetails(name, med.generic_name, med.category, med);
+      return {
+        name,
+        type: clinical.type || med.suggestedType || 'PRESCRIPTION',
+        dosage: clinical.dosage || med.strength || undefined,
+        purpose: clinical.purpose || undefined,
+        frequency: clinical.frequency || med.frequency || 'once',
+        notes: clinical.mealInstruction || med.foodInstruction || undefined,
+        form: clinical.form || med.form || 'tablet',
+      };
+    });
     if (medsToAdd.length === 0) {
       notify.warn('No Medicines Selected', 'Please select at least 1 medicine to add.');
       return;
@@ -948,6 +1503,22 @@ function ScanResultsReviewCard({ scanResult, onDismiss, onBatchAdd, onFieldFocus
             <p className="text-[11px] text-[var(--ink-3)] truncate">{scanResult.category}</p>
           )}
         </div>
+
+        {/* Clinical Indication & Purpose Tile */}
+        <div className="p-3 rounded-2xl border bg-emerald-50/50 dark:bg-emerald-950/20 border-emerald-500/25 sm:col-span-2">
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] uppercase tracking-wider font-bold text-emerald-800 dark:text-emerald-400 flex items-center gap-1.5">
+              <Activity className="w-3.5 h-3.5 text-emerald-600" />
+              Clinical Indication & Purpose
+            </span>
+            <span className="text-[10px] font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-500/15 px-2 py-0.5 rounded-full">
+              Auto-filled in Step 2 below
+            </span>
+          </div>
+          <p className="font-bold text-[var(--ink)] text-xs sm:text-sm mt-0.5">
+            {scanResult.purpose || scanResult.indication || getMedicineIndication({ name: drugName, generic: scanResult.generic_name, category: scanResult.category })}
+          </p>
+        </div>
       </div>
 
       {/* Chemical Salts Decomposition */}
@@ -997,7 +1568,7 @@ function ScanResultsReviewCard({ scanResult, onDismiss, onBatchAdd, onFieldFocus
 // ─── Main Redesigned Component ────────────────────────────────────────────────
 export default function AddMedicinePage() {
   const navigate = useNavigate();
-  const { user, isGuest, requireAuth } = useAuth();
+  const { isGuest, requireAuth } = useAuth();
   const { t } = useT();
   const isReduced = useReducedMotion();
   const fileInputRef = useRef(null);
@@ -1096,7 +1667,6 @@ export default function AddMedicinePage() {
   const [safetyPreviewAlerts, setSafetyPreviewAlerts] = useState([]);
   const [safetyPreviewLoading, setSafetyPreviewLoading] = useState(false);
 
-  const socketRef = useRef(null);
 
   // Save recent search
   const addRecentSearch = (term) => {
@@ -1209,14 +1779,20 @@ export default function AddMedicinePage() {
   const handleSelectSuggestion = useCallback((sug) => {
     setName(sug.name);
     addRecentSearch(sug.name);
-    if (sug.generic) setGenericName(sug.generic);
-    if (sug.generic && sug.generic.includes('+')) {
-      setCompositionSalts(sug.generic.split('+').map(s => s.trim()).filter(Boolean));
-    }
-    if (sug.dosage) setDosage(sug.dosage);
-    if (sug.commonFrequency) setFrequency(sug.commonFrequency);
-    if (sug.foodInstruction) setNotes(sug.foodInstruction);
-    if (sug.purpose) setPurpose(sug.purpose);
+
+    const clinical = resolveClinicalDetails(sug.name, sug.generic, sug.category, sug);
+
+    if (clinical.genericName) setGenericName(clinical.genericName);
+    if (clinical.salts?.length > 0) setCompositionSalts(clinical.salts);
+    if (clinical.dosage) setDosage(clinical.dosage);
+    if (clinical.form) setForm(clinical.form);
+    if (clinical.type) setType(clinical.type);
+    if (clinical.mealInstruction) setNotes(clinical.mealInstruction);
+    if (clinical.frequency) setFrequency(clinical.frequency);
+    if (clinical.timings?.length > 0) setTimings(clinical.timings);
+
+    if (clinical.purpose) setPurpose(clinical.purpose);
+    if (clinical.condition) setSelectedCondition(clinical.condition);
 
     if (sug.extractedTimings?.length > 0) {
       setTimings(sug.extractedTimings);
@@ -1230,8 +1806,12 @@ export default function AddMedicinePage() {
       setTimings(['morning']);
     }
 
-    if (sug.source === 'herbal' || sug.name.toLowerCase().includes('turmeric') || sug.name.toLowerCase().includes('ashwagandha')) {
+    if (sug.source === 'herbal' || sug.name?.toLowerCase().includes('turmeric') || sug.name?.toLowerCase().includes('ashwagandha') || clinical.type === 'HERBAL') {
       setType('HERBAL');
+    } else if (clinical.type) {
+      setType(clinical.type);
+    } else if (sug.source === 'otc' || sug.category?.toLowerCase().includes('otc')) {
+      setType('OTC');
     } else {
       setType('PRESCRIPTION');
     }
@@ -1243,6 +1823,27 @@ export default function AddMedicinePage() {
   }, []);
 
   const handleNameKeyDown = useCallback((e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      if (showSuggestions && suggestions.length > 0) {
+        handleSelectSuggestion(suggestions[selectedIdx >= 0 ? selectedIdx : 0]);
+      } else if (name.trim().length >= 2) {
+        const clinical = resolveClinicalDetails(name.trim(), genericName);
+        if (clinical.genericName) setGenericName(clinical.genericName);
+        if (clinical.salts?.length > 0) setCompositionSalts(clinical.salts);
+        if (clinical.dosage) setDosage(clinical.dosage);
+        if (clinical.purpose) setPurpose(clinical.purpose);
+        if (clinical.condition) setSelectedCondition(clinical.condition);
+        if (clinical.mealInstruction) setNotes(clinical.mealInstruction);
+        if (clinical.frequency) setFrequency(clinical.frequency);
+        if (clinical.timings?.length > 0) setTimings(clinical.timings);
+        if (clinical.form) setForm(clinical.form);
+        if (clinical.type) setType(clinical.type);
+        setShowSuggestions(false);
+        notify.success('Drug Details Auto-Filled', `Auto-filled details for "${name.trim()}"`);
+      }
+      return;
+    }
     if (!showSuggestions || suggestions.length === 0) return;
     if (e.key === 'ArrowDown') {
       e.preventDefault();
@@ -1250,13 +1851,10 @@ export default function AddMedicinePage() {
     } else if (e.key === 'ArrowUp') {
       e.preventDefault();
       setSelectedIdx(prev => Math.max(prev - 1, -1));
-    } else if (e.key === 'Enter' && selectedIdx >= 0) {
-      e.preventDefault();
-      handleSelectSuggestion(suggestions[selectedIdx]);
     } else if (e.key === 'Escape') {
       setShowSuggestions(false);
     }
-  }, [showSuggestions, suggestions, selectedIdx, handleSelectSuggestion]);
+  }, [showSuggestions, suggestions, selectedIdx, handleSelectSuggestion, name, genericName]);
 
   // Grouped suggestions for the combobox
   const groupedSuggestions = useMemo(() => {
@@ -1337,59 +1935,34 @@ export default function AddMedicinePage() {
   const handleSelectPillMatch = (match) => {
     setName(match.drugName);
     addRecentSearch(match.drugName);
-    if (match.strength) setDosage(match.strength);
-    if (match.shape) {
-      const s = match.shape.toLowerCase();
-      if (s.includes('capsule')) setForm('capsule');
-      else setForm('tablet');
-    }
-    setType('PRESCRIPTION');
+
+    const clinical = resolveClinicalDetails(match.drugName, match.genericName, match.category, match);
+
+    if (clinical.genericName) setGenericName(clinical.genericName);
+    if (clinical.salts?.length > 0) setCompositionSalts(clinical.salts);
+    if (clinical.dosage) setDosage(clinical.dosage);
+    if (clinical.form) setForm(clinical.form);
+    if (clinical.type) setType(clinical.type);
+    if (clinical.mealInstruction) setNotes(clinical.mealInstruction);
+    if (clinical.frequency) setFrequency(clinical.frequency);
+    if (clinical.timings?.length > 0) setTimings(clinical.timings);
+
+    if (clinical.purpose) setPurpose(clinical.purpose);
+    if (clinical.condition) setSelectedCondition(clinical.condition);
+
     setIsScanFilled(true);
     setPillState('idle');
     notify.success('Pill Details Loaded', `Pre-filled "${match.drugName}". Review all fields before saving.`);
   };
 
-  // Socket setup
-  const setupSocket = useCallback((currentUserId) => {
-    if (socketRef.current) socketRef.current.disconnect();
-
-    const socketUrl = import.meta.env.VITE_API_URL || window.location.origin;
-    const socket = socketIO(socketUrl, {
-      transports: ['websocket', 'polling'],
-      autoConnect: true,
-    });
-
-    socket.on('connect', () => {
-      socket.emit('join-patient-room', { userId: currentUserId, patientId: currentUserId });
-    });
-
-    const handleResult = (data) => {
-      setCheckResult(data);
-      setCheckState('done');
-    };
-
-    socket.on('interaction-checked', handleResult);
-    socket.on('interaction-check-result', handleResult);
-
-    socket.on('connect_error', (err) => {
-      console.warn('[socket] connect_error:', err.message);
-      setCheckState('done');
-      setCheckResult({
-        summary: 'check-error',
-        message: 'Real-time notification delayed. You can view full interaction summary on your Dashboard.',
-      });
-    });
-
-    socketRef.current = socket;
+  // Live interaction check via shared socket
+  const handleInteractionResult = useCallback((data) => {
+    setCheckResult(data);
+    setCheckState('done');
   }, []);
 
-  useEffect(() => {
-    const userId = user?.userId || user?.id;
-    if (userId) setupSocket(userId);
-    return () => {
-      socketRef.current?.disconnect();
-    };
-  }, [user, setupSocket]);
+  useSocketEvent('interaction-checked', handleInteractionResult);
+  useSocketEvent('interaction-check-result', handleInteractionResult);
 
   // Scan mutation with 3-step animated progress simulation
   const scanMutation = useMutation({
@@ -1412,35 +1985,25 @@ export default function AddMedicinePage() {
       if (extractedName) {
         setName(extractedName);
         addRecentSearch(extractedName);
-        const genName = data.generic_name || data.genericName || '';
-        setGenericName(genName);
 
-        if (Array.isArray(data.composition) && data.composition.length > 0) {
-          setCompositionSalts(data.composition);
-        } else if (Array.isArray(data.genericSalts) && data.genericSalts.length > 0) {
-          setCompositionSalts(data.genericSalts);
-        } else if (genName && genName.includes('+')) {
-          setCompositionSalts(genName.split('+').map(s => s.trim()).filter(Boolean));
-        } else {
-          setCompositionSalts([]);
+        const clinical = resolveClinicalDetails(extractedName, data.generic_name || data.genericName, data.category, data);
+
+        if (clinical.genericName) setGenericName(clinical.genericName);
+        if (clinical.salts?.length > 0) setCompositionSalts(clinical.salts);
+        if (clinical.dosage) setDosage(clinical.dosage);
+        if (clinical.form) setForm(clinical.form);
+        if (clinical.type) setType(clinical.type);
+        if (clinical.mealInstruction) setNotes(clinical.mealInstruction);
+        if (clinical.frequency) setFrequency(clinical.frequency);
+        if (clinical.timings?.length > 0) setTimings(clinical.timings);
+
+        if (clinical.purpose) {
+          setPurpose(clinical.purpose);
+          data.purpose = clinical.purpose;
+          data.indication = clinical.purpose;
         }
-
-        const dosageVal = data.strength || data.suggestedDosage || '';
-        setDosage(dosageVal);
-
-        const formStr = (data.form || '').toLowerCase();
-        if (formStr.includes('capsule')) setForm('capsule');
-        else if (formStr.includes('syrup') || formStr.includes('liquid') || formStr.includes('suspension')) setForm('syrup');
-        else if (formStr.includes('injection')) setForm('injection');
-        else if (formStr.includes('ointment') || formStr.includes('cream') || formStr.includes('gel')) setForm('cream');
-        else if (formStr.includes('drop')) setForm('drops');
-        else if (formStr.includes('inhaler') || formStr.includes('respule')) setForm('inhaler');
-        else setForm('tablet');
-
-        if (data.suggestedType) {
-          setType(data.suggestedType);
-        } else if (formStr.includes('tablet') || formStr.includes('capsule')) {
-          setType('PRESCRIPTION');
+        if (clinical.condition) {
+          setSelectedCondition(clinical.condition);
         }
 
         if (data.manufacturer) setManufacturer(data.manufacturer);
@@ -1448,35 +2011,22 @@ export default function AddMedicinePage() {
         if (data.expiryDate) setExpiryDate(data.expiryDate);
         if (data.safetyTip) setSafetyWarning(data.safetyTip);
 
-        const freqStr = (data.frequency || data.commonFrequency || '').toLowerCase();
-        if (freqStr.includes('twice') || freqStr.includes('bid')) {
-          setFrequency('twice');
-          setTimings(['morning', 'evening']);
-        } else if (freqStr.includes('thrice') || freqStr.includes('tid')) {
-          setFrequency('thrice');
-          setTimings(['morning', 'afternoon', 'evening']);
-        } else if (freqStr.includes('once') || freqStr.includes('od') || freqStr.includes('daily')) {
-          setFrequency('once');
-          setTimings(['morning']);
-        }
-
         const prescriberVal = data.prescriber || data.prescriberName;
         if (prescriberVal) setPrescriber(prescriberVal);
-        if (data.foodInstruction) setNotes(data.foodInstruction);
 
         setIsScanFilled(true);
         setSelectedDrugInfo({
           name: extractedName,
-          generic: genName || extractedName,
+          generic: clinical.genericName || extractedName,
           rxcui: data.rxcui || data.standardizedCode,
-          dosage: dosageVal,
-          category: data.category || (type === 'HERBAL' ? 'Ayurvedic / Herbal' : 'Prescription Drug'),
+          dosage: clinical.dosage,
+          category: data.category || (clinical.type === 'HERBAL' ? 'Ayurvedic / Herbal' : 'Prescription Drug'),
           safetyTip: data.safetyTip || 'Verify dosage and administration instructions with your physician.',
           dosageOptions: data.dosageOptions || [],
           source: data.source || (data.rxcui ? 'rxnorm' : 'gemini'),
         });
 
-        notify.success('Prescription Scanned & Auto-Filled', `Auto-filled "${extractedName}" from label.`);
+        notify.success('Prescription Scanned & Auto-Filled', `Auto-filled details for "${extractedName}".`);
       } else {
         notify.info('Text Extracted', 'Please verify or enter the medicine name below.');
       }
@@ -1658,24 +2208,28 @@ export default function AddMedicinePage() {
     const medName = drugData.drug_name;
     setName(medName);
     addRecentSearch(medName);
-    if (drugData.generic_name) setGenericName(drugData.generic_name);
-    if (drugData.strength) setDosage(drugData.strength);
-    if (drugData.form) {
-      const f = drugData.form.toLowerCase();
-      if (f.includes('capsule')) setForm('capsule');
-      else if (f.includes('syrup')) setForm('syrup');
-      else if (f.includes('injection')) setForm('injection');
-      else setForm('tablet');
-    }
-    if (drugData.foodInstruction) setNotes(drugData.foodInstruction);
+
+    const clinical = resolveClinicalDetails(medName, drugData.generic_name, drugData.category, drugData);
+
+    if (clinical.genericName) setGenericName(clinical.genericName);
+    if (clinical.salts?.length > 0) setCompositionSalts(clinical.salts);
+    if (clinical.dosage) setDosage(clinical.dosage);
+    if (clinical.form) setForm(clinical.form);
+    if (clinical.type) setType(clinical.type);
+    if (clinical.mealInstruction) setNotes(clinical.mealInstruction);
+    if (clinical.frequency) setFrequency(clinical.frequency);
+    if (clinical.timings?.length > 0) setTimings(clinical.timings);
+    if (clinical.purpose) setPurpose(clinical.purpose);
+    if (clinical.condition) setSelectedCondition(clinical.condition);
     if (drugData.safetyTip) setSafetyWarning(drugData.safetyTip);
+
     setIsScanFilled(true);
     setSelectedDrugInfo({
       name: medName,
-      generic: drugData.generic_name || medName,
+      generic: clinical.genericName || medName,
       rxcui: drugData.rxcui,
-      dosage: drugData.strength,
-      category: drugData.category || 'Prescription Drug',
+      dosage: clinical.dosage,
+      category: drugData.category || (clinical.type === 'HERBAL' ? 'Ayurvedic / Herbal' : 'Prescription Drug'),
       safetyTip: drugData.safetyTip,
       source: drugData.source || 'local_registry',
     });
@@ -1771,6 +2325,7 @@ export default function AddMedicinePage() {
           name: name.trim(),
           type,
           dosage: formattedDosage || 'Standard Dose',
+          purpose: purpose.trim() || undefined,
           dateAdded: new Date().toISOString(),
         },
         rxNorm: {
@@ -1792,7 +2347,13 @@ export default function AddMedicinePage() {
       return;
     }
 
-    addMutation.mutate({ name: name.trim(), type, dosage: formattedDosage || undefined });
+    addMutation.mutate({
+      name: name.trim(),
+      type,
+      dosage: formattedDosage || undefined,
+      purpose: purpose.trim() || undefined,
+      notes: notes.trim() || undefined,
+    });
   };
 
   const handleAddAnother = () => {
@@ -1805,6 +2366,8 @@ export default function AddMedicinePage() {
     setBatchNo('');
     setExpiryDate('');
     setSafetyWarning('');
+    setPurpose('');
+    setSelectedCondition(null);
     setScanState('idle');
     setCheckState('idle');
     setCheckResult(null);
@@ -1977,71 +2540,71 @@ export default function AddMedicinePage() {
         }}
       />
 
-      <div className="space-y-8">
-        {/* ── Breadcrumb & Top Header ── */}
-        <div className="space-y-4">
+      <div className="space-y-6">
+        {/* ── Page Header Card (Polished Spacing & Responsive Padding) ── */}
+        <div className="p-5 sm:p-6 rounded-3xl bg-[var(--surface)] border border-[var(--border)] shadow-xs space-y-4">
+          {/* Top Row: Back Navigation + Status Badges */}
           <div className="flex flex-wrap items-center justify-between gap-3">
             <button
               type="button"
               onClick={() => navigate('/home')}
-              className="ps-btn ps-btn-secondary py-2 px-3 text-xs font-mono font-bold flex items-center gap-1.5 cursor-pointer"
+              className="ps-btn ps-btn-secondary py-1.5 px-3 text-xs font-mono font-bold flex items-center gap-1.5 cursor-pointer rounded-xl hover:bg-[var(--surface-2)] transition-all"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
               <span>Back to Dashboard</span>
             </button>
 
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-[var(--brand-600)]/10 text-[var(--brand-600)] border border-[var(--brand-600)]/20">
-              <span className="w-2 h-2 rounded-full bg-[var(--brand-600)] animate-pulse" />
-              <span>Multimodal Intake Hub</span>
-              <span className="text-[var(--brand-600)]/60">·</span>
-              <span className="font-mono text-[11px]">RxNorm & Indian Formulary</span>
+            <div className="flex flex-wrap items-center gap-2">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-[var(--brand-600)]/10 text-[var(--brand-600)] border border-[var(--brand-600)]/20 shadow-2xs">
+                <span className="w-2 h-2 rounded-full bg-[var(--brand-600)] animate-pulse" />
+                <span>Multimodal Intake Hub</span>
+                <span className="text-[var(--brand-600)]/60">·</span>
+                <span className="font-mono text-[11px]">RxNorm & Indian Formulary</span>
+              </div>
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-[var(--brand-600)]/8 border border-[var(--brand-600)]/20 text-[var(--brand-600)] shadow-2xs">
+                <Leaf className="w-3.5 h-3.5 text-[var(--brand-600)] flex-shrink-0" />
+                <span>Includes herb-drug checks for Turmeric & Ashwagandha</span>
+              </div>
             </div>
           </div>
 
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
-            <div className="space-y-1">
-              <h1 className="text-3xl sm:text-4xl font-extrabold text-[var(--ink)] tracking-tight font-[var(--font-heading)]">
-                Add <span className="font-serif italic font-normal text-[var(--coral)]">Medicine</span>
-              </h1>
-              <p className="text-sm text-[var(--ink-2)] max-w-xl">
-                Scan prescriptions, search Indian & global formularies, or identify loose tablets by imprint.
-              </p>
-            </div>
-
-            {/* Herbal Safety Note Chip */}
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-2xl bg-[var(--brand-600)]/8 border border-[var(--brand-600)]/20 text-xs text-[var(--brand-600)] font-medium">
-              <Leaf className="w-4 h-4 text-[var(--brand-600)] flex-shrink-0" />
-              <span>Includes herb-drug checks for Turmeric & Ashwagandha</span>
-            </div>
+          {/* Heading Row */}
+          <div className="space-y-1">
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-[var(--ink)] tracking-tight font-[var(--font-heading)]">
+              Add <span className="font-serif italic font-normal text-[var(--coral)]">Medicine</span>
+            </h1>
+            <p className="text-xs sm:text-sm text-[var(--ink-2)] max-w-2xl leading-relaxed">
+              Scan prescriptions, search Indian & global formularies, or identify loose tablets by imprint.
+            </p>
           </div>
-        </div>
 
-        {/* ── SegmentedControl with Sliding Indicator ── */}
-        <div className="max-w-xl mx-auto sm:mx-0">
-          <SegmentedControl
-            name="add-medicine-tab"
-            size="lg"
-            fullWidth
-            value={activeTab}
-            onChange={(val) => setActiveTab(val)}
-            options={[
-              {
-                value: 'scan',
-                label: 'Scan Slip / Box',
-                icon: <ScanLine className="w-4 h-4" />,
-              },
-              {
-                value: 'search',
-                label: 'Search Formulary',
-                icon: <Search className="w-4 h-4" />,
-              },
-              {
-                value: 'pill_id',
-                label: 'Pill ID',
-                icon: <Pill className="w-4 h-4" />,
-              },
-            ]}
-          />
+          {/* Segmented Tab Navigator with Clean Sizing & Padding */}
+          <div className="pt-1 w-full max-w-xl">
+            <SegmentedControl
+              name="add-medicine-tab"
+              size="md"
+              fullWidth
+              value={activeTab}
+              onChange={(val) => setActiveTab(val)}
+              options={[
+                {
+                  value: 'scan',
+                  label: 'Scan Slip / Box',
+                  icon: <ScanLine className="w-4 h-4" />,
+                },
+                {
+                  value: 'search',
+                  label: 'Search Formulary',
+                  icon: <Search className="w-4 h-4" />,
+                },
+                {
+                  value: 'pill_id',
+                  label: 'Pill ID',
+                  icon: <Pill className="w-4 h-4" />,
+                },
+              ]}
+            />
+          </div>
         </div>
 
         {/* Global form error banner */}
@@ -2399,12 +2962,19 @@ export default function AddMedicinePage() {
                           type="button"
                           onClick={() => {
                             setName(preset.brand);
-                            setGenericName(preset.generic);
-                            setDosage(preset.dosage);
-                            setType(preset.type);
-                            setPurpose(preset.purpose);
                             addRecentSearch(preset.brand);
-                            notify.success('Preset Loaded', `Selected ${preset.brand} (${preset.generic})`);
+                            const clinical = resolveClinicalDetails(preset.brand, preset.generic, '', preset);
+                            if (clinical.genericName) setGenericName(clinical.genericName);
+                            if (clinical.salts?.length > 0) setCompositionSalts(clinical.salts);
+                            if (clinical.dosage) setDosage(clinical.dosage);
+                            if (clinical.purpose) setPurpose(clinical.purpose);
+                            if (clinical.condition) setSelectedCondition(clinical.condition);
+                            if (clinical.mealInstruction) setNotes(clinical.mealInstruction);
+                            if (clinical.frequency) setFrequency(clinical.frequency);
+                            if (clinical.timings?.length > 0) setTimings(clinical.timings);
+                            if (clinical.form) setForm(clinical.form);
+                            if (clinical.type) setType(clinical.type);
+                            notify.success('Preset Loaded', `Selected ${preset.brand} (${clinical.genericName || preset.generic})`);
                           }}
                           className="px-2.5 py-1 rounded-xl text-xs font-semibold bg-[var(--surface)] hover:bg-[var(--surface-2)] text-[var(--ink-2)] hover:text-[var(--brand-600)] border border-[var(--border)] transition-all cursor-pointer flex items-center gap-1 shadow-2xs"
                         >
@@ -2430,6 +3000,17 @@ export default function AddMedicinePage() {
                           onClick={() => {
                             setName(term);
                             handleNameChange(term);
+                            const clinical = resolveClinicalDetails(term);
+                            if (clinical.genericName) setGenericName(clinical.genericName);
+                            if (clinical.salts?.length > 0) setCompositionSalts(clinical.salts);
+                            if (clinical.dosage) setDosage(clinical.dosage);
+                            if (clinical.purpose) setPurpose(clinical.purpose);
+                            if (clinical.condition) setSelectedCondition(clinical.condition);
+                            if (clinical.mealInstruction) setNotes(clinical.mealInstruction);
+                            if (clinical.frequency) setFrequency(clinical.frequency);
+                            if (clinical.timings?.length > 0) setTimings(clinical.timings);
+                            if (clinical.form) setForm(clinical.form);
+                            if (clinical.type) setType(clinical.type);
                           }}
                           className="text-[11px] px-2 py-0.5 rounded-lg bg-[var(--surface-2)] text-[var(--ink-2)] hover:text-[var(--brand-600)] hover:bg-[var(--surface)] transition-colors cursor-pointer"
                         >
@@ -2635,10 +3216,15 @@ export default function AddMedicinePage() {
               </div>
             )}
 
-            {/* ══════════════════════════════════════════════════════════════════
-                FORM SECTION: Packaging, Clinical Indication & Administration
-                ══════════════════════════════════════════════════════════════════ */}
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form
+              onSubmit={handleSubmit}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA') {
+                  e.preventDefault();
+                }
+              }}
+              className="space-y-6"
+            >
               <Card
                 title="Medicine & Schedule Details"
                 subtitle="Verify active chemical composition, packaging label, and administration schedule"
@@ -2689,6 +3275,21 @@ export default function AddMedicinePage() {
                           autoComplete="off"
                           value={name}
                           onChange={(e) => handleNameChange(e.target.value)}
+                          onBlur={() => {
+                            if (name.trim().length >= 2) {
+                              const clinical = resolveClinicalDetails(name.trim());
+                              if (clinical.genericName) setGenericName(clinical.genericName);
+                              if (clinical.salts?.length > 0) setCompositionSalts(clinical.salts);
+                              if (clinical.dosage) setDosage(clinical.dosage);
+                              if (clinical.purpose) setPurpose(clinical.purpose);
+                              if (clinical.condition) setSelectedCondition(clinical.condition);
+                              if (clinical.mealInstruction) setNotes(clinical.mealInstruction);
+                              if (clinical.frequency) setFrequency(clinical.frequency);
+                              if (clinical.timings?.length > 0) setTimings(clinical.timings);
+                              if (clinical.form) setForm(clinical.form);
+                              if (clinical.type) setType(clinical.type);
+                            }
+                          }}
                           onFocus={() => { if (suggestions.length > 0) setShowSuggestions(true); }}
                           onKeyDown={handleNameKeyDown}
                           placeholder={t('add_medicine.search_placeholder', 'e.g. Dolo 650, Augmentin 625, Warfarin, Turmeric')}
@@ -2852,7 +3453,7 @@ export default function AddMedicinePage() {
                       >
                         {DOSAGE_FORMS.map((f) => (
                           <option key={f.value} value={f.value}>
-                            {f.icon} {f.label}
+                            {f.label}
                           </option>
                         ))}
                       </PolySafeSelect>
@@ -2886,8 +3487,9 @@ export default function AddMedicinePage() {
                       </h4>
                     </div>
                     {purpose && (
-                      <span className="text-[11px] font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-500/10 px-2.5 py-0.5 rounded-full">
-                        Active Reason Set
+                      <span className="text-[11px] font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-500/10 px-2.5 py-0.5 rounded-full flex items-center gap-1">
+                        <Check className="w-3 h-3 text-emerald-600" />
+                        {isScanFilled ? 'Auto-Filled from Scan' : 'Active Reason Set'}
                       </span>
                     )}
                   </div>
@@ -2906,10 +3508,8 @@ export default function AddMedicinePage() {
                               setSelectedCondition(null);
                             } else {
                               setSelectedCondition(condName);
-                              if (!purpose.trim()) {
-                                const defaultRec = CONDITION_MED_RECOMMENDATIONS[condName]?.[0]?.purpose || condName;
-                                setPurpose(defaultRec);
-                              }
+                              const defaultRec = CONDITION_MED_RECOMMENDATIONS[condName]?.[0]?.purpose || condName;
+                              setPurpose(defaultRec);
                             }
                           }}
                           className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer border ${
@@ -2924,6 +3524,48 @@ export default function AddMedicinePage() {
                       );
                     })}
                   </div>
+
+                  {/* Recommended Medicines for Selected Condition */}
+                  {selectedCondition && CONDITION_MED_RECOMMENDATIONS[selectedCondition]?.length > 0 && (
+                    <div className="p-3 bg-[var(--surface-2)] rounded-2xl border border-[var(--border)] space-y-2 animate-fadeIn">
+                      <div className="flex items-center justify-between text-[11px] font-bold text-[var(--ink-2)]">
+                        <span className="flex items-center gap-1.5">
+                          <Sparkles className="w-3.5 h-3.5 text-[var(--brand-600)]" />
+                          <span>Recommended Medicines for {selectedCondition}:</span>
+                        </span>
+                        <span className="text-[10px] text-[var(--ink-3)] font-normal">Click to auto-fill details</span>
+                      </div>
+                      <div className="flex flex-wrap gap-1.5">
+                        {CONDITION_MED_RECOMMENDATIONS[selectedCondition].map((recMed) => (
+                          <button
+                            key={recMed.name}
+                            type="button"
+                            onClick={() => {
+                              setName(recMed.name);
+                              addRecentSearch(recMed.name);
+                              const clinical = resolveClinicalDetails(recMed.name, recMed.generic, '', recMed);
+                              if (clinical.genericName) setGenericName(clinical.genericName);
+                              if (clinical.salts?.length > 0) setCompositionSalts(clinical.salts);
+                              if (clinical.dosage) setDosage(clinical.dosage);
+                              if (clinical.purpose) setPurpose(clinical.purpose);
+                              if (clinical.condition) setSelectedCondition(clinical.condition);
+                              if (clinical.mealInstruction) setNotes(clinical.mealInstruction);
+                              if (clinical.frequency) setFrequency(clinical.frequency);
+                              if (clinical.timings?.length > 0) setTimings(clinical.timings);
+                              if (clinical.form) setForm(clinical.form);
+                              if (clinical.type) setType(clinical.type);
+                              notify.success('Auto-Filled', `Auto-filled details for ${recMed.name}`);
+                            }}
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-[var(--surface)] hover:bg-[var(--brand-600)] hover:text-white text-[var(--ink)] border border-[var(--border)] transition-all cursor-pointer shadow-2xs group"
+                          >
+                            <Pill className="w-3.5 h-3.5 text-[var(--brand-600)] group-hover:text-white" />
+                            <span className="font-bold">{recMed.name}</span>
+                            <span className="text-[10px] opacity-70">({recMed.dosage})</span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
 
                   <PolySafeInput
                     type="text"

@@ -62,3 +62,10 @@ MATHEMATICAL_CALCULATIONS_AND_DATASETS.md
 POSTER_DATA.md
 UI_LAYOUT_SPECIFICATION.md
 UI_REDESIGN_REPORT.md
+
+# Scratch and test inspection artifacts
+scratch/
+backend/scripts/*.png
+backend/scripts/*.cjs
+
+

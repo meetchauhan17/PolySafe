@@ -72,7 +72,7 @@ async function sendOtpEmail({ email, name, code }) {
         </div>
 
         <p style="color: #64748b; font-size: 12px; margin: 0; font-weight: 500;">
-          ⏱ This code will expire in <strong style="color: #1e293b;">10 minutes</strong>. Never share this code with anyone.
+          This code will expire in <strong style="color: #1e293b;">10 minutes</strong>. Never share this code with anyone.
         </p>
       </div>
 

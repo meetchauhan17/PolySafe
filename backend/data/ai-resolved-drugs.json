@@ -4949,5 +4949,24 @@
     "safetyTip": "Take with a full glass of water and food to minimize risk of gastrointestinal irritation or ulceration.",
     "standardizedCode": "142442",
     "layer": "Layer 5 (gemini_gemini-3.1-flash-lite)"
+  },
+  "dol": {
+    "resolvedName": "Dolo 650",
+    "genericName": "Paracetamol",
+    "genericSalts": [
+      "Paracetamol"
+    ],
+    "constituents": [
+      "Paracetamol"
+    ],
+    "harmLevel": 3,
+    "class": "Analgesic / Antipyretic",
+    "foodInstruction": "after_food",
+    "dosageOptions": [
+      "650mg"
+    ],
+    "safetyTip": "Max 4,000mg per 24 hours. Keep at least 4-6 hours between consecutive doses.",
+    "standardizedCode": "161",
+    "layer": "Layer 3 (Fuzzy Match: Dolo 650)"
   }
 }

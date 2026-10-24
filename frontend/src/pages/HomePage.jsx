@@ -77,6 +77,17 @@ import ClinicalReportModal from '../components/ClinicalReportModal';
 import AlternativeSuggestionsModal from '../components/AlternativeSuggestionsModal';
 import ClinicalScoreExplainerModal from '../components/ClinicalScoreExplainerModal';
 import { useT } from '../i18n/useT';
+import {
+  DEMO_CLINICAL_PATIENT,
+  DEMO_CLINICAL_MEDICINES,
+  DEMO_CLINICAL_SCHEDULE,
+  DEMO_CLINICAL_FLAGS,
+  DEMO_CLINICAL_REGIMEN_RISK,
+  DEMO_CLINICAL_ACB_SCORE,
+  DEMO_CLINICAL_FOOD_INTERACTIONS,
+  DEMO_CLINICAL_SAFETY_ALERTS,
+  computeUnifiedScores,
+} from '../data/mockClinicalData';
 
 // ─── Severity colour map ─────────────────────────────────────────────────────
 const SEVERITY_STYLES = {
@@ -248,41 +259,25 @@ function renderMedicationDetails(med) {
 }
 
 
-// ─── Demo/mock data shown when not logged in (no token) ─────────────────────
+// ─── Unified Demo data shown when not logged in (no token) ─────────────────
 const DEMO_DATA = {
- status: 'CAUTION',
- medicines: [
- { id: 'd1', name: 'Warfarin', type: 'PRESCRIPTION', dosage: '5mg', category: 'Anticoagulant (Blood Thinner)', dateAdded: new Date().toISOString() },
- { id: 'd2', name: 'Aspirin', type: 'OTC', dosage: '81mg', category: 'Antiplatelet / NSAID', dateAdded: new Date().toISOString() },
- { id: 'd3', name: 'Lisinopril', type: 'PRESCRIPTION', dosage: '10mg', category: 'ACE Inhibitor (Antihypertensive)', dateAdded: new Date().toISOString() },
- { id: 'd4', name: 'Turmeric (Curcumin)', type: 'HERBAL', dosage: '500mg', category: 'Herbal Supplement', dateAdded: new Date().toISOString() },
- ],
- schedule: [
- { medicineId: 'd1', name: 'Warfarin', dosage: '5mg', type: 'PRESCRIPTION', time: '08:00 AM' },
- { medicineId: 'd2', name: 'Aspirin', dosage: '81mg', type: 'OTC', time: '12:00 PM' },
- { medicineId: 'd3', name: 'Lisinopril', dosage: '10mg', type: 'PRESCRIPTION', time: '06:00 PM' },
- { medicineId: 'd4', name: 'Turmeric (Curcumin)', dosage: '500mg', type: 'HERBAL', time: '09:00 PM' },
- ],
- flags: [
- {
- id: 'f1',
- severity: 'MAJOR',
- medicineA: { id: 'd1', name: 'Warfarin', type: 'PRESCRIPTION' },
- medicineB: { id: 'd4', name: 'Turmeric (Curcumin)', type: 'HERBAL' },
- plainExplanation: 'Turmeric may enhance Warfarin\'s blood-thinning effect, significantly increasing bleeding risk.',
- clinicalExplanation: 'Curcumin inhibits platelet aggregation and CYP2C9-mediated warfarin metabolism, elevating INR.',
- dateFlagged: new Date().toISOString(),
- },
- {
- id: 'f2',
- severity: 'MODERATE',
- medicineA: { id: 'd1', name: 'Warfarin', type: 'PRESCRIPTION' },
- medicineB: { id: 'd2', name: 'Aspirin', type: 'OTC' },
- plainExplanation: 'Taking Aspirin with Warfarin increases gastrointestinal bleeding risk.',
- clinicalExplanation: 'Combined anticoagulant + antiplatelet therapy raises haemorrhagic risk; monitor INR closely.',
- dateFlagged: new Date().toISOString(),
- },
- ],
+  status: 'CRITICAL',
+  patientId: DEMO_CLINICAL_PATIENT.id,
+  patientName: DEMO_CLINICAL_PATIENT.name,
+  patientAge: DEMO_CLINICAL_PATIENT.age,
+  patientBloodType: DEMO_CLINICAL_PATIENT.bloodType,
+  patientConditions: DEMO_CLINICAL_PATIENT.conditions,
+  patientAllergies: DEMO_CLINICAL_PATIENT.allergies,
+  emergencyContacts: DEMO_CLINICAL_PATIENT.emergencyContacts,
+  regimenRisk: DEMO_CLINICAL_REGIMEN_RISK,
+  regimenHarmLevel: 5,
+  acbScore: DEMO_CLINICAL_ACB_SCORE,
+  medicines: DEMO_CLINICAL_MEDICINES,
+  schedule: DEMO_CLINICAL_SCHEDULE,
+  flags: DEMO_CLINICAL_FLAGS,
+  foodInteractions: DEMO_CLINICAL_FOOD_INTERACTIONS,
+  safetyAlerts: DEMO_CLINICAL_SAFETY_ALERTS,
+  safetyAlertCount: DEMO_CLINICAL_SAFETY_ALERTS.length,
 };
 
 // ─── Physician Directives Banner ────────────────────────────────────────────
@@ -684,40 +679,41 @@ export default function HomePage() {
  const [remindersEnabled, setRemindersEnabled] = useState(() => {
  try { return localStorage.getItem('polysafe_reminders') === 'true'; } catch { return false; }
  });
+  const handleToggleAllReminders = () => {
+    if (isGuest) {
+      openGuestLockModal('medication reminders');
+      return;
+    }
+    const next = !remindersEnabled;
+    setRemindersEnabled(next);
+    try { localStorage.setItem('polysafe_reminders', String(next)); } catch {}
+    if (next) {
+      notify.success('Reminders Activated', 'Daily dose notifications are now active.');
+    } else {
+      notify.info('Reminders Paused', 'Medication reminders have been paused.');
+    }
+  };
+  const [remindedDoses, setRemindedDoses] = useState({});
 
- const handleToggleAllReminders = () => {
- if (isGuest) {
- openGuestLockModal('medication reminders');
- return;
- }
- setRemindersEnabled((prev) => {
- const next = !prev;
- try { localStorage.setItem('polysafe_reminders', String(next)); } catch {}
- if (next) {
- notify.success('Reminders Activated', 'Daily dose notifications are now active.');
- } else {
- notify.info('Reminders Paused', 'Medication reminders have been paused.');
- }
- return next;
- });
- };
- const [remindedDoses, setRemindedDoses] = useState({});
+  const handleToggleDoseReminder = (doseKey, medicineName, time) => {
+    if (isGuest) {
+      openGuestLockModal('set individual dose reminders');
+      return;
+    }
+    const isCurrentlyReminded = remindersEnabled || Boolean(remindedDoses[doseKey]);
+    const nextState = !isCurrentlyReminded;
 
- const handleToggleDoseReminder = (doseKey, medicineName, time) => {
- if (isGuest) {
- openGuestLockModal('set individual dose reminders');
- return;
- }
- setRemindedDoses((prev) => {
- const next = { ...prev, [doseKey]: !prev[doseKey] };
- if (next[doseKey]) {
- notify.success('Dose Reminder Set', `You'll be reminded to take ${medicineName} at ${time}.`);
- } else {
- notify.info('Reminder Cleared', `Reminder for ${medicineName} at ${time} removed.`);
- }
- return next;
- });
- };
+    setRemindedDoses((prev) => ({
+      ...prev,
+      [doseKey]: nextState,
+    }));
+
+    if (nextState) {
+      notify.success('Dose Reminder Set', `You'll be reminded to take ${medicineName} at ${time}.`);
+    } else {
+      notify.info('Reminder Cleared', `Reminder for ${medicineName} at ${time} removed.`);
+    }
+  };
 
   const {
     data: summary,
@@ -796,14 +792,26 @@ export default function HomePage() {
   const safetyAlerts = data?.safetyAlerts ?? [];
   const isEmpty = medicines.length === 0;
 
-  const regimenRisk = data?.regimenRisk;
-  const highestHarmLevel = regimenRisk?.level ?? (medicines.length > 0 ? Math.max(...medicines.map((m) => m.harmLevel || 1)) : 1);
-  const highestRiskDrug = regimenRisk?.highestRiskDrug || (medicines.length > 0 ? medicines.reduce((prev, curr) => ((curr.harmLevel || 1) > (prev?.harmLevel || 1) ? curr : prev), medicines[0]) : null);
-  const highestRiskDrugName = highestRiskDrug?.name || 'high-risk medication';
+  const unifiedScores = computeUnifiedScores({
+    regimenRisk: data?.regimenRisk,
+    medicines,
+    flags,
+    status,
+    acbScore: data?.acbScore,
+  });
 
-  const acbScoreVal = data?.acbScore ?? (medicines.reduce((sum, m) => sum + (m.acbScore || 0), 0) || (status === 'CRITICAL' ? 3 : status === 'CAUTION' ? 1 : 0));
-  const homeRiskScore = regimenRisk?.score ?? data?.regimenHarmLevel ?? highestHarmLevel ?? (flags.length > 0 ? 4 : 1);
-  const homeRiskLabel = status === 'CRITICAL' ? t('home.critical_risk', 'Critical Risk') : status === 'CAUTION' ? t('home.caution_needed', 'Caution Needed') : t('home.safe_regimen', 'Safe Regimen');
+  const regimenRisk = data?.regimenRisk;
+  const highestHarmLevel = unifiedScores.level;
+  const highestRiskDrug = unifiedScores.highestRiskDrug;
+  const highestRiskDrugName = unifiedScores.highestDrugName;
+
+  const acbScoreVal = unifiedScores.acbScore;
+  const homeRiskScore = unifiedScores.score;
+  const homeRiskLabel = (status === 'CRITICAL' || unifiedScores.level >= 5)
+    ? t('home.critical_risk', 'Critical Risk')
+    : (status === 'CAUTION' || unifiedScores.level >= 3)
+    ? t('home.caution_needed', 'Caution Needed')
+    : t('home.safe_regimen', 'Safe Regimen');
 
   const emergencyCardData = {
     patient: {
@@ -1145,35 +1153,26 @@ export default function HomePage() {
                     <span>Why is score {typeof homeRiskScore === 'number' ? homeRiskScore.toFixed(1) : homeRiskScore}?</span>
                   </button>
                 </div>
-                <div className="space-y-3 min-w-0">
-                  <div className="flex items-center justify-between gap-2 flex-wrap">
-                    <div>
-                      <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--ink)] font-[var(--font-heading)]">
-                        {t('home.acb_surveillance_title', 'Anticholinergic Burden Surveillance')}
-                      </h3>
-                      <p className="text-[11px] text-[var(--ink-3)] font-mono mt-0.5">
-                        {t('home.acb_surveillance_sub', 'Cumulative multi-agent cognitive and psychomotor load')}
-                      </p>
-                    </div>
-                    <div className="flex items-center gap-2">
+                <div className="min-w-0">
+                  <ACBMeter
+                    value={acbScoreVal}
+                    label={t('home.acb_surveillance_title', 'Anticholinergic Burden Surveillance')}
+                    sublabel={t('home.acb_surveillance_sub', 'Cumulative multi-agent cognitive and psychomotor load (AGS Beers 2024)')}
+                    action={
                       <button
                         type="button"
                         onClick={() => {
                           setScoreExplainerTab('acb');
                           setShowScoreExplainer(true);
                         }}
-                        className="inline-flex items-center gap-1 text-[11px] font-bold text-amber-700 dark:text-amber-400 hover:underline cursor-pointer"
+                        className="inline-flex items-center gap-1 text-[11px] font-bold text-amber-700 dark:text-amber-400 hover:underline cursor-pointer bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/20"
                         title="Click to see how ACB is calculated and what it means"
                       >
                         <HelpCircle className="w-3.5 h-3.5" />
                         <span>Why is ACB {acbScoreVal}?</span>
                       </button>
-                      <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-[var(--surface-2)] text-[var(--ink-2)] border border-[var(--border)]">
-                        {acbScoreVal >= 3 ? t('home.acb_high_risk', 'High Risk') : acbScoreVal >= 1 ? t('home.acb_moderate', 'Moderate') : t('home.acb_normal', 'Normal')}
-                      </span>
-                    </div>
-                  </div>
-                  <ACBMeter value={acbScoreVal} />
+                    }
+                  />
                 </div>
               </div>
             </div>
@@ -1515,7 +1514,7 @@ export default function HomePage() {
               </Link>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-start">
               <AnimatePresence initial={false}>
                 {medicines.map((med) => (
                 <MedicationCard

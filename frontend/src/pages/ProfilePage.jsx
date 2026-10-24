@@ -10,7 +10,6 @@
  *   - Theme toggle (Light / Dark) with live palette preview card.
  *   - Text size selector (Sm / Md / Lg) with live scaling sample paragraph preview.
  *   - Language selector (EN / HI / GU) with live translated clinical alert preview.
- *   - Stage Projector Mode toggle with live contrast badge preview.
  * • Role-adaptive identity (Patient, Doctor, Caregiver).
  * • Account deletion danger zone modal requiring "DELETE" typed confirmation.
  */
@@ -109,8 +108,6 @@ export default function ProfilePage() {
     theme,
     setTheme,
     toggleTheme,
-    isProjectorMode,
-    toggleProjectorMode,
   } = useDisplaySettings();
 
   const currentRole = (user?.role || 'PATIENT').toUpperCase();
@@ -853,53 +850,6 @@ export default function ProfilePage() {
                 <p className="text-[10px] font-mono text-rose-800 dark:text-rose-300 font-bold pt-1">
                   {previewTranslation.advisory}
                 </p>
-              </div>
-            </Card>
-
-            {/* 4. Stage Projector Mode & Live Preview */}
-            <Card
-              title="Stage Projector Mode"
-              subtitle="High-contrast stage view optimized for projection systems, grand rounds, and intense lighting"
-              icon={<Monitor className="w-5 h-5 text-[var(--accent-500)]" />}
-              className="p-6 sm:p-8 space-y-6"
-            >
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-2xl bg-[var(--canvas)] border border-[var(--border)]">
-                <div className="space-y-1">
-                  <h4 className="text-sm font-bold text-[var(--ink)] font-[var(--font-heading)]">
-                    Auditorium & Projector Presentation Mode
-                  </h4>
-                  <p className="text-xs text-[var(--ink-3)] max-w-md leading-relaxed">
-                    Maximizes contrast, enlarges touch targets, and flattens decorative effects to ensure clear visibility from 20 feet away.
-                  </p>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={toggleProjectorMode}
-                  className={`px-5 py-2.5 rounded-2xl text-xs font-bold uppercase tracking-wider transition-all cursor-pointer shadow-xs active:scale-95 ${
-                    isProjectorMode
-                      ? 'bg-amber-600 hover:bg-amber-700 text-white'
-                      : 'bg-[var(--surface)] hover:bg-[var(--surface-2)] border border-[var(--border)] text-[var(--ink)]'
-                  }`}
-                >
-                  {isProjectorMode ? 'Projector Mode ON' : 'Projector Mode OFF'}
-                </button>
-              </div>
-
-              {/* Live Projector Preview Badge */}
-              <div className="p-4 rounded-2xl bg-[var(--surface)] border border-[var(--border)] flex items-center justify-between">
-                <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[var(--ink-3)]">
-                  Live Projector Status:
-                </span>
-                <span
-                  className={`text-xs font-mono font-bold px-3 py-1 rounded-full border ${
-                    isProjectorMode
-                      ? 'bg-amber-500/20 text-amber-900 dark:text-amber-100 border-amber-500 font-black'
-                      : 'bg-[var(--canvas)] text-[var(--ink-3)] border-[var(--border)]'
-                  }`}
-                >
-                  {isProjectorMode ? '⚡ PROJECTOR: ACTIVE (HIGH CONTRAST)' : 'PROJECTOR: INACTIVE'}
-                </span>
               </div>
             </Card>
           </motion.div>

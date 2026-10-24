@@ -21,13 +21,16 @@ import {
 import QRCode from 'qrcode';
 import { notify } from '../utils/toast';
 import { FlipCard } from '../three-d/FlipCard';
+import Logo, { LogoMark } from './Logo';
 
 export default function EmergencyMedicalCardModal({
   isOpen,
+  open: openProp,
   onClose,
   data,
   isDemo = false,
 }) {
+  const show = openProp ?? isOpen ?? false;
   const [qrDataUrl, setQrDataUrl] = useState('');
   const [copied, setCopied] = useState(false);
   const [isFlipped, setIsFlipped] = useState(false);
@@ -79,25 +82,25 @@ export default function EmergencyMedicalCardModal({
 
   // Close on Escape key
   useEffect(() => {
-    if (!isOpen) return;
+    if (!show) return;
     const handleKeyDown = (e) => {
       if (e.key === 'Escape') onClose?.();
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, onClose]);
+  }, [show, onClose]);
 
   // Lock body scroll while open
   useEffect(() => {
-    if (!isOpen) return;
+    if (!show) return;
     const prev = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     return () => { document.body.style.overflow = prev; };
-  }, [isOpen]);
+  }, [show]);
 
   // Generate real QR code data URL safely
   useEffect(() => {
-    if (isOpen) {
+    if (show) {
       const generateQR = QRCode?.toDataURL || QRCode?.default?.toDataURL;
       if (typeof generateQR === 'function') {
         generateQR(qrVerificationUrl, {
@@ -112,10 +115,10 @@ export default function EmergencyMedicalCardModal({
           .catch((err) => console.warn('QR code notice:', err.message));
       }
     }
-  }, [isOpen, qrVerificationUrl]);
+  }, [show, qrVerificationUrl]);
 
   const handleCopySummary = () => {
-    const text = `🚨 POLYSAPE EMERGENCY MEDICAL IDENTITY CARD
+    const text = `[POLYSAFE EMERGENCY MEDICAL IDENTITY CARD]
 Card ID: ${cardId}
 Patient: ${patient.name} (${patient.age} yrs)
 Blood Group: ${patient.bloodType || 'O Positive'}
@@ -126,7 +129,7 @@ Emergency Caregiver: ${primaryCaregiver.name} (${primaryCaregiver.phone})
 Verification URL: ${qrVerificationUrl}`;
 
     try {
-      navigator.clipboard.writeText(text);
+      navigator.clipboard?.writeText?.(text);
       setCopied(true);
       notify.success('Copied to Clipboard', 'Emergency medical card summary copied.');
       setTimeout(() => setCopied(false), 2500);
@@ -139,9 +142,11 @@ Verification URL: ${qrVerificationUrl}`;
     window.print();
   };
 
+  if (typeof document === 'undefined') return null;
+
   return createPortal(
     <AnimatePresence>
-      {isOpen && (
+      {show && (
         <div
           className="fixed inset-0 z-[200] flex items-center justify-center p-0 sm:p-4 bg-slate-950/80 backdrop-blur-md overflow-y-auto"
           onClick={(e) => {
@@ -195,8 +200,8 @@ Verification URL: ${qrVerificationUrl}`;
                     {/* Bold Vermilion Header Band with Medical Cross */}
                     <div className="bg-[#EF4444] text-white px-5 py-3.5 flex items-center justify-between">
                       <div className="flex items-center gap-2.5">
-                        <div className="w-7 h-7 rounded-lg bg-white/20 border border-white/40 flex items-center justify-center flex-shrink-0">
-                          <Plus className="w-5 h-5 text-white" strokeWidth={3.5} />
+                        <div className="flex items-center justify-center flex-shrink-0">
+                          <LogoMark size={28} concept="cross" variant="white" />
                         </div>
                         <div>
                           <p className="text-xs font-black uppercase tracking-widest leading-none font-mono">
@@ -254,9 +259,10 @@ Verification URL: ${qrVerificationUrl}`;
                           {(patient.allergies || ['None recorded']).map((alg, idx) => (
                             <span
                               key={idx}
-                              className="text-xs font-bold px-3 py-1 rounded-full border-2 border-[#EF4444] text-[#B91C1C] dark:text-rose-300 bg-rose-500/10 shadow-2xs"
+                              className="text-xs font-bold px-3 py-1 rounded-full border-2 border-[#EF4444] text-[#B91C1C] dark:text-rose-300 bg-rose-500/10 shadow-2xs inline-flex items-center gap-1.5"
                             >
-                              ⚠️ {alg}
+                              <AlertTriangle className="w-3.5 h-3.5 text-rose-600 shrink-0" />
+                              <span>{alg}</span>
                             </span>
                           ))}
                         </div>

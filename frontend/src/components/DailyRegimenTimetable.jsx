@@ -22,7 +22,7 @@ import {
 } from 'lucide-react';
 import axios from 'axios';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { io as socketIO } from 'socket.io-client';
+import { useSocketEvent } from '../context/SocketContext';
 import { notify } from '../utils/toast';
 import { useT } from '../i18n/useT';
 import { useAuth } from '../context/AuthContext';
@@ -215,47 +215,21 @@ export default function DailyRegimenTimetable({
     );
   };
 
-  // ─── 5. Real-Time Socket.IO Synchronization ──────────────────────────────
-  useEffect(() => {
-    if (!token || isGuest) return;
+  // ─── 5. Real-Time Socket.IO Synchronization (Shared Instance) ─────────────
+  useSocketEvent('dose_logged', (payload) => {
+    console.log('[DailyRegimenTimetable] Live dose_logged event received:', payload);
+    queryClient.invalidateQueries({ queryKey: ['patient-doses'] });
+    queryClient.invalidateQueries({ queryKey: ['patient-adherence'] });
+    queryClient.invalidateQueries({ queryKey: ['home-summary'] });
+  });
 
-    const socketUrl = axios.defaults.baseURL
-      ? axios.defaults.baseURL.replace(/\/api$/, '')
-      : (window.location.hostname === 'localhost' ? 'http://localhost:5000' : window.location.origin);
-
-    const socket = socketIO(socketUrl, {
-      transports: ['websocket', 'polling'],
-      reconnectionAttempts: 5,
+  useSocketEvent('caregiver_reminder', (payload) => {
+    console.log('[DailyRegimenTimetable] Live caregiver_reminder event received:', payload);
+    sendDoseReminder({
+      title: 'Caregiver Dose Reminder',
+      body: payload.message || `${payload.caregiverName || 'Your caregiver'} sent a reminder to take your scheduled medications.`,
     });
-
-    socket.on('connect', () => {
-      const patientId = user?.patientId || user?.userId || user?.id;
-      if (patientId) {
-        socket.emit('join-patient-room', { patientId, userId: user?.userId || user?.id });
-      }
-    });
-
-    // Listen for live dose logs (e.g. from server job or another tab)
-    socket.on('dose_logged', (payload) => {
-      console.log('[DailyRegimenTimetable] Live dose_logged event received:', payload);
-      queryClient.invalidateQueries({ queryKey: ['patient-doses'] });
-      queryClient.invalidateQueries({ queryKey: ['patient-adherence'] });
-      queryClient.invalidateQueries({ queryKey: ['home-summary'] });
-    });
-
-    // Listen for caregiver reminders
-    socket.on('caregiver_reminder', (payload) => {
-      console.log('[DailyRegimenTimetable] Live caregiver_reminder event received:', payload);
-      sendDoseReminder({
-        title: 'Caregiver Dose Reminder',
-        body: payload.message || `${payload.caregiverName || 'Your caregiver'} sent a reminder to take your scheduled medications.`,
-      });
-    });
-
-    return () => {
-      socket.disconnect();
-    };
-  }, [token, isGuest, user, queryClient]);
+  });
 
   // ─── 6. Scheduled Browser Notification Checks ────────────────────────────
   useEffect(() => {

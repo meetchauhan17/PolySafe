@@ -26,10 +26,10 @@ export default function LanguageSwitcher({
     <div
       role="group"
       aria-label="Language selection"
-      className={`inline-flex items-center gap-1 p-0.5 rounded-[var(--radius-sm)] bg-[var(--surface-2)] border border-[var(--border)] ${className}`}
+      className={`inline-flex items-center gap-0.5 p-0.5 rounded-[var(--radius-sm)] bg-[var(--surface-2)] border border-[var(--border)] ${className}`}
     >
       {showIcon && (
-        <span className="pl-1.5 pr-0.5 text-[var(--ink-2)]" aria-hidden="true">
+        <span className="pl-1 pr-0.5 text-[var(--ink-2)]" aria-hidden="true">
           <Globe className="w-3.5 h-3.5" />
         </span>
       )}
@@ -42,7 +42,7 @@ export default function LanguageSwitcher({
             onClick={() => setLang(l.code)}
             aria-pressed={isActive}
             aria-label={compact ? `${l.short} (${l.label})` : l.label}
-            className={`px-2 py-1 text-xs font-bold rounded-[6px] transition-all cursor-pointer ${
+            className={`px-1.5 py-1 text-xs font-bold rounded-[6px] transition-all cursor-pointer ${
               isActive
                 ? 'bg-[var(--brand-600)] text-white shadow-xs'
                 : 'text-[var(--ink-2)] hover:text-[var(--ink)] hover:bg-[var(--surface)]'
