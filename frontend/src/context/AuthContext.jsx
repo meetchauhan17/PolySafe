@@ -75,7 +75,10 @@ export function AuthProvider({ children }) {
     try {
       const storedToken = localStorage.getItem(TOKEN_KEY);
       const storedRole = localStorage.getItem(ROLE_KEY);
-      const isGuestStored = localStorage.getItem(GUEST_KEY) === 'true';
+      const isGuestStored =
+        localStorage.getItem(GUEST_KEY) === 'true' ||
+        localStorage.getItem('polysafe_guest_mode') === 'true' ||
+        localStorage.getItem('polysafe_is_guest') === 'true';
       let storedUser = {};
       try {
         storedUser = JSON.parse(localStorage.getItem(USER_KEY) || '{}');
@@ -115,9 +118,10 @@ export function AuthProvider({ children }) {
       } else if (isGuestStored) {
         setAxiosAuthHeader(null);
         setToken(null);
+        const resolvedRole = (storedRole || 'PATIENT').toUpperCase();
         const guestUser = {
           userId: null,
-          role: 'PATIENT',
+          role: resolvedRole,
           isGuest: true,
         };
         setUser(guestUser);
@@ -233,6 +237,7 @@ export function AuthProvider({ children }) {
         isOpen={guestLockState.isOpen}
         onClose={closeGuestLockModal}
         featureName={guestLockState.featureName}
+        onLogout={logout}
       />
     </AuthContext.Provider>
   );

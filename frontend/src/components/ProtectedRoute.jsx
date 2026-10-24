@@ -28,13 +28,10 @@ export default function ProtectedRoute({ allowedRoles }) {
  return <Navigate to="/login" state={{ from: location }} replace />;
  }
 
- // Guest users are allowed to explore patient routes in demo/preview mode
- if (user.isGuest) {
- if (allowedRoles && allowedRoles.includes('PATIENT')) {
- return <Outlet />;
- }
- return <Navigate to="/login" replace />;
- }
+  // Guest users are allowed to explore patient, doctor, and caregiver views in offline demo mode
+  if (user.isGuest) {
+    return <Outlet />;
+  }
 
  const userRole = (user.role || 'PATIENT').toUpperCase();
 

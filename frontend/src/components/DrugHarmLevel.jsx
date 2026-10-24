@@ -7,7 +7,7 @@ import axios from 'axios';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import {
   ChevronDown, ChevronUp, Loader2, Info, FlaskConical,
-  Activity, AlertTriangle, Pill, Heart, Leaf, ShieldAlert, Stethoscope
+  Activity, AlertTriangle, Pill, Heart, Leaf, ShieldAlert, Stethoscope, HelpCircle
 } from 'lucide-react';
 import Card from './Card';
 import LedIndicator from './LedIndicator';
@@ -55,12 +55,12 @@ export const HARM_LEVELS = {
     tier: 'L4',
     label: 'High Risk',
     shortLabel: 'L4 HIGH',
-    color: '#d97706',
+    color: '#b45309',
     ledStatus: 'caution',
     bg: 'bg-orange-950/5',
-    border: 'border-amber-500',
-    badgeCls: 'text-amber-600 border-amber-500 shadow-[var(--shadow-sm)]',
-    barColor: 'bg-amber-500',
+    border: 'border-amber-600',
+    badgeCls: 'text-amber-800 dark:text-amber-300 border-amber-600 shadow-[var(--shadow-sm)]',
+    barColor: 'bg-amber-600',
     tip: 'Statins, opioids, SSRIs/SNRIs, TCAs, ARBs, ACEIs, antidiabetics — high-alert prescription drug.',
   },
   5: {
@@ -133,7 +133,7 @@ export function getAverageBurdenTier(avgScore) {
     return {
       tier: 'L4',
       label: 'High Load (Tier 4)',
-      color: '#d97706',
+      color: '#b45309',
       ledStatus: 'caution',
       desc: 'Elevated pharmacological burden across multiple active systemic medications.',
     };
@@ -1071,8 +1071,16 @@ export function PolypharmacyHarmDashboard({ medicines = [], flags = [], regimenR
           {/* Average Risk Score */}
           <div className="p-4 rounded-2xl bg-[var(--canvas)] border border-[var(--border)] shadow-xs hover:border-[var(--border-strong)] transition-all space-y-1.5">
             <div className="flex items-center justify-between">
-              <span className="text-[10px] font-mono font-bold text-[var(--ink-3)] uppercase tracking-wider">
-                Average Regimen Burden
+              <span className="text-[10px] font-mono font-bold text-[var(--ink-3)] uppercase tracking-wider flex items-center gap-1.5">
+                <span>Average Regimen Burden</span>
+                <button
+                  type="button"
+                  onClick={() => window.dispatchEvent(new CustomEvent('polysafe:open-score-explainer', { detail: { tab: 'average' } }))}
+                  className="text-teal-600 dark:text-teal-400 hover:text-teal-800 p-0.5 rounded cursor-pointer"
+                  title="Click for clinical explanation"
+                >
+                  <HelpCircle className="w-3.5 h-3.5" />
+                </button>
               </span>
               <LedIndicator status={avgBurden.ledStatus} size="sm" />
             </div>
@@ -1095,8 +1103,16 @@ export function PolypharmacyHarmDashboard({ medicines = [], flags = [], regimenR
           {/* Highest Risk Drug */}
           <div className="p-4 rounded-2xl bg-[var(--canvas)] border border-[var(--border)] shadow-xs hover:border-[var(--border-strong)] transition-all space-y-1.5">
             <div className="flex items-center justify-between">
-              <span className="text-[10px] font-mono font-bold text-[var(--ink-3)] uppercase tracking-wider">
-                Peak Risk Agent
+              <span className="text-[10px] font-mono font-bold text-[var(--ink-3)] uppercase tracking-wider flex items-center gap-1.5">
+                <span>Peak Risk Agent</span>
+                <button
+                  type="button"
+                  onClick={() => window.dispatchEvent(new CustomEvent('polysafe:open-score-explainer', { detail: { tab: 'peak' } }))}
+                  className="text-orange-600 dark:text-orange-400 hover:text-orange-800 p-0.5 rounded cursor-pointer"
+                  title="Click for clinical explanation"
+                >
+                  <HelpCircle className="w-3.5 h-3.5" />
+                </button>
               </span>
               <LedIndicator status={highestCfg.ledStatus} size="sm" />
             </div>

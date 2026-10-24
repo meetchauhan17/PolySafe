@@ -3,8 +3,8 @@ import React from 'react';
 import { clsx } from 'clsx';
 
 /**
- * Generic badge / chip component.
- * For severity-specific status, use StatusPill from LedIndicator.jsx.
+ * Generic badge component.
+ * Uses tokens and WCAG AA contrast.
  */
 export function Badge({ children, variant = 'default', size = 'md', className, icon }) {
   const variants = {
@@ -19,7 +19,7 @@ export function Badge({ children, variant = 'default', size = 'md', className, i
   };
 
   const sizeClasses = {
-    sm: 'text-[11px] px-1.5 py-0.5',
+    sm: 'text-[11px] px-2 py-0.5',
     md: 'text-xs px-2.5 py-0.5',
     lg: 'text-sm px-3 py-1',
   };
@@ -33,16 +33,16 @@ export function Badge({ children, variant = 'default', size = 'md', className, i
         className
       )}
     >
-      {icon && <span className="flex-shrink-0" aria-hidden>{icon}</span>}
+      {icon && <span className="flex-shrink-0" aria-hidden="true">{icon}</span>}
       {children}
     </span>
   );
 }
 
 /**
- * DrugHarmBadge — L1 through L5 with color and label.
+ * DrugHarmBadge — L1 through L5 with tier tokens and visible number.
  */
-export function DrugHarmBadge({ level, className }) {
+export function DrugHarmBadge({ level, showLabel = false, className }) {
   const lvl = (level || 'L1').toString().toUpperCase().replace(/^L?(\d)$/, 'L$1');
   const tierClasses = {
     L1: 'ps-harm l1',
@@ -52,46 +52,36 @@ export function DrugHarmBadge({ level, className }) {
     L5: 'ps-harm l5',
   };
   const descriptions = {
-    L1: 'Minimal risk',
-    L2: 'Low risk',
-    L3: 'Moderate risk',
-    L4: 'High risk',
-    L5: 'Critical risk',
+    L1: 'Minimal Risk',
+    L2: 'Low Risk',
+    L3: 'Moderate Risk',
+    L4: 'High Risk',
+    L5: 'Critical Risk',
   };
+
   return (
     <span
-      className={clsx(tierClasses[lvl] || 'ps-harm l1', className)}
+      className={clsx(
+        tierClasses[lvl] || 'ps-harm l1',
+        'font-mono font-bold inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs select-none shadow-[var(--shadow-xs)]',
+        className
+      )}
       title={descriptions[lvl]}
       aria-label={`Harm level ${lvl}: ${descriptions[lvl]}`}
     >
-      {lvl}
+      <span className="font-bold">{lvl}</span>
+      {showLabel && (
+        <span className="font-[var(--font-heading)] font-semibold text-[11px] opacity-90">
+          — {descriptions[lvl]}
+        </span>
+      )}
     </span>
   );
 }
 
-/**
- * Selectable Chip — for filter selection, multi-select, etc.
- */
-export function Chip({ children, selected, onClick, icon, className }) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={clsx(
-        'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[var(--radius-sm)]',
-        'text-sm font-semibold font-[var(--font-heading)] border transition-all',
-        'min-h-[36px] cursor-pointer',
-        selected
-          ? 'bg-[var(--brand-50)] text-[var(--brand-700)] border-[var(--brand-600)]'
-          : 'bg-[var(--surface)] text-[var(--ink-2)] border-[var(--border)] hover:border-[var(--border-strong)] hover:text-[var(--ink)]',
-        className
-      )}
-      aria-pressed={selected}
-    >
-      {icon && <span aria-hidden>{icon}</span>}
-      {children}
-    </button>
-  );
-}
-
+export { default as Chip } from './Chip';
+export { default as StatusPill } from './StatusPill';
+export { default as RoleBadge } from './RoleBadge';
+export { default as TypeChip } from './TypeChip';
+export { default as StatusDot } from './StatusDot';
 export default Badge;

@@ -62,60 +62,20 @@ const config = {
   },
 };
 
-/**
- * StatusDot — just the dot (and optional pulsing animation)
- */
-export function StatusDot({ status = 'unknown', size = 'md', className }) {
-  const sizeClass = { sm: 'w-1.5 h-1.5', md: 'w-2 h-2', lg: 'w-2.5 h-2.5' };
-  return (
-    <span
-      className={clsx('ps-status-dot', status, sizeClass[size], className)}
-      aria-hidden
-    />
-  );
-}
-
-/**
- * StatusPill — dot + icon + label text, always all three.
- * This is the primary status display component across the app.
- */
-export function StatusPill({
-  status = 'unknown',
-  label,
-  size = 'md',
-  className,
-}) {
-  const cfg = config[status] || config.unknown;
-  const Icon = cfg.icon;
-  const displayLabel = label || cfg.label;
-
-  const sizeClasses = {
-    sm: 'text-xs px-2 py-0.5 gap-1',
-    md: 'text-sm px-2.5 py-1 gap-1.5',
-    lg: 'text-base px-3 py-1.5 gap-2',
-  };
-  const iconSizes = { sm: 'w-3 h-3', md: 'w-3.5 h-3.5', lg: 'w-4 h-4' };
-
-  return (
-    <span
-      className={clsx(
-        'inline-flex items-center font-semibold font-[var(--font-heading)] rounded-full border',
-        cfg.text, cfg.bg, cfg.border,
-        sizeClasses[size],
-        className
-      )}
-      aria-label={`Status: ${displayLabel}`}
-    >
-      <StatusDot status={status} size="sm" />
-      <Icon className={clsx(iconSizes[size], 'flex-shrink-0')} aria-hidden />
-      <span>{displayLabel}</span>
-    </span>
-  );
-}
+export { default as StatusDot } from './StatusDot';
+export { default as StatusPill } from './StatusPill';
 
 /**
  * Legacy LedIndicator — maps to StatusDot for backward compat
  */
 export default function LedIndicator({ status, size, className }) {
-  return <StatusDot status={status} size={size} className={className} />;
+  const normStatus = (status || 'unknown').toLowerCase();
+  const sizeClass = { sm: 'w-1.5 h-1.5', md: 'w-2 h-2', lg: 'w-2.5 h-2.5' };
+  return (
+    <span
+      className={clsx('ps-status-dot', normStatus, sizeClass[size] || sizeClass.md, className)}
+      aria-hidden="true"
+    />
+  );
 }
+

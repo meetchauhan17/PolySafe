@@ -1,31 +1,11 @@
-import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
-import { 
-  ShieldCheck, 
-  Pill, 
-  PlusCircle, 
-  ShieldAlert, 
-  Activity, 
-  Clock, 
-  Stethoscope, 
-  UserCheck, 
-  LogIn,
-  LogOut,
-  Menu,
-  X,
-  User,
-} from 'lucide-react';
+// src/components/Navbar.jsx
+import React from 'react';
+import SharedTopBar from './SharedTopBar';
+import { Pill, Clock, TrendingUp, Stethoscope, ShieldAlert, PlusCircle, Activity, UserCheck, User } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-import LedIndicator from './LedIndicator';
 
 export default function Navbar() {
-  const location = useLocation();
-  const { user, logout } = useAuth() || {};
-  const shouldReduceMotion = useReducedMotion();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [showSignOutModal, setShowSignOutModal] = useState(false);
-
+  const { user } = useAuth() || {};
 
   const getNavItems = () => {
     if (!user || user.isGuest) {
@@ -33,8 +13,7 @@ export default function Navbar() {
         { path: '/home', label: 'Home', icon: Pill },
         { path: '/add-medicine', label: 'Add Med', icon: PlusCircle },
         { path: '/timeline', label: 'Timeline', icon: Clock },
-        { path: '/doctor-dashboard', label: 'Doctor', icon: Stethoscope },
-        { path: '/caregiver-view', label: 'Caregiver', icon: ShieldAlert },
+        { path: '/insights', label: 'Insights', icon: TrendingUp },
       ];
     }
     const role = (user.role || 'PATIENT').toUpperCase();
@@ -54,260 +33,18 @@ export default function Navbar() {
       { path: '/home', label: 'Home', icon: Pill },
       { path: '/add-medicine', label: 'Add Med', icon: PlusCircle },
       { path: '/timeline', label: 'Timeline', icon: Clock },
+      { path: '/insights', label: 'Insights', icon: TrendingUp },
       { path: '/log-symptom', label: 'Symptoms', icon: Activity },
       { path: '/connected', label: 'Connected', icon: UserCheck },
       { path: '/profile', label: 'Profile', icon: User },
     ];
   };
 
-  const navItems = getNavItems();
-
-  // Helper for user initials
-  const getInitials = (name) => {
-    if (!name) return 'PS';
-    return name
-      .split(' ')
-      .map((n) => n[0])
-      .join('')
-      .toUpperCase()
-      .slice(0, 2);
-  };
-
   return (
-    <nav className="ps-navbar sticky top-0 z-50 h-16 flex items-center px-4 md:px-8">
-      <div className="w-full max-w-[1152px] mx-auto flex items-center justify-between">
-        {/* Left: Brand logo & wordmark */}
-        <Link to="/home" className="flex items-center gap-2.5 group">
-          <div
-            className="p-2 rounded-xl bg-[var(--brand-600)]/10 border border-[var(--brand-600)]/20 text-[var(--brand-600)] shadow-xs transition-transform group-hover:scale-105"
-            style={{ filter: 'drop-shadow(0 0 6px rgba(14,116,144,.20))' }}
-          >
-            <ShieldCheck className="w-5 h-5" />
-          </div>
-          <div>
-            <span className="text-lg font-extrabold tracking-tight text-[var(--ink)] font-[var(--font-heading)] block leading-none drop-shadow-[0_1px_0_rgba(255,255,255,0.8)]">
-              PolySafe
-            </span>
-            <span className="text-[10px] block text-[var(--ink-3)] font-mono font-bold tracking-wider uppercase mt-0.5">
-              Control Panel
-            </span>
-          </div>
-        </Link>
-
-        {/* Center: Desktop Navigation links */}
-        <div className="hidden lg:flex items-center gap-2">
-          {navItems.map((item) => {
-            const Icon = item.icon;
-            const isDoctor = item.path === '/doctor-dashboard';
-            const isCaregiver = item.path === '/caregiver-view';
-            const activeColor = isDoctor
-              ? 'text-[var(--doctor-600)]'
-              : isCaregiver
-              ? 'text-[var(--caregiver-600)]'
-              : 'text-[var(--brand-600)]';
-            const isActive =
-              location.pathname === item.path ||
-              (item.path === '/connected' && location.pathname === '/connected-people') ||
-              (item.path === '/insights' && location.pathname === '/trends');
-
-            return (
-              <Link
-                key={item.path}
-                to={item.path}
-                className={`relative flex items-center gap-1.5 px-3 py-1.5 rounded-2xl text-xs font-bold uppercase tracking-wider whitespace-nowrap shrink-0 transition-all ${
-                  isActive
-                    ? `bg-[var(--canvas)] ${activeColor} shadow-[var(--shadow-inner)]`
-                    : 'bg-[var(--canvas)] text-[var(--ink-3)] shadow-[var(--shadow-sm)] hover:text-[var(--ink)] hover:shadow-[var(--shadow-sm)] hover:-translate-y-0.5'
-                }`}
-              >
-                <Icon className="w-3.5 h-3.5 shrink-0" />
-                <span className="whitespace-nowrap">{item.label}</span>
-                {isActive && (
-                  <span
-                    className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-[var(--safe-fg)] shadow-[0_0_8px_2px_rgba(21,128,61,.25)] animate-[led-pulse_2s_ease-in-out_infinite]"
-                  />
-                )}
-              </Link>
-            );
-          })}
-        </div>
-
-        {/* Right: Status LED + User Profile + Actions */}
-        <div className="flex items-center gap-3">
-          {/* System Online LED Indicator */}
-          <div className="hidden sm:flex items-center bg-[var(--surface-2)] border border-[var(--border)] px-2.5 py-1 rounded-full shadow-xs">
-            <LedIndicator status="online" label="Online" size="sm" />
-          </div>
-
-
-
-          {user && !user.isGuest ? (
-            <div className="flex items-center gap-2">
-              <Link
-                to="/profile"
-                className={`w-8 h-8 rounded-full ${
-                  user.role === 'DOCTOR'
-                    ? 'bg-[var(--doctor-600)]'
-                    : user.role === 'CAREGIVER'
-                    ? 'bg-[var(--caregiver-600)]'
-                    : 'bg-[var(--brand-600)]'
-                } text-white font-mono text-xs font-bold flex items-center justify-center shadow-[var(--shadow-sm)] hover:scale-105 transition-transform`}
-                title={`${user.name || user.email} (${user.role || 'PATIENT'})`}
-              >
-                {getInitials(user.name || user.email)}
-              </Link>
-              {user.role === 'DOCTOR' && (
-                <span className="hidden sm:inline-block text-[10px] font-mono font-extrabold uppercase px-2 py-0.5 rounded-md bg-[var(--doctor-600)] text-white shadow-xs">
-                  MD
-                </span>
-              )}
-              <button
-                onClick={() => setShowSignOutModal(true)}
-                className="ps-btn ps-btn--ghost ps-btn--sm text-[var(--critical-fg)]"
-                title="Sign Out"
-                aria-label="Sign Out of PolySafe"
-              >
-                <LogOut className="w-3.5 h-3.5" />
-                <span className="hidden md:inline">Exit</span>
-              </button>
-            </div>
-          ) : (
-            <Link
-              to="/login"
-              className="ps-btn ps-btn--primary ps-btn--sm"
-            >
-              <LogIn className="w-3.5 h-3.5" />
-              <span>Sign In</span>
-            </Link>
-          )}
-
-          {/* Mobile hamburger menu toggle */}
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden p-2 rounded-xl bg-[var(--surface)] border border-[var(--border)] text-[var(--ink)] shadow-xs active:scale-95 cursor-pointer hover:bg-[var(--canvas)] transition-colors"
-            aria-label="Toggle navigation menu"
-          >
-            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-          </button>
-        </div>
-      </div>
-
-      {/* Mobile Drawer */}
-      <AnimatePresence>
-        {mobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.18, ease: 'easeOut' }}
-            className="lg:hidden absolute top-16 left-0 right-0 bg-[var(--surface)] border-b border-[var(--border-strong)] shadow-[var(--shadow-lg)] p-4 flex flex-col gap-1.5 z-50"
-          >
-            {navItems.map((item) => {
-              const Icon = item.icon;
-              const isDoctor = item.path === '/doctor-dashboard';
-              const isCaregiver = item.path === '/caregiver-view';
-              const activeColor = isDoctor
-                ? 'text-[var(--doctor-600)] border-l-4 border-[var(--doctor-600)] bg-[var(--canvas)]'
-                : isCaregiver
-                ? 'text-[var(--caregiver-600)] border-l-4 border-[var(--caregiver-600)] bg-[var(--canvas)]'
-                : 'text-[var(--brand-600)] border-l-4 border-[var(--brand-600)] bg-[var(--canvas)]';
-              const isActive =
-                location.pathname === item.path ||
-                (item.path === '/connected' && location.pathname === '/connected-people');
-
-              return (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
-                    isActive
-                      ? activeColor
-                      : 'text-[var(--ink-2)] hover:bg-[var(--canvas)] hover:text-[var(--ink)]'
-                  }`}
-                >
-                  <Icon className={`w-4 h-4 flex-shrink-0 ${
-                    isActive ? '' : 'text-[var(--ink-3)]'
-                  }`} />
-                  <span>{item.label}</span>
-                  {isActive && (
-                    <span className="ml-auto w-1.5 h-1.5 rounded-full bg-[var(--safe-fg)] shadow-[0_0_6px_2px_rgba(21,128,61,.25)] animate-[led-pulse_2s_ease-in-out_infinite]" />
-                  )}
-                </Link>
-              );
-            })}
-
-            <div className="pt-2 mt-1 border-t border-[var(--border)] flex items-center justify-between px-2">
-              <LedIndicator status="online" label="System Active" size="sm" />
-              <Link
-                to="/onboarding"
-                onClick={() => setMobileMenuOpen(false)}
-                className="text-xs font-mono text-[var(--brand-600)] underline underline-offset-2"
-              >
-                Reset Profile
-              </Link>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* ── Sign Out Confirmation Modal ── */}
-      <AnimatePresence>
-        {showSignOutModal && (
-          <div className="ps-modal-overlay">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setShowSignOutModal(false)}
-              className="fixed inset-0 bg-[#1a1f2e]/60"
-            />
-            <motion.div
-              initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.95, y: 15 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.95, y: 10 }}
-              transition={{ type: 'spring', damping: 30, stiffness: 400 }}
-              className="relative z-10 w-full max-w-sm bg-[var(--canvas)] rounded-[28px] p-6 shadow-[var(--shadow-lg)] border border-[var(--border)] text-left space-y-4"
-              role="dialog"
-              aria-modal="true"
-            >
-              <div className="flex items-center gap-3">
-                <div className="p-3 bg-[var(--critical-fg)]/10 text-[var(--critical-fg)] rounded-2xl shadow-[var(--shadow-sm)]">
-                  <LogOut className="w-5 h-5" />
-                </div>
-                <div>
-                  <h3 className="text-base font-extrabold text-[var(--ink)] font-[var(--font-heading)]">
-                    Sign out of PolySafe?
-                  </h3>
-                  <p className="text-xs text-[var(--ink-3)] font-mono">
-                    Are you sure you want to end your active session?
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-center justify-end gap-2.5 pt-2 border-t border-[var(--border)]">
-                <button
-                  type="button"
-                  onClick={() => setShowSignOutModal(false)}
-                  className="ps-btn ps-btn--secondary ps-btn--sm"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setShowSignOutModal(false);
-                    logout();
-                  }}
-                  className="ps-btn ps-btn--critical ps-btn--sm"
-                >
-                  Sign Out
-                </button>
-              </div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
-    </nav>
+    <SharedTopBar
+      role={user?.role || 'PATIENT'}
+      navItems={getNavItems()}
+      darkVariant={(user?.role || '').toUpperCase() === 'DOCTOR'}
+    />
   );
 }

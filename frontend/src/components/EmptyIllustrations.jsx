@@ -1,387 +1,364 @@
-import React from 'react';
-
 /**
- * EmptyIllustrations.jsx
+ * frontend/src/components/EmptyIllustrations.jsx
  *
- * Hand-crafted, cohesive line-art SVG illustrations for PolySafe empty states.
- * Brand palette: Deep Teal (var(--brand-600)), Warm Terracotta (var(--brand-600)), Warm Parchment/Sand (var(--border), var(--surface)), Charcoal (var(--ink)).
- * Style: 1.75px-2px stroke, round caps/joins, subtle translucent fills, unified visual language.
+ * Cohesive Editorial Line-Art Empty State Illustrations
+ * ─────────────────────────────────────────────────────────────────────────────
+ * Style Rules:
+ * • Editorial line art: 2px strokes in var(--ink, #0B1B2B)
+ * • Flat fills in ivory / paper (var(--paper, #FFFFFF) / var(--surface, #FAF8F5))
+ * • Exactly one blue accent: var(--brand-600, #0E7490)
+ * • Exactly one coral accent: var(--accent-500, #FF5C35)
+ * • Inline SVGs, strictly lightweight (< 3 KB each)
+ *
+ * Illustrations included:
+ * 1. EmptyMedicinesIllustration    (No medicines added)
+ * 2. EmptyFlagsIllustration        (No flags / All checks clear)
+ * 3. EmptyConnectionsIllustration  (No doctor/caregiver connections)
+ * 4. EmptySymptomsIllustration     (No symptoms logged)
+ * 5. EmptyPatientsIllustration    (No patient selected in doctor view)
+ * 6. EmptyDataIllustration        (No data / telemetry yet)
+ * 7. EmptySearchIllustration      (Search returned 0 results)
  */
 
-export function EmptyMedicinesIllustration({ className = 'w-36 h-36 mx-auto' }) {
- return (
- <svg
- viewBox="0 0 160 160"
- fill="none"
- xmlns="http://www.w3.org/2000/svg"
- className={className}
- aria-hidden="true"
- >
- {/* Soft Ambient Background Circle */}
- <circle cx="80" cy="80" r="64" fill="var(--canvas)" fillOpacity="0.5" />
- <circle cx="80" cy="80" r="54" stroke="var(--brand-600)" strokeOpacity="0.15" strokeWidth="1.5" strokeDasharray="3 3" />
+import React from 'react';
+import { clsx } from 'clsx';
 
- {/* Pill Bottle */}
- <g transform="translate(42, 38)">
- {/* Bottle Cap */}
- <rect x="18" y="4" width="28" height="10" rx="3" fill="var(--border)" stroke="var(--brand-600)" strokeWidth="2" strokeLinejoin="round" />
- <line x1="24" y1="4" x2="24" y2="14" stroke="var(--brand-600)" strokeWidth="1.5" strokeLinecap="round" opacity="0.4" />
- <line x1="32" y1="4" x2="32" y2="14" stroke="var(--brand-600)" strokeWidth="1.5" strokeLinecap="round" opacity="0.4" />
- <line x1="40" y1="4" x2="40" y2="14" stroke="var(--brand-600)" strokeWidth="1.5" strokeLinecap="round" opacity="0.4" />
+/* ── 1. No Medicines Added ───────────────────────────────────────────── */
+export function EmptyMedicinesIllustration({ className = 'w-32 h-32 mx-auto' }) {
+  return (
+    <svg
+      viewBox="0 0 120 120"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={clsx('overflow-visible flex-shrink-0 select-none', className)}
+      role="img"
+      aria-label="No medications illustration"
+    >
+      {/* Background Soft Ambient Disc */}
+      <circle cx="60" cy="60" r="48" fill="var(--surface-2, #F1F5F9)" opacity="0.6" />
 
- {/* Bottle Neck */}
- <rect x="22" y="14" width="20" height="4" fill="#FFFFFF" stroke="var(--brand-600)" strokeWidth="2" strokeLinejoin="round" />
+      {/* Pill Bottle */}
+      <g transform="translate(32, 28)">
+        {/* Cap with ridges */}
+        <rect x="14" y="0" width="28" height="8" rx="2" fill="var(--paper, #FFFFFF)" stroke="var(--ink, #0B1B2B)" strokeWidth="2" />
+        <line x1="21" y1="2" x2="21" y2="6" stroke="var(--ink, #0B1B2B)" strokeWidth="1.5" strokeLinecap="round" />
+        <line x1="28" y1="2" x2="28" y2="6" stroke="var(--ink, #0B1B2B)" strokeWidth="1.5" strokeLinecap="round" />
+        <line x1="35" y1="2" x2="35" y2="6" stroke="var(--ink, #0B1B2B)" strokeWidth="1.5" strokeLinecap="round" />
 
- {/* Bottle Body */}
- <rect x="10" y="18" width="44" height="64" rx="8" fill="#FFFFFF" stroke="var(--brand-600)" strokeWidth="2" strokeLinejoin="round" />
- {/* Bottle Label Area */}
- <rect x="14" y="28" width="36" height="38" rx="4" fill="var(--surface)" stroke="var(--border)" strokeWidth="1.5" />
- {/* Rx Symbol */}
- <path d="M22 36H28C30.2 36 32 37.8 32 40C32 42.2 30.2 44 28 44H22V36ZM22 44L32 54M28 47L34 43" stroke="var(--brand-600)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
- {/* Dosage lines */}
- <line x1="22" y1="58" x2="42" y2="58" stroke="var(--ink-3)" strokeWidth="1.5" strokeLinecap="round" opacity="0.5" />
- </g>
+        {/* Neck */}
+        <rect x="18" y="8" width="20" height="4" fill="var(--paper, #FFFFFF)" stroke="var(--ink, #0B1B2B)" strokeWidth="2" />
 
- {/* Floating Capsule 1 (Left Tilt) */}
- <g transform="translate(94, 76) rotate(35)">
- <rect x="0" y="0" width="16" height="32" rx="8" fill="#FFFFFF" stroke="var(--brand-600)" strokeWidth="2" strokeLinejoin="round" />
- <path d="M0 8C0 3.58 3.58 0 8 0C12.42 0 16 3.58 16 8V16H0V8Z" fill="var(--brand-600)" fillOpacity="0.2" stroke="var(--brand-600)" strokeWidth="2" strokeLinejoin="round" />
- <line x1="0" y1="16" x2="16" y2="16" stroke="var(--brand-600)" strokeWidth="2" />
- </g>
+        {/* Bottle Body */}
+        <rect x="8" y="12" width="40" height="52" rx="6" fill="var(--paper, #FFFFFF)" stroke="var(--ink, #0B1B2B)" strokeWidth="2" />
 
- {/* Floating Capsule 2 (Bottom Round Tablet) */}
- <circle cx="36" cy="116" r="10" fill="#FFFFFF" stroke="var(--brand-600)" strokeWidth="2" />
- <line x1="29" y1="116" x2="43" y2="116" stroke="var(--brand-600)" strokeWidth="1.5" strokeLinecap="round" />
+        {/* Paper Prescription Label with Rx */}
+        <rect x="12" y="20" width="32" height="34" rx="3" fill="var(--surface, #FAF8F5)" stroke="var(--border, #E2E8F0)" strokeWidth="1.2" />
+        {/* Blue Rx Glyphs */}
+        <path d="M18 28H23C25 28 26 29 26 31C26 33 25 34 23 34H18V28ZM18 34L26 42M23 37L28 33" stroke="var(--brand-600, #0E7490)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        {/* Prescription lines */}
+        <line x1="18" y1="46" x2="38" y2="46" stroke="var(--ink-4, #94A3B8)" strokeWidth="1.5" strokeLinecap="round" />
+      </g>
 
- {/* Delicate Herbal Leaf Branch */}
- <path d="M112 44C118 42 126 46 128 54C120 56 114 52 112 44Z" fill="var(--brand-600)" fillOpacity="0.15" stroke="var(--brand-600)" strokeWidth="1.75" strokeLinejoin="round" />
- <path d="M128 54C134 56 138 64 136 72C128 72 124 66 128 54Z" fill="var(--brand-600)" fillOpacity="0.15" stroke="var(--brand-600)" strokeWidth="1.75" strokeLinejoin="round" />
- <path d="M112 44C118 56 124 68 132 80" stroke="var(--brand-600)" strokeWidth="1.75" strokeLinecap="round" />
+      {/* Floating 45-degree Dual-Tone Capsule (Blue & Coral) */}
+      <g transform="translate(82, 74) rotate(-35)">
+        {/* Blue Half */}
+        <path d="M -6 -12 C -6 -15.3 -3.3 -18 0 -18 C 3.3 -18 6 -15.3 6 -12 L 6 0 L -6 0 Z" fill="var(--brand-600, #0E7490)" stroke="var(--ink, #0B1B2B)" strokeWidth="2" strokeLinejoin="round" />
+        {/* Coral Half */}
+        <path d="M -6 0 L 6 0 L 6 12 C 6 15.3 3.3 18 0 18 C -3.3 18 -6 15.3 -6 12 Z" fill="var(--accent-500, #FF5C35)" stroke="var(--ink, #0B1B2B)" strokeWidth="2" strokeLinejoin="round" />
+        {/* Dividing Seam */}
+        <line x1="-6" y1="0" x2="6" y2="0" stroke="var(--ink, #0B1B2B)" strokeWidth="2" />
+      </g>
 
- {/* Sparkles */}
- <path d="M34 46L36 40L38 46L44 48L38 50L36 56L34 50L28 48L34 46Z" fill="var(--brand-600)" fillOpacity="0.4" />
- <path d="M128 104L129.5 99.5L134 98L129.5 96.5L128 92L126.5 96.5L122 98L126.5 99.5L128 104Z" fill="var(--brand-600)" fillOpacity="0.4" />
- </svg>
- );
+      {/* Floating Scored Round Tablet */}
+      <circle cx="28" cy="84" r="8" fill="var(--paper, #FFFFFF)" stroke="var(--ink, #0B1B2B)" strokeWidth="2" />
+      <line x1="22" y1="84" x2="34" y2="84" stroke="var(--ink, #0B1B2B)" strokeWidth="1.5" strokeLinecap="round" />
+
+      {/* Subtle Coral Plus Accent Spark */}
+      <path d="M88 32V40M84 36H92" stroke="var(--accent-500, #FF5C35)" strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  );
 }
 
-export function EmptyTimelineIllustration({ className = 'w-36 h-36 mx-auto' }) {
- return (
- <svg
- viewBox="0 0 160 160"
- fill="none"
- xmlns="http://www.w3.org/2000/svg"
- className={className}
- aria-hidden="true"
- >
- {/* Ambient background circle */}
- <circle cx="80" cy="80" r="64" fill="var(--canvas)" fillOpacity="0.4" />
+/* ── 2. No Flags / All Clear ─────────────────────────────────────────── */
+export function EmptyFlagsIllustration({ className = 'w-32 h-32 mx-auto' }) {
+  return (
+    <svg
+      viewBox="0 0 120 120"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={clsx('overflow-visible flex-shrink-0 select-none', className)}
+      role="img"
+      aria-label="All clear no flags illustration"
+    >
+      <circle cx="60" cy="60" r="48" fill="var(--surface-2, #F1F5F9)" opacity="0.6" />
 
- {/* The Central Continuous Timeline Cord (var(--brand-600)) */}
- <line x1="50" y1="20" x2="50" y2="140" stroke="var(--brand-600)" strokeWidth="2.5" strokeDasharray="4 4" strokeLinecap="round" />
+      {/* Shield Body in Editorial Ivory */}
+      <path
+        d="M 60 22 C 71 22, 80 24.5, 82 29 C 82 50, 74 62, 60 70 C 46 62, 38 50, 38 29 C 40 24.5, 49 22, 60 22 Z"
+        fill="var(--paper, #FFFFFF)"
+        stroke="var(--ink, #0B1B2B)"
+        strokeWidth="2.5"
+        strokeLinejoin="round"
+      />
 
- {/* Node 1: Top Prescription Node */}
- <circle cx="50" cy="42" r="9" fill="#FFFFFF" stroke="var(--brand-600)" strokeWidth="2.5" />
- <circle cx="50" cy="42" r="3.5" fill="var(--brand-600)" />
- <g transform="translate(68, 28)">
- <rect x="0" y="0" width="62" height="28" rx="6" fill="#FFFFFF" stroke="var(--border)" strokeWidth="1.5" />
- <line x1="8" y1="10" x2="38" y2="10" stroke="var(--brand-600)" strokeWidth="2" strokeLinecap="round" />
- <line x1="8" y1="18" x2="52" y2="18" stroke="var(--ink-3)" strokeWidth="1.5" strokeLinecap="round" opacity="0.5" />
- </g>
+      {/* Large Bold Checkmark (Blue Accent) */}
+      <path
+        d="M 50 45 L 57 53 L 71 37"
+        stroke="var(--brand-600, #0E7490)"
+        strokeWidth="3"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
 
- {/* Node 2: Middle Flag / Warning Node */}
- <circle cx="50" cy="82" r="9" fill="#FFFFFF" stroke="var(--brand-600)" strokeWidth="2.5" />
- <path d="M50 78V83M50 86V87" stroke="var(--brand-600)" strokeWidth="2" strokeLinecap="round" />
- <g transform="translate(68, 68)">
- <rect x="0" y="0" width="56" height="28" rx="6" fill="#FFFFFF" stroke="var(--brand-600)" strokeWidth="1.5" strokeOpacity="0.4" />
- <line x1="8" y1="10" x2="32" y2="10" stroke="var(--brand-600)" strokeWidth="2" strokeLinecap="round" />
- <line x1="8" y1="18" x2="46" y2="18" stroke="var(--ink-3)" strokeWidth="1.5" strokeLinecap="round" opacity="0.5" />
- </g>
+      {/* Olive/Laurel Wreath Sprig */}
+      <path d="M 28 66 C 26 50, 34 36, 42 30" stroke="var(--ink, #0B1B2B)" strokeWidth="1.75" strokeLinecap="round" />
+      <path d="M 92 66 C 94 50, 86 36, 78 30" stroke="var(--ink, #0B1B2B)" strokeWidth="1.75" strokeLinecap="round" />
 
- {/* Node 3: Bottom Safe Node */}
- <circle cx="50" cy="122" r="9" fill="#FFFFFF" stroke="var(--safe-fg)" strokeWidth="2.5" />
- <path d="M47 122L49.5 124.5L53.5 119.5" stroke="var(--safe-fg)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
- <g transform="translate(68, 108)">
- <rect x="0" y="0" width="58" height="28" rx="6" fill="#FFFFFF" stroke="var(--border)" strokeWidth="1.5" />
- <line x1="8" y1="10" x2="34" y2="10" stroke="var(--brand-600)" strokeWidth="2" strokeLinecap="round" />
- <line x1="8" y1="18" x2="48" y2="18" stroke="var(--ink-3)" strokeWidth="1.5" strokeLinecap="round" opacity="0.5" />
- </g>
+      {/* Laurel Leaves */}
+      <ellipse cx="30" cy="46" rx="4" ry="2.5" transform="rotate(-30 30 46)" fill="var(--paper, #FFFFFF)" stroke="var(--ink, #0B1B2B)" strokeWidth="1.5" />
+      <ellipse cx="32" cy="58" rx="4" ry="2.5" transform="rotate(-15 32 58)" fill="var(--paper, #FFFFFF)" stroke="var(--ink, #0B1B2B)" strokeWidth="1.5" />
+      <ellipse cx="90" cy="46" rx="4" ry="2.5" transform="rotate(30 90 46)" fill="var(--paper, #FFFFFF)" stroke="var(--ink, #0B1B2B)" strokeWidth="1.5" />
+      <ellipse cx="88" cy="58" rx="4" ry="2.5" transform="rotate(15 88 58)" fill="var(--paper, #FFFFFF)" stroke="var(--ink, #0B1B2B)" strokeWidth="1.5" />
 
- {/* Clock Icon Accent */}
- <circle cx="26" cy="42" r="10" fill="#FFFFFF" stroke="var(--brand-600)" strokeWidth="1.75" />
- <path d="M26 38V42L28.5 44.5" stroke="var(--brand-600)" strokeWidth="1.5" strokeLinecap="round" />
- </svg>
- );
+      {/* Delicate Coral Star Accent */}
+      <path d="M 60 80 L 61.5 85 L 66 86.5 L 61.5 88 L 60 93 L 58.5 88 L 54 86.5 L 58.5 85 Z" fill="var(--accent-500, #FF5C35)" />
+    </svg>
+  );
 }
 
-export function EmptyDoctorsIllustration({ className = 'w-36 h-36 mx-auto' }) {
- return (
- <svg
- viewBox="0 0 160 160"
- fill="none"
- xmlns="http://www.w3.org/2000/svg"
- className={className}
- aria-hidden="true"
- >
- {/* Background circle */}
- <circle cx="80" cy="80" r="64" fill="var(--canvas)" fillOpacity="0.5" />
+/* ── 3. No Connections (Doctor / Caregiver) ─────────────────────────── */
+export function EmptyConnectionsIllustration({ className = 'w-32 h-32 mx-auto' }) {
+  return (
+    <svg
+      viewBox="0 0 120 120"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={clsx('overflow-visible flex-shrink-0 select-none', className)}
+      role="img"
+      aria-label="No clinical connections illustration"
+    >
+      <circle cx="60" cy="60" r="48" fill="var(--surface-2, #F1F5F9)" opacity="0.6" />
 
- {/* Stethoscope Arch */}
- <path
- d="M52 44V70C52 85.464 64.536 98 80 98C95.464 98 108 85.464 108 70V44"
- stroke="var(--doctor-600)"
- strokeWidth="2.5"
- strokeLinecap="round"
- />
- {/* Earpieces */}
- <circle cx="48" cy="42" r="4.5" fill="var(--doctor-600)" />
- <circle cx="112" cy="42" r="4.5" fill="var(--doctor-600)" />
- <path d="M48 42H56" stroke="var(--doctor-600)" strokeWidth="2" strokeLinecap="round" />
- <path d="M104 42H112" stroke="var(--doctor-600)" strokeWidth="2" strokeLinecap="round" />
+      {/* Left Profile Node (Doctor/Caregiver with Blue Accent) */}
+      <g transform="translate(24, 40)">
+        <circle cx="16" cy="12" r="8" fill="var(--paper, #FFFFFF)" stroke="var(--ink, #0B1B2B)" strokeWidth="2" />
+        <path d="M 4 34 C 4 25, 9 22, 16 22 C 23 22, 28 25, 28 34" fill="var(--paper, #FFFFFF)" stroke="var(--ink, #0B1B2B)" strokeWidth="2" strokeLinecap="round" />
+        <circle cx="16" cy="12" r="3" fill="var(--brand-600, #0E7490)" />
+      </g>
 
- {/* Stem & Chestpiece */}
- <path d="M80 98V114" stroke="var(--doctor-600)" strokeWidth="2.5" strokeLinecap="round" />
- <circle cx="80" cy="122" r="10" fill="#FFFFFF" stroke="var(--doctor-600)" strokeWidth="2.5" />
- <circle cx="80" cy="122" r="4" fill="var(--brand-600)" />
+      {/* Right Profile Node (Patient with Coral Accent) */}
+      <g transform="translate(64, 40)">
+        <circle cx="16" cy="12" r="8" fill="var(--paper, #FFFFFF)" stroke="var(--ink, #0B1B2B)" strokeWidth="2" />
+        <path d="M 4 34 C 4 25, 9 22, 16 22 C 23 22, 28 25, 28 34" fill="var(--paper, #FFFFFF)" stroke="var(--ink, #0B1B2B)" strokeWidth="2" strokeLinecap="round" />
+        <circle cx="16" cy="12" r="3" fill="var(--accent-500, #FF5C35)" />
+      </g>
 
- {/* Medical Cross Shield inside */}
- <g transform="translate(62, 50)">
- <path
- d="M18 4L4 9V20C4 28 10 34 18 37C26 34 32 28 32 20V9L18 4Z"
- fill="#FFFFFF"
- stroke="var(--brand-600)"
- strokeWidth="2"
- strokeLinejoin="round"
- />
- {/* Cross */}
- <path d="M18 13V27M11 20H25" stroke="var(--brand-600)" strokeWidth="2" strokeLinecap="round" />
- </g>
+      {/* Dotted Bridge Line Linking Them */}
+      <path d="M 48 56 Q 60 48 72 56" stroke="var(--ink, #0B1B2B)" strokeWidth="2" strokeDasharray="3 3" strokeLinecap="round" />
 
- {/* QR Code link accent */}
- <g transform="translate(112, 102)">
- <rect x="0" y="0" width="22" height="22" rx="4" fill="#FFFFFF" stroke="var(--brand-600)" strokeWidth="1.5" />
- <rect x="3" y="3" width="5" height="5" fill="var(--brand-600)" />
- <rect x="14" y="3" width="5" height="5" fill="var(--brand-600)" />
- <rect x="3" y="14" width="5" height="5" fill="var(--brand-600)" />
- <rect x="14" y="14" width="4" height="4" fill="var(--brand-600)" />
- </g>
- </svg>
- );
+      {/* 6-Digit Keycode PIN Token in Center */}
+      <g transform="translate(43, 76)">
+        <rect x="0" y="0" width="34" height="18" rx="5" fill="var(--paper, #FFFFFF)" stroke="var(--ink, #0B1B2B)" strokeWidth="2" />
+        <circle cx="8" cy="9" r="2" fill="var(--brand-600, #0E7490)" />
+        <circle cx="17" cy="9" r="2" fill="var(--ink, #0B1B2B)" />
+        <circle cx="26" cy="9" r="2" fill="var(--accent-500, #FF5C35)" />
+      </g>
+    </svg>
+  );
 }
 
-export function EmptyCaregiversIllustration({ className = 'w-36 h-36 mx-auto' }) {
- return (
- <svg
- viewBox="0 0 160 160"
- fill="none"
- xmlns="http://www.w3.org/2000/svg"
- className={className}
- aria-hidden="true"
- >
- {/* Ambient background */}
- <circle cx="80" cy="80" r="64" fill="var(--canvas)" fillOpacity="0.45" />
+/* ── 4. No Symptoms Logged ───────────────────────────────────────────── */
+export function EmptySymptomsIllustration({ className = 'w-32 h-32 mx-auto' }) {
+  return (
+    <svg
+      viewBox="0 0 120 120"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={clsx('overflow-visible flex-shrink-0 select-none', className)}
+      role="img"
+      aria-label="No symptoms logged illustration"
+    >
+      <circle cx="60" cy="60" r="48" fill="var(--surface-2, #F1F5F9)" opacity="0.6" />
 
- {/* Two caring hands cradling a heart */}
- {/* Left Hand */}
- <path
- d="M32 108C36 94 48 88 58 88C64 88 70 91 76 96L80 100L72 108C64 114 52 118 40 114L32 108Z"
- fill="#FFFFFF"
- stroke="var(--caregiver-600)"
- strokeWidth="2"
- strokeLinejoin="round"
- />
- {/* Right Hand */}
- <path
- d="M128 108C124 94 112 88 102 88C96 88 90 91 84 96L80 100L88 108C96 114 108 118 120 114L128 108Z"
- fill="#FFFFFF"
- stroke="var(--caregiver-600)"
- strokeWidth="2"
- strokeLinejoin="round"
- />
+      {/* Clinical Clipboard */}
+      <g transform="translate(34, 22)">
+        {/* Clip */}
+        <rect x="18" y="0" width="16" height="8" rx="2" fill="var(--surface-2, #F1F5F9)" stroke="var(--ink, #0B1B2B)" strokeWidth="2" />
+        <circle cx="26" cy="4" r="1.5" fill="var(--ink, #0B1B2B)" />
 
- {/* Floating Center Heart */}
- <path
- d="M80 44C73.373 34 58 36 54 48C50 60 64 72 80 84C96 72 110 60 106 48C102 36 86.627 34 80 44Z"
- fill="#FFFFFF"
- stroke="var(--brand-600)"
- strokeWidth="2.5"
- strokeLinejoin="round"
- />
- {/* Heart Inner Shield Icon */}
- <path
- d="M80 54L72 58V65C72 70 75 74 80 76C85 74 88 70 88 65V58L80 54Z"
- fill="var(--canvas)"
- stroke="var(--brand-600)"
- strokeWidth="1.5"
- strokeLinejoin="round"
- />
+        {/* Board */}
+        <rect x="4" y="6" width="44" height="66" rx="6" fill="var(--paper, #FFFFFF)" stroke="var(--ink, #0B1B2B)" strokeWidth="2" />
 
- {/* Protective Sparkles */}
- <path d="M42 46L44 40L46 46L52 48L46 50L44 56L42 50L36 48L42 46Z" fill="var(--brand-600)" fillOpacity="0.45" />
- <path d="M116 42L117.5 37.5L122 36L117.5 34.5L116 30L114.5 34.5L110 36L114.5 37.5L116 42Z" fill="var(--caregiver-600)" fillOpacity="0.45" />
- </svg>
- );
+        {/* Steady EKG Line (Blue Accent) */}
+        <path
+          d="M 10 38 H 18 L 22 30 L 26 44 L 30 36 L 33 38 H 42"
+          stroke="var(--brand-600, #0E7490)"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+
+        {/* Checklist Rows with Empty Checkboxes */}
+        <rect x="12" y="18" width="6" height="6" rx="1.5" stroke="var(--ink, #0B1B2B)" strokeWidth="1.5" fill="none" />
+        <line x1="22" y1="21" x2="40" y2="21" stroke="var(--ink-4, #94A3B8)" strokeWidth="1.5" strokeLinecap="round" />
+
+        <rect x="12" y="52" width="6" height="6" rx="1.5" stroke="var(--ink, #0B1B2B)" strokeWidth="1.5" fill="none" />
+        <line x1="22" y1="55" x2="38" y2="55" stroke="var(--ink-4, #94A3B8)" strokeWidth="1.5" strokeLinecap="round" />
+      </g>
+
+      {/* Gentle Floating Coral Heart Dot */}
+      <g transform="translate(80, 72)">
+        <path
+          d="M 10 3 C 6 0, 0 3, 0 8 C 0 13, 10 19, 10 19 C 10 19, 20 13, 20 8 C 20 3, 14 0, 10 3 Z"
+          fill="var(--accent-500, #FF5C35)"
+          stroke="var(--ink, #0B1B2B)"
+          strokeWidth="1.75"
+          strokeLinejoin="round"
+        />
+      </g>
+    </svg>
+  );
 }
 
-export function EmptyDoctorPatientIllustration({ className = 'w-36 h-36 mx-auto' }) {
- return (
- <svg
- viewBox="0 0 160 160"
- fill="none"
- xmlns="http://www.w3.org/2000/svg"
- className={className}
- aria-hidden="true"
- >
- {/* Ambient background */}
- <circle cx="80" cy="80" r="64" fill="var(--canvas)" fillOpacity="0.4" />
+/* ── 5. No Patient Selected (Doctor Rail / Selection) ────────────────── */
+export function EmptyPatientsIllustration({ className = 'w-32 h-32 mx-auto' }) {
+  return (
+    <svg
+      viewBox="0 0 120 120"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={clsx('overflow-visible flex-shrink-0 select-none', className)}
+      role="img"
+      aria-label="No patient selected illustration"
+    >
+      <circle cx="60" cy="60" r="48" fill="var(--surface-2, #F1F5F9)" opacity="0.6" />
 
- {/* Clinical Clipboard */}
- <g transform="translate(42, 28)">
- {/* Clip top */}
- <rect x="26" y="0" width="24" height="10" rx="3" fill="var(--border)" stroke="var(--doctor-600)" strokeWidth="2" strokeLinejoin="round" />
- <circle cx="38" cy="5" r="2" fill="var(--doctor-600)" />
+      {/* Patient Identification Card */}
+      <g transform="translate(28, 28)">
+        <rect x="0" y="0" width="64" height="48" rx="6" fill="var(--paper, #FFFFFF)" stroke="var(--ink, #0B1B2B)" strokeWidth="2" />
+        {/* Lanyard Slot */}
+        <rect x="24" y="-3" width="16" height="6" rx="2" fill="var(--surface-2, #F1F5F9)" stroke="var(--ink, #0B1B2B)" strokeWidth="1.5" />
 
- {/* Board Body */}
- <rect x="4" y="6" width="68" height="96" rx="8" fill="#FFFFFF" stroke="var(--doctor-600)" strokeWidth="2" strokeLinejoin="round" />
+        {/* Avatar Silhouette */}
+        <circle cx="18" cy="18" r="6" fill="var(--brand-600, #0E7490)" />
+        <path d="M 9 34 C 9 28, 13 26, 18 26 C 23 26, 27 28, 27 34" fill="var(--ink, #0B1B2B)" />
 
- {/* Medical Chart Lines */}
- <line x1="16" y1="24" x2="48" y2="24" stroke="var(--brand-600)" strokeWidth="2.5" strokeLinecap="round" />
- <line x1="16" y1="34" x2="60" y2="34" stroke="var(--ink-3)" strokeWidth="1.75" strokeLinecap="round" opacity="0.4" />
- <line x1="16" y1="42" x2="52" y2="42" stroke="var(--ink-3)" strokeWidth="1.75" strokeLinecap="round" opacity="0.4" />
+        {/* Card Field Lines */}
+        <line x1="34" y1="16" x2="54" y2="16" stroke="var(--ink, #0B1B2B)" strokeWidth="2" strokeLinecap="round" />
+        <line x1="34" y1="24" x2="48" y2="24" stroke="var(--ink-4, #94A3B8)" strokeWidth="1.5" strokeLinecap="round" />
+        <line x1="34" y1="31" x2="52" y2="31" stroke="var(--ink-4, #94A3B8)" strokeWidth="1.5" strokeLinecap="round" />
+      </g>
 
- {/* Heartbeat EKG Pulse Wave */}
- <path
- d="M16 60H26L30 52L36 68L42 56L46 62L50 60H60"
- stroke="var(--brand-600)"
- strokeWidth="2"
- strokeLinecap="round"
- strokeLinejoin="round"
- />
-
- {/* Prescription safety check marks */}
- <line x1="16" y1="76" x2="38" y2="76" stroke="var(--ink-3)" strokeWidth="1.75" strokeLinecap="round" opacity="0.4" />
- <line x1="16" y1="84" x2="48" y2="84" stroke="var(--ink-3)" strokeWidth="1.75" strokeLinecap="round" opacity="0.4" />
- </g>
-
- {/* Looping Stethoscope in front */}
- <path
- d="M28 88C28 112 44 126 70 126C96 126 112 112 112 90"
- stroke="var(--brand-600)"
- strokeWidth="2.5"
- strokeLinecap="round"
- />
- <circle cx="112" cy="88" r="8" fill="#FFFFFF" stroke="var(--brand-600)" strokeWidth="2" />
- <circle cx="112" cy="88" r="3.5" fill="var(--brand-600)" />
- </svg>
- );
+      {/* Inspecting Stethoscope Loop (with Coral Chestpiece) */}
+      <path d="M 28 84 C 28 100, 48 104, 60 104 C 72 104, 92 100, 92 84" stroke="var(--ink, #0B1B2B)" strokeWidth="2" strokeLinecap="round" />
+      <circle cx="92" cy="84" r="6" fill="var(--accent-500, #FF5C35)" stroke="var(--ink, #0B1B2B)" strokeWidth="2" />
+    </svg>
+  );
 }
 
-export function EmptyDoctorListIllustration({ className = 'w-24 h-24 mx-auto' }) {
- return (
- <svg
- viewBox="0 0 120 120"
- fill="none"
- xmlns="http://www.w3.org/2000/svg"
- className={className}
- aria-hidden="true"
- >
- <circle cx="60" cy="60" r="48" fill="var(--surface)" stroke="var(--border)" strokeWidth="1.5" strokeDasharray="3 3" />
- {/* Patient Avatar Silhouette with Shield */}
- <circle cx="60" cy="46" r="12" fill="#FFFFFF" stroke="var(--brand-600)" strokeWidth="2" />
- <path
- d="M40 78C40 68 49 64 60 64C71 64 80 68 80 78"
- stroke="var(--brand-600)"
- strokeWidth="2"
- strokeLinecap="round"
- />
- {/* Keycode Badge */}
- <g transform="translate(42, 82)">
- <rect x="0" y="0" width="36" height="16" rx="4" fill="#FFFFFF" stroke="var(--brand-600)" strokeWidth="1.5" />
- <circle cx="9" cy="8" r="1.5" fill="var(--brand-600)" />
- <circle cx="15" cy="8" r="1.5" fill="var(--brand-600)" />
- <circle cx="21" cy="8" r="1.5" fill="var(--brand-600)" />
- <circle cx="27" cy="8" r="1.5" fill="var(--brand-600)" />
- </g>
- </svg>
- );
+/* ── 6. No Data Yet (Telemetry / Analytics Baseline) ─────────────────── */
+export function EmptyDataIllustration({ className = 'w-32 h-32 mx-auto' }) {
+  return (
+    <svg
+      viewBox="0 0 120 120"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={clsx('overflow-visible flex-shrink-0 select-none', className)}
+      role="img"
+      aria-label="No data yet illustration"
+    >
+      <circle cx="60" cy="60" r="48" fill="var(--surface-2, #F1F5F9)" opacity="0.6" />
+
+      {/* Chart Plot Area */}
+      <g transform="translate(26, 28)">
+        {/* Coordinate Axes */}
+        <line x1="10" y1="8" x2="10" y2="58" stroke="var(--ink, #0B1B2B)" strokeWidth="2" strokeLinecap="round" />
+        <line x1="10" y1="58" x2="62" y2="58" stroke="var(--ink, #0B1B2B)" strokeWidth="2" strokeLinecap="round" />
+
+        {/* Dotted Grid Guidelines */}
+        <line x1="10" y1="24" x2="62" y2="24" stroke="var(--border, #E2E8F0)" strokeWidth="1.5" strokeDasharray="3 3" />
+        <line x1="10" y1="41" x2="62" y2="41" stroke="var(--border, #E2E8F0)" strokeWidth="1.5" strokeDasharray="3 3" />
+
+        {/* Baseline Ascending Trend (Blue Accent) */}
+        <path
+          d="M 12 52 Q 28 42, 40 30 T 58 18"
+          stroke="var(--brand-600, #0E7490)"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          fill="none"
+        />
+
+        {/* Initial Data Calibration Points */}
+        <circle cx="12" cy="52" r="3.5" fill="var(--paper, #FFFFFF)" stroke="var(--ink, #0B1B2B)" strokeWidth="2" />
+        <circle cx="40" cy="30" r="3.5" fill="var(--paper, #FFFFFF)" stroke="var(--ink, #0B1B2B)" strokeWidth="2" />
+        <circle cx="58" cy="18" r="4" fill="var(--accent-500, #FF5C35)" stroke="var(--ink, #0B1B2B)" strokeWidth="2" />
+      </g>
+
+      {/* Calibration Dial */}
+      <circle cx="86" cy="80" r="9" fill="var(--paper, #FFFFFF)" stroke="var(--ink, #0B1B2B)" strokeWidth="2" />
+      <line x1="86" y1="80" x2="90" y2="76" stroke="var(--ink, #0B1B2B)" strokeWidth="1.75" strokeLinecap="round" />
+    </svg>
+  );
 }
 
-export function EmptyScheduleIllustration({ className = 'w-32 h-32 mx-auto' }) {
- return (
- <svg
- viewBox="0 0 140 140"
- fill="none"
- xmlns="http://www.w3.org/2000/svg"
- className={className}
- aria-hidden="true"
- >
- <circle cx="70" cy="70" r="54" fill="var(--canvas)" stroke="var(--border)" strokeWidth="1.5" />
- {/* Clock Face */}
- <circle cx="70" cy="66" r="32" fill="#FFFFFF" stroke="var(--brand-600)" strokeWidth="2" />
- <path d="M70 46V66L82 74" stroke="var(--brand-600)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
- <circle cx="70" cy="66" r="3" fill="var(--brand-600)" />
+/* ── 7. Search No Results ────────────────────────────────────────────── */
+export function EmptySearchIllustration({ className = 'w-32 h-32 mx-auto' }) {
+  return (
+    <svg
+      viewBox="0 0 120 120"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={clsx('overflow-visible flex-shrink-0 select-none', className)}
+      role="img"
+      aria-label="Search no results illustration"
+    >
+      <circle cx="60" cy="60" r="48" fill="var(--surface-2, #F1F5F9)" opacity="0.6" />
 
- {/* Sunrise Horizon Arc */}
- <path d="M40 106C52 98 88 98 100 106" stroke="var(--brand-600)" strokeWidth="2" strokeLinecap="round" />
- <path d="M70 94V88M54 98L50 94M86 98L90 94" stroke="var(--brand-600)" strokeWidth="1.5" strokeLinecap="round" opacity="0.6" />
- </svg>
- );
+      {/* Document / Formulary Page */}
+      <g transform="translate(30, 24)">
+        <rect x="0" y="0" width="46" height="60" rx="5" fill="var(--paper, #FFFFFF)" stroke="var(--ink, #0B1B2B)" strokeWidth="2" />
+        {/* Placeholder Lines */}
+        <line x1="10" y1="14" x2="36" y2="14" stroke="var(--border, #E2E8F0)" strokeWidth="2" strokeLinecap="round" />
+        <line x1="10" y1="22" x2="30" y2="22" stroke="var(--border, #E2E8F0)" strokeWidth="1.5" strokeLinecap="round" />
+        <line x1="10" y1="30" x2="34" y2="30" stroke="var(--border, #E2E8F0)" strokeWidth="1.5" strokeLinecap="round" />
+      </g>
+
+      {/* Prominent Magnifying Glass over Document */}
+      <g transform="translate(54, 46)">
+        {/* Glass Outer Rim */}
+        <circle cx="20" cy="20" r="16" fill="var(--paper, #FFFFFF)" stroke="var(--ink, #0B1B2B)" strokeWidth="2.5" />
+        {/* Lens Reflection (Blue Accent Arc) */}
+        <path d="M 10 14 C 14 9, 26 9, 30 14" stroke="var(--brand-600, #0E7490)" strokeWidth="1.5" strokeLinecap="round" />
+        {/* Question Mark Inside Lens (Coral Accent) */}
+        <path
+          d="M 17 16 C 17 13.5, 23 13.5, 23 16 C 23 18, 20 19, 20 21"
+          stroke="var(--accent-500, #FF5C35)"
+          strokeWidth="2"
+          strokeLinecap="round"
+        />
+        <circle cx="20" cy="25" r="1.25" fill="var(--accent-500, #FF5C35)" />
+        {/* Handle */}
+        <line x1="32" y1="32" x2="48" y2="48" stroke="var(--ink, #0B1B2B)" strokeWidth="3" strokeLinecap="round" />
+      </g>
+    </svg>
+  );
 }
 
-export function EmptyTrendsIllustration({ className = 'w-36 h-36 mx-auto' }) {
- return (
- <svg
- viewBox="0 0 160 160"
- fill="none"
- xmlns="http://www.w3.org/2000/svg"
- className={className}
- aria-hidden="true"
- >
- {/* Ambient background circle */}
- <circle cx="80" cy="80" r="64" fill="var(--canvas)" fillOpacity="0.45" />
+/* ── Backward Compatible Aliases & Clean Barrel ───────────────────────── */
+export const EmptyTimelineIllustration = EmptyDataIllustration;
+export const EmptyDoctorsIllustration = EmptyConnectionsIllustration;
+export const EmptyCaregiversIllustration = EmptyConnectionsIllustration;
+export const EmptyDoctorPatientIllustration = EmptyPatientsIllustration;
+export const EmptyDoctorListIllustration = EmptyPatientsIllustration;
+export const EmptyScheduleIllustration = EmptySymptomsIllustration;
+export const EmptyTrendsIllustration = EmptyDataIllustration;
 
- {/* Graph Grid Frame */}
- <g transform="translate(30, 32)">
- {/* Y Axis & X Axis */}
- <line x1="16" y1="12" x2="16" y2="88" stroke="var(--brand-600)" strokeWidth="2" strokeLinecap="round" />
- <line x1="16" y1="88" x2="94" y2="88" stroke="var(--brand-600)" strokeWidth="2" strokeLinecap="round" />
-
- {/* Dotted Grid Guidelines */}
- <line x1="16" y1="36" x2="94" y2="36" stroke="var(--brand-600)" strokeWidth="1.25" strokeDasharray="3 3" strokeOpacity="0.25" />
- <line x1="16" y1="62" x2="94" y2="62" stroke="var(--brand-600)" strokeWidth="1.25" strokeDasharray="3 3" strokeOpacity="0.25" />
-
- {/* Trend Area Wave / Line */}
- <path
- d="M20 78 Q 38 64 54 48 T 88 34"
- fill="none"
- stroke="var(--brand-600)"
- strokeWidth="2.5"
- strokeLinecap="round"
- />
-
- {/* Shaded Area Under Curve */}
- <path
- d="M20 78 Q 38 64 54 48 T 88 34 V 88 H 20 Z"
- fill="var(--brand-600)"
- fillOpacity="0.1"
- />
-
- {/* Data Point Nodes */}
- <circle cx="20" cy="78" r="4.5" fill="#FFFFFF" stroke="var(--brand-600)" strokeWidth="2" />
- <circle cx="54" cy="48" r="4.5" fill="#FFFFFF" stroke="var(--brand-600)" strokeWidth="2" />
- <circle cx="88" cy="34" r="5" fill="#FFFFFF" stroke="var(--brand-600)" strokeWidth="2.5" />
- <circle cx="88" cy="34" r="2" fill="var(--brand-600)" />
- </g>
-
- {/* Magnifying Glass Lens */}
- <g transform="translate(94, 86)">
- <circle cx="16" cy="16" r="14" fill="#FFFFFF" stroke="var(--brand-600)" strokeWidth="2" />
- <path d="M16 8V16L22 20" stroke="var(--brand-600)" strokeWidth="1.5" strokeLinecap="round" />
- <line x1="26" y1="26" x2="38" y2="38" stroke="var(--brand-600)" strokeWidth="2.5" strokeLinecap="round" />
- </g>
-
- {/* Sparkles */}
- <path d="M42 26L43.5 21.5L48 20L43.5 18.5L42 14L40.5 18.5L36 20L40.5 21.5L42 26Z" fill="var(--brand-600)" fillOpacity="0.5" />
- </svg>
- );
-}
+export default {
+  EmptyMedicinesIllustration,
+  EmptyFlagsIllustration,
+  EmptyConnectionsIllustration,
+  EmptySymptomsIllustration,
+  EmptyPatientsIllustration,
+  EmptyDataIllustration,
+  EmptySearchIllustration,
+};
