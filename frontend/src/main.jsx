@@ -13,9 +13,10 @@ try {
   localStorage.removeItem('polysafe_projector_mode');
 } catch (e) {}
 
-// Configure global API base URL from VITE_API_URL for production deployment
-if (import.meta.env.VITE_API_URL) {
-  axios.defaults.baseURL = import.meta.env.VITE_API_URL;
+// Configure global API base URL: custom env var OR production default OR local proxy
+const API_BASE_URL = import.meta.env.VITE_API_URL || (import.meta.env.PROD ? 'https://polysafe-backend.vercel.app' : '');
+if (API_BASE_URL) {
+  axios.defaults.baseURL = API_BASE_URL;
 }
 
 // Global 8-second request timeout for all API communications
