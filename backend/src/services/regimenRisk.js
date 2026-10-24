@@ -202,6 +202,7 @@ async function calculateRegimenRisk(patientId) {
   return {
     averageRisk,
     level,
+    score: level,
     tier: `L${level}`,
     label,
     color,

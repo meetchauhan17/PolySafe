@@ -86,6 +86,16 @@ const doctorLoginSchema = z.object({
   password: z.string().min(1, 'Password is required'),
 });
 
+const forgotPasswordSchema = z.object({
+  email: z.string().email('Invalid email address'),
+});
+
+const resetPasswordSchema = z.object({
+  email: z.string().email('Invalid email address'),
+  code: z.string().length(6, 'Verification code must be 6 digits'),
+  newPassword: z.string().min(8, 'New password must be at least 8 characters'),
+});
+
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 /** Validate req.body against a Zod schema; sends 400 on failure. */
@@ -485,6 +495,165 @@ router.post('/doctor/login', loginIpLimiter, async (req, res) => {
   } catch (err) {
     console.error('[doctor/login]', err);
     res.status(500).json({ error: 'Login failed. Please try again.' });
+  }
+});
+
+// ═════════════════════════════════════════════════════════════════════════════
+// POST /auth/logout
+// Real logout endpoint acknowledging session termination
+// ═════════════════════════════════════════════════════════════════════════════
+router.post('/logout', (req, res) => {
+  return res.status(200).json({ message: 'Signed out successfully.' });
+});
+
+// ═════════════════════════════════════════════════════════════════════════════
+// POST /auth/forgot-password
+// Generates and emails a 6-digit password reset OTP
+// ═════════════════════════════════════════════════════════════════════════════
+router.post('/forgot-password', otpSendLimiter, async (req, res) => {
+  const data = validate(forgotPasswordSchema, req.body, res);
+  if (!data) return;
+
+  const targetEmail = data.email.toLowerCase().trim();
+
+  try {
+    const user = await prisma.user.findFirst({ where: { email: targetEmail } });
+
+    // Always respond with success to prevent user enumeration
+    if (!user) {
+      return res.status(200).json({
+        message: 'If an account exists with this email, a 6-digit verification code has been sent.',
+      });
+    }
+
+    const code = Math.floor(100000 + Math.random() * 900000).toString();
+    const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+
+    // Invalidate previous OTP codes for this email
+    await prisma.otpCode.updateMany({
+      where: { email: targetEmail, used: false },
+      data: { used: true },
+    });
+
+    await prisma.otpCode.create({
+      data: {
+        email: targetEmail,
+        code,
+        expiresAt,
+      },
+    });
+
+    await sendOtpEmail({
+      email: targetEmail,
+      name: user.name,
+      code,
+    });
+
+    return res.status(200).json({
+      message: 'If an account exists with this email, a 6-digit verification code has been sent.',
+      email: targetEmail,
+      ...(process.env.NODE_ENV !== 'production' && { _devOtp: code }),
+    });
+  } catch (err) {
+    console.error('[forgot-password]', err);
+    res.status(500).json({ error: 'Failed to process password reset request.' });
+  }
+});
+
+// ═════════════════════════════════════════════════════════════════════════════
+// POST /auth/reset-password
+// Verifies OTP code and sets new bcrypt-hashed password
+// ═════════════════════════════════════════════════════════════════════════════
+router.post('/reset-password', async (req, res) => {
+  const data = validate(resetPasswordSchema, req.body, res);
+  if (!data) return;
+
+  const { code, newPassword } = data;
+  const targetEmail = data.email.toLowerCase().trim();
+
+  try {
+    const validOtp = await prisma.otpCode.findFirst({
+      where: {
+        email: targetEmail,
+        code,
+        used: false,
+        expiresAt: { gt: new Date() },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    if (!validOtp) {
+      return res.status(400).json({ error: 'Invalid or expired verification code. Please request a new code.' });
+    }
+
+    // Mark OTP code as used
+    await prisma.otpCode.update({
+      where: { id: validOtp.id },
+      data: { used: true },
+    });
+
+    const user = await prisma.user.findFirst({ where: { email: targetEmail } });
+    if (!user) {
+      return res.status(404).json({ error: 'Account not found.' });
+    }
+
+    const passwordHash = await bcrypt.hash(newPassword, SALT_ROUNDS);
+
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        passwordHash,
+        failedLoginAttempts: 0,
+        lockedUntil: null,
+      },
+    });
+
+    return res.status(200).json({ message: 'Password has been reset successfully. You can now sign in.' });
+  } catch (err) {
+    console.error('[reset-password]', err);
+    res.status(500).json({ error: 'Failed to reset password.' });
+  }
+});
+
+// ═════════════════════════════════════════════════════════════════════════════
+// DELETE /auth/delete-account
+// GDPR & HIPAA compliant right-to-erasure account deletion
+// ═════════════════════════════════════════════════════════════════════════════
+router.delete('/delete-account', auth, async (req, res) => {
+  const userId = req.user.userId;
+
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      include: { patient: true },
+    });
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found.' });
+    }
+
+    // Cascade deletion inside transaction
+    await prisma.$transaction(async (tx) => {
+      if (user.patient) {
+        const patientId = user.patient.id;
+        await tx.doseLog.deleteMany({ where: { patientId } });
+        await tx.interactionFlag.deleteMany({ where: { patientId } });
+        await tx.symptom.deleteMany({ where: { patientId } });
+        await tx.medicine.deleteMany({ where: { patientId } });
+        await tx.connection.deleteMany({ where: { patientId } });
+        await tx.patient.delete({ where: { id: patientId } });
+      }
+      await tx.connection.deleteMany({ where: { connectedUserId: userId } });
+      await tx.medicine.deleteMany({ where: { addedBy: userId } });
+      await tx.user.delete({ where: { id: userId } });
+    });
+
+    return res.status(200).json({
+      message: 'Your account and all associated health records have been permanently deleted in accordance with privacy regulations.',
+    });
+  } catch (err) {
+    console.error('[delete-account]', err);
+    res.status(500).json({ error: 'Failed to delete account. Please try again or contact support.' });
   }
 });
 

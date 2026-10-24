@@ -15,7 +15,8 @@
     "test:auth": "node tests/test-unified-3roles-auth.js",
     "test:accounts": "node tests/test-user-specified-accounts.js",
     "test:scan": "node tests/test-hybrid-scan.js",
-    "test:resolver": "node tests/test-indian-resolver.js"
+    "test:resolver": "node tests/test-indian-resolver.js",
+    "backup:db": "node scripts/backup-db.js"
   },
   "prisma": {
     "seed": "node prisma/seed.js"
@@ -43,7 +44,9 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "axe-core": "^4.14.0",
     "nodemon": "^3.1.14",
-    "prisma": "^5.22.0"
+    "prisma": "^5.22.0",
+    "puppeteer": "^25.15.0"
   }
 }

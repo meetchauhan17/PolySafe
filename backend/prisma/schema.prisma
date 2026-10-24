@@ -36,6 +36,12 @@ enum ConnectionStatus {
   REVOKED
 }
 
+enum DoseStatus {
+  TAKEN
+  SKIPPED
+  MISSED
+}
+
 // ─── Models ───────────────────────────────────────────────────────────────────
 
 model User {
@@ -101,6 +107,7 @@ model Patient {
   symptoms         Symptom[]
   connections      Connection[]
   interactionFlags InteractionFlag[]
+  doseLogs         DoseLog[]
 }
 
 model Medicine {
@@ -131,6 +138,7 @@ model Medicine {
   symptoms              Symptom[]         @relation("PossibleCauseMedicine")
   interactionFlagsAsA   InteractionFlag[] @relation("MedicineA")
   interactionFlagsAsB   InteractionFlag[] @relation("MedicineB")
+  doseLogs              DoseLog[]
 }
 
 model Symptom {
@@ -186,6 +194,25 @@ model InteractionFlag {
   generatedBy         String?  @default("fallback")
 
   dateFlagged         DateTime @default(now())
+}
+
+model DoseLog {
+  id           String     @id @default(uuid())
+  patientId    String
+  patient      Patient    @relation(fields: [patientId], references: [id], onDelete: Cascade)
+
+  medicineId   String
+  medicine     Medicine   @relation(fields: [medicineId], references: [id], onDelete: Cascade)
+
+  scheduledFor DateTime
+  takenAt      DateTime?
+  status       DoseStatus @default(TAKEN)
+  createdAt    DateTime   @default(now())
+
+  @@index([patientId, scheduledFor])
+  @@index([patientId, status])
+  @@index([medicineId])
+  @@map("dose_log")
 }
 
 // ─── DDInter Reference Dataset ────────────────────────────────────────────────

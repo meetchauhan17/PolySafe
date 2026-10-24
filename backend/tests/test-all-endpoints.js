@@ -56,6 +56,18 @@ async function runAudit() {
 
   try {
     // ══════════════════════════════════════════════════════════════
+    // Pre-Flight: GET /health (Diagnostic & Status)
+    // ══════════════════════════════════════════════════════════════
+    try {
+      const healthRes = await api.get('/health');
+      if (healthRes.status === 200 && healthRes.data?.status === 'ok') {
+        console.log(`\x1b[32m✔\x1b[0m [HEALTH CHECK] GET /health OK (API: ${healthRes.data.api}, DB: ${healthRes.data.db}, DEMO: ${healthRes.data.demoMode})`);
+      }
+    } catch (e) {
+      console.warn('[HEALTH CHECK] Warning:', e.message);
+    }
+
+    // ══════════════════════════════════════════════════════════════
     // Step 1: POST /auth/patient/signup-send-otp
     // ══════════════════════════════════════════════════════════════
     try {

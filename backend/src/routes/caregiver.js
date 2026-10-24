@@ -18,6 +18,7 @@ const express = require('express');
 const prisma  = require('../lib/prisma');
 const { auth } = require('../middleware/auth');
 const { calculateRegimenRisk } = require('../services/regimenRisk');
+const doseService = require('../services/doseService');
 
 const router = express.Router();
 
@@ -127,12 +128,32 @@ router.get('/patient-summary/:patientId', auth, async (req, res) => {
       interactionFlags.some((f) => f.severity === s)
     ) ?? null;
 
+    // 6. Adherence metrics & today's missed doses (NO DRUG NAMES)
+    const adherenceData = await doseService.getAdherence({ patientId, days: 7 });
+    const todayDoses = await doseService.getDosesForDate({ patientId });
+
+    const todayMissedDoses = (todayDoses.doses || [])
+      .filter((d) => d.status === 'MISSED')
+      .map((d) => ({
+        id: d.id,
+        time: d.time,
+        slotLabel: d.slotLabel,
+        dosage: d.dosage || 'Prescribed dose',
+        status: 'MISSED',
+        scheduledFor: d.scheduledFor,
+        // Medicine name strictly omitted per privacy matrix
+      }));
+
     return res.status(200).json({
       status,
       medicineCount:  medicines.length,
       flagCount:      interactionFlags.length,
       worstSeverity,
       schedule,
+      adherencePercentage: adherenceData.adherencePercentage,
+      streakDays: adherenceData.streakDays,
+      todayMissedDoses,
+      todayMissedCount: todayMissedDoses.length,
       // Explicit omissions per permission matrix:
       // - No medicine names
       // - No symptom logs
@@ -142,6 +163,62 @@ router.get('/patient-summary/:patientId', auth, async (req, res) => {
   } catch (err) {
     console.error('[GET /caregiver/patient-summary]', err);
     return res.status(500).json({ error: 'Failed to load patient summary.' });
+  }
+});
+
+// ═════════════════════════════════════════════════════════════════════════════
+// POST /caregiver/remind-patient/:patientId
+// Caregiver sends an instant dose reminder ping to the patient
+// ═════════════════════════════════════════════════════════════════════════════
+router.post('/remind-patient/:patientId', auth, async (req, res) => {
+  const { userId } = req.user;
+  const { patientId } = req.params;
+
+  try {
+    const connection = await verifyApprovedCaregiverConnection(userId, patientId);
+    if (!connection) {
+      return res.status(403).json({ error: 'No approved caregiver connection.' });
+    }
+
+    const caregiverUser = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { name: true },
+    });
+
+    const patient = await prisma.patient.findUnique({
+      where: { id: patientId },
+      select: { id: true, userId: true },
+    });
+
+    if (!patient) {
+      return res.status(404).json({ error: 'Patient not found.' });
+    }
+
+    const io = req.app.get('io');
+    if (io) {
+      const caregiverName = caregiverUser?.name || 'Your Caregiver';
+      const reminderPayload = {
+        type: 'DOSE_REMINDER',
+        caregiverName,
+        patientId,
+        message: `${caregiverName} sent you a gentle reminder to take your scheduled medicines.`,
+        timestamp: new Date().toISOString(),
+      };
+
+      io.to(`patient-${patient.id}`).emit('caregiver_reminder', reminderPayload);
+      if (patient.userId) {
+        io.to(`patient-${patient.userId}`).emit('caregiver_reminder', reminderPayload);
+      }
+      console.log(`[caregiver] Sent dose reminder from ${caregiverName} to patient ${patient.id}`);
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: 'Dose reminder sent to patient.',
+    });
+  } catch (err) {
+    console.error('[POST /caregiver/remind-patient]', err);
+    return res.status(500).json({ error: 'Failed to send reminder.' });
   }
 });
 

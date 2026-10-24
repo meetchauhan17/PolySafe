@@ -9,10 +9,11 @@
  *   2. "plain": Plain-language explanation for patients, referencing age / conditions
  *      when relevant, with strict "not a diagnosis" safety framing.
  *
- * Guardrails:
- *   - Only explains the provided severity and burden scores — never invents claims.
- *   - 8-second strict timeout: falls back immediately to structured template so
- *     the user is never blocked or left with a frozen spinner.
+ * Supports multi-language translation (en | hi | gu) with:
+ *   - Simple everyday words in native script (Devanagari / Gujarati)
+ *   - Strict safety framing translated
+ *   - 8-second timeout with deterministic fallback (English + translated template)
+ *   - In-memory cache by (flagId, lang)
  *
  * generatedBy values (checked by frontend to show contextual UI):
  *   'groq'       — live Groq response, full explanation
@@ -27,10 +28,13 @@ const axios = require('axios');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const { isDemoMode, getMockGroqExplanation } = require('../lib/demo');
 
+// Cache keyed by `${flagId || `${drugA}-${drugB}`}:${lang}`
+const explanationCache = new Map();
+
 /**
  * Secondary LLM explanation engine via Google Gemini Flash
  */
-async function tryGeminiExplanation({ drugA, drugB, severity, burdenScore, burdenLevel, patientAge, patientConditions }) {
+async function tryGeminiExplanation({ drugA, drugB, severity, burdenScore, burdenLevel, patientAge, patientConditions, lang = 'en' }) {
   const geminiKey = process.env.GEMINI_API_KEY || (process.env.GEMINI_API_KEYS ? process.env.GEMINI_API_KEYS.split(/[,;\s]+/)[0] : '');
   if (!geminiKey || geminiKey === 'your_gemini_api_key_here') return null;
 
@@ -38,6 +42,18 @@ async function tryGeminiExplanation({ drugA, drugB, severity, burdenScore, burde
     const genAI = new GoogleGenerativeAI(geminiKey);
     const model = genAI.getGenerativeModel({ model: 'gemini-3.5-flash' });
     const conditionsText = Array.isArray(patientConditions) && patientConditions.length > 0 ? patientConditions.join(', ') : 'None';
+
+    let langInstruction = 'Respond in clear, accessible English.';
+    let mandatoryEnding = '(This is an informational safety alert, not a medical diagnosis.)';
+
+    if (lang === 'hi') {
+      langInstruction = 'Respond strictly in Hindi (हिंदी in Devanagari script). Use simple, reassuring Hindi words that an Indian patient or elderly family member can easily understand.';
+      mandatoryEnding = '(यह एक सूचनात्मक सुरक्षा चेतावनी है, चिकित्सीय निदान नहीं।)';
+    } else if (lang === 'gu') {
+      langInstruction = 'Respond strictly in Gujarati (ગુજરાતી script). Use simple, reassuring Gujarati words that an elderly family member can easily understand.';
+      mandatoryEnding = '(આ એક માહિતીપ્રદ સુરક્ષા ચેતવણી છે, તબીબી નિદાન નથી.)';
+    }
+
     const prompt = `You are a clinical pharmacologist and patient safety communication specialist.
 Generate two concise, accurate explanations for this Drug-Drug Interaction:
 - Drug A: ${drugA}
@@ -46,28 +62,32 @@ Generate two concise, accurate explanations for this Drug-Drug Interaction:
 - Cumulative Burden: Score ${burdenScore ?? 0} (${burdenLevel ?? 'Normal'})
 - Patient Age: ${patientAge ?? 'Not specified'}
 - Conditions: ${conditionsText}
+- Target Language: ${lang.toUpperCase()}
 
 STRICT GUARDRAILS:
 1. ONLY explain the verified severity level (${severity}) and burden score (${burdenScore}).
 2. NEVER invent unverified adverse effects.
-3. "clinical": 1-sentence formal pharmacological summary for a physician or pharmacist.
-4. "plain": Plain-language explanation for patients ending strictly with: "(This is an informational safety alert, not a medical diagnosis.)"
+3. ${langInstruction}
+4. "clinical": 1-sentence formal pharmacological summary for a physician or pharmacist.
+5. "plain": Plain-language explanation for patients ending strictly with: "${mandatoryEnding}"
 
 Return ONLY valid JSON matching this schema:
 {
-  "clinical": "Formal 1-sentence pharmacological summary for clinicians",
-  "plain": "Patient-friendly explanation concluding with (This is an informational safety alert, not a medical diagnosis.)"
+  "clinical": "1-sentence pharmacological summary",
+  "plain": "Patient-friendly explanation concluding strictly with ${mandatoryEnding}"
 }`;
 
     const res = await model.generateContent(prompt);
     const text = res.response.text().replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/```$/i, '').trim();
     const parsed = JSON.parse(text);
     if (parsed.clinical && parsed.plain) {
-      console.log(`[explanationGenerator] Successfully generated clinical explanation via Gemini Flash for ${drugA} + ${drugB}`);
+      console.log(`[explanationGenerator] Successfully generated clinical explanation via Gemini Flash for ${drugA} + ${drugB} in ${lang}`);
       return {
         clinical: parsed.clinical.trim(),
         plain: parsed.plain.trim(),
         generatedBy: 'gemini',
+        isTranslated: lang !== 'en',
+        lang,
       };
     }
   } catch (err) {
@@ -78,38 +98,62 @@ Return ONLY valid JSON matching this schema:
 
 /**
  * Fallback static explanation builder when Groq is unavailable, times out, or has demo key.
+ * If lang is 'hi' or 'gu', returns the English text plus the translated deterministic template.
  */
-function buildFallbackExplanation({ drugA, drugB, severity, burdenScore, burdenLevel }) {
+function buildFallbackExplanation({ drugA, drugB, severity, burdenScore, burdenLevel, lang = 'en' }) {
   const sev = severity || 'Unknown';
   const score = burdenScore ?? 0;
   const level = burdenLevel ?? 'Normal';
 
-  let clinical = `Interaction identified between ${drugA} and ${drugB} (${sev}). Cumulative anticholinergic/sedative burden index: ${score} (${level}).`;
-  let plain = `An interaction between ${drugA} and ${drugB} was detected (${sev} severity). Please consult your doctor before taking both medicines together. (This is an informational safety alert, not a medical diagnosis.)`;
+  let enClinical = `Interaction identified between ${drugA} and ${drugB} (${sev}). Cumulative anticholinergic/sedative burden index: ${score} (${level}).`;
+  let enPlain = `An interaction between ${drugA} and ${drugB} was detected (${sev} severity). Please consult your doctor before taking both medicines together. (This is an informational safety alert, not a medical diagnosis.)`;
 
   if (sev === 'Major' || sev === 'Contraindicated') {
-    clinical = `High-risk interaction: ${drugA} + ${drugB} (${sev}). Concomitant administration requires clinical evaluation and regimen adjustment. Cumulative burden: ${score} (${level}).`;
-    plain = `Taking ${drugA} and ${drugB} together is flagged as ${sev}. Please consult your doctor or pharmacist right away. (This is an informational safety alert, not a medical diagnosis.)`;
+    enClinical = `High-risk interaction: ${drugA} + ${drugB} (${sev}). Concomitant administration requires clinical evaluation and regimen adjustment. Cumulative burden: ${score} (${level}).`;
+    enPlain = `Taking ${drugA} and ${drugB} together is flagged as ${sev}. Please consult your doctor or pharmacist right away. (This is an informational safety alert, not a medical diagnosis.)`;
   } else if (sev === 'Minor') {
-    clinical = `Minor interaction between ${drugA} and ${drugB}. Monitor for mild adverse effects as clinically indicated.`;
-    plain = `A minor interaction was found between ${drugA} and ${drugB}. No immediate change is needed, but inform your healthcare provider. (This is an informational safety alert, not a medical diagnosis.)`;
+    enClinical = `Minor interaction between ${drugA} and ${drugB}. Monitor for mild adverse effects as clinically indicated.`;
+    enPlain = `A minor interaction was found between ${drugA} and ${drugB}. No immediate change is needed, but inform your healthcare provider. (This is an informational safety alert, not a medical diagnosis.)`;
   }
 
-  return { clinical, plain, generatedBy: 'fallback' };
+  if (lang === 'hi') {
+    let hiPlain = `${drugA} और ${drugB} के बीच परस्पर क्रिया पाई गई (${sev} जोखिम)। दोनों दवाएं एक साथ लेने से पहले कृपया अपने डॉक्टर से सलाह लें। (यह एक सूचनात्मक सुरक्षा चेतावनी है, चिकित्सीय निदान नहीं।)`;
+    if (sev === 'Major' || sev === 'Contraindicated') {
+      hiPlain = `${drugA} और ${drugB} को एक साथ लेना ${sev} जोखिम के रूप में चिह्नित है। कृपया तुरंत अपने डॉक्टर या फार्मासिस्ट से सलाह लें। (यह एक सूचनात्मक सुरक्षा चेतावनी है, चिकित्सीय निदान नहीं।)`;
+    } else if (sev === 'Minor') {
+      hiPlain = `${drugA} और ${drugB} के बीच मामूली परस्पर क्रिया पाई गई। तत्काल किसी बदलाव की आवश्यकता नहीं है, लेकिन अपने डॉक्टर को सूचित करें। (यह एक सूचनात्मक सुरक्षा चेतावनी है, चिकित्सीय निदान नहीं।)`;
+    }
+    return {
+      clinical: `औषधीय परस्पर क्रिया: ${drugA} + ${drugB} (${sev})। संचयी शामक भार: ${score} (${level})।`,
+      plain: `${hiPlain}\n\n[Original: ${enPlain}]`,
+      generatedBy: 'fallback',
+      isTranslated: true,
+      lang: 'hi',
+    };
+  }
+
+  if (lang === 'gu') {
+    let guPlain = `${drugA} અને ${drugB} વચ્ચે ક્રિયાપ્રતિક્રિયા જણાઈ છે (${sev} જોખમ). બંને દવાઓ સાથે લેતા પહેલાં કૃપા કરીને તમારા ડૉક્ટરની સલાહ લો. (આ એક માહિતીપ્રદ સુરક્ષા ચેતવણી છે, તબીબી નિદાન નથી.)`;
+    if (sev === 'Major' || sev === 'Contraindicated') {
+      guPlain = `${drugA} અને ${drugB} સાથે લેવું ${sev} જોખમ તરીકે ફ્લેગ થયેલ છે. કૃપા કરીને તાત્કાલિક તમારા ડૉક્ટર અથવા ફાર્માસિસ્ટનો સંપર્ક કરો. (આ એક માહિતીપ્રદ સુરક્ષા ચેતવણી છે, તબીબી નિદાન નથી.)`;
+    } else if (sev === 'Minor') {
+      guPlain = `${drugA} અને ${drugB} વચ્ચે સામાન્ય ક્રિયાપ્રતિક્રિયા મળી છે. તાત્કાલિક કોઈ ફેરફારની જરૂર નથી, પરંતુ તમારા ડૉક્ટરને જાણ કરો. (આ એક માહિતીપ્રદ સુરક્ષા ચેતવણી છે, તબીબી નિદાન નથી.)`;
+    }
+    return {
+      clinical: `ઔષધીય ક્રિયાપ્રતિક્રિયા: ${drugA} + ${drugB} (${sev}). કુલ સેડટીવ બોજ: ${score} (${level}).`,
+      plain: `${guPlain}\n\n[Original: ${enPlain}]`,
+      generatedBy: 'fallback',
+      isTranslated: true,
+      lang: 'gu',
+    };
+  }
+
+  return { clinical: enClinical, plain: enPlain, generatedBy: 'fallback', isTranslated: false, lang: 'en' };
 }
 
 /**
  * Generates clinical and plain explanations using Groq API with an 8-second timeout.
- *
- * @param {Object} params
- * @param {string} params.drugA - First drug name
- * @param {string} params.drugB - Second drug name
- * @param {string} params.severity - DDInter severity ('Major' | 'Moderate' | 'Minor' | 'Contraindicated' | 'Unknown')
- * @param {number} [params.burdenScore] - Cumulative ACB burden score (0-3+)
- * @param {string} [params.burdenLevel] - 'Normal' | 'Moderate' | 'Critical'
- * @param {number} [params.patientAge] - Patient age
- * @param {string[]} [params.patientConditions] - Array of patient chronic conditions
- * @returns {Promise<{ clinical: string, plain: string, generatedBy: 'groq' | 'fallback' }>}
+ * Cached by (flagId || `${drugA}-${drugB}`, lang).
  */
 async function generateExplanation({
   drugA,
@@ -119,26 +163,57 @@ async function generateExplanation({
   burdenLevel = 'Normal',
   patientAge,
   patientConditions = [],
+  flagId = null,
+  lang = 'en',
 }) {
-  // ── DEMO MOCK ── Groq not called. Remove DEMO_MODE=true for production.
-  // ⚠  DEMO MOCK — controlled by DEMO_MODE=true in .env.
+  const normalizedLang = ['hi', 'gu'].includes(String(lang).toLowerCase()) ? String(lang).toLowerCase() : 'en';
+  const cacheKey = `${flagId || `${drugA}-${drugB}`}:${normalizedLang}`;
+
+  if (explanationCache.has(cacheKey)) {
+    return explanationCache.get(cacheKey);
+  }
+
+  // ── DEMO MOCK ── Groq not called if DEMO_MODE=true
   if (isDemoMode()) {
-    console.log(`[explanationGenerator] DEMO_MODE=true — returning mock explanation for ${drugA} + ${drugB} (Groq not called)`);
-    return getMockGroqExplanation({ drugA, drugB, severity, burdenScore, burdenLevel });
+    console.log(`[explanationGenerator] DEMO_MODE=true — returning mock explanation for ${drugA} + ${drugB} (${normalizedLang})`);
+    const mock = getMockGroqExplanation({ drugA, drugB, severity, burdenScore, burdenLevel });
+    if (normalizedLang !== 'en') {
+      const fb = buildFallbackExplanation({ drugA, drugB, severity, burdenScore, burdenLevel, lang: normalizedLang });
+      explanationCache.set(cacheKey, fb);
+      return fb;
+    }
+    explanationCache.set(cacheKey, mock);
+    return mock;
   }
 
   const apiKey = process.env.GROQ_API_KEY;
 
   // If no API key or mock/demo key, attempt Gemini Flash before static fallback
   if (!apiKey || apiKey === 'gsk_demo_key' || apiKey.startsWith('gsk_demo')) {
-    const geminiExp = await tryGeminiExplanation({ drugA, drugB, severity, burdenScore, burdenLevel, patientAge, patientConditions });
-    if (geminiExp) return geminiExp;
-    return buildFallbackExplanation({ drugA, drugB, severity, burdenScore, burdenLevel });
+    const geminiExp = await tryGeminiExplanation({ drugA, drugB, severity, burdenScore, burdenLevel, patientAge, patientConditions, lang: normalizedLang });
+    if (geminiExp) {
+      explanationCache.set(cacheKey, geminiExp);
+      return geminiExp;
+    }
+    const fb = buildFallbackExplanation({ drugA, drugB, severity, burdenScore, burdenLevel, lang: normalizedLang });
+    explanationCache.set(cacheKey, fb);
+    return fb;
   }
 
   const conditionsText = Array.isArray(patientConditions) && patientConditions.length > 0
     ? patientConditions.join(', ')
     : 'None reported';
+
+  let langInstruction = 'Respond in clear, accessible English.';
+  let mandatoryEnding = '(This is an informational safety alert, not a medical diagnosis.)';
+
+  if (normalizedLang === 'hi') {
+    langInstruction = 'Respond strictly in Hindi (हिंदी in Devanagari script). Use simple, reassuring everyday Hindi words that an elderly Indian patient can easily understand.';
+    mandatoryEnding = '(यह एक सूचनात्मक सुरक्षा चेतावनी है, चिकित्सीय निदान नहीं।)';
+  } else if (normalizedLang === 'gu') {
+    langInstruction = 'Respond strictly in Gujarati (ગુજરાતી script). Use simple, reassuring Gujarati words that an elderly family member can easily understand.';
+    mandatoryEnding = '(આ એક માહિતીપ્રદ સુરક્ષા ચેતવણી છે, તબીબી નિદાન નથી.)';
+  }
 
   const systemPrompt = `You are a clinical pharmacologist and patient safety communication specialist.
 Your task is to generate two concise, accurate explanations for an identified Drug-Drug Interaction (DDI) and cumulative anticholinergic/sedative burden score.
@@ -146,15 +221,16 @@ Your task is to generate two concise, accurate explanations for an identified Dr
 STRICT MEDICAL GUARDRAILS:
 1. ONLY explain the verified severity level (${severity}) and cumulative burden score (${burdenScore}, ${burdenLevel}).
 2. NEVER invent, hallucinate, or extrapolate unverified adverse effects or new medical conditions beyond what is provided.
-3. For the "clinical" explanation: Write a 1-sentence formal pharmacological summary for a physician or pharmacist.
-4. For the "plain" explanation: Write in calm, simple, patient-friendly language. Reference patient age (${patientAge ?? 'Not specified'}) or conditions (${conditionsText}) ONLY if directly relevant to clearance, sedation, or fall risk.
-5. MANDATORY PATIENT FRAMING: The "plain" explanation MUST conclude with: "(This is an informational safety alert, not a medical diagnosis.)"
+3. ${langInstruction}
+4. For the "clinical" explanation: Write a 1-sentence formal pharmacological summary for a physician or pharmacist.
+5. For the "plain" explanation: Write in calm, simple, patient-friendly language. Reference patient age (${patientAge ?? 'Not specified'}) or conditions (${conditionsText}) ONLY if directly relevant.
+6. MANDATORY PATIENT FRAMING: The "plain" explanation MUST conclude with: "${mandatoryEnding}"
 
 OUTPUT FORMAT:
 Respond ONLY with a valid JSON object matching this schema:
 {
-  "clinical": "Formal 1-sentence pharmacological summary for clinicians",
-  "plain": "Patient-friendly explanation concluding with (This is an informational safety alert, not a medical diagnosis.)"
+  "clinical": "1-sentence pharmacological summary",
+  "plain": "Patient-friendly explanation concluding with ${mandatoryEnding}"
 }`;
 
   const userPrompt = `Generate explanations for:
@@ -163,7 +239,8 @@ Respond ONLY with a valid JSON object matching this schema:
 - DDInter Interaction Severity: ${severity}
 - Cumulative Anticholinergic/Sedative Burden: Score ${burdenScore} (${burdenLevel})
 - Patient Age: ${patientAge ?? 'N/A'}
-- Patient Conditions: ${conditionsText}`;
+- Patient Conditions: ${conditionsText}
+- Language: ${normalizedLang.toUpperCase()}`;
 
   try {
     const response = await axios.post(
@@ -175,7 +252,7 @@ Respond ONLY with a valid JSON object matching this schema:
           { role: 'user', content: userPrompt },
         ],
         temperature: 0.2,
-        max_tokens: 350,
+        max_tokens: 400,
         response_format: { type: 'json_object' },
       },
       {
@@ -189,42 +266,54 @@ Respond ONLY with a valid JSON object matching this schema:
 
     const content = response.data?.choices?.[0]?.message?.content;
     if (!content) {
-      return buildFallbackExplanation({ drugA, drugB, severity, burdenScore, burdenLevel });
+      const fb = buildFallbackExplanation({ drugA, drugB, severity, burdenScore, burdenLevel, lang: normalizedLang });
+      explanationCache.set(cacheKey, fb);
+      return fb;
     }
 
     const parsed = JSON.parse(content);
     if (!parsed.clinical || !parsed.plain) {
-      return buildFallbackExplanation({ drugA, drugB, severity, burdenScore, burdenLevel });
+      const fb = buildFallbackExplanation({ drugA, drugB, severity, burdenScore, burdenLevel, lang: normalizedLang });
+      explanationCache.set(cacheKey, fb);
+      return fb;
     }
 
-    return {
+    const result = {
       clinical: parsed.clinical.trim(),
       plain: parsed.plain.trim(),
       generatedBy: 'groq',
+      isTranslated: normalizedLang !== 'en',
+      lang: normalizedLang,
     };
+    explanationCache.set(cacheKey, result);
+    return result;
   } catch (err) {
     const isTimeout = err.code === 'ECONNABORTED' || err.message?.includes('timeout');
-    const isNetwork = err.code === 'ENOTFOUND'    || err.code === 'ECONNREFUSED';
     console.warn(
-      `[explanationGenerator] Groq API ${
-        isTimeout ? 'timed out after 8s (user sees raw severity immediately)' :
-        isNetwork ? 'unreachable — network error' :
-        `error ${err.response?.status ?? 'unknown'}: ${err.response?.data?.error?.message || err.message}`
-      } — using structured fallback`
+      `[explanationGenerator] Groq API ${isTimeout ? 'timed out after 8s' : 'error'} (${err.message}) — using structured fallback`
     );
-    // Try Gemini Flash before static fallback
-    const geminiExp = await tryGeminiExplanation({ drugA, drugB, severity, burdenScore, burdenLevel, patientAge, patientConditions });
-    if (geminiExp) return geminiExp;
 
-    // Graceful fallback — returns immediately so the user is never blocked.
-    // generatedBy:'timeout' lets the frontend show "Generating detailed explanation..."
-    // rather than a generic loading state.
-    const fallback = buildFallbackExplanation({ drugA, drugB, severity, burdenScore, burdenLevel });
-    return {
+    // Try Gemini Flash before static fallback
+    const geminiExp = await tryGeminiExplanation({ drugA, drugB, severity, burdenScore, burdenLevel, patientAge, patientConditions, lang: normalizedLang });
+    if (geminiExp) {
+      explanationCache.set(cacheKey, geminiExp);
+      return geminiExp;
+    }
+
+    const fallback = buildFallbackExplanation({ drugA, drugB, severity, burdenScore, burdenLevel, lang: normalizedLang });
+    const result = {
       ...fallback,
       generatedBy: isTimeout ? 'timeout' : 'fallback',
+      isTranslated: normalizedLang !== 'en',
+      lang: normalizedLang,
     };
+    explanationCache.set(cacheKey, result);
+    return result;
   }
 }
 
-module.exports = { generateExplanation };
+module.exports = {
+  generateExplanation,
+  buildFallbackExplanation,
+  explanationCache,
+};

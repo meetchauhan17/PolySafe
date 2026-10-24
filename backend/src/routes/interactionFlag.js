@@ -19,6 +19,9 @@ const express = require('express');
 const prisma = require('../lib/prisma');
 const { auth } = require('../middleware/auth');
 const { calculateCumulativeBurden } = require('../services/burdenIndex');
+const { screenFoodDrugInteractions } = require('../services/foodDrugService');
+const { getSaferAlternativeSuggestions } = require('../services/alternativeSuggestions');
+const { generateExplanation } = require('../services/explanationGenerator');
 
 const router = express.Router();
 
@@ -74,22 +77,77 @@ router.get('/:id', auth, async (req, res) => {
     // 3. Recalculate cumulative burden live (includes the new medicine)
     const burdenResult = await calculateCumulativeBurden(flag.patientId);
 
+    // 4. Screen food/lifestyle interactions and clinical alternatives for involved drugs
+    const involvedMedicines = [
+      flag.medicineA ? { name: flag.medicineA.name, dosage: flag.medicineA.dosage } : null,
+      flag.medicineB ? { name: flag.medicineB.name, dosage: flag.medicineB.dosage } : null,
+    ].filter(Boolean);
+
+    const foodInteractions = screenFoodDrugInteractions(involvedMedicines);
+    const alternativeSuggestions = getSaferAlternativeSuggestions(involvedMedicines);
+
+    const doctorQuestions = [
+      `Is the combination of ${flag.medicineA?.name} and ${flag.medicineB?.name} strictly indicated for my clinical state, or is a safer non-interacting alternative available?`,
+      `Should we adjust the timing (e.g., separating doses by 2 to 4 hours) or modify dosages to minimize pharmacological conflict?`,
+      `What specific warning symptoms or baseline lab tests (e.g. INR, serum creatinine, liver enzymes, electrolytes) should be monitored?`,
+    ];
+
+    const actionPlan = flag.severity === 'Major' || flag.severity === 'Contraindicated'
+      ? `Notify your prescribing physician or clinical pharmacist immediately regarding ${flag.medicineA?.name} + ${flag.medicineB?.name}. Do not alter prescribed doses abruptly without clinical supervision.`
+      : `Discuss this combination during your next routine medical review. Take note of any new symptoms such as dizziness, fatigue, or upset stomach.`;
+
+    const lang = String(req.query.lang || 'en').toLowerCase();
+    let clinicalExp = flag.clinicalExplanation;
+    let plainExp = flag.plainExplanation;
+    let isTranslated = false;
+    let generatedSource = flag.generatedBy ?? 'fallback';
+
+    if (lang === 'hi' || lang === 'gu') {
+      try {
+        const localized = await generateExplanation({
+          drugA: flag.medicineA?.name,
+          drugB: flag.medicineB?.name,
+          severity: flag.severity,
+          burdenScore: burdenResult.totalScore,
+          burdenLevel: burdenResult.level,
+          patientAge: flag.patient?.age,
+          patientConditions: flag.patient?.conditions,
+          flagId: flag.id,
+          lang,
+        });
+        if (localized) {
+          clinicalExp = localized.clinical || clinicalExp;
+          plainExp = localized.plain || plainExp;
+          isTranslated = true;
+          generatedSource = localized.generatedBy || generatedSource;
+        }
+      } catch (e) {
+        console.warn(`[interactionFlag] Localized explanation failed for ${lang}:`, e.message);
+      }
+    }
+
     return res.status(200).json({
       flag: {
         id:                  flag.id,
         severity:            flag.severity,
-        clinicalExplanation: flag.clinicalExplanation,
-        plainExplanation:    flag.plainExplanation,
+        clinicalExplanation: clinicalExp,
+        plainExplanation:    plainExp,
+        isTranslated,
+        lang,
         // 'groq' | 'fallback' | 'timeout' | 'demo-mock' — drives contextual UI in RiskAnalysisPage
-        generatedBy:         flag.generatedBy ?? 'fallback',
+        generatedBy:         generatedSource,
         dateFlagged:         flag.dateFlagged,
         medicineA:           flag.medicineA,
         medicineB:           flag.medicineB,
+        actionPlan,
+        doctorQuestions,
         patient: {
           age:        flag.patient?.age ?? null,
           conditions: flag.patient?.conditions ?? [],
         },
       },
+      foodInteractions,
+      alternativeSuggestions,
       burden: {
         totalScore:  burdenResult.totalScore,
         level:       burdenResult.level,
